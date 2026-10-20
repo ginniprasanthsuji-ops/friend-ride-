@@ -1,1 +1,98 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FRIEND RIDE — Every Ride, A Friendly Ride</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f1f7f5;
+      color: #17342d;
+    }
+    header {
+      background: #087f5b;
+      color: white;
+      padding: 22px;
+      border-radius: 18px;
+      text-align: center;
+    }
+    .card {
+      max-width: 520px;
+      margin: 18px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 3px 14px #0001;
+    }
+    label { display: block; margin-top: 14px; font-weight: bold; }
+    input, select, button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 7px;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+    input, select { border: 1px solid #cbd8d3; }
+    button {
+      background: #087f5b;
+      color: white;
+      border: 0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .offer { background: #1459a8; }
+    .note { color: #64736d; font-size: 13px; }
+    #result { padding: 12px; background: #edf8f2; border-radius: 9px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FRIEND RIDE</h1>
+    <p>Every Ride, A Friendly Ride.</p>
+    <p>Bike • Auto • Car</p>
+  </header>  <section class="card">
+    <h2>Book Your Ride</h2>
+    <label for="vehicle">Choose vehicle</label>
+    <select id="vehicle">
+      <option>Bike</option>
+      <option>Auto</option>
+      <option>Car</option>
+    </select><label for="pickup">Pickup location</label>
+<input id="pickup" placeholder="Enter pickup point">
 
+<label for="destination">Destination</label>
+<input id="destination" placeholder="Enter destination">
+
+<label for="phone">Mobile number</label>
+<input id="phone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number">
+
+<label for="fare">Your fare offer (₹)</label>
+<input id="fare" type="number" min="1" value="200">
+
+<button class="offer" onclick="previewOffer()">Preview fare offer</button>
+<p id="result">Demo only — no real booking or payment.</p>
+<p class="note">The ₹20 token fee will be separate from the driver's agreed trip fare. Online payment will be added securely later.</p>
+
+  </section>  <script>
+    function previewOffer() {
+      const vehicle = document.getElementById('vehicle').value;
+      const pickup = document.getElementById('pickup').value.trim();
+      const destination = document.getElementById('destination').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const fare = Number(document.getElementById('fare').value);
+
+      if (!pickup || !destination || !/^[0-9]{10}$/.test(phone) || !Number.isFinite(fare) || fare <= 0) {
+        document.getElementById('result').textContent =
+          'Please enter pickup, destination, valid 10-digit mobile number, and fare.';
+        return;
+      }
+
+      document.getElementById('result').textContent =
+        'DEMO: ' + vehicle + ' ride from ' + pickup + ' to ' + destination +
+        '. Your fare offer is ₹' + fare + '. No driver has been contacted.';
+    }
+  </script></body>
+</html>
