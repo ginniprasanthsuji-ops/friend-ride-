@@ -4,29 +4,113 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101827">
+  <meta name="description" content="FRIEND RIDE - Book Bike, Auto and Car rides easily.">
   <title>FRIEND RIDE | Ride Booking</title>
+
   <style>
-    *{box-sizing:border-box}
-    body{margin:0;background:#101827;color:#f8fafc;font-family:Arial,sans-serif}
-    header{padding:22px 16px;background:#17243a;text-align:center}
-    header h1{margin:0;color:#38e0b4;font-size:29px}
-    header p{color:#cbd5e1;margin-bottom:0}
-    main{max-width:650px;margin:20px auto;padding:0 14px}
-    .card{background:#1b2940;padding:18px;border-radius:16px;margin-bottom:16px}
-    h2{margin-top:0;font-size:20px}
-    label{display:block;margin:12px 0 6px;color:#dbeafe}
-    input,select,textarea{width:100%;padding:13px;border-radius:9px;border:1px solid #42516b;background:#101827;color:white;font-size:16px}
-    button{border:0;border-radius:9px;padding:13px 15px;background:#38e0b4;color:#06251e;font-weight:bold;font-size:15px;cursor:pointer}
-    .buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-    .buttons button{flex:1}
-    .secondary{background:#334155;color:white}
-    .danger{background:#ef4444;color:white}
-    .hidden{display:none}
-    .status{padding:12px;background:#0c1727;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}
-    .ride{padding:13px;border:1px solid #42516b;border-radius:10px;margin-top:10px}
-    small{color:#cbd5e1}
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #101827;
+      color: #f8fafc;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      padding: 22px 16px;
+      background: #17243a;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #38e0b4;
+      font-size: 29px;
+    }
+
+    header p { color: #cbd5e1; margin-bottom: 0; }
+
+    main {
+      max-width: 650px;
+      margin: 20px auto;
+      padding: 0 14px;
+    }
+
+    .card {
+      background: #1b2940;
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+
+    h2 { margin-top: 0; font-size: 20px; }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      color: #dbeafe;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid #42516b;
+      background: #101827;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 13px 15px;
+      background: #38e0b4;
+      color: #06251e;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .buttons button { flex: 1; }
+
+    .secondary { background: #334155; color: white; }
+    .danger { background: #ef4444; color: white; }
+    .hidden { display: none !important; }
+
+    .status {
+      padding: 12px;
+      background: #0c1727;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .ride {
+      padding: 13px;
+      border: 1px solid #42516b;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .ride p { white-space: pre-line; overflow-wrap: anywhere; }
+    small { color: #cbd5e1; }
   </style>
 </head>
+
 <body>
 <header>
   <h1>FRIEND RIDE 🚕</h1>
@@ -36,41 +120,60 @@
 <main>
   <section class="card">
     <h2>👤 Login / Registration</h2>
-    <label>పేరు</label>
-    <input id="name" placeholder="మీ పూర్తి పేరు">
-    <label>ఇమెయిల్</label>
-    <input id="email" type="email" placeholder="name@example.com">
-    <label>పాస్‌వర్డ్</label>
-    <input id="password" type="password" minlength="6" placeholder="కనీసం 6 అక్షరాలు">
-    <label>మీరు ఎవరు?</label>
+
+    <label for="name">పేరు</label>
+    <input id="name" autocomplete="name" placeholder="మీ పూర్తి పేరు">
+
+    <label for="email">ఇమెయిల్</label>
+    <input id="email" type="email" autocomplete="email"
+           placeholder="name@example.com">
+
+    <label for="password">పాస్‌వర్డ్</label>
+    <input id="password" type="password"
+           autocomplete="current-password" minlength="6"
+           placeholder="కనీసం 6 అక్షరాలు">
+
+    <label for="role">మీరు ఎవరు?</label>
     <select id="role">
       <option value="customer">Customer — కస్టమర్</option>
       <option value="driver">Driver — డ్రైవర్</option>
     </select>
+
     <div class="buttons">
       <button id="signup">కొత్త అకౌంట్</button>
       <button id="login" class="secondary">Login</button>
       <button id="logout" class="danger hidden">Logout</button>
     </div>
-    <p id="authStatus" class="status">Supabase కనెక్షన్ ప్రారంభమవుతోంది...</p>
+
+    <p id="authStatus" class="status" role="status" aria-live="polite">
+      Supabase కనెక్షన్ ప్రారంభమవుతోంది...
+    </p>
   </section>
 
   <section id="customerPanel" class="card hidden">
     <h2>📍 బుక్ రైడ్</h2>
-    <label>వాహనం</label>
+
+    <label for="vehicle">వాహనం</label>
     <select id="vehicle">
       <option value="Bike">Bike</option>
       <option value="Auto">Auto</option>
       <option value="Car">Car</option>
     </select>
-    <label>ఎక్కడి నుంచి?</label>
+
+    <label for="pickup">ఎక్కడి నుంచి?</label>
     <input id="pickup" placeholder="Pickup location">
-    <label>ఎక్కడికి వెళ్లాలి?</label>
+
+    <label for="drop">ఎక్కడికి వెళ్లాలి?</label>
     <input id="drop" placeholder="Drop location">
-    <label>మీరు ఇవ్వగల ఛార్జీ (₹)</label>
-    <input id="fare" type="number" min="1" placeholder="ఉదా: 150">
-    <label>అదనపు వివరాలు (ఐచ్ఛికం)</label>
-    <textarea id="notes" placeholder="గుర్తించాల్సిన వివరాలు"></textarea>
+
+    <label for="fare">మీరు ఇవ్వగల ఛార్జీ (₹)</label>
+    <input id="fare" type="number" min="1" step="1"
+           inputmode="numeric" placeholder="ఉదా: 150">
+
+    <label for="notes">అదనపు వివరాలు (ఐచ్ఛికం)</label>
+    <textarea id="notes" rows="3"
+              placeholder="గుర్తించాల్సిన వివరాలు"></textarea>
+
     <div class="buttons">
       <button id="bookRide">రైడ్ బుక్ చేయండి</button>
       <button id="myRides" class="secondary">నా రైడ్స్</button>
@@ -80,58 +183,101 @@
   <section id="driverPanel" class="card hidden">
     <h2>🚘 డ్రైవర్ డ్యాష్‌బోర్డ్</h2>
     <p>రైడ్ అభ్యర్థనలను చూడటానికి Online అవ్వండి.</p>
+
     <div class="buttons">
       <button id="onlineBtn">Go Online</button>
       <button id="offlineBtn" class="secondary">Go Offline</button>
       <button id="refreshRides" class="secondary">Refresh Rides</button>
     </div>
-    <p id="driverStatus" class="status">డ్రైవర్ స్థితి: Offline</p>
+
+    <p id="driverStatus" class="status" role="status">
+      డ్రైవర్ స్థితి: Offline
+    </p>
   </section>
 
   <section class="card">
     <h2>📋 రైడ్ వివరాలు</h2>
-    <div id="ridesList"><small>Login అయిన తర్వాత మీ రైడ్స్ ఇక్కడ కనిపిస్తాయి.</small></div>
+    <div id="ridesList">
+      <small>Login అయిన తర్వాత మీ రైడ్స్ ఇక్కడ కనిపిస్తాయి.</small>
+    </div>
   </section>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://fglyplxcczdjtfwobtzh.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz";
 
-const authStatus = document.getElementById("authStatus");
-const ridesList = document.getElementById("ridesList");
+<script>
+"use strict";
+
+/* Supabase Project Settings లోని నిజమైన URL, Publishable Key ఉపయోగించండి. */
+const SUPABASE_URL =
+  "https://fglyplxcczdjtfwobtzh.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz";
+
+const $ = id => document.getElementById(id);
+
+const authStatus = $("authStatus");
+const ridesList = $("ridesList");
 
 let db = null;
 let currentUser = null;
 let currentProfile = null;
 let isOnline = false;
+let authReady = false;
+let loadingRides = false;
 
-function message(el, text) {
-  el.textContent = text;
+function message(element, text) {
+  element.textContent = String(text ?? "");
 }
 
 function showError(error) {
   console.error(error);
-  return error?.message || "ఒక సమస్య వచ్చింది. మళ్లీ ప్రయత్నించండి.";
-}
-
-function ready() {
-  return db && !SUPABASE_PUBLISHABLE_KEY.includes("sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz");
+  return error?.message || "సమస్య వచ్చింది. మళ్లీ ప్రయత్నించండి.";
 }
 
 function showPanels() {
-  const loggedIn = !!currentUser;
-  document.getElementById("customerPanel").classList.toggle(
-    "hidden", !loggedIn || currentProfile?.role !== "customer"
+  const loggedIn = !!currentUser && !!currentProfile;
+
+  $("customerPanel").classList.toggle(
+    "hidden", !loggedIn || currentProfile.role !== "customer"
   );
-  document.getElementById("driverPanel").classList.toggle(
-    "hidden", !loggedIn || currentProfile?.role !== "driver"
+
+  $("driverPanel").classList.toggle(
+    "hidden", !loggedIn || currentProfile.role !== "driver"
   );
-  document.getElementById("logout").classList.toggle("hidden", !loggedIn);
+
+  $("logout").classList.toggle("hidden", !currentUser);
+
+  $("signup").disabled = !authReady;
+  $("login").disabled = !authReady;
 }
 
-async function loadProfile(user) {
+function validateCredentials(includeName = false) {
+  const name = $("name").value.trim();
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  if (includeName && !name) {
+    message(authStatus, "మీ పూర్తి పేరు నమోదు చేయండి.");
+    return false;
+  }
+
+  if (!email || !$("email").checkValidity()) {
+    message(authStatus, "సరైన ఇమెయిల్ నమోదు చేయండి.");
+    return false;
+  }
+
+  if (password.length < 6) {
+    message(authStatus, "పాస్‌వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి.");
+    return false;
+  }
+
+  return true;
+}
+
+/* Profile load / create */
+async function loadProfile(user, registrationName = "") {
   const { data, error } = await db
     .from("profiles")
     .select("id,full_name,phone,role")
@@ -140,145 +286,232 @@ async function loadProfile(user) {
 
   if (error) throw error;
 
-  if (!data) {
-    const fullName = document.getElementById("name").value.trim();
-    const role = document.getElementById("role").value;
+  if (data) {
+    currentProfile = data;
+  } else {
+    const metadata = user.user_metadata || {};
+    const fullName =
+      registrationName ||
+      metadata.full_name ||
+      user.email ||
+      "Customer";
+
+    /*
+      గమనిక: Driver role ను production లో admin approval
+      లేకుండా నమ్మకూడదు. Database policy ద్వారా రక్షించాలి.
+    */
+    const requestedRole =
+      metadata.role === "driver" ? "driver" : "customer";
+
     const { data: created, error: insertError } = await db
       .from("profiles")
       .insert({
         id: user.id,
-        full_name: fullName || user.email,
-        role: role
+        full_name: fullName,
+        role: requestedRole
       })
       .select("id,full_name,phone,role")
       .single();
 
     if (insertError) throw insertError;
     currentProfile = created;
-  } else {
-    currentProfile = data;
   }
 
+  currentUser = user;
   showPanels();
-  message(authStatus, "Login విజయవంతం: " + (currentProfile.full_name || user.email)
-    + "\nRole: " + currentProfile.role);
+
+  message(
+    authStatus,
+    "Login విజయవంతం: " +
+    (currentProfile.full_name || user.email) +
+    "\nRole: " + currentProfile.role
+  );
+
   await loadRides();
 }
 
+/* Registration */
 async function register() {
-  if (!ready()) {
-    message(authStatus, "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz");
+  if (!authReady) {
+    message(authStatus, "Supabase ఇంకా సిద్ధంగా లేదు.");
     return;
   }
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const name = document.getElementById("name").value.trim();
+  if (!validateCredentials(true)) return;
 
-  if (!email || password.length < 6 || !name) {
-    message(authStatus, "పేరు, సరైన ఇమెయిల్, కనీసం 6 అక్షరాల పాస్‌వర్డ్ ఇవ్వండి.");
-    return;
-  }
+  const name = $("name").value.trim();
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  const role = $("role").value;
+
+  $("signup").disabled = true;
+  message(authStatus, "అకౌంట్ సృష్టిస్తున్నాము...");
 
   try {
-    const { data, error } = await db.auth.signUp({ email, password });
+    const { data, error } = await db.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: name,
+          role: role
+        }
+      }
+    });
+
     if (error) throw error;
 
-    if (data.session) {
-      currentUser = data.user;
-      await loadProfile(currentUser);
+    if (data.session && data.user) {
+      await loadProfile(data.user, name);
     } else {
-      message(authStatus,
-        "రిజిస్ట్రేషన్ అభ్యర్థన పంపబడింది. ఇమెయిల్ ధృవీకరణ అవసరమైతే, మీ ఇమెయిల్‌ను ధృవీకరించి Login చేయండి.");
+      message(
+        authStatus,
+        "రిజిస్ట్రేషన్ అభ్యర్థన పంపబడింది.\n" +
+        "Email verification అడిగితే మీ ఇమెయిల్ ధృవీకరించి, " +
+        "తర్వాత Login చేయండి."
+      );
     }
-  } catch (e) {
-    message(authStatus, showError(e));
+  } catch (error) {
+    message(authStatus, "రిజిస్ట్రేషన్ విఫలమైంది: " + showError(error));
+  } finally {
+    $("signup").disabled = !authReady;
   }
 }
 
+/* Login */
 async function login() {
-  if (!ready()) {
-    message(authStatus, "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz");
+  if (!authReady) {
+    message(authStatus, "Supabase ఇంకా సిద్ధంగా లేదు.");
     return;
   }
+
+  if (!validateCredentials(false)) return;
+
+  $("login").disabled = true;
+  message(authStatus, "Login చేస్తున్నాము...");
 
   try {
     const { data, error } = await db.auth.signInWithPassword({
-      email: document.getElementById("email").value.trim(),
-      password: document.getElementById("password").value
+      email: $("email").value.trim(),
+      password: $("password").value
     });
+
     if (error) throw error;
-    currentUser = data.user;
-    await loadProfile(currentUser);
-  } catch (e) {
-    message(authStatus, showError(e));
+
+    await loadProfile(data.user);
+  } catch (error) {
+    message(authStatus, "Login విఫలమైంది: " + showError(error));
+  } finally {
+    $("login").disabled = !authReady;
   }
 }
 
+/* Logout */
 async function logout() {
   if (!db) return;
+
   try {
-    if (isOnline && currentUser) {
+    if (currentUser && currentProfile?.role === "driver") {
       await db.from("driver_locations")
-        .update({ is_online: false, updated_at: new Date().toISOString() })
+        .update({
+          is_online: false,
+          updated_at: new Date().toISOString()
+        })
         .eq("driver_id", currentUser.id);
     }
+
     const { error } = await db.auth.signOut();
     if (error) throw error;
+
     currentUser = null;
     currentProfile = null;
     isOnline = false;
+
     showPanels();
     message(authStatus, "మీరు Logout అయ్యారు.");
-    ridesList.textContent = "మళ్లీ Login చేయండి.";
-  } catch (e) {
-    message(authStatus, showError(e));
+    message(ridesList, "మళ్లీ Login చేయండి.");
+    message($("driverStatus"), "డ్రైవర్ స్థితి: Offline");
+  } catch (error) {
+    message(authStatus, "Logout సమస్య: " + showError(error));
   }
 }
 
+/* Book ride */
 async function bookRide() {
-  if (!currentUser || currentProfile?.role !== "customer") return;
+  if (!currentUser || currentProfile?.role !== "customer") {
+    message(authStatus, "ముందుగా Customer అకౌంట్‌తో Login చేయండి.");
+    return;
+  }
 
-  const pickup = document.getElementById("pickup").value.trim();
-  const drop = document.getElementById("drop").value.trim();
-  const fare = Number(document.getElementById("fare").value);
+  const pickup = $("pickup").value.trim();
+  const drop = $("drop").value.trim();
+  const fareText = $("fare").value.trim();
+  const fare = Number(fareText);
 
-  if (!pickup || !drop || !Number.isFinite(fare) || fare <= 0) {
+  if (!pickup || !drop || !fareText ||
+      !Number.isFinite(fare) || fare <= 0) {
     alert("Pickup, Drop, సరైన ఛార్జీ నమోదు చేయండి.");
     return;
   }
 
+  if (pickup.toLowerCase() === drop.toLowerCase()) {
+    alert("Pickup, Drop ఒకేలా ఉండకూడదు.");
+    return;
+  }
+
+  $("bookRide").disabled = true;
+
   try {
-    const { data, error } = await db.from("rides").insert({
+    const { error } = await db.from("rides").insert({
       customer_id: currentUser.id,
-      vehicle_type: document.getElementById("vehicle").value,
+      vehicle_type: $("vehicle").value,
       pickup_text: pickup,
       drop_text: drop,
       fare_offer: fare,
       status: "requested",
-      notes: document.getElementById("notes").value.trim() || null
-    }).select().single();
+      notes: $("notes").value.trim() || null
+    });
 
     if (error) throw error;
-    alert("రైడ్ అభ్యర్థన పంపబడింది!");
+
+    alert("రైడ్ అభ్యర్థన విజయవంతంగా పంపబడింది!");
+    $("pickup").value = "";
+    $("drop").value = "";
+    $("fare").value = "";
+    $("notes").value = "";
+
     await loadRides();
-  } catch (e) {
-    alert("రైడ్ బుక్ కాలేదు: " + showError(e));
+  } catch (error) {
+    alert("రైడ్ బుక్ కాలేదు: " + showError(error));
+  } finally {
+    $("bookRide").disabled = false;
   }
 }
 
+/* Load customer / driver rides */
 async function loadRides() {
-  if (!currentUser || !currentProfile) return;
+  if (!currentUser || !currentProfile || !db || loadingRides) return;
+
+  loadingRides = true;
+  message(ridesList, "రైడ్స్ లోడ్ అవుతున్నాయి...");
 
   try {
-    let query = db.from("rides").select("*").order("created_at", { ascending: false }).limit(30);
+    let query = db
+      .from("rides")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30);
 
     if (currentProfile.role === "customer") {
       query = query.eq("customer_id", currentUser.id);
-    } else {
+    } else if (currentProfile.role === "driver") {
       query = query.or(
-        "driver_id.eq." + currentUser.id + ",and(driver_id.is.null,status.eq.requested)"
+        "driver_id.eq." + currentUser.id +
+        ",and(driver_id.is.null,status.eq.requested)"
       );
+    } else {
+      message(ridesList, "ఈ అకౌంట్‌కు అనుమతించిన Role లేదు.");
+      return;
     }
 
     const { data, error } = await query;
@@ -287,7 +520,7 @@ async function loadRides() {
     ridesList.replaceChildren();
 
     if (!data || data.length === 0) {
-      ridesList.textContent = "ఇప్పటికి రైడ్స్ లేవు.";
+      message(ridesList, "ప్రస్తుతం రైడ్స్ లేవు.");
       return;
     }
 
@@ -297,13 +530,19 @@ async function loadRides() {
 
       const details = document.createElement("p");
       details.textContent =
-        ride.vehicle_type + " | ₹" + (ride.agreed_fare ?? ride.fare_offer ?? "-") +
-        "\n" + ride.pickup_text + " → " + ride.drop_text +
-        "\nస్థితి: " + ride.status;
+        "🚘 " + (ride.vehicle_type || "-") +
+        " | ₹" + (ride.agreed_fare ?? ride.fare_offer ?? "-") +
+        "\n📍 " + (ride.pickup_text || "-") +
+        " → " + (ride.drop_text || "-") +
+        "\nస్థితి: " + (ride.status || "-");
+
       item.appendChild(details);
 
-      if (currentProfile.role === "driver" &&
-          ride.status === "requested" && !ride.driver_id) {
+      if (
+        currentProfile.role === "driver" &&
+        ride.status === "requested" &&
+        !ride.driver_id
+      ) {
         const accept = document.createElement("button");
         accept.textContent = "Accept Ride";
         accept.addEventListener("click", () => acceptRide(ride.id));
@@ -312,77 +551,170 @@ async function loadRides() {
 
       ridesList.appendChild(item);
     });
-  } catch (e) {
-    ridesList.textContent = "రైడ్స్ లోడ్ కాలేదు: " + showError(e);
+  } catch (error) {
+    message(ridesList, "రైడ్స్ లోడ్ కాలేదు: " + showError(error));
+  } finally {
+    loadingRides = false;
   }
 }
 
+/*
+  ఇది ఒక conditional update మాత్రమే.
+  నిజమైన race-safe acceptance కోసం database RPC/function,
+  సరైన RLS policy కూడా అవసరం.
+*/
 async function acceptRide(rideId) {
-  alert("రైడ్ అంగీకరించడానికి సురక్షితమైన database permission/function ఏర్పాటు అవసరం. Supabase policies లేకపోతే ఇది పనిచేయకపోవచ్చు.");
+  if (!currentUser || currentProfile?.role !== "driver") return;
+
   try {
-    const { error } = await db.from("rides")
-      .update({ driver_id: currentUser.id, status: "accepted" })
+    const { data, error } = await db
+      .from("rides")
+      .update({
+        driver_id: currentUser.id,
+        status: "accepted"
+      })
       .eq("id", rideId)
       .is("driver_id", null)
-      .eq("status", "requested");
+      .eq("status", "requested")
+      .select("id");
+
     if (error) throw error;
+
+    if (!data || data.length === 0) {
+      alert("ఈ రైడ్‌ను మరొక డ్రైవర్ ఇప్పటికే అంగీకరించి ఉండవచ్చు.");
+    } else {
+      alert("రైడ్ అంగీకరించబడింది!");
+    }
+
     await loadRides();
-  } catch (e) {
-    alert("Accept కాలేదు: " + showError(e));
+  } catch (error) {
+    alert("Accept కాలేదు: " + showError(error));
   }
 }
 
+/* Driver Online / Offline */
 async function setOnline(value) {
-  if (!currentUser || currentProfile?.role !== "driver") return;
+  if (!currentUser || currentProfile?.role !== "driver") {
+    message($("driverStatus"), "Driver అకౌంట్‌తో Login చేయండి.");
+    return;
+  }
+
   try {
-    const { error } = await db.from("driver_locations").upsert({
-      driver_id: currentUser.id,
-      latitude: null,
-      longitude: null,
-      is_online: value,
-      updated_at: new Date().toISOString()
-    }, { onConflict: "driver_id" });
+    /*
+      driver_locations టేబుల్‌లో driver_id, is_online,
+      updated_at columns ఉండాలి.
+      GPS tracking ఈ కోడ్‌లో ఇంకా అమలు కాలేదు.
+    */
+    const { error } = await db
+      .from("driver_locations")
+      .upsert({
+        driver_id: currentUser.id,
+        is_online: value,
+        updated_at: new Date().toISOString()
+      }, { onConflict: "driver_id" });
 
     if (error) throw error;
+
     isOnline = value;
-    message(document.getElementById("driverStatus"),
-      value ? "Online — GPS స్థానం ఇంకా జోడించలేదు." : "Offline");
-  } catch (e) {
-    message(document.getElementById("driverStatus"), showError(e));
+
+    message(
+      $("driverStatus"),
+      value
+        ? "Online — GPS tracking ఇంకా ప్రారంభించలేదు."
+        : "Offline"
+    );
+  } catch (error) {
+    message($("driverStatus"), showError(error));
   }
 }
 
-document.getElementById("signup").addEventListener("click", register);
-document.getElementById("login").addEventListener("click", login);
-document.getElementById("logout").addEventListener("click", logout);
-document.getElementById("bookRide").addEventListener("click", bookRide);
-document.getElementById("myRides").addEventListener("click", loadRides);
-document.getElementById("refreshRides").addEventListener("click", loadRides);
-document.getElementById("onlineBtn").addEventListener("click", () => setOnline(true));
-document.getElementById("offlineBtn").addEventListener("click", () => setOnline(false));
+/* Buttons */
+$("signup").addEventListener("click", register);
+$("login").addEventListener("click", login);
+$("logout").addEventListener("click", logout);
+$("bookRide").addEventListener("click", bookRide);
+$("myRides").addEventListener("click", loadRides);
+$("refreshRides").addEventListener("click", loadRides);
+$("onlineBtn").addEventListener("click", () => setOnline(true));
+$("offlineBtn").addEventListener("click", () => setOnline(false));
 
-if (window.supabase?.createClient) {
-  if (ready()) {
-    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-    db.auth.getSession().then(async ({ data, error }) => {
-      if (error) {
-        message(authStatus, showError(error));
-        return;
-      }
-      if (data.session) {
-        currentUser = data.session.user;
-        try { await loadProfile(currentUser); }
-        catch (e) { message(authStatus, showError(e)); }
-      } else {
-        message(authStatus, "Supabase కనెక్ట్ అయింది. Login లేదా కొత్త అకౌంట్ సృష్టించండి.");
-      }
-    });
-  } else {
-    message(authStatus, "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz");
+/* Supabase initialization */
+function initializeApp() {
+  if (!window.supabase?.createClient) {
+    message(
+      authStatus,
+      "Supabase లైబ్రరీ లోడ్ కాలేదు. Internet connection తనిఖీ చేయండి."
+    );
+    return;
   }
-} else {
-  message(authStatus, "Supabase లైబ్రరీ లోడ్ కాలేదు. ఇంటర్నెట్ కనెక్షన్ చూడండి.");
+
+  if (
+    !SUPABASE_URL.startsWith("https://") ||
+    !SUPABASE_PUBLISHABLE_KEY ||
+    SUPABASE_PUBLISHABLE_KEY.includes("PASTE_YOUR_KEY")
+  ) {
+    message(
+      authStatus,
+      "Supabase Project URL లేదా Publishable Key సరిగా లేదు."
+    );
+    return;
+  }
+
+  db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  authReady = true;
+  showPanels();
+
+  db.auth.onAuthStateChange((event, session) => {
+    /*
+      Auth callback లో database requests ను నేరుగా చేయకుండా
+      తదుపరి task లో profile load చేస్తాము.
+    */
+    setTimeout(async () => {
+      try {
+        if (session?.user) {
+          if (currentUser?.id !== session.user.id || !currentProfile) {
+            await loadProfile(session.user);
+          }
+        } else {
+          currentUser = null;
+          currentProfile = null;
+          isOnline = false;
+          showPanels();
+        }
+      } catch (error) {
+        message(authStatus, "అకౌంట్ వివరాలు లోడ్ కాలేదు: " + showError(error));
+      }
+    }, 0);
+  });
+
+  db.auth.getSession().then(async ({ data, error }) => {
+    if (error) {
+      message(authStatus, "Session సమస్య: " + showError(error));
+      return;
+    }
+
+    if (data.session?.user) {
+      try {
+        await loadProfile(data.session.user);
+      } catch (error) {
+        message(authStatus, "Profile లోడ్ కాలేదు: " + showError(error));
+      }
+    } else {
+      message(
+        authStatus,
+        "Supabase కనెక్షన్ ప్రారంభమైంది. Login లేదా కొత్త అకౌంట్ సృష్టించండి."
+      );
+    }
+  }).catch(error => {
+    message(authStatus, "Supabase సమస్య: " + showError(error));
+  });
 }
+
+initializeApp();
 </script>
 </body>
 </html>
