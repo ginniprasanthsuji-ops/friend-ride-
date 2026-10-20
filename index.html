@@ -352,11 +352,13 @@ async function register() {
       email,
       password,
       options: {
-        data: {
-          full_name: name,
-          role: role
-        }
-      }
+  emailRedirectTo:
+    "https://ginniprasanthsuji-ops.github.io/friend-ride-/",
+  data: {
+    full_name: name,
+    role: role
+  }
+}
     });
 
     if (error) throw error;
