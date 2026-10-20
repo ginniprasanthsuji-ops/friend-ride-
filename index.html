@@ -94,5 +94,20 @@
         'DEMO: ' + vehicle + ' ride from ' + pickup + ' to ' + destination +
         '. Your fare offer is ₹' + fare + '. No driver has been contacted.';
     }
-  </script></body>
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://fglyplxcczdjtfwobtzh.supabase.co/rest/v1/ ";
+  const SUPABASE_PUBLISHABLE_KEY = "https://fglyplxcczdjtfwobtzh.supabase.co/rest/v1/  ";
+
+  const friendRideSupabase =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz
+    );
+
+  console.log("FRIEND RIDE Supabase ready");
+</script>
+</body>
+</body>
 </html>
