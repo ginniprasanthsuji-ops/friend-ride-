@@ -1,113 +1,388 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="te">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FRIEND RIDE — Every Ride, A Friendly Ride</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>FRIEND RIDE | Ride Booking</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #f1f7f5;
-      color: #17342d;
-    }
-    header {
-      background: #087f5b;
-      color: white;
-      padding: 22px;
-      border-radius: 18px;
-      text-align: center;
-    }
-    .card {
-      max-width: 520px;
-      margin: 18px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 3px 14px #0001;
-    }
-    label { display: block; margin-top: 14px; font-weight: bold; }
-    input, select, button {
-      width: 100%;
-      padding: 13px;
-      margin-top: 7px;
-      border-radius: 9px;
-      font-size: 16px;
-    }
-    input, select { border: 1px solid #cbd8d3; }
-    button {
-      background: #087f5b;
-      color: white;
-      border: 0;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .offer { background: #1459a8; }
-    .note { color: #64736d; font-size: 13px; }
-    #result { padding: 12px; background: #edf8f2; border-radius: 9px; }
+    *{box-sizing:border-box}
+    body{margin:0;background:#101827;color:#f8fafc;font-family:Arial,sans-serif}
+    header{padding:22px 16px;background:#17243a;text-align:center}
+    header h1{margin:0;color:#38e0b4;font-size:29px}
+    header p{color:#cbd5e1;margin-bottom:0}
+    main{max-width:650px;margin:20px auto;padding:0 14px}
+    .card{background:#1b2940;padding:18px;border-radius:16px;margin-bottom:16px}
+    h2{margin-top:0;font-size:20px}
+    label{display:block;margin:12px 0 6px;color:#dbeafe}
+    input,select,textarea{width:100%;padding:13px;border-radius:9px;border:1px solid #42516b;background:#101827;color:white;font-size:16px}
+    button{border:0;border-radius:9px;padding:13px 15px;background:#38e0b4;color:#06251e;font-weight:bold;font-size:15px;cursor:pointer}
+    .buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .buttons button{flex:1}
+    .secondary{background:#334155;color:white}
+    .danger{background:#ef4444;color:white}
+    .hidden{display:none}
+    .status{padding:12px;background:#0c1727;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}
+    .ride{padding:13px;border:1px solid #42516b;border-radius:10px;margin-top:10px}
+    small{color:#cbd5e1}
   </style>
 </head>
 <body>
-  <header>
-    <h1>FRIEND RIDE</h1>
-    <p>Every Ride, A Friendly Ride.</p>
-    <p>Bike • Auto • Car</p>
-  </header>  <section class="card">
-    <h2>Book Your Ride</h2>
-    <label for="vehicle">Choose vehicle</label>
+<header>
+  <h1>FRIEND RIDE 🚕</h1>
+  <p>Your Ride, Your Choice</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2>👤 Login / Registration</h2>
+    <label>పేరు</label>
+    <input id="name" placeholder="మీ పూర్తి పేరు">
+    <label>ఇమెయిల్</label>
+    <input id="email" type="email" placeholder="name@example.com">
+    <label>పాస్‌వర్డ్</label>
+    <input id="password" type="password" minlength="6" placeholder="కనీసం 6 అక్షరాలు">
+    <label>మీరు ఎవరు?</label>
+    <select id="role">
+      <option value="customer">Customer — కస్టమర్</option>
+      <option value="driver">Driver — డ్రైవర్</option>
+    </select>
+    <div class="buttons">
+      <button id="signup">కొత్త అకౌంట్</button>
+      <button id="login" class="secondary">Login</button>
+      <button id="logout" class="danger hidden">Logout</button>
+    </div>
+    <p id="authStatus" class="status">Supabase కనెక్షన్ ప్రారంభమవుతోంది...</p>
+  </section>
+
+  <section id="customerPanel" class="card hidden">
+    <h2>📍 బుక్ రైడ్</h2>
+    <label>వాహనం</label>
     <select id="vehicle">
-      <option>Bike</option>
-      <option>Auto</option>
-      <option>Car</option>
-    </select><label for="pickup">Pickup location</label>
-<input id="pickup" placeholder="Enter pickup point">
+      <option value="Bike">Bike</option>
+      <option value="Auto">Auto</option>
+      <option value="Car">Car</option>
+    </select>
+    <label>ఎక్కడి నుంచి?</label>
+    <input id="pickup" placeholder="Pickup location">
+    <label>ఎక్కడికి వెళ్లాలి?</label>
+    <input id="drop" placeholder="Drop location">
+    <label>మీరు ఇవ్వగల ఛార్జీ (₹)</label>
+    <input id="fare" type="number" min="1" placeholder="ఉదా: 150">
+    <label>అదనపు వివరాలు (ఐచ్ఛికం)</label>
+    <textarea id="notes" placeholder="గుర్తించాల్సిన వివరాలు"></textarea>
+    <div class="buttons">
+      <button id="bookRide">రైడ్ బుక్ చేయండి</button>
+      <button id="myRides" class="secondary">నా రైడ్స్</button>
+    </div>
+  </section>
 
-<label for="destination">Destination</label>
-<input id="destination" placeholder="Enter destination">
+  <section id="driverPanel" class="card hidden">
+    <h2>🚘 డ్రైవర్ డ్యాష్‌బోర్డ్</h2>
+    <p>రైడ్ అభ్యర్థనలను చూడటానికి Online అవ్వండి.</p>
+    <div class="buttons">
+      <button id="onlineBtn">Go Online</button>
+      <button id="offlineBtn" class="secondary">Go Offline</button>
+      <button id="refreshRides" class="secondary">Refresh Rides</button>
+    </div>
+    <p id="driverStatus" class="status">డ్రైవర్ స్థితి: Offline</p>
+  </section>
 
-<label for="phone">Mobile number</label>
-<input id="phone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number">
+  <section class="card">
+    <h2>📋 రైడ్ వివరాలు</h2>
+    <div id="ridesList"><small>Login అయిన తర్వాత మీ రైడ్స్ ఇక్కడ కనిపిస్తాయి.</small></div>
+  </section>
+</main>
 
-<label for="fare">Your fare offer (₹)</label>
-<input id="fare" type="number" min="1" value="200">
-
-<button class="offer" onclick="previewOffer()">Preview fare offer</button>
-<p id="result">Demo only — no real booking or payment.</p>
-<p class="note">The ₹20 token fee will be separate from the driver's agreed trip fare. Online payment will be added securely later.</p>
-
-  </section>  <script>
-    function previewOffer() {
-      const vehicle = document.getElementById('vehicle').value;
-      const pickup = document.getElementById('pickup').value.trim();
-      const destination = document.getElementById('destination').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const fare = Number(document.getElementById('fare').value);
-
-      if (!pickup || !destination || !/^[0-9]{10}$/.test(phone) || !Number.isFinite(fare) || fare <= 0) {
-        document.getElementById('result').textContent =
-          'Please enter pickup, destination, valid 10-digit mobile number, and fare.';
-        return;
-      }
-
-      document.getElementById('result').textContent =
-        'DEMO: ' + vehicle + ' ride from ' + pickup + ' to ' + destination +
-        '. Your fare offer is ₹' + fare + '. No driver has been contacted.';
-    }
-  </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = "https://fglyplxcczdjtfwobtzh.supabase.co/rest/v1/ ";
-  const SUPABASE_PUBLISHABLE_KEY = "https://fglyplxcczdjtfwobtzh.supabase.co/rest/v1/  ";
+const SUPABASE_URL = "https://fglyplxcczdjtfwobtzh.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz";
 
-  const friendRideSupabase =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz
-    );
+const authStatus = document.getElementById("authStatus");
+const ridesList = document.getElementById("ridesList");
 
-  console.log("FRIEND RIDE Supabase ready");
+let db = null;
+let currentUser = null;
+let currentProfile = null;
+let isOnline = false;
+
+function message(el, text) {
+  el.textContent = text;
+}
+
+function showError(error) {
+  console.error(error);
+  return error?.message || "ఒక సమస్య వచ్చింది. మళ్లీ ప్రయత్నించండి.";
+}
+
+function ready() {
+  return db && !SUPABASE_PUBLISHABLE_KEY.includes("ఇక్కడ_పెట్టండి");
+}
+
+function showPanels() {
+  const loggedIn = !!currentUser;
+  document.getElementById("customerPanel").classList.toggle(
+    "hidden", !loggedIn || currentProfile?.role !== "customer"
+  );
+  document.getElementById("driverPanel").classList.toggle(
+    "hidden", !loggedIn || currentProfile?.role !== "driver"
+  );
+  document.getElementById("logout").classList.toggle("hidden", !loggedIn);
+}
+
+async function loadProfile(user) {
+  const { data, error } = await db
+    .from("profiles")
+    .select("id,full_name,phone,role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  if (!data) {
+    const fullName = document.getElementById("name").value.trim();
+    const role = document.getElementById("role").value;
+    const { data: created, error: insertError } = await db
+      .from("profiles")
+      .insert({
+        id: user.id,
+        full_name: fullName || user.email,
+        role: role
+      })
+      .select("id,full_name,phone,role")
+      .single();
+
+    if (insertError) throw insertError;
+    currentProfile = created;
+  } else {
+    currentProfile = data;
+  }
+
+  showPanels();
+  message(authStatus, "Login విజయవంతం: " + (currentProfile.full_name || user.email)
+    + "\nRole: " + currentProfile.role);
+  await loadRides();
+}
+
+async function register() {
+  if (!ready()) {
+    message(authStatus, "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz");
+    return;
+  }
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const name = document.getElementById("name").value.trim();
+
+  if (!email || password.length < 6 || !name) {
+    message(authStatus, "పేరు, సరైన ఇమెయిల్, కనీసం 6 అక్షరాల పాస్‌వర్డ్ ఇవ్వండి.");
+    return;
+  }
+
+  try {
+    const { data, error } = await db.auth.signUp({ email, password });
+    if (error) throw error;
+
+    if (data.session) {
+      currentUser = data.user;
+      await loadProfile(currentUser);
+    } else {
+      message(authStatus,
+        "రిజిస్ట్రేషన్ అభ్యర్థన పంపబడింది. ఇమెయిల్ ధృవీకరణ అవసరమైతే, మీ ఇమెయిల్‌ను ధృవీకరించి Login చేయండి.");
+    }
+  } catch (e) {
+    message(authStatus, showError(e));
+  }
+}
+
+async function login() {
+  if (!ready()) {
+    message(authStatus, "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz");
+    return;
+  }
+
+  try {
+    const { data, error } = await db.auth.signInWithPassword({
+      email: document.getElementById("email").value.trim(),
+      password: document.getElementById("password").value
+    });
+    if (error) throw error;
+    currentUser = data.user;
+    await loadProfile(currentUser);
+  } catch (e) {
+    message(authStatus, showError(e));
+  }
+}
+
+async function logout() {
+  if (!db) return;
+  try {
+    if (isOnline && currentUser) {
+      await db.from("driver_locations")
+        .update({ is_online: false, updated_at: new Date().toISOString() })
+        .eq("driver_id", currentUser.id);
+    }
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+    currentUser = null;
+    currentProfile = null;
+    isOnline = false;
+    showPanels();
+    message(authStatus, "మీరు Logout అయ్యారు.");
+    ridesList.textContent = "మళ్లీ Login చేయండి.";
+  } catch (e) {
+    message(authStatus, showError(e));
+  }
+}
+
+async function bookRide() {
+  if (!currentUser || currentProfile?.role !== "customer") return;
+
+  const pickup = document.getElementById("pickup").value.trim();
+  const drop = document.getElementById("drop").value.trim();
+  const fare = Number(document.getElementById("fare").value);
+
+  if (!pickup || !drop || !Number.isFinite(fare) || fare <= 0) {
+    alert("Pickup, Drop, సరైన ఛార్జీ నమోదు చేయండి.");
+    return;
+  }
+
+  try {
+    const { data, error } = await db.from("rides").insert({
+      customer_id: currentUser.id,
+      vehicle_type: document.getElementById("vehicle").value,
+      pickup_text: pickup,
+      drop_text: drop,
+      fare_offer: fare,
+      status: "requested",
+      notes: document.getElementById("notes").value.trim() || null
+    }).select().single();
+
+    if (error) throw error;
+    alert("రైడ్ అభ్యర్థన పంపబడింది!");
+    await loadRides();
+  } catch (e) {
+    alert("రైడ్ బుక్ కాలేదు: " + showError(e));
+  }
+}
+
+async function loadRides() {
+  if (!currentUser || !currentProfile) return;
+
+  try {
+    let query = db.from("rides").select("*").order("created_at", { ascending: false }).limit(30);
+
+    if (currentProfile.role === "customer") {
+      query = query.eq("customer_id", currentUser.id);
+    } else {
+      query = query.or(
+        "driver_id.eq." + currentUser.id + ",and(driver_id.is.null,status.eq.requested)"
+      );
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    ridesList.replaceChildren();
+
+    if (!data || data.length === 0) {
+      ridesList.textContent = "ఇప్పటికి రైడ్స్ లేవు.";
+      return;
+    }
+
+    data.forEach(ride => {
+      const item = document.createElement("div");
+      item.className = "ride";
+
+      const details = document.createElement("p");
+      details.textContent =
+        ride.vehicle_type + " | ₹" + (ride.agreed_fare ?? ride.fare_offer ?? "-") +
+        "\n" + ride.pickup_text + " → " + ride.drop_text +
+        "\nస్థితి: " + ride.status;
+      item.appendChild(details);
+
+      if (currentProfile.role === "driver" &&
+          ride.status === "requested" && !ride.driver_id) {
+        const accept = document.createElement("button");
+        accept.textContent = "Accept Ride";
+        accept.addEventListener("click", () => acceptRide(ride.id));
+        item.appendChild(accept);
+      }
+
+      ridesList.appendChild(item);
+    });
+  } catch (e) {
+    ridesList.textContent = "రైడ్స్ లోడ్ కాలేదు: " + showError(e);
+  }
+}
+
+async function acceptRide(rideId) {
+  alert("రైడ్ అంగీకరించడానికి సురక్షితమైన database permission/function ఏర్పాటు అవసరం. Supabase policies లేకపోతే ఇది పనిచేయకపోవచ్చు.");
+  try {
+    const { error } = await db.from("rides")
+      .update({ driver_id: currentUser.id, status: "accepted" })
+      .eq("id", rideId)
+      .is("driver_id", null)
+      .eq("status", "requested");
+    if (error) throw error;
+    await loadRides();
+  } catch (e) {
+    alert("Accept కాలేదు: " + showError(e));
+  }
+}
+
+async function setOnline(value) {
+  if (!currentUser || currentProfile?.role !== "driver") return;
+  try {
+    const { error } = await db.from("driver_locations").upsert({
+      driver_id: currentUser.id,
+      latitude: null,
+      longitude: null,
+      is_online: value,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "driver_id" });
+
+    if (error) throw error;
+    isOnline = value;
+    message(document.getElementById("driverStatus"),
+      value ? "Online — GPS స్థానం ఇంకా జోడించలేదు." : "Offline");
+  } catch (e) {
+    message(document.getElementById("driverStatus"), showError(e));
+  }
+}
+
+document.getElementById("signup").addEventListener("click", register);
+document.getElementById("login").addEventListener("click", login);
+document.getElementById("logout").addEventListener("click", logout);
+document.getElementById("bookRide").addEventListener("click", bookRide);
+document.getElementById("myRides").addEventListener("click", loadRides);
+document.getElementById("refreshRides").addEventListener("click", loadRides);
+document.getElementById("onlineBtn").addEventListener("click", () => setOnline(true));
+document.getElementById("offlineBtn").addEventListener("click", () => setOnline(false));
+
+if (window.supabase?.createClient) {
+  if (ready()) {
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    db.auth.getSession().then(async ({ data, error }) => {
+      if (error) {
+        message(authStatus, showError(error));
+        return;
+      }
+      if (data.session) {
+        currentUser = data.session.user;
+        try { await loadProfile(currentUser); }
+        catch (e) { message(authStatus, showError(e)); }
+      } else {
+        message(authStatus, "Supabase కనెక్ట్ అయింది. Login లేదా కొత్త అకౌంట్ సృష్టించండి.");
+      }
+    });
+  } else {
+    message(authStatus, "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz");
+  }
+} else {
+  message(authStatus, "Supabase లైబ్రరీ లోడ్ కాలేదు. ఇంటర్నెట్ కనెక్షన్ చూడండి.");
+}
 </script>
-</body>
 </body>
 </html>
