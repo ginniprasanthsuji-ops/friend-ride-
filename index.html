@@ -566,10 +566,24 @@ async function loadRides() {
   సరైన RLS policy కూడా అవసరం.
 */
 async function acceptRide(rideId) {
-  if (!currentUser || currentProfile?.role !== "driver") return;
+  if (!currentUser || currentProfile?.role !== "driver") {
+    return;
+  }
+
+  if (currentProfile.driver_approval_status !== "approved") {
+    alert("మీ Driver Account‌కు Admin Approval ఇంకా రాలేదు.");
+    return;
+  }
 
   try {
-    const { data, error } = await db
+    const { data, error } = await db.rpc("accept_ride", {
+      p_ride_id: rideId
+    });
+
+    if (error) throw error;
+
+    if (data !== true) {
+      alert("ఈ రైడ్‌ను ఇప్పటికే మరొ= await db
       .from("rides")
       .update({
         driver_id: currentUser.id,
