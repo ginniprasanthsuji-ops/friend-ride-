@@ -1,337 +1,337 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="te">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101827">
 <meta name="description" content="FRIEND RIDE - Book Bike, Auto and Car rides easily.">
 <title>FRIEND RIDE | Ride Booking</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#101827;color:#f8fafc;font-family:Arial,sans-serif}
-header{padding:22px 16px;background:#17243a;text-align:center}header h1{margin:0;color:#38e0b4;font-size:29px}header p{color:#cbd5e1;margin-bottom:0}
-main{max-width:760px;margin:20px auto;padding:0 14px}.card{background:#1b2940;padding:18px;border-radius:16px;margin-bottom:16px}
-h2{margin-top:0;font-size:20px}h3{color:#38e0b4}label{display:block;margin:12px 0 6px;color:#dbeafe}
-input,select,textarea{width:100%;padding:13px;border-radius:9px;border:1px solid #42516b;background:#101827;color:white;font-size:16px}
-button{border:0;border-radius:9px;padding:13px 15px;background:#38e0b4;color:#06251e;font-weight:bold;font-size:15px;cursor:pointer}
-button:disabled{opacity:.55;cursor:not-allowed}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.buttons button{flex:1}
-.secondary{background:#334155;color:white}.danger{background:#ef4444;color:white}.hidden{display:none!important}
-.status{padding:12px;background:#0c1727;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}
-.ride,.application{padding:13px;border:1px solid #42516b;border-radius:10px;margin-top:10px;overflow-wrap:anywhere}
-.ride p,.application p{white-space:pre-line;line-height:1.5}small{color:#cbd5e1}
+:root{color-scheme:dark;--bg:#101827;--card:#17243a;--line:#2a3b55;--text:#f8fafc;--muted:#cbd5e1;--green:#38e8b4;--blue:#2563eb;--red:#f87171}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px Arial,sans-serif}
+header{padding:18px 16px;background:#17243a;text-align:center;border-bottom:1px solid var(--line)}
+header h1{margin:0 0 6px;font-size:24px}header p{margin:0;color:var(--muted)}
+main{max-width:760px;margin:18px auto;padding:0 12px 40px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+h2{font-size:19px;margin:0 0 14px;color:var(--green)}label{display:block;margin:11px 0 5px;color:var(--muted)}
+input,select,textarea{width:100%;padding:12px;border:1px solid #40516b;border-radius:9px;background:#0f172a;color:var(--text);font-size:16px}
+textarea{min-height:70px}button{border:0;border-radius:9px;padding:12px 15px;background:var(--green);color:#06251f;font-weight:700;font-size:15px;cursor:pointer;margin:8px 6px 0 0}
+button.secondary{background:#334155;color:white}button.danger{background:#7f1d1d;color:white}button:disabled{opacity:.5;cursor:not-allowed}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none!important}.status{padding:10px;border-radius:8px;background:#0f172a;color:var(--muted);white-space:pre-wrap;margin-top:10px}
+.item{border:1px solid var(--line);padding:12px;border-radius:10px;margin:10px 0}.muted{color:var(--muted);font-size:14px}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#26364d;font-size:12px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:520px){.row{grid-template-columns:1fr}header h1{font-size:21px}}
 </style>
 </head>
 <body>
-<header><h1>FRIEND RIDE 🚕</h1><p>Your Ride, Your Choice</p></header>
+<header><h1>🚕 FRIEND RIDE</h1><p>Your Ride, Your Choice</p></header>
 <main>
-<section class="card">
-<h2>👤 Login / Registration</h2>
-<label for="name">పేరు</label><input id="name" autocomplete="name" placeholder="మీ పూర్తి పేరు">
-<label for="email">ఇమెయిల్</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com">
-<label for="password">పాస్‌వర్డ్</label><input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="కనీసం 6 అక్షరాలు">
-<label for="role">మీరు ఎవరు?</label><select id="role"><option value="customer">Customer — కస్టమర్</option><option value="driver">Driver — డ్రైవర్</option></select>
-<div class="buttons"><button id="signup">కొత్త అకౌంట్</button><button id="login" class="secondary">Login</button><button id="logout" class="danger hidden">Logout</button></div>
-<p id="authStatus" class="status" role="status" aria-live="polite">Supabase కనెక్షన్ ప్రారంభమవుతోంది...</p>
-</section>
+  <section id="authCard" class="card">
+    <h2>📱 Mobile OTP Login</h2>
+    <p class="muted">మీ మొబైల్ నంబర్‌కు వచ్చిన OTPతో కొనసాగండి. Email లేదా password అవసరం లేదు.</p>
+    <label for="phone">మొబైల్ నంబర్ (10 అంకెలు)</label>
+    <input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="ఉదా: 9876543210" autocomplete="tel">
+    <button id="sendOtpBtn">OTP పంపండి</button>
+    <div id="otpArea" class="hidden">
+      <label for="otp">SMS OTP</label>
+      <input id="otp" type="text" inputmode="numeric" maxlength="6" placeholder="6 అంకెల OTP" autocomplete="one-time-code">
+      <button id="verifyOtpBtn">OTP ధృవీకరించండి / Login</button>
+    </div>
+    <div id="authStatus" class="status" role="status" aria-live="polite">మీ మొబైల్ నంబర్ నమోదు చేయండి.</div>
+  </section>
 
-<section id="driverApplyPanel" class="card hidden">
-<h2>🪪 డ్రైవర్ రిజిస్ట్రేషన్</h2><p>వివరాలు సమర్పించిన తర్వాత Admin Approval కోసం వేచి ఉండాలి.</p>
-<label for="driverName">పూర్తి పేరు</label><input id="driverName" placeholder="డ్రైవర్ పేరు">
-<label for="driverPhone">ఫోన్ నంబర్</label><input id="driverPhone" type="tel" inputmode="tel" placeholder="ఫోన్ నంబర్">
-<label for="vehicleType">వాహనం రకం</label><select id="vehicleType"><option>Bike</option><option>Auto</option><option>Car</option></select>
-<label for="vehicleCompany">వాహనం కంపెనీ</label><input id="vehicleCompany" placeholder="ఉదా: Honda">
-<label for="vehicleModel">వాహనం మోడల్</label><input id="vehicleModel" placeholder="ఉదా: Activa">
-<label for="vehicleRegistration">వాహన రిజిస్ట్రేషన్ నంబర్</label><input id="vehicleRegistration" placeholder="ఉదా: AS01AB1234">
-<label for="experience">డ్రైవింగ్ అనుభవం (సంవత్సరాలు)</label><input id="experience" type="number" min="0" max="60" step="1">
-<label for="licenseNumber">డ్రైవింగ్ లైసెన్స్ నంబర్</label><input id="licenseNumber" placeholder="లైసెన్స్ నంబర్">
-<label for="licenseImage">లైసెన్స్ ఫోటో (JPG/PNG/PDF, గరిష్ఠం 5 MB)</label><input id="licenseImage" type="file" accept="image/jpeg,image/png,application/pdf">
-<p id="approvalStatus" class="status">Approval status: Pending</p><div class="buttons"><button id="saveDriver">డ్రైవర్ వివరాలు సమర్పించండి</button></div>
-</section>
+  <section id="appArea" class="hidden">
+    <section class="card">
+      <div class="row"><div><h2>👋 FRIEND RIDE</h2><div id="userInfo" class="muted"></div></div><div style="text-align:right"><button id="logoutBtn" class="secondary">Logout</button></div></div>
+      <label for="fullName">మీ పేరు</label><input id="fullName" placeholder="పూర్తి పేరు">
+      <div class="row">
+        <div><label for="role">మీరు ఎవరు?</label><select id="role"><option value="customer">Customer</option><option value="driver">Driver</option></select></div>
+        <div><label for="vehicleType">వాహనం</label><select id="vehicleType"><option value="Bike">Bike</option><option value="Auto">Auto</option><option value="Car">Car</option></select></div>
+      </div>
+      <button id="saveProfileBtn">ప్రొఫైల్ సేవ్ చేయండి</button>
+      <div id="profileStatus" class="status"></div>
+    </section>
 
-<section id="customerPanel" class="card hidden">
-<h2>📍 బుక్ రైడ్</h2><label for="vehicle">వాహనం</label><select id="vehicle"><option>Bike</option><option>Auto</option><option>Car</option></select>
-<label for="pickup">ఎక్కడి నుంచి?</label><input id="pickup" placeholder="Pickup location">
-<label for="drop">ఎక్కడికి వెళ్లాలి?</label><input id="drop" placeholder="Drop location">
-<label for="fare">మీరు ఇవ్వగల ఛార్జీ (₹)</label><input id="fare" type="number" min="1" step="1" placeholder="ఉదా: 150">
-<label for="notes">అదనపు వివరాలు (ఐచ్ఛికం)</label><textarea id="notes" rows="3" placeholder="గుర్తించాల్సిన వివరాలు"></textarea>
-<div class="buttons"><button id="bookRide">రైడ్ బుక్ చేయండి</button><button id="myRides" class="secondary">నా రైడ్స్</button></div>
-</section>
+    <section id="bookingCard" class="card">
+      <h2>🛺 Ride Booking</h2>
+      <label for="pickup">Pickup స్థలం</label><input id="pickup" placeholder="ఎక్కడి నుంచి?">
+      <label for="drop">Drop స్థలం</label><input id="drop" placeholder="ఎక్కడికి?">
+      <div class="row">
+        <div><label for="rideVehicle">వాహనం</label><select id="rideVehicle"><option value="Bike">Bike</option><option value="Auto">Auto</option><option value="Car">Car</option></select></div>
+        <div><label for="fare">మీరు ఇవ్వగల ఛార్జీ (₹)</label><input id="fare" type="number" min="1" placeholder="ఉదా: 150"></div>
+      </div>
+      <label for="notes">అదనపు వివరాలు (ఐచ్ఛికం)</label><textarea id="notes" placeholder="ఏమైనా సూచనలు"></textarea>
+      <button id="bookRideBtn">Ride Request చేయండి</button>
+      <div id="bookingStatus" class="status"></div>
+    </section>
 
-<section id="driverPanel" class="card hidden">
-<h2>🚘 డ్రైవర్ డ్యాష్‌బోర్డ్</h2><p>Admin Approval వచ్చిన తర్వాత మాత్రమే Online అవ్వగలరు.</p>
-<div class="buttons"><button id="onlineBtn">Go Online</button><button id="offlineBtn" class="secondary">Go Offline</button><button id="refreshRides" class="secondary">Refresh Rides</button></div>
-<p id="driverStatus" class="status">డ్రైవర్ స్థితి: Offline</p>
-</section>
+    <section id="driverCard" class="card hidden">
+      <h2>🚗 Driver Panel</h2>
+      <p class="muted">Driver approval అవసరం. Online స్థితిని మార్చడానికి మీ Driver profile approve అయి ఉండాలి.</p>
+      <div id="driverApproval" class="status"></div>
+      <button id="onlineBtn">Online</button><button id="offlineBtn" class="secondary">Offline</button>
+      <h3>కొత్త Ride Requests</h3><div id="driverRides"></div>
+      <h3>Driver Application</h3>
+      <label for="driverPhone">మొబైల్ నంబర్</label><input id="driverPhone" type="tel" inputmode="numeric" maxlength="10">
+      <div class="row">
+        <div><label for="vehicleCompany">వాహన కంపెనీ</label><input id="vehicleCompany" placeholder="ఉదా: Honda"></div>
+        <div><label for="vehicleModel">మోడల్</label><input id="vehicleModel" placeholder="ఉదా: Activa"></div>
+      </div>
+      <label for="vehicleRegistration">వాహన రిజిస్ట్రేషన్ నంబర్</label><input id="vehicleRegistration" placeholder="ఉదా: AP30AB1234">
+      <label for="experience">డ్రైవింగ్ అనుభవం (సంవత్సరాలు)</label><input id="experience" type="number" min="0" value="0">
+      <label for="licenseNumber">Driving License నంబర్</label><input id="licenseNumber" placeholder="లైసెన్స్ నంబర్">
+      <button id="applyDriverBtn">Driver Application సేవ్ చేయండి</button>
+      <div id="driverStatus" class="status"></div>
+    </section>
 
-<section id="adminPanel" class="card hidden">
-<h2>🛡️ FRIEND RIDE Admin Dashboard</h2><p>డ్రైవర్ అప్లికేషన్లను పరిశీలించి Approval status మార్చండి.</p>
-<div class="buttons"><button id="refreshDrivers" class="secondary">Refresh Applications</button></div>
-<p id="adminStatus" class="status" role="status" aria-live="polite">Admin Dashboard సిద్ధంగా ఉంది.</p>
-<div id="adminDiagnostics" class="status hidden"></div><div id="driverApplications"><small>Driver applications ఇక్కడ కనిపిస్తాయి.</small></div>
-</section>
+    <section class="card">
+      <h2>📋 నా Rides</h2><button id="refreshRidesBtn" class="secondary">Refresh</button><div id="myRides"></div>
+    </section>
 
-<section class="card"><h2>📋 రైడ్ వివరాలు</h2><div id="ridesList"><small>Login అయిన తర్వాత రైడ్స్ ఇక్కడ కనిపిస్తాయి.</small></div></section>
+    <section id="adminCard" class="card hidden">
+      <h2>🛡️ Admin Dashboard</h2><p class="muted">Admin RPC permissions ఉన్న అకౌంట్‌కు మాత్రమే.</p>
+      <button id="loadDriversBtn" class="secondary">Driver Applications లోడ్ చేయండి</button><div id="adminStatus" class="status"></div><div id="adminDrivers"></div>
+    </section>
+  </section>
 </main>
+<footer>FRIEND RIDE • Secure mobile verification</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-"use strict";
-const SUPABASE_URL = "https://fglyplxcczdjtfwobtzh.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz";
-const LICENSE_BUCKET = "driver-licenses";
-const ADMIN_UID = "dab01cf4-5363-4e85-a0e1-bcdd177c88f7";
-const $ = id => document.getElementById(id);
-let db=null,currentUser=null,currentProfile=null,authReady=false,loadingRides=false;
+(() => {
+  "use strict";
+  const SUPABASE_URL = "https://fglyplxcczdjftwobtzh.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz";
+  const OTP_FUNCTION_URL = SUPABASE_URL + "/functions/v1/sms-otp";
+  const $ = id => document.getElementById(id);
+  const show = (id, yes=true) => $(id).classList.toggle("hidden", !yes);
+  const say = (id, text) => { $(id).textContent = text || ""; };
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  let currentUser = null, currentProfile = null, verifiedPhone = null;
 
-function message(el,text){el.textContent=String(text??"");}
-function showError(error){console.error(error);return error?.message||"సమస్య వచ్చింది. మళ్లీ ప్రయత్నించండి.";}
-function isAdmin(){
-  const currentId=String(currentUser?.id||"").trim().toLowerCase();
-  const adminId=String(ADMIN_UID||"").trim().toLowerCase();
-  return Boolean(currentId && currentId===adminId);
-}
-function showPanels(){
-  const loggedIn=Boolean(currentUser&&currentProfile), role=currentProfile?.role;
-  $("adminPanel").classList.toggle("hidden",!loggedIn||!isAdmin());
-  $("customerPanel").classList.toggle("hidden",!loggedIn||role!=="customer"||isAdmin());
-  $("driverPanel").classList.toggle("hidden",!loggedIn||role!=="driver"||isAdmin());
-  $("driverApplyPanel").classList.toggle("hidden",!loggedIn||role!=="driver"||isAdmin());
-  $("logout").classList.toggle("hidden",!currentUser);
-  $("signup").disabled=!authReady;$("login").disabled=!authReady;
-  if(isAdmin()){
-    message($("adminDiagnostics"),"Admin గుర్తింపు విజయవంతం.\nLogin User ID: "+currentUser.id+"\nADMIN_UID: "+ADMIN_UID);
-    $("adminDiagnostics").classList.remove("hidden");
-  }else if(currentUser){
-    message($("adminDiagnostics"),"Admin ID match కాలేదు.\nLogin User ID: "+currentUser.id+"\nADMIN_UID: "+ADMIN_UID);
-    $("adminDiagnostics").classList.remove("hidden");
-  }
-  if(role==="driver"){
-    message($("approvalStatus"),"Approval status: "+(currentProfile.driver_approval_status||"pending"));
-    const approved=currentProfile.driver_approval_status==="approved";
-    $("onlineBtn").disabled=!approved;$("offlineBtn").disabled=!approved;
-  }
-}
-function validateCredentials(includeName=false){
-  const name=$("name").value.trim(),email=$("email").value.trim(),password=$("password").value;
-  if(includeName&&!name){message($("authStatus"),"మీ పూర్తి పేరు నమోదు చేయండి.");return false;}
-  if(!email||!$("email").checkValidity()){message($("authStatus"),"సరైన ఇమెయిల్ నమోదు చేయండి.");return false;}
-  if(password.length<6){message($("authStatus"),"పాస్‌వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి.");return false;}
-  return true;
-}
-const PROFILE_COLUMNS="id,full_name,phone,role,driver_approval_status,vehicle_type,vehicle_company,vehicle_model,vehicle_registration,driving_experience_years,driving_license_number,driving_license_document_path";
-
-async function loadProfile(user,registrationName=""){
-  const {data,error}=await db.from("profiles").select(PROFILE_COLUMNS).eq("id",user.id).maybeSingle();
-  if(error)throw error;
-  if(data){currentProfile=data;}
-  else{
-    const metadata=user.user_metadata||{};
-    const fullName=registrationName||metadata.full_name||user.email||"Customer";
-    const requestedRole=metadata.role==="driver"?"driver":"customer";
-    const {data:created,error:insertError}=await db.from("profiles").insert({id:user.id,full_name:fullName,role:requestedRole}).select(PROFILE_COLUMNS).single();
-    if(insertError)throw insertError;
-    currentProfile=created;
-  }
-  currentUser=user;
-  showPanels();
-  message($("authStatus"),"Login విజయవంతం: "+(currentProfile.full_name||user.email)+"\nRole: "+currentProfile.role+"\nUser ID: "+user.id+"\nAdmin match: "+isAdmin());
-  if(isAdmin()){message($("ridesList"),"Admin Dashboard ద్వారా driver applications నిర్వహించండి.");await loadDriverApplications();}
-  else await loadRides();
-  if(currentProfile.role==="driver")fillDriverForm();
-}
-function fillDriverForm(){
-  const p=currentProfile||{};
-  $("driverName").value=p.full_name||"";$("driverPhone").value=p.phone||"";
-  $("vehicleType").value=p.vehicle_type||"Bike";$("vehicleCompany").value=p.vehicle_company||"";
-  $("vehicleModel").value=p.vehicle_model||"";$("vehicleRegistration").value=p.vehicle_registration||"";
-  $("experience").value=p.driving_experience_years??"";$("licenseNumber").value=p.driving_license_number||"";
-  message($("approvalStatus"),"Approval status: "+(p.driver_approval_status||"pending")+
-    (p.driving_license_document_path?"\nలైసెన్స్ ఫైల్ ఇప్పటికే సమర్పించబడింది.":"\nలైసెన్స్ ఫైల్ ఇంకా సమర్పించలేదు."));
-}
-async function register(){
-  if(!authReady){message($("authStatus"),"Supabase ఇంకా సిద్ధంగా లేదు.");return;}
-  if(!validateCredentials(true))return;
-  $("signup").disabled=true;message($("authStatus"),"అకౌంట్ సృష్టిస్తున్నాము...");
-  try{
-    const {data,error}=await db.auth.signUp({email:$("email").value.trim(),password:$("password").value,
-      options:{emailRedirectTo:"https://ginniprasanthsuji-ops.github.io/friend-ride-/",data:{full_name:$("name").value.trim(),role:$("role").value}}});
-    if(error)throw error;
-    if(data.session&&data.user)await loadProfile(data.user,$("name").value.trim());
-    else message($("authStatus"),"రిజిస్ట్రేషన్ అభ్యర్థన పంపబడింది. Email verification అడిగితే ఇమెయిల్ ధృవీకరించి Login చేయండి.");
-  }catch(error){message($("authStatus"),"రిజిస్ట్రేషన్ విఫలమైంది: "+showError(error));}
-  finally{$("signup").disabled=!authReady;}
-}
-async function login(){
-  if(!authReady){message($("authStatus"),"Supabase ఇంకా సిద్ధంగా లేదు.");return;}
-  if(!validateCredentials(false))return;
-  $("login").disabled=true;message($("authStatus"),"Login చేస్తున్నాము...");
-  try{
-    const {data,error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
-    if(error)throw error;
-    await loadProfile(data.user);
-  }catch(error){message($("authStatus"),"Login విఫలమైంది: "+showError(error));}
-  finally{$("login").disabled=!authReady;}
-}
-async function logout(){
-  if(!db)return;
-  try{
-    if(currentUser&&currentProfile?.role==="driver"){
-      await db.from("driver_locations").update({is_online:false,updated_at:new Date().toISOString()}).eq("driver_id",currentUser.id);
-    }
-    const {error}=await db.auth.signOut();if(error)throw error;
-    currentUser=null;currentProfile=null;showPanels();
-    message($("authStatus"),"మీరు Logout అయ్యారు.");message($("ridesList"),"మళ్లీ Login చేయండి.");
-    message($("driverStatus"),"డ్రైవర్ స్థితి: Offline");
-  }catch(error){message($("authStatus"),"Logout సమస్య: "+showError(error));}
-}
-async function saveDriver(){
-  if(!currentUser||currentProfile?.role!=="driver"){alert("Driver అకౌంట్‌తో Login చేయండి.");return;}
-  const fullName=$("driverName").value.trim(),phone=$("driverPhone").value.trim();
-  const registration=$("vehicleRegistration").value.trim().toUpperCase(),experienceText=$("experience").value.trim();
-  const experience=Number(experienceText),licenseNumber=$("licenseNumber").value.trim();
-  if(!fullName||!phone||!registration||!experienceText||!licenseNumber){alert("పేరు, ఫోన్, వాహన రిజిస్ట్రేషన్, అనుభవం, లైసెన్స్ నంబర్ నింపండి.");return;}
-  if(!/^[0-9+\-\s()]{10,16}$/.test(phone)){alert("సరైన ఫోన్ నంబర్ నమోదు చేయండి.");return;}
-  if(!Number.isInteger(experience)||experience<0||experience>60){alert("డ్రైవింగ్ అనుభవం 0–60 మధ్య నమోదు చేయండి.");return;}
-  $("saveDriver").disabled=true;message($("approvalStatus"),"వివరాలు సమర్పిస్తున్నాము...");
-  try{
-    let documentPath=currentProfile.driving_license_document_path||null;const file=$("licenseImage").files[0];
-    if(file){
-      if(file.size>5*1024*1024)throw new Error("లైసెన్స్ ఫైల్ 5 MB కంటే తక్కువగా ఉండాలి.");
-      if(!["image/jpeg","image/png","application/pdf"].includes(file.type))throw new Error("JPG, PNG లేదా PDF ఫైల్ మాత్రమే అప్‌లోడ్ చేయండి.");
-      const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_"),path=currentUser.id+"/"+Date.now()+"_"+safeName;
-      const {error:uploadError}=await db.storage.from(LICENSE_BUCKET).upload(path,file,{upsert:false,contentType:file.type});
-      if(uploadError)throw uploadError;documentPath=path;
-    }
-    const {data,error}=await db.from("profiles").update({full_name:fullName,phone,vehicle_type:$("vehicleType").value,
-      vehicle_company:$("vehicleCompany").value.trim()||null,vehicle_model:$("vehicleModel").value.trim()||null,
-      vehicle_registration:registration,driving_experience_years:experience,driving_license_number:licenseNumber,
-      driving_license_document_path:documentPath}).eq("id",currentUser.id).select(PROFILE_COLUMNS).single();
-    if(error)throw error;currentProfile=data;showPanels();fillDriverForm();alert("డ్రైవర్ వివరాలు సేవ్ అయ్యాయి. Admin Approval కోసం వేచి ఉండండి.");
-  }catch(error){message($("approvalStatus"),"సమర్పించలేకపోయాం: "+showError(error)+"\nStorage bucket లేదా policies తనిఖీ చేయాలి.");}
-  finally{$("saveDriver").disabled=false;}
-}
-async function bookRide(){
-  if(!currentUser||currentProfile?.role!=="customer"||isAdmin()){message($("authStatus"),"Customer అకౌంట్‌తో Login చేయండి.");return;}
-  const pickup=$("pickup").value.trim(),drop=$("drop").value.trim(),fareText=$("fare").value.trim(),fare=Number(fareText);
-  if(!pickup||!drop||!fareText||!Number.isFinite(fare)||fare<=0){alert("Pickup, Drop, సరైన ఛార్జీ నమోదు చేయండి.");return;}
-  if(pickup.toLowerCase()===drop.toLowerCase()){alert("Pickup, Drop ఒకేలా ఉండకూడదు.");return;}
-  $("bookRide").disabled=true;
-  try{
-    const {error}=await db.from("rides").insert({customer_id:currentUser.id,vehicle_type:$("vehicle").value,pickup_text:pickup,
-      drop_text:drop,fare_offer:fare,status:"requested",notes:$("notes").value.trim()||null});
-    if(error)throw error;alert("రైడ్ అభ్యర్థన పంపబడింది!");
-    $("pickup").value="";$("drop").value="";$("fare").value="";$("notes").value="";await loadRides();
-  }catch(error){alert("రైడ్ బుక్ కాలేదు: "+showError(error));}
-  finally{$("bookRide").disabled=false;}
-}
-async function loadDriverApplications(){
-  if(!db||!isAdmin()){message($("adminStatus"),"Admin access denied. Login User ID: "+(currentUser?.id||"none"));return;}
-  const list=$("driverApplications");list.replaceChildren();message($("adminStatus"),"Driver applications లోడ్ అవుతున్నాయి...");
-  try{
-    const {data,error}=await db.rpc("admin_list_driver_applications");if(error)throw error;
-    if(!Array.isArray(data)||data.length===0){message($("adminStatus"),"ప్రస్తుతం Driver applications లేవు.");return;}
-    message($("adminStatus"),"మొత్తం "+data.length+" applications.");
-    data.forEach(driver=>{
-      const card=document.createElement("div");card.className="application";
-      const heading=document.createElement("h3");heading.textContent=driver.full_name||"పేరు ఇవ్వలేదు";card.appendChild(heading);
-      const details=document.createElement("p");
-      details.textContent="Phone: "+(driver.phone||"-")+"\nVehicle: "+[driver.vehicle_type,driver.vehicle_company,driver.vehicle_model].filter(Boolean).join(" ")+
-        "\nRegistration: "+(driver.vehicle_registration||"-")+"\nExperience: "+(driver.driving_experience_years??"-")+" years"+
-        "\nLicense number: "+(driver.driving_license_number||"-")+"\nLicense document: "+(driver.driving_license_document_path?"Uploaded (private file)":"Not uploaded")+
-        "\nApproval: "+(driver.driver_approval_status||"pending");
-      card.appendChild(details);const buttons=document.createElement("div");buttons.className="buttons";
-      [["approved","Approve"],["rejected","Reject"],["pending","Set Pending"]].forEach(([status,label])=>{
-        const button=document.createElement("button");button.textContent=label;
-        if(status==="rejected")button.className="danger";if(status==="pending")button.className="secondary";
-        button.addEventListener("click",()=>setDriverApproval(driver.id,status,button));buttons.appendChild(button);
-      });
-      card.appendChild(buttons);list.appendChild(card);
+  async function callOtp(payload) {
+    const response = await fetch(OTP_FUNCTION_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
     });
-  }catch(error){message($("adminStatus"),"Applications లోడ్ కాలేదు: "+showError(error));}
-}
-async function setDriverApproval(driverId,status,button){
-  if(!isAdmin()){message($("adminStatus"),"Admin access denied.");return;}
-  const labels={approved:"Approve",rejected:"Reject",pending:"Set Pending"};
-  if(!confirm("ఈ డ్రైవర్‌ను "+labels[status]+" చేయాలా?"))return;
-  button.disabled=true;
-  try{
-    const {data,error}=await db.rpc("admin_set_driver_status",{p_driver_id:driverId,p_status:status});
-    if(error)throw error;if(data!==true)throw new Error("Driver record update కాలేదు.");
-    message($("adminStatus"),"Driver status updated: "+status);await loadDriverApplications();
-  }catch(error){message($("adminStatus"),"Status మార్చలేకపోయాం: "+showError(error));}
-  finally{button.disabled=false;}
-}
-async function loadRides(){
-  if(!currentUser||!currentProfile||!db||loadingRides)return;
-  if(isAdmin()){message($("ridesList"),"Admin Dashboard ద్వారా driver applications నిర్వహించండి.");return;}
-  loadingRides=true;message($("ridesList"),"రైడ్స్ లోడ్ అవుతున్నాయి...");
-  try{
-    let query=db.from("rides").select("*").order("created_at",{ascending:false}).limit(30);
-    if(currentProfile.role==="customer")query=query.eq("customer_id",currentUser.id);
-    else if(currentProfile.role==="driver"){
-      if(currentProfile.driver_approval_status!=="approved"){message($("ridesList"),"మీ Driver Account ఇంకా ఆమోదించబడలేదు.");return;}
-      query=query.or("driver_id.eq."+currentUser.id+",and(driver_id.is.null,status.eq.requested)");
-    }else{message($("ridesList"),"ఈ అకౌంట్‌కు అనుమతించిన Role లేదు.");return;}
-    const {data,error}=await query;if(error)throw error;ridesListReplace(data);
-  }catch(error){message($("ridesList"),"రైడ్స్ లోడ్ కాలేదు: "+showError(error));}
-  finally{loadingRides=false;}
-}
-function ridesListReplace(data){
-  const list=$("ridesList");list.replaceChildren();
-  if(!data||data.length===0){message(list,"ప్రస్తుతం రైడ్స్ లేవు.");return;}
-  data.forEach(ride=>{
-    const item=document.createElement("div");item.className="ride";const details=document.createElement("p");
-    details.textContent="🚘 "+(ride.vehicle_type||"-")+" | ₹"+(ride.agreed_fare??ride.fare_offer??"-")+
-      "\n📍 "+(ride.pickup_text||"-")+" → "+(ride.drop_text||"-")+"\nస్థితి: "+(ride.status||"-");
-    item.appendChild(details);
-    if(currentProfile.role==="driver"&&currentProfile.driver_approval_status==="approved"&&ride.status==="requested"&&!ride.driver_id){
-      const accept=document.createElement("button");accept.textContent="Accept Ride";accept.addEventListener("click",()=>acceptRide(ride.id));item.appendChild(accept);
-    }
-    list.appendChild(item);
-  });
-}
-async function acceptRide(rideId){
-  if(!currentUser||currentProfile?.role!=="driver"||isAdmin()){alert("Driver అకౌంట్‌తో Login చేయండి.");return;}
-  if(currentProfile.driver_approval_status!=="approved"){alert("Admin Approval ఇంకా రాలేదు.");return;}
-  try{
-    const {data,error}=await db.rpc("accept_ride",{p_ride_id:rideId});if(error)throw error;
-    alert(data===true?"రైడ్ అంగీకరించబడింది!":"ఈ రైడ్‌ను మరొక డ్రైవర్ అంగీకరించి ఉండవచ్చు.");await loadRides();
-  }catch(error){alert("Accept కాలేదు: "+showError(error));}
-}
-async function setOnline(value){
-  if(!currentUser||currentProfile?.role!=="driver"||isAdmin()){message($("driverStatus"),"Driver అకౌంట్‌తో Login చేయండి.");return;}
-  if(currentProfile.driver_approval_status!=="approved"){message($("driverStatus"),"Admin Approval వచ్చే వరకు Online అవ్వలేరు.");return;}
-  try{
-    const {error}=await db.from("driver_locations").upsert({driver_id:currentUser.id,is_online:value,updated_at:new Date().toISOString()},{onConflict:"driver_id"});
-    if(error)throw error;message($("driverStatus"),value?"Online — GPS tracking ఇంకా అమలు కాలేదు.":"Offline");
-  }catch(error){message($("driverStatus"),showError(error));}
-}
-$("signup").addEventListener("click",register);$("login").addEventListener("click",login);$("logout").addEventListener("click",logout);
-$("saveDriver").addEventListener("click",saveDriver);$("bookRide").addEventListener("click",bookRide);
-$("myRides").addEventListener("click",loadRides);$("refreshRides").addEventListener("click",loadRides);
-$("refreshDrivers").addEventListener("click",loadDriverApplications);
-$("onlineBtn").addEventListener("click",()=>setOnline(true));$("offlineBtn").addEventListener("click",()=>setOnline(false));
+    let data = {};
+    try { data = await response.json(); } catch (_) {}
+    if (!response.ok) throw new Error(data.error || data.message || ("OTP request failed (" + response.status + ")"));
+    return data;
+  }
 
-function initializeApp(){
-  if(!window.supabase?.createClient){message($("authStatus"),"Supabase లైబ్రరీ లోడ్ కాలేదు. Internet connection తనిఖీ చేయండి.");return;}
-  db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);authReady=true;showPanels();
-  db.auth.onAuthStateChange((event,session)=>{
-    setTimeout(async()=>{
-      try{
-        if(session?.user){
-          if(currentUser?.id!==session.user.id||!currentProfile)await loadProfile(session.user);
-        }else{currentUser=null;currentProfile=null;showPanels();}
-      }catch(error){message($("authStatus"),"అకౌంట్ వివరాలు లోడ్ కాలేదు: "+showError(error));}
-    },0);
+  $("sendOtpBtn").addEventListener("click", async () => {
+    const phone = $("phone").value.replace(/\D/g,"");
+    if (!/^[6-9]\d{9}$/.test(phone)) return say("authStatus","దయచేసి సరైన 10 అంకెల భారతీయ మొబైల్ నంబర్ నమోదు చేయండి.");
+    $("sendOtpBtn").disabled = true;
+    say("authStatus","OTP పంపిస్తున్నాం...");
+    try {
+      const data = await callOtp({action:"send", mobile:phone});
+      verifiedPhone = phone;
+      show("otpArea", true);
+      say("authStatus", data.message || "OTP పంపబడింది. SMSలో వచ్చిన OTP నమోదు చేయండి.");
+    } catch (e) { say("authStatus","OTP పంపడంలో సమస్య: " + e.message); }
+    finally { $("sendOtpBtn").disabled = false; }
   });
-  db.auth.getSession().then(async({data,error})=>{
-    if(error){message($("authStatus"),"Session సమస్య: "+showError(error));return;}
-    if(data.session?.user){
-      try{await loadProfile(data.session.user);}
-      catch(error){message($("authStatus"),"Profile లోడ్ కాలేదు: "+showError(error));}
-    }else message($("authStatus"),"Supabase కనెక్షన్ ప్రారంభమైంది. Login లేదా కొత్త అకౌంట్ సృష్టించండి.");
-  }).catch(error=>message($("authStatus"),"Supabase సమస్య: "+showError(error)));
-}
-initializeApp();
+
+  $("verifyOtpBtn").addEventListener("click", async () => {
+    const phone = $("phone").value.replace(/\D/g,"");
+    const otp = $("otp").value.trim();
+    if (!/^[6-9]\d{9}$/.test(phone) || !/^\d{4,8}$/.test(otp)) return say("authStatus","మొబైల్ నంబర్, OTP సరిచూడండి.");
+    $("verifyOtpBtn").disabled = true;
+    say("authStatus","OTP ధృవీకరిస్తున్నాం...");
+    try {
+      const data = await callOtp({action:"verify", mobile:phone, otp});
+      if (data.verified !== true && data.ok !== true) throw new Error(data.error || "OTP సరైనది కాదు.");
+      // Security requirement: the Edge Function must create/return a real Supabase Auth session.
+      // Never create an anonymous session here; it would not securely bind this verified phone to the user.
+      const session = data.session || (data.access_token && data.refresh_token
+        ? {access_token:data.access_token, refresh_token:data.refresh_token} : null);
+      if (!session) {
+        throw new Error("OTP సరైనది. కానీ sms-otp Function Supabase Login session ఇవ్వడం లేదు. Verify responseలో session {access_token, refresh_token} ఇవ్వడానికి Edge Function‌ను అప్డేట్ చేయాలి.");
+      }
+      const {data:sessionData, error:sessionError} = await db.auth.setSession(session);
+      if (sessionError) throw sessionError;
+      currentUser = sessionData.user;
+      verifiedPhone = phone;
+      await loadProfile();
+      show("authCard", false); show("appArea", true);
+      say("userInfo", "Verified mobile: " + phone);
+      await loadRides();
+    } catch (e) { say("authStatus", e.message || "Login విఫలమైంది."); }
+    finally { $("verifyOtpBtn").disabled = false; }
+  });
+
+  async function loadProfile() {
+    if (!currentUser) return;
+    const {data, error} = await db.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
+    if (error) throw error;
+    currentProfile = data;
+    if (data) {
+      $("fullName").value = data.full_name || "";
+      $("role").value = data.role || "customer";
+      $("vehicleType").value = data.vehicle_type || "Bike";
+      $("driverPhone").value = data.phone || verifiedPhone || "";
+      $("vehicleCompany").value = data.vehicle_company || "";
+      $("vehicleModel").value = data.vehicle_model || "";
+      $("vehicleRegistration").value = data.vehicle_registration || "";
+      $("experience").value = data.driving_experience_years || 0;
+      $("licenseNumber").value = data.driving_license_number || "";
+    } else {
+      $("driverPhone").value = verifiedPhone || "";
+    }
+    const isDriver = currentProfile?.role === "driver";
+    show("driverCard", isDriver);
+    show("bookingCard", currentProfile?.role !== "driver");
+    show("adminCard", currentProfile?.role === "admin");
+    if (isDriver) say("driverApproval","Approval status: " + (currentProfile.driver_approval_status || "pending"));
+  }
+
+  $("saveProfileBtn").addEventListener("click", async () => {
+    if (!currentUser) return;
+    const full_name = $("fullName").value.trim();
+    if (!full_name) return say("profileStatus","మీ పేరు నమోదు చేయండి.");
+    const role = $("role").value;
+    // Phone is set from the verified number, not trusted from an arbitrary input.
+    const row = {id:currentUser.id, full_name, phone:verifiedPhone || currentProfile?.phone, role,
+      vehicle_type:$("vehicleType").value};
+    try {
+      const {data,error} = await db.from("profiles").upsert(row,{onConflict:"id"}).select().single();
+      if (error) throw error;
+      currentProfile = {...currentProfile,...data};
+      await loadProfile();
+      say("profileStatus","ప్రొఫైల్ సేవ్ అయింది.");
+    } catch(e) { say("profileStatus","సేవ్ కాలేదు: "+e.message); }
+  });
+
+  $("bookRideBtn").addEventListener("click", async () => {
+    if (!currentUser) return;
+    const pickup=$("pickup").value.trim(), drop=$("drop").value.trim(), fare=Number($("fare").value);
+    if (!pickup || !drop || !Number.isFinite(fare) || fare <= 0) return say("bookingStatus","Pickup, Drop, సరైన ఛార్జీ నమోదు చేయండి.");
+    try {
+      const row = {customer_id:currentUser.id, vehicle_type:$("rideVehicle").value,
+        pickup, drop, fare_offer:fare, notes:$("notes").value.trim(), status:"requested"};
+      const {error}=await db.from("rides").insert(row);
+      if(error) throw error;
+      say("bookingStatus","Ride request పంపబడింది.");
+      $("pickup").value=""; $("drop").value=""; $("fare").value=""; $("notes").value="";
+      await loadRides();
+    } catch(e) { say("bookingStatus","Ride request విఫలమైంది: "+e.message); }
+  });
+
+  async function loadRides() {
+    if (!currentUser || !currentProfile) return;
+    const target = $("myRides"); target.replaceChildren();
+    try {
+      let query = db.from("rides").select("*").order("created_at",{ascending:false}).limit(30);
+      if (currentProfile.role === "customer") query = query.eq("customer_id",currentUser.id);
+      else if (currentProfile.role === "driver") query = query.or("status.eq.requested,driver_id.eq."+currentUser.id);
+      const {data,error}=await query;
+      if(error) throw error;
+      (data||[]).forEach(ride => {
+        const item=document.createElement("div"); item.className="item";
+        const title=document.createElement("strong"); title.textContent=(ride.vehicle_type||"Ride")+" • ₹"+(ride.agreed_fare ?? ride.fare_offer ?? "—");
+        const details=document.createElement("p"); details.textContent=(ride.pickup||"") + " → " + (ride.drop||"");
+        const meta=document.createElement("p"); meta.className="muted"; meta.textContent="Status: "+(ride.status||"unknown");
+        item.append(title,details,meta);
+        if(currentProfile.role==="driver" && ride.status==="requested" && currentProfile.driver_approval_status==="approved"){
+          const accept=document.createElement("button"); accept.textContent="Accept Ride";
+          accept.addEventListener("click",()=>acceptRide(ride.id)); item.append(accept);
+        }
+        target.append(item);
+      });
+      if(!data?.length) target.textContent="ఇప్పటివరకు rides లేవు.";
+      if(currentProfile.role==="driver") await loadDriverRequests();
+    } catch(e) { target.textContent="Rides లోడ్ కాలేదు: "+e.message; }
+  }
+
+  async function acceptRide(rideId) {
+    try {
+      const {data,error}=await db.rpc("accept_ride",{p_ride_id:rideId});
+      if(error) throw error;
+      say("driverStatus","Ride accept request పంపబడింది.");
+      await loadRides();
+    } catch(e) { say("driverStatus","Ride accept కాలేదు: "+e.message); }
+  }
+
+  async function loadDriverRequests() {
+    const box=$("driverRides"); box.replaceChildren();
+    if(currentProfile?.driver_approval_status!=="approved"){box.textContent="Admin approval వచ్చిన తర్వాత requests కనిపిస్తాయి.";return;}
+    try{
+      const {data,error}=await db.from("rides").select("*").eq("status","requested").order("created_at",{ascending:false}).limit(30);
+      if(error) throw error;
+      (data||[]).forEach(ride=>{
+        const item=document.createElement("div");item.className="item";
+        const p=document.createElement("p");p.textContent=(ride.pickup||"")+" → "+(ride.drop||"")+" • ₹"+(ride.fare_offer||"—");
+        const b=document.createElement("button");b.textContent="Accept Ride";b.addEventListener("click",()=>acceptRide(ride.id));
+        item.append(p,b);box.append(item);
+      });
+      if(!data?.length)box.textContent="ప్రస్తుతం కొత్త requests లేవు.";
+    }catch(e){box.textContent="Requests లోడ్ కాలేదు: "+e.message;}
+  }
+
+  async function setOnline(is_online) {
+    if(!currentUser || currentProfile?.role!=="driver") return;
+    if(currentProfile.driver_approval_status!=="approved") return say("driverStatus","Admin approval తర్వాత మాత్రమే online కావచ్చు.");
+    try{
+      const {error}=await db.from("driver_locations").upsert({driver_id:currentUser.id,is_online,updated_at:new Date().toISOString()},{onConflict:"driver_id"});
+      if(error) throw error;
+      say("driverStatus",is_online?"మీరు Onlineలో ఉన్నారు.":"మీరు Offlineలో ఉన్నారు.");
+    }catch(e){say("driverStatus","స్థితి మార్చలేకపోయాం: "+e.message);}
+  }
+  $("onlineBtn").addEventListener("click",()=>setOnline(true));
+  $("offlineBtn").addEventListener("click",()=>setOnline(false));
+
+  $("applyDriverBtn").addEventListener("click",async()=>{
+    if(!currentUser)return;
+    const phone=$("driverPhone").value.replace(/\D/g,"");
+    if(phone !== verifiedPhone && phone !== (currentProfile?.phone||"")) return say("driverStatus","ధృవీకరించిన మొబైల్ నంబర్‌ను ఉపయోగించండి.");
+    const row={id:currentUser.id,full_name:$("fullName").value.trim(),phone:verifiedPhone||currentProfile?.phone,
+      role:"driver",vehicle_type:$("vehicleType").value,vehicle_company:$("vehicleCompany").value.trim(),
+      vehicle_model:$("vehicleModel").value.trim(),vehicle_registration:$("vehicleRegistration").value.trim(),
+      driving_experience_years:Number($("experience").value||0),driving_license_number:$("licenseNumber").value.trim(),
+      driver_approval_status:currentProfile?.driver_approval_status||"pending"};
+    try{
+      const {error}=await db.from("profiles").upsert(row,{onConflict:"id"});
+      if(error)throw error;
+      await loadProfile();say("driverStatus","Driver application సేవ్ అయింది. Admin approval కోసం వేచి ఉండండి.");
+    }catch(e){say("driverStatus","Application సేవ్ కాలేదు: "+e.message);}
+  });
+
+  $("loadDriversBtn").addEventListener("click",async()=>{
+    try{
+      const {data,error}=await db.rpc("admin_list_driver_applications");
+      if(error)throw error;
+      const box=$("adminDrivers");box.replaceChildren();
+      (data||[]).forEach(driver=>{
+        const item=document.createElement("div");item.className="item";
+        const p=document.createElement("p");p.textContent=(driver.full_name||"Driver")+" • "+(driver.phone||"")+" • "+(driver.driver_approval_status||"pending");
+        item.append(p);box.append(item);
+      });
+      say("adminStatus",(data||[]).length+" applications లోడ్ అయ్యాయి.");
+    }catch(e){say("adminStatus","Admin data లోడ్ కాలేదు: "+e.message);}
+  });
+  $("refreshRidesBtn").addEventListener("click",loadRides);
+  $("logoutBtn").addEventListener("click",async()=>{
+    await db.auth.signOut();currentUser=null;currentProfile=null;verifiedPhone=null;
+    show("appArea",false);show("authCard",true);show("otpArea",false);
+    $("phone").value="";$("otp").value="";say("authStatus","Logout అయ్యారు. మళ్లీ మొబైల్ OTPతో Login చేయండి.");
+  });
+
+  async function init(){
+    try{
+      const {data,error}=await db.auth.getSession();if(error)throw error;
+      if(data.session){
+        currentUser=data.session.user;
+        const {data:profile,error:profileError}=await db.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
+        if(profileError) throw profileError;
+        currentProfile=profile;verifiedPhone=profile?.phone||null;
+        if(profile){show("authCard",false);show("appArea",true);say("userInfo","Verified mobile: "+(profile.phone||""));await loadProfile();await loadRides();}
+      }
+    }catch(e){say("authStatus","ప్రారంభించడంలో సమస్య: "+e.message);}
+  }
+  init();
+})();
 </script>
 </body>
 </html>
