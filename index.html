@@ -16,7 +16,7 @@ h2{font-size:19px;margin:0 0 14px;color:var(--green)}label{display:block;margin:
 input,select,textarea{width:100%;padding:12px;border:1px solid #40516b;border-radius:9px;background:#0f172a;color:var(--text);font-size:16px}
 textarea{min-height:70px}button{border:0;border-radius:9px;padding:12px 15px;background:var(--green);color:#06251f;font-weight:700;font-size:15px;cursor:pointer;margin:8px 6px 0 0}
 button.secondary{background:#334155;color:white}button.danger{background:#7f1d1d;color:white}button:disabled{opacity:.5;cursor:not-allowed}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none!important}.status{padding:10px;border-radius:8px;background:#0f172a;color:var(--muted);white-space:pre-wrap;margin-top:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none!important}.status{padding:10px;border-radius:8px;background:#0f172a;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:10px}
 .item{border:1px solid var(--line);padding:12px;border-radius:10px;margin:10px 0}.muted{color:var(--muted);font-size:14px}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#26364d;font-size:12px}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 @media(max-width:520px){.row{grid-template-columns:1fr}header h1{font-size:21px}}
@@ -27,7 +27,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 <main>
   <section id="authCard" class="card">
     <h2>📱 Mobile OTP Login</h2>
-    <p class="muted">మీ మొబైల్ నంబర్‌కు వచ్చిన OTPతో కొనసాగండి. Email లేదా password అవసరం లేదు.</p>
+    <p class="muted">మీ మొబైల్ నంబర్‌కు SMS OTPతో కొనసాగండి. Email లేదా password అవసరం లేదు.</p>
     <label for="phone">మొబైల్ నంబర్ (10 అంకెలు)</label>
     <input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="ఉదా: 9876543210" autocomplete="tel">
     <button id="sendOtpBtn">OTP పంపండి</button>
@@ -71,7 +71,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       <button id="onlineBtn">Online</button><button id="offlineBtn" class="secondary">Offline</button>
       <h3>కొత్త Ride Requests</h3><div id="driverRides"></div>
       <h3>Driver Application</h3>
-      <label for="driverPhone">మొబైల్ నంబర్</label><input id="driverPhone" type="tel" inputmode="numeric" maxlength="10">
+      <label for="driverPhone">మొబైల్ నంబర్</label><input id="driverPhone" type="tel" inputmode="numeric" maxlength="10" readonly>
       <div class="row">
         <div><label for="vehicleCompany">వాహన కంపెనీ</label><input id="vehicleCompany" placeholder="ఉదా: Honda"></div>
         <div><label for="vehicleModel">మోడల్</label><input id="vehicleModel" placeholder="ఉదా: Activa"></div>
@@ -93,78 +93,83 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
     </section>
   </section>
 </main>
-<footer>FRIEND RIDE • Secure mobile verification</footer>
+<footer>FRIEND RIDE • Supabase Auth mobile verification</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {
   "use strict";
-  const SUPABASE_URL = "https://fglyplxcczdjftwobtzh.supabase.co";
+  const SUPABASE_URL = "https://fglyplxcczdjtfwobtzh.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz";
-  const OTP_FUNCTION_URL =
-  SUPABASE_URL + "/functions/v1/Sms-otp";
   const $ = id => document.getElementById(id);
   const show = (id, yes=true) => $(id).classList.toggle("hidden", !yes);
   const say = (id, text) => { $(id).textContent = text || ""; };
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-  let currentUser = null, currentProfile = null, verifiedPhone = null;
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+  });
+  let currentUser = null, currentProfile = null, verifiedPhone = null, requestedPhone = null;
 
-  async function callOtp(payload) {
-    const response = await fetch(OTP_FUNCTION_URL, {
-      method: "POST",
-      headers: {
-  "Content-Type": "application/json",
-  "apikey": SUPABASE_PUBLISHABLE_KEY
-},
-      body: JSON.stringify(payload)
-    });
-    let data = {};
-    try { data = await response.json(); } catch (_) {}
-    if (!response.ok) throw new Error(data.error || data.message || ("OTP request failed (" + response.status + ")"));
-    return data;
+  function phoneE164(raw) {
+    const digits = String(raw || "").replace(/\D/g, "");
+    if (!/^[6-9]\d{9}$/.test(digits)) return null;
+    return "+91" + digits;
+  }
+  function phoneLocal(e164) {
+    const digits = String(e164 || "").replace(/\D/g, "");
+    return digits.length === 12 && digits.startsWith("91") ? digits.slice(2) : digits;
+  }
+  function friendlyError(error) {
+    const m = error?.message || String(error || "తెలియని సమస్య");
+    if (/captcha/i.test(m)) return m + "\nSupabase Authలో CAPTCHA ఎనేబుల్ అయి ఉంటే దానికి సంబంధించిన సెట్టింగ్ అవసరం.";
+    if (/sms|provider|twilio|messagebird|vonage|textlocal/i.test(m)) return m + "\nSupabase Dashboard → Authentication → Providers/Sign In → Phoneలో SMS provider సెట్టింగ్ తనిఖీ చేయండి.";
+    if (/rate limit|too many requests/i.test(m)) return m + "\nకొద్దిసేపు వేచి మళ్లీ ప్రయత్నించండి.";
+    return m;
   }
 
   $("sendOtpBtn").addEventListener("click", async () => {
-    const phone = $("phone").value.replace(/\D/g,"");
-    if (!/^[6-9]\d{9}$/.test(phone)) return say("authStatus","దయచేసి సరైన 10 అంకెల భారతీయ మొబైల్ నంబర్ నమోదు చేయండి.");
+    const phone = phoneE164($("phone").value);
+    if (!phone) return say("authStatus","దయచేసి సరైన 10 అంకెల భారతీయ మొబైల్ నంబర్ నమోదు చేయండి.");
     $("sendOtpBtn").disabled = true;
-    say("authStatus","OTP పంపిస్తున్నాం...");
+    say("authStatus","Supabase Auth ద్వారా OTP పంపిస్తున్నాం...");
     try {
-      const data = await callOtp({action:"send", mobile:phone});
-      verifiedPhone = phone;
+      const { error } = await db.auth.signInWithOtp({
+        phone,
+        options: { shouldCreateUser: true }
+      });
+      if (error) throw error;
+      requestedPhone = phone;
       show("otpArea", true);
-      say("authStatus", data.message || "OTP పంపబడింది. SMSలో వచ్చిన OTP నమోదు చేయండి.");
-    } catch (e) { say("authStatus","OTP పంపడంలో సమస్య: " + e.message); }
-    finally { $("sendOtpBtn").disabled = false; }
+      say("authStatus","OTP అభ్యర్థన పంపబడింది. SMSలో వచ్చిన 6 అంకెల OTP నమోదు చేయండి.");
+    } catch (e) {
+      say("authStatus","OTP పంపడంలో సమస్య: " + friendlyError(e));
+    } finally { $("sendOtpBtn").disabled = false; }
   });
 
   $("verifyOtpBtn").addEventListener("click", async () => {
-    const phone = $("phone").value.replace(/\D/g,"");
-    const otp = $("otp").value.trim();
-    if (!/^[6-9]\d{9}$/.test(phone) || !/^\d{4,8}$/.test(otp)) return say("authStatus","మొబైల్ నంబర్, OTP సరిచూడండి.");
+    const phone = phoneE164($("phone").value);
+    const token = $("otp").value.trim();
+    if (!phone || !/^\d{6}$/.test(token)) return say("authStatus","సరైన మొబైల్ నంబర్ మరియు 6 అంకెల OTP నమోదు చేయండి.");
+    if (requestedPhone && requestedPhone !== phone) return say("authStatus","OTP కోరిన అదే మొబైల్ నంబర్ ఉపయోగించండి.");
     $("verifyOtpBtn").disabled = true;
     say("authStatus","OTP ధృవీకరిస్తున్నాం...");
     try {
-      const data = await callOtp({action:"verify", mobile:phone, otp});
-      if (data.verified !== true && data.ok !== true) throw new Error(data.error || "OTP సరైనది కాదు.");
-      // Security requirement: the Edge Function must create/return a real Supabase Auth session.
-      // Never create an anonymous session here; it would not securely bind this verified phone to the user.
-      const session = data.session || (data.access_token && data.refresh_token
-        ? {access_token:data.access_token, refresh_token:data.refresh_token} : null);
-      if (!session) {
-        throw new Error("OTP సరైనది. కానీ sms-otp Function Supabase Login session ఇవ్వడం లేదు. Verify responseలో session {access_token, refresh_token} ఇవ్వడానికి Edge Function‌ను అప్డేట్ చేయాలి.");
-      }
-      const {data:sessionData, error:sessionError} = await db.auth.setSession(session);
-      if (sessionError) throw sessionError;
-      currentUser = sessionData.user;
+      const { data, error } = await db.auth.verifyOtp({ phone, token, type: "sms" });
+      if (error) throw error;
+      if (!data?.session || !data?.user) throw new Error("OTP ధృవీకరణ జరిగింది, కానీ Login session రాలేదు. Supabase Phone Auth సెట్టింగ్ తనిఖీ చేయండి.");
+      currentUser = data.user;
       verifiedPhone = phone;
-      await loadProfile();
-      show("authCard", false); show("appArea", true);
-      say("userInfo", "Verified mobile: " + phone);
-      await loadRides();
-    } catch (e) { say("authStatus", e.message || "Login విఫలమైంది."); }
-    finally { $("verifyOtpBtn").disabled = false; }
+      await openApp();
+    } catch (e) {
+      say("authStatus","Login సమస్య: " + friendlyError(e));
+    } finally { $("verifyOtpBtn").disabled = false; }
   });
+
+  async function openApp() {
+    await loadProfile();
+    show("authCard", false); show("appArea", true);
+    say("userInfo", "Verified mobile: " + phoneLocal(verifiedPhone || currentUser?.phone));
+    await loadRides();
+  }
 
   async function loadProfile() {
     if (!currentUser) return;
@@ -175,20 +180,21 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       $("fullName").value = data.full_name || "";
       $("role").value = data.role || "customer";
       $("vehicleType").value = data.vehicle_type || "Bike";
-      $("driverPhone").value = data.phone || verifiedPhone || "";
+      $("driverPhone").value = phoneLocal(data.phone || verifiedPhone || currentUser.phone);
       $("vehicleCompany").value = data.vehicle_company || "";
       $("vehicleModel").value = data.vehicle_model || "";
       $("vehicleRegistration").value = data.vehicle_registration || "";
       $("experience").value = data.driving_experience_years || 0;
       $("licenseNumber").value = data.driving_license_number || "";
     } else {
-      $("driverPhone").value = verifiedPhone || "";
+      $("driverPhone").value = phoneLocal(verifiedPhone || currentUser.phone);
+      $("role").value = "customer";
     }
-    const isDriver = currentProfile?.role === "driver";
-    show("driverCard", isDriver);
-    show("bookingCard", currentProfile?.role !== "driver");
-    show("adminCard", currentProfile?.role === "admin");
-    if (isDriver) say("driverApproval","Approval status: " + (currentProfile.driver_approval_status || "pending"));
+    const role = currentProfile?.role || "customer";
+    show("driverCard", role === "driver");
+    show("bookingCard", role !== "driver");
+    show("adminCard", role === "admin");
+    if (role === "driver") say("driverApproval","Approval status: " + (currentProfile.driver_approval_status || "pending"));
   }
 
   $("saveProfileBtn").addEventListener("click", async () => {
@@ -196,16 +202,15 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
     const full_name = $("fullName").value.trim();
     if (!full_name) return say("profileStatus","మీ పేరు నమోదు చేయండి.");
     const role = $("role").value;
-    // Phone is set from the verified number, not trusted from an arbitrary input.
-    const row = {id:currentUser.id, full_name, phone:verifiedPhone || currentProfile?.phone, role,
-      vehicle_type:$("vehicleType").value};
+    const row = {id:currentUser.id, full_name, phone:verifiedPhone || currentUser.phone, role, vehicle_type:$("vehicleType").value};
     try {
       const {data,error} = await db.from("profiles").upsert(row,{onConflict:"id"}).select().single();
       if (error) throw error;
       currentProfile = {...currentProfile,...data};
       await loadProfile();
       say("profileStatus","ప్రొఫైల్ సేవ్ అయింది.");
-    } catch(e) { say("profileStatus","సేవ్ కాలేదు: "+e.message); }
+      await loadRides();
+    } catch(e) { say("profileStatus","సేవ్ కాలేదు: "+friendlyError(e)); }
   });
 
   $("bookRideBtn").addEventListener("click", async () => {
@@ -213,14 +218,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
     const pickup=$("pickup").value.trim(), drop=$("drop").value.trim(), fare=Number($("fare").value);
     if (!pickup || !drop || !Number.isFinite(fare) || fare <= 0) return say("bookingStatus","Pickup, Drop, సరైన ఛార్జీ నమోదు చేయండి.");
     try {
-      const row = {customer_id:currentUser.id, vehicle_type:$("rideVehicle").value,
-        pickup, drop, fare_offer:fare, notes:$("notes").value.trim(), status:"requested"};
+      const row = {customer_id:currentUser.id, vehicle_type:$("rideVehicle").value, pickup, drop, fare_offer:fare, notes:$("notes").value.trim(), status:"requested"};
       const {error}=await db.from("rides").insert(row);
       if(error) throw error;
       say("bookingStatus","Ride request పంపబడింది.");
       $("pickup").value=""; $("drop").value=""; $("fare").value=""; $("notes").value="";
       await loadRides();
-    } catch(e) { say("bookingStatus","Ride request విఫలమైంది: "+e.message); }
+    } catch(e) { say("bookingStatus","Ride request విఫలమైంది: "+friendlyError(e)); }
   });
 
   async function loadRides() {
@@ -246,7 +250,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       });
       if(!data?.length) target.textContent="ఇప్పటివరకు rides లేవు.";
       if(currentProfile.role==="driver") await loadDriverRequests();
-    } catch(e) { target.textContent="Rides లోడ్ కాలేదు: "+e.message; }
+    } catch(e) { target.textContent="Rides లోడ్ కాలేదు: "+friendlyError(e); }
   }
 
   async function acceptRide(rideId) {
@@ -255,7 +259,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       if(error) throw error;
       say("driverStatus","Ride accept request పంపబడింది.");
       await loadRides();
-    } catch(e) { say("driverStatus","Ride accept కాలేదు: "+e.message); }
+    } catch(e) { say("driverStatus","Ride accept కాలేదు: "+friendlyError(e)); }
   }
 
   async function loadDriverRequests() {
@@ -271,7 +275,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
         item.append(p,b);box.append(item);
       });
       if(!data?.length)box.textContent="ప్రస్తుతం కొత్త requests లేవు.";
-    }catch(e){box.textContent="Requests లోడ్ కాలేదు: "+e.message;}
+    }catch(e){box.textContent="Requests లోడ్ కాలేదు: "+friendlyError(e);}
   }
 
   async function setOnline(is_online) {
@@ -281,16 +285,14 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       const {error}=await db.from("driver_locations").upsert({driver_id:currentUser.id,is_online,updated_at:new Date().toISOString()},{onConflict:"driver_id"});
       if(error) throw error;
       say("driverStatus",is_online?"మీరు Onlineలో ఉన్నారు.":"మీరు Offlineలో ఉన్నారు.");
-    }catch(e){say("driverStatus","స్థితి మార్చలేకపోయాం: "+e.message);}
+    }catch(e){say("driverStatus","స్థితి మార్చలేకపోయాం: "+friendlyError(e));}
   }
   $("onlineBtn").addEventListener("click",()=>setOnline(true));
   $("offlineBtn").addEventListener("click",()=>setOnline(false));
 
   $("applyDriverBtn").addEventListener("click",async()=>{
     if(!currentUser)return;
-    const phone=$("driverPhone").value.replace(/\D/g,"");
-    if(phone !== verifiedPhone && phone !== (currentProfile?.phone||"")) return say("driverStatus","ధృవీకరించిన మొబైల్ నంబర్‌ను ఉపయోగించండి.");
-    const row={id:currentUser.id,full_name:$("fullName").value.trim(),phone:verifiedPhone||currentProfile?.phone,
+    const row={id:currentUser.id,full_name:$("fullName").value.trim(),phone:verifiedPhone||currentUser.phone,
       role:"driver",vehicle_type:$("vehicleType").value,vehicle_company:$("vehicleCompany").value.trim(),
       vehicle_model:$("vehicleModel").value.trim(),vehicle_registration:$("vehicleRegistration").value.trim(),
       driving_experience_years:Number($("experience").value||0),driving_license_number:$("licenseNumber").value.trim(),
@@ -299,7 +301,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       const {error}=await db.from("profiles").upsert(row,{onConflict:"id"});
       if(error)throw error;
       await loadProfile();say("driverStatus","Driver application సేవ్ అయింది. Admin approval కోసం వేచి ఉండండి.");
-    }catch(e){say("driverStatus","Application సేవ్ కాలేదు: "+e.message);}
+    }catch(e){say("driverStatus","Application సేవ్ కాలేదు: "+friendlyError(e));}
   });
 
   $("loadDriversBtn").addEventListener("click",async()=>{
@@ -313,13 +315,16 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
         item.append(p);box.append(item);
       });
       say("adminStatus",(data||[]).length+" applications లోడ్ అయ్యాయి.");
-    }catch(e){say("adminStatus","Admin data లోడ్ కాలేదు: "+e.message);}
+    }catch(e){say("adminStatus","Admin data లోడ్ కాలేదు: "+friendlyError(e));}
   });
   $("refreshRidesBtn").addEventListener("click",loadRides);
+
   $("logoutBtn").addEventListener("click",async()=>{
-    await db.auth.signOut();currentUser=null;currentProfile=null;verifiedPhone=null;
+    try { await db.auth.signOut(); } catch(e) { console.error(e); }
+    currentUser=null;currentProfile=null;verifiedPhone=null;requestedPhone=null;
     show("appArea",false);show("authCard",true);show("otpArea",false);
-    $("phone").value="";$("otp").value="";say("authStatus","Logout అయ్యారు. మళ్లీ మొబైల్ OTPతో Login చేయండి.");
+    $("phone").value="";$("otp").value="";
+    say("authStatus","Logout అయ్యారు. మళ్లీ మొబైల్ OTPతో Login చేయండి.");
   });
 
   async function init(){
@@ -327,13 +332,17 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       const {data,error}=await db.auth.getSession();if(error)throw error;
       if(data.session){
         currentUser=data.session.user;
-        const {data:profile,error:profileError}=await db.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
-        if(profileError) throw profileError;
-        currentProfile=profile;verifiedPhone=profile?.phone||null;
-        if(profile){show("authCard",false);show("appArea",true);say("userInfo","Verified mobile: "+(profile.phone||""));await loadProfile();await loadRides();}
+        verifiedPhone=currentUser.phone || null;
+        await openApp();
       }
-    }catch(e){say("authStatus","ప్రారంభించడంలో సమస్య: "+e.message);}
+    }catch(e){say("authStatus","ప్రారంభించడంలో సమస్య: "+friendlyError(e));}
   }
+  db.auth.onAuthStateChange((_event, session) => {
+    if (session?.user) {
+      currentUser = session.user;
+      verifiedPhone = session.user.phone || verifiedPhone;
+    }
+  });
   init();
 })();
 </script>
