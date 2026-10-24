@@ -112,7 +112,10 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
   async function callOtp(payload) {
     const response = await fetch(OTP_FUNCTION_URL, {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
+      headers: {
+  "Content-Type": "application/json",
+  "apikey": SUPABASE_PUBLISHABLE_KEY
+},
       body: JSON.stringify(payload)
     });
     let data = {};
