@@ -101,7 +101,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
   "use strict";
   const SUPABASE_URL = "https://fglyplxcczdjftwobtzh.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz";
-  const OTP_FUNCTION_URL = SUPABASE_URL + "/functions/v1/sms-otp";
+  const OTP_FUNCTION_URL =
+  SUPABASE_URL + "/functions/v1/Sms-otp";
   const $ = id => document.getElementById(id);
   const show = (id, yes=true) => $(id).classList.toggle("hidden", !yes);
   const say = (id, text) => { $(id).textContent = text || ""; };
