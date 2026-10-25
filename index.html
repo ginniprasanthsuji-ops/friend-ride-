@@ -108,6 +108,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
   });
   let currentUser = null, currentProfile = null, verifiedPhone = null, requestedPhone = null;
+  let ridesChannel = null;
 
   function phoneE164(raw) {
     const digits = String(raw || "").replace(/\D/g, "");
@@ -164,9 +165,44 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
     } finally { $("verifyOtpBtn").disabled = false; }
   });
 
+  function stopRidesRealtime() {
+    if (ridesChannel) {
+      db.removeChannel(ridesChannel);
+      ridesChannel = null;
+    }
+  }
+
+  function startRidesRealtime() {
+    if (!currentUser || !currentProfile || currentProfile.role !== "driver") {
+      stopRidesRealtime();
+      return;
+    }
+    stopRidesRealtime();
+    ridesChannel = db
+      .channel("rides-live-" + currentUser.id)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "rides" },
+        (payload) => {
+          loadRides();
+          if (payload.eventType === "INSERT") {
+            say("driverStatus", "కొత్త Ride Request వచ్చింది. జాబితాను పరిశీలించండి.");
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          console.log("FRIEND RIDE realtime connected");
+        } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+          console.warn("FRIEND RIDE realtime status:", status);
+        }
+      });
+  }
+
   async function openApp() {
     await loadProfile();
     show("authCard", false); show("appArea", true);
+    startRidesRealtime();
     say("userInfo", "Verified mobile: " + phoneLocal(verifiedPhone || currentUser?.phone));
     await loadRides();
   }
@@ -208,6 +244,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       if (error) throw error;
       currentProfile = {...currentProfile,...data};
       await loadProfile();
+      startRidesRealtime();
       say("profileStatus","ప్రొఫైల్ సేవ్ అయింది.");
       await loadRides();
     } catch(e) { say("profileStatus","సేవ్ కాలేదు: "+friendlyError(e)); }
@@ -320,6 +357,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
   $("refreshRidesBtn").addEventListener("click",loadRides);
 
   $("logoutBtn").addEventListener("click",async()=>{
+    stopRidesRealtime();
     try { await db.auth.signOut(); } catch(e) { console.error(e); }
     currentUser=null;currentProfile=null;verifiedPhone=null;requestedPhone=null;
     show("appArea",false);show("authCard",true);show("otpArea",false);
