@@ -352,19 +352,73 @@ show("adminCard", isAdmin);
     }catch(e){say("driverStatus","Application సేవ్ కాలేదు: "+friendlyError(e));}
   });
 
-  $("loadDriversBtn").addEventListener("click",async()=>{
-    try{
-      const {data,error}=await db.rpc("admin_list_driver_applications");
-      if(error)throw error;
-      const box=$("adminDrivers");box.replaceChildren();
-      (data||[]).forEach(driver=>{
-        const item=document.createElement("div");item.className="item";
-        const p=document.createElement("p");p.textContent=(driver.full_name||"Driver")+" • "+(driver.phone||"")+" • "+(driver.driver_approval_status||"pending");
-        item.append(p);box.append(item);
+  
+  $("loadDriversBtn").addEventListener("click", async () => {
+    try {
+      const { data, error } = await db.rpc("admin_list_driver_applications");
+      if (error) throw error;
+
+      const box = $("adminDrivers");
+      box.replaceChildren();
+
+      (data || []).forEach(driver => {
+        const item = document.createElement("div");
+        item.className = "item";
+
+        const p = document.createElement("p");
+        p.textContent =
+          (driver.full_name || "Driver") + " • " +
+          (driver.phone || "") + " • " +
+          (driver.driver_approval_status || "pending");
+
+        item.append(p);
+
+        if (driver.driver_approval_status !== "approved") {
+          const btn = document.createElement("button");
+          btn.textContent = "Approve Driver";
+          btn.type = "button";
+
+          btn.addEventListener("click", async () => {
+            if (!driver.id) {
+              say("adminStatus", "Driver ID అందలేదు. SQL function పరిశీలించాలి.");
+              return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Approving...";
+
+            try {
+              const { error: approveError } = await db.rpc(
+                "admin_approve_driver",
+                { p_driver_id: driver.id }
+              );
+
+              if (approveError) throw approveError;
+
+              say("adminStatus", "Driver approval విజయవంతమైంది.");
+              $("loadDriversBtn").click();
+            } catch (e) {
+              btn.disabled = false;
+              btn.textContent = "Approve Driver";
+              say("adminStatus", "Approval కాలేదు: " + friendlyError(e));
+            }
+          });
+
+          item.append(btn);
+        }
+
+        box.append(item);
       });
-      say("adminStatus",(data||[]).length+" applications లోడ్ అయ్యాయి.");
-    }catch(e){say("adminStatus","Admin data లోడ్ కాలేదు: "+friendlyError(e));}
+
+      say(
+        "adminStatus",
+        (data || []).length + " applications లోడ్ అయ్యాయి."
+      );
+    } catch (e) {
+      say("adminStatus", "Admin data లోడ్ కాలేదు: " + friendlyError(e));
+    }
   });
+l
   $("refreshRidesBtn").addEventListener("click",loadRides);
 
   $("logoutBtn").addEventListener("click",async()=>{
