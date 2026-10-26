@@ -1,4 +1,3 @@
-
 const CACHE_NAME = "friend-ride-v2";
 
 self.addEventListener("install", (event) => {
