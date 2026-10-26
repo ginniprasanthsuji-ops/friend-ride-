@@ -227,9 +227,20 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
       $("role").value = "customer";
     }
     const role = currentProfile?.role || "customer";
-    show("driverCard", role === "driver");
-    show("bookingCard", role !== "driver");
-    show("adminCard", role === "admin");
+
+let isAdmin = false;
+const { data: adminCheck, error: adminError } =
+  await db.rpc("is_friend_ride_admin");
+
+if (!adminError) {
+  isAdmin = adminCheck === true;
+} else {
+  console.error("Admin check failed:", adminError);
+}
+
+show("driverCard", role === "driver" && !isAdmin);
+show("bookingCard", role !== "driver" && !isAdmin);
+show("adminCard", isAdmin);
     if (role === "driver") say("driverApproval","Approval status: " + (currentProfile.driver_approval_status || "pending"));
   }
 
