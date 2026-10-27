@@ -150,7 +150,43 @@ a {
     padding: 16px;
   }
 }</style></head><body><header><h1>🚕 FRIEND RIDE</h1><p>Your Ride, Your Choice</p></header><main>
-<section id="authCard" class="card"><h2>📱 Mobile OTP Login</h2><label>మొబైల్ నంబర్</label><input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="9876543210"><button id="sendOtpBtn">OTP పంపండి</button><div id="otpArea" class="hidden"><label>SMS OTP</label><input id="otp" inputmode="numeric" maxlength="6"><button id="verifyOtpBtn">OTP ధృవీకరించండి</button></div><div id="authStatus" class="status">మొబైల్ నంబర్ నమోదు చేయండి.</div></section>
+
+<section id="authCard" class="card">
+  <h2>📱 FRIEND RIDE లాగిన్</h2>
+  <p class="muted">మీ మొబైల్ నంబర్‌తో సురక్షితంగా లాగిన్ అవ్వండి.</p>
+
+  <label for="phone">మొబైల్ నంబర్</label>
+  <input
+    id="phone"
+    type="tel"
+    inputmode="numeric"
+    autocomplete="tel-national"
+    maxlength="10"
+    placeholder="10 అంకెల మొబైల్ నంబర్"
+  >
+
+  <button id="sendOtpBtn">OTP పంపండి</button>
+
+  <div id="otpArea" class="hidden">
+    <label for="otp">SMS ద్వారా వచ్చిన OTP</label>
+    <input
+      id="otp"
+      type="tel"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      maxlength="6"
+      placeholder="6 అంకెల OTP నమోదు చేయండి"
+    >
+    <button id="verifyOtpBtn">OTP ధృవీకరించండి</button>
+  </div>
+
+  <div id="authStatus" class="status" role="status" aria-live="polite">
+    ప్రారంభించడానికి మీ మొబైల్ నంబర్ నమోదు చేయండి.
+  </div>
+
+  <p class="muted">🔒 మీ మొబైల్ నంబర్ ధృవీకరణ కోసం ఉపయోగించబడుతుంది.</p>
+</section>
+
 <section id="appArea" class="hidden">
 <section class="card"><div class="row"><div><h2>FRIEND RIDE</h2><div id="userInfo" class="muted"></div></div><div><button id="enablePushBtn" class="secondary">Notifications ON</button><button id="logoutBtn" class="secondary">Logout</button></div></div>
 <label>మీ పేరు</label><input id="fullName" placeholder="పూర్తి పేరు"><div class="row"><div><label>మీరు ఎవరు?</label><select id="role"><option value="customer">Customer</option><option value="driver">Driver</option></select></div><div><label>వాహనం</label><select id="vehicleType"><option>Bike</option><option>Auto</option><option>Car</option></select></div></div><button id="saveProfileBtn">ప్రొఫైల్ సేవ్</button><div id="profileStatus" class="status"></div></section>
