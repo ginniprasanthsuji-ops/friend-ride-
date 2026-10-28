@@ -57,7 +57,7 @@ async function contact(id){if(!id)return null;try{let r=await db.from("profiles"
 async function getRideDriverDetails(rideId){try{let r=await db.rpc("get_ride_driver_details",{p_ride_id:rideId});if(r.error)throw r.error;return Array.isArray(r.data)?(r.data[0]||null):r.data}catch(e){console.warn("Driver detail RPC error:",err(e));return null}}
 function stopLive(){if(channel){db.removeChannel(channel);channel=null}}
 function live(){stopLive();if(!user||!profile)return;channel=db.channel("ride-live-"+user.id).on("postgres_changes",{event:"*",schema:"public",table:"rides"},p=>{let r=p.new||{},o=p.old||{},mine=[r.customer_id,r.driver_id,o.customer_id,o.driver_id].includes(user.id);loadRides();if(mine&&p.eventType==="UPDATE"&&["accepted","driver_accepted"].includes(r.status)){if(profile.role==="customer"){say("bookingStatus","✅ Driver మీ Ride Accept చేశారు.");if("Notification"in window&&Notification.permission==="granted")try{new Notification("FRIEND RIDE",{body:"Driver మీ Ride Accept చేశారు."})}catch(_){}}else say("driverStatus","Ride Accept అయింది.")}if(profile.role==="driver"&&p.eventType==="INSERT")say("driverStatus","కొత్త Ride Request వచ్చింది")}).subscribe(s=>{if(s==="CHANNEL_ERROR")console.warn("Realtime error")})}
-async function loadProfile(){let r=await db.from("profiles").select("*").eq("id",user.id).maybeSingle();if(r.error)throw r.error;profile=r.data;if(profile){$("fullName").value=profile.full_name||"";$("role").value=profile.role||"customer";$("vehicleType").value=profile.vehicle_type||"Bike";$("vehicleCompany").value=profile.vehicle_company||"";$("vehicleModel").value=profile.vehicle_model||"";$("vehicleRegistration").value=profile.vehicle_registration||"";$("licenseNumber").value=profile.driving_license_number||"";$("experience").value=profile.driving_experience_years||0}let a=await db.rpc("is_friend_ride_admin"),admin=!a.error&&a.data===true;const isDriver=profile?.role==="driver";const isApproved=profile?.driver_approval_status==="approved";show("driverCard",isDriver&&!admin);show("referralCard",isDriver&&!admin&&isApproved);show("bookingCard",!isDriver&&!admin);show("adminCard",admin);show("adminReferralCard",admin);const appToggle=$("toggleDriverApplicationBtn"),appForm=$("driverApplicationForm");if(appToggle&&appForm){const canApply=isDriver&&!isApproved&&!admin;show("toggleDriverApplicationBtn",canApply);show("driverApplicationForm",false);if(!canApply)appForm.classList.add("hidden");if(isApproved)say("driverStatus","మీ Driver Registration ఇప్పటికే Approved అయింది. మళ్లీ నమోదు అవసరం లేదు.");else if(isDriver)say("driverStatus","మీ Driver Application ఇంకా approval కోసం వేచి ఉంది.");}if(isDriver)say("driverApproval","Approval Status: "+(profile.driver_approval_status||"pending"))}
+async function loadProfile(){let r=await db.from("profiles").select("*").eq("id",user.id).maybeSingle();if(r.error)throw r.error;profile=r.data;if(profile){const setValue=(id,value)=>{const el=$(id);if(el)el.value=value??""};setValue("fullName",profile.full_name);setValue("role",profile.role||"customer");setValue("vehicleType",profile.vehicle_type||"Bike");setValue("vehicleCompany",profile.vehicle_company);setValue("vehicleModel",profile.vehicle_model);setValue("vehicleRegistration",profile.vehicle_registration);setValue("licenseNumber",profile.driving_license_number);setValue("experience",profile.driving_experience_years??0)}let a=await db.rpc("is_friend_ride_admin"),admin=!a.error&&a.data===true;const isDriver=profile?.role==="driver";const isApproved=profile?.driver_approval_status==="approved";show("driverCard",isDriver&&!admin);show("referralCard",isDriver&&!admin&&isApproved);show("bookingCard",!isDriver&&!admin);show("adminCard",admin);show("adminReferralCard",admin);const appToggle=$("toggleDriverApplicationBtn"),appForm=$("driverApplicationForm");if(appToggle&&appForm){const canApply=isDriver&&!isApproved&&!admin;show("toggleDriverApplicationBtn",canApply);show("driverApplicationForm",false);if(!canApply)appForm.classList.add("hidden");if(isApproved)say("driverStatus","మీ Driver Registration ఇప్పటికే Approved అయింది. మళ్లీ నమోదు అవసరం లేదు.");else if(isDriver)say("driverStatus","మీ Driver Application ఇంకా approval కోసం వేచి ఉంది.");}if(isDriver)say("driverApproval","Approval Status: "+(profile.driver_approval_status||"pending"))}
 async function openApp(){await loadProfile();show("authCard",false);show("appArea",true);show("safetyCard",false);show("publicFeedbackCard",false);show("subscriptionPoster",false);say("userInfo","Verified mobile: "+local(phone||user.phone));live();await loadRides();if(profile?.role==="driver")await loadMyReferral()}
 $("adminLoginBtn").onclick=()=>{adminLoginMode=true;$("authCard").querySelector("h2").textContent="🛡️ Admin Login";$("sendOtpBtn").textContent="Admin OTP పంపండి";say("authStatus","Admin అనుమతి ఉన్న మొబైల్ నంబర్‌తో OTP పొందండి.");$("phone").focus()};
 $("sendOtpBtn").onclick=async()=>{let p=e164($("phone").value);if(!p)return say("authStatus","సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి");try{let r=await db.auth.signInWithOtp({phone:p,options:{shouldCreateUser:true}});if(r.error)throw r.error;requestedPhone=p;show("otpArea");say("authStatus","SMS OTP పంపబడింది")}catch(e){say("authStatus","OTP సమస్య: "+err(e))}};
@@ -98,14 +98,48 @@ $("copyReferralBtn").onclick=async()=>{const c=$("myReferralCode").value;if(!c)r
 $("shareReferralBtn").onclick=()=>{const c=$("myReferralCode").value;if(!c)return say("referralStatus","ముందుగా Referral Code లోడ్ చేయండి.");const url="https://ginniprasanthsuji-ops.github.io/friend-ride-/?ref="+encodeURIComponent(c);const msg="FRIEND RIDE Driver registration. Referral Code: "+c+"\\nJoin here: "+url+"\\nReferral offer terms apply.";window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank","noopener")};
 
 const languageText={
-te:{"languageSelect":"భాష","toggleDriverApplicationBtn":"🚗 Driver Application తెరవండి","applyDriverBtn":"Driver Application సేవ్","bookRideBtn":"Ride Request చేయండి","refreshRidesBtn":"Refresh","onlineBtn":"Online","offlineBtn":"Offline","loadDriversBtn":"Driver Applications లోడ్ చేయండి","logoutBtn":"Logout","userInfo":"లాగిన్ వివరాలు","driverApproval":"డ్రైవర్ అనుమతి స్థితి","bookingCard":"రైడ్ బుకింగ్","driverCard":"డ్రైవర్ డ్యాష్‌బోర్డ్"},
-en:{"languageSelect":"Language","toggleDriverApplicationBtn":"🚗 Open Driver Application","applyDriverBtn":"Save Driver Application","bookRideBtn":"Request Ride","refreshRidesBtn":"Refresh","onlineBtn":"Online","offlineBtn":"Offline","loadDriversBtn":"Load Driver Applications","logoutBtn":"Log out","userInfo":"Login details","driverApproval":"Driver approval status","bookingCard":"Ride Booking","driverCard":"Driver Dashboard"},
-hi:{"languageSelect":"भाषा","toggleDriverApplicationBtn":"🚗 ड्राइवर आवेदन खोलें","applyDriverBtn":"ड्राइवर आवेदन सेव करें","bookRideBtn":"राइड बुक करें","refreshRidesBtn":"रीफ्रेश","onlineBtn":"ऑनलाइन","offlineBtn":"ऑफलाइन","loadDriversBtn":"ड्राइवर आवेदन लोड करें","logoutBtn":"लॉग आउट","userInfo":"लॉगिन विवरण","driverApproval":"ड्राइवर अनुमोदन स्थिति","bookingCard":"राइड बुकिंग","driverCard":"ड्राइवर डैशबोर्ड"}
+te:{"languageSelect":"భాష","toggleDriverApplicationBtn":"🚗 Driver Application తెరవండి","applyDriverBtn":"Driver Application సేవ్","bookRideBtn":"Ride Request చేయండి","refreshRidesBtn":"Refresh","onlineBtn":"Online","offlineBtn":"Offline","loadDriversBtn":"Driver Applications లోడ్ చేయండి","logoutBtn":"Logout"},
+en:{"languageSelect":"Language","toggleDriverApplicationBtn":"🚗 Open Driver Application","applyDriverBtn":"Save Driver Application","bookRideBtn":"Request Ride","refreshRidesBtn":"Refresh","onlineBtn":"Online","offlineBtn":"Offline","loadDriversBtn":"Load Driver Applications","logoutBtn":"Log out"},
+hi:{"languageSelect":"भाषा","toggleDriverApplicationBtn":"🚗 ड्राइवर आवेदन खोलें","applyDriverBtn":"ड्राइवर आवेदन सेव करें","bookRideBtn":"राइड बुक करें","refreshRidesBtn":"रीफ्रेश","onlineBtn":"ऑनलाइन","offlineBtn":"ऑफलाइन","loadDriversBtn":"ड्राइवर आवेदन लोड करें","logoutBtn":"लॉग आउट"}
 };
-function applyLanguage(lang){const dict=languageText[lang]||languageText.te;for(const [id,value] of Object.entries(dict)){const el=$(id);if(el){if(id==="languageSelect")continue;el.textContent=value}}document.documentElement.lang=lang;try{localStorage.setItem("friendRideLanguage",lang)}catch(_){}}
-$("languageSelect").addEventListener("change",e=>applyLanguage(e.target.value));
-$("toggleDriverApplicationBtn").onclick=()=>{if(profile?.role!=="driver"||profile?.driver_approval_status==="approved")return;const f=$("driverApplicationForm");f.classList.toggle("hidden");$("toggleDriverApplicationBtn").textContent=f.classList.contains("hidden")?(languageText[$("languageSelect").value]?.toggleDriverApplicationBtn||languageText.te.toggleDriverApplicationBtn):({"te":"Driver Application మూసివేయండి","en":"Close Driver Application","hi":"ड्राइवर आवेदन बंद करें"}[$("languageSelect").value]||"Close Driver Application")};
-try{const saved=localStorage.getItem("friendRideLanguage");if(saved&&["te","en","hi"].includes(saved))$("languageSelect").value=saved;applyLanguage($("languageSelect").value)}catch(_){applyLanguage("te")}
+function applyLanguage(lang){
+  const dict=languageText[lang]||languageText.te;
+  for(const [id,value] of Object.entries(dict)){
+    const el=$(id);
+    if(!el) continue;
+    if(["bookingCard","driverCard","userInfo","driverApproval","languageSelect"].includes(id)) continue;
+    if(el.tagName==="INPUT"||el.tagName==="TEXTAREA"){
+      if(el.hasAttribute("placeholder")) el.placeholder=value;
+    } else {
+      el.textContent=value;
+    }
+  }
+  const headingMap={
+    te:{bookingCard:"🛺 రైడ్ బుకింగ్",driverCard:"🚗 డ్రైవర్ డ్యాష్‌బోర్డ్"},
+    en:{bookingCard:"🛺 Ride Booking",driverCard:"🚗 Driver Dashboard"},
+    hi:{bookingCard:"🛺 राइड बुकिंग",driverCard:"🚗 ड्राइवर डैशबोर्ड"}
+  };
+  for(const id of ["bookingCard","driverCard"]){
+    const card=$(id), heading=card?.querySelector("h2");
+    if(card&&heading) heading.textContent=(headingMap[lang]||headingMap.te)[id];
+  }
+  document.documentElement.lang=lang;
+  try{localStorage.setItem("friendRideLanguage",lang)}catch(_){}
+}
+$("languageSelect")?.addEventListener("change",e=>applyLanguage(e.target.value));
+$("toggleDriverApplicationBtn").onclick=()=>{
+  if(profile?.role!=="driver"||profile?.driver_approval_status==="approved")return;
+  const f=$("driverApplicationForm"); if(!f)return;
+  f.classList.toggle("hidden");
+  $("toggleDriverApplicationBtn").textContent=f.classList.contains("hidden")
+    ?(languageText[$("languageSelect").value]?.toggleDriverApplicationBtn||languageText.te.toggleDriverApplicationBtn)
+    :({"te":"Driver Application మూసివేయండి","en":"Close Driver Application","hi":"ड्राइवर आवेदन बंद करें"}[$("languageSelect").value]||"Close Driver Application");
+};
+try{
+  const saved=localStorage.getItem("friendRideLanguage");
+  if(saved&&["te","en","hi"].includes(saved)&&$("languageSelect")) $("languageSelect").value=saved;
+  applyLanguage($("languageSelect")?.value||"te");
+}catch(_){applyLanguage("te")}
 async function init(){try{let r=await db.auth.getSession();if(r.data?.session){user=r.data.session.user;phone=user.phone||null;await openApp()}}catch(e){say("authStatus","Session లోడ్ కాలేదు: "+err(e))}}
 db.auth.onAuthStateChange((_e,s)=>{if(s?.user){user=s.user;phone=s.user.phone||phone}});init();
 })();
