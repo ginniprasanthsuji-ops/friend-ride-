@@ -95,20 +95,3 @@ async function init(){try{let r=await db.auth.getSession();if(r.data?.session){u
 db.auth.onAuthStateChange((_e,s)=>{if(s?.user){user=s.user;phone=s.user.phone||phone}});init();
 })();
 </script><script>if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));</script></body></html>
-'''
-# Save complete file
-out = Path("/mnt/data/FRIEND_RIDE_FR04_index.html")
-out.write_text(html, encoding="utf-8")
-# Basic static sanity checks
-checks = {
-    "html_starts_doctype": html.lstrip().startswith("<!doctype html>"),
-    "has_fr04_form": 'id="driverApplicationCard"' in html,
-    "has_application_submit_handler": 'submitDriverApplicationBtn").onclick=submitDriverApplication' in html,
-    "has_admin_approval_rpc": 'admin_approve_driver' in html,
-    "has_accept_ride_rpc": 'accept_ride' in html,
-    "closes_html": html.rstrip().endswith("</html>"),
-    "bytes": out.stat().st_size,
-    "lines": len(html.splitlines()),
-}
-print("Created:", out)
-print(checks)
