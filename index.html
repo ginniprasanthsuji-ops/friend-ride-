@@ -190,6 +190,404 @@ $("loadSubscriptionsBtn").onclick=loadAdminSubscriptions;
 
 $("logoutBtn").onclick=async()=>{stopLive();await db.auth.signOut();user=null;profile=null;phone=null;show("appArea",false);show("authCard",true);show("safetyCard",true);show("subscriptionPoster",true);show("otpArea",false);say("authStatus","Logout అయ్యారు.")};
 $("languageSelect").onchange=e=>{document.documentElement.lang=e.target.value};
+
+/* ==========================================
+   FRIEND RIDE FR-10 TO FR-15 ADD-ON
+   ========================================== */
+
+async function setupFR10to15() {
+  if (!user || !profile) return;
+
+  let panel = $("fr10to15Panel");
+
+  if (!panel) {
+    panel = document.createElement("section");
+    panel.id = "fr10to15Panel";
+    panel.className = "card";
+    panel.innerHTML = `
+      <h2>🚀 FRIEND RIDE — FR-10 to FR-15</h2>
+
+      <section class="item">
+        <h3>FR-10 — Driver Subscription</h3>
+        <div id="fr10Status" class="status">Subscription status</div>
+        <button id="fr10Refresh">Subscription Refresh</button>
+      </section>
+
+      <section class="item">
+        <h3>FR-11 — GPS Location</h3>
+        <p class="muted">Driver GPS location update చేయండి.</p>
+        <button id="fr11GPS">📍 GPS Location Update</button>
+        <div id="fr11Status" class="status"></div>
+      </section>
+
+      <section class="item">
+        <h3>FR-12 — Ride Location Sharing</h3>
+        <label>Ride ID</label>
+        <input id="fr12RideId" placeholder="మీ Accepted Ride ID">
+        <button id="fr12Share">Driver Location Share</button>
+        <button id="fr12View" class="secondary">Latest Location View</button>
+        <div id="fr12Status" class="status"></div>
+      </section>
+
+      <section class="item">
+        <h3>FR-13 — Fare Negotiation</h3>
+        <p>Driver Counter Offer మరియు Customer Accept / Reject ఫీచర్లు ఇప్పటికే ఉన్న Driver Requests, My Rides విభాగాల్లో పనిచేస్తాయి.</p>
+        <div id="fr13Status" class="status">
+          Existing Counter Offer system ఉపయోగించండి.
+        </div>
+      </section>
+
+      <section class="item">
+        <h3>FR-14 — Notifications</h3>
+        <button id="fr14Refresh">🔔 Notifications Refresh</button>
+        <div id="fr14List"></div>
+      </section>
+
+      <section class="item">
+        <h3>FR-15 — Feedback & Complaint</h3>
+        <label>Completed Ride ID</label>
+        <input id="fr15RideId" placeholder="Ride ID">
+        <label>Rating</label>
+        <select id="fr15Rating">
+          <option value="5">⭐⭐⭐⭐⭐ 5</option>
+          <option value="4">⭐⭐⭐⭐ 4</option>
+          <option value="3">⭐⭐⭐ 3</option>
+          <option value="2">⭐⭐ 2</option>
+          <option value="1">⭐ 1</option>
+        </select>
+        <label>Feedback</label>
+        <textarea id="fr15Feedback" placeholder="మీ అభిప్రాయం"></textarea>
+        <button id="fr15Submit">Submit Feedback</button>
+
+        <hr>
+        <label>Complaint వివరాలు</label>
+        <textarea id="fr15Complaint" placeholder="మీ సమస్యను వివరించండి"></textarea>
+        <button id="fr15ComplaintSubmit" class="secondary">Submit Complaint</button>
+        <div id="fr15Status" class="status"></div>
+      </section>
+
+      <section class="item safety">
+        <h3>🆘 Emergency SOS</h3>
+        <label>Ride ID (ఉంటే)</label>
+        <input id="fr15SOSRide" placeholder="Ride ID">
+        <label>Emergency Message</label>
+        <input id="fr15SOSMessage" placeholder="Emergency వివరాలు">
+        <button id="fr15SOS" style="background:#c62828">🆘 SOS Alert Save</button>
+        <div id="fr15SOSStatus" class="status"></div>
+        <p class="muted">SOS వివరాలు మాత్రమే Supabaseలో సేవ్ అవుతాయి. ఇది 112కు కాల్ చేయదు లేదా పోలీసులకు ఆటోమేటిక్ అలర్ట్ పంపదు. అత్యవసర పరిస్థితిలో 112కు నేరుగా కాల్ చేయండి.</p>
+      </section>
+    `;
+
+    $("appArea").appendChild(panel);
+  }
+
+  const msg = (id, value) => {
+    const el = $(id);
+    if (el) el.textContent = value || "";
+  };
+
+  // FR-10: Subscription status
+  $("fr10Refresh").onclick = async () => {
+    try {
+      const result = await rpc("my_driver_subscription", {});
+      const s = Array.isArray(result) ? result[0] : result;
+      msg("fr10Status",
+        "Status: " + (s?.subscription_status || "none") +
+        " | Active: " + (s?.is_active ? "YES" : "NO") +
+        " | Expiry: " + (s?.expires_at || "—")
+      );
+    } catch (e) {
+      msg("fr10Status", "Subscription error: " + err(e));
+    }
+  };
+
+  // FR-11: GPS location update
+  $("fr11GPS").onclick = async () => {
+    try {
+      if (profile.role !== "driver") {
+        throw Error("Driver account మాత్రమే GPS update చేయగలదు.");
+      }
+
+      if (!navigator.geolocation) {
+        throw Error("GPS support లేదు.");
+      }
+
+      msg("fr11Status", "GPS location పొందుతున్నాం...");
+
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          { enableHighAccuracy: true, timeout: 20000 }
+        );
+      });
+
+      const result = await db.from("driver_locations").upsert({
+        driver_id: user.id,
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+        updated_at: new Date().toISOString()
+      }, { onConflict: "driver_id" });
+
+      if (result.error) throw result.error;
+
+      msg("fr11Status", "GPS Location Update అయింది.");
+    } catch (e) {
+      msg("fr11Status", "GPS Error: " + err(e));
+    }
+  };
+
+  // FR-12: Driver shares one GPS point for an assigned ride
+  $("fr12Share").onclick = async () => {
+    try {
+      if (profile.role !== "driver") {
+        throw Error("Driver మాత్రమే location share చేయగలరు.");
+      }
+
+      const rideId = $("fr12RideId").value.trim();
+      if (!rideId) throw Error("Ride ID నమోదు చేయండి.");
+
+      const rideResult = await db.from("rides")
+        .select("id,driver_id,status")
+        .eq("id", rideId)
+        .eq("driver_id", user.id)
+        .maybeSingle();
+
+      if (rideResult.error) throw rideResult.error;
+      if (!rideResult.data) throw Error("మీకు కేటాయించిన Ride ID కాదు.");
+
+      if (!navigator.geolocation) throw Error("GPS అందుబాటులో లేదు.");
+
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve, reject,
+          { enableHighAccuracy: true, timeout: 20000 }
+        );
+      });
+
+      const result = await db.from("fr_ride_tracking").insert({
+        ride_id: rideId,
+        driver_id: user.id,
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+        accuracy_m: pos.coords.accuracy,
+        updated_at: new Date().toISOString()
+      });
+
+      if (result.error) throw result.error;
+
+      msg("fr12Status", "మీ GPS Location ఈ Ride కోసం Share అయింది.");
+    } catch (e) {
+      msg("fr12Status", "Location Share Error: " + err(e));
+    }
+  };
+
+  // FR-12: Customer or assigned driver views latest shared location
+  $("fr12View").onclick = async () => {
+    try {
+      const rideId = $("fr12RideId").value.trim();
+      if (!rideId) throw Error("Ride ID నమోదు చేయండి.");
+
+      const rideResult = await db.from("rides")
+        .select("id,customer_id,driver_id")
+        .eq("id", rideId)
+        .maybeSingle();
+
+      if (rideResult.error) throw rideResult.error;
+
+      const ride = rideResult.data;
+      if (!ride) throw Error("Ride కనుగొనబడలేదు.");
+
+      if (ride.customer_id !== user.id && ride.driver_id !== user.id) {
+        throw Error("ఈ Ride మీకు సంబంధించినది కాదు.");
+      }
+
+      const result = await db.from("fr_ride_tracking")
+        .select("latitude,longitude,updated_at")
+        .eq("ride_id", rideId)
+        .order("updated_at", { ascending: false })
+        .limit(1);
+
+      if (result.error) throw result.error;
+
+      const loc = result.data?.[0];
+      if (!loc) throw Error("Driver ఇంకా Location Share చేయలేదు.");
+
+      const mapUrl = "https://www.google.com/maps?q=" +
+        loc.latitude + "," + loc.longitude;
+
+      msg("fr12Status",
+        "Latest location: " + loc.latitude + ", " + loc.longitude +
+        " | Updated: " + new Date(loc.updated_at).toLocaleString()
+      );
+
+      window.open(mapUrl, "_blank", "noopener");
+    } catch (e) {
+      msg("fr12Status", "Location View Error: " + err(e));
+    }
+  };
+
+  // FR-13: Existing bargaining system is retained
+  msg("fr13Status",
+    "మీ ప్రస్తుత Counter Offer / Accept / Reject వ్యవస్థ అలాగే ఉంటుంది."
+  );
+
+  // FR-14: Read own notifications
+  $("fr14Refresh").onclick = async () => {
+    const box = $("fr14List");
+    box.replaceChildren();
+
+    try {
+      const result = await db.from("fr_ride_notifications")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(30);
+
+      if (result.error) throw result.error;
+
+      for (const n of result.data || []) {
+        const item = document.createElement("div");
+        item.className = "item";
+
+        const title = document.createElement("strong");
+        title.textContent = n.title;
+
+        const body = document.createElement("p");
+        body.textContent = n.message;
+
+        const date = document.createElement("small");
+        date.textContent = new Date(n.created_at).toLocaleString();
+
+        item.append(title, body, date);
+
+        if (!n.read_at) {
+          const button = document.createElement("button");
+          button.className = "secondary";
+          button.textContent = "Mark as Read";
+
+          button.onclick = async () => {
+            const update = await db.from("fr_ride_notifications")
+              .update({ read_at: new Date().toISOString() })
+              .eq("id", n.id)
+              .eq("user_id", user.id);
+
+            if (update.error) {
+              msg("fr14List", "Update Error: " + err(update.error));
+            } else {
+              $("fr14Refresh").click();
+            }
+          };
+
+          item.append(button);
+        }
+
+        box.append(item);
+      }
+
+      if (!result.data?.length) {
+        box.textContent = "Notifications లేవు.";
+      }
+    } catch (e) {
+      box.textContent = "Notification Error: " + err(e);
+    }
+  };
+
+  // FR-15: Feedback
+  $("fr15Submit").onclick = async () => {
+    try {
+      const rideId = $("fr15RideId").value.trim();
+      const rating = Number($("fr15Rating").value);
+      const comments = $("fr15Feedback").value.trim();
+
+      if (!rideId) throw Error("Ride ID నమోదు చేయండి.");
+
+      const result = await db.from("fr_ride_feedback").insert({
+        ride_id: rideId,
+        reviewer_id: user.id,
+        rating,
+        comments
+      });
+
+      if (result.error) throw result.error;
+
+      msg("fr15Status", "Feedback విజయవంతంగా సేవ్ అయింది.");
+      $("fr15Feedback").value = "";
+    } catch (e) {
+      msg("fr15Status", "Feedback Error: " + err(e));
+    }
+  };
+
+  // FR-15: Complaint
+  $("fr15ComplaintSubmit").onclick = async () => {
+    try {
+      const rideId = $("fr15RideId").value.trim();
+      const complaint = $("fr15Complaint").value.trim();
+
+      if (!rideId) throw Error("Ride ID నమోదు చేయండి.");
+      if (complaint.length < 5) {
+        throw Error("Complaint కనీసం 5 అక్షరాలు ఉండాలి.");
+      }
+
+      const result = await db.from("fr_ride_complaints").insert({
+        ride_id: rideId,
+        reporter_id: user.id,
+        complaint
+      });
+
+      if (result.error) throw result.error;
+
+      msg("fr15Status", "Complaint Admin పరిశీలన కోసం పంపబడింది.");
+      $("fr15Complaint").value = "";
+    } catch (e) {
+      msg("fr15Status", "Complaint Error: " + err(e));
+    }
+  };
+
+  // SOS: Save emergency record only
+  $("fr15SOS").onclick = async () => {
+    try {
+      let latitude = null;
+      let longitude = null;
+
+      if (navigator.geolocation) {
+        try {
+          const pos = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              resolve, reject,
+              { enableHighAccuracy: true, timeout: 10000 }
+            );
+          });
+          latitude = pos.coords.latitude;
+          longitude = pos.coords.longitude;
+        } catch (_) {}
+      }
+
+      const result = await db.from("fr_ride_sos").insert({
+        ride_id: $("fr15SOSRide").value.trim() || null,
+        sender_id: user.id,
+        latitude,
+        longitude,
+        message: $("fr15SOSMessage").value.trim() || "Emergency SOS"
+      });
+
+      if (result.error) throw result.error;
+
+      msg("fr15SOSStatus",
+        "SOS వివరాలు సేవ్ అయ్యాయి. అత్యవసరమైతే 112కు కాల్ చేయండి."
+      );
+    } catch (e) {
+      msg("fr15SOSStatus", "SOS Error: " + err(e));
+    }
+  };
+
+  // Initial loads
+  if (profile.role === "driver") {
+    $("fr10Refresh").click();
+  }
+
+  $("fr14Refresh").click();
+}
 async function init(){try{const r=await db.auth.getSession();if(r.data?.session){user=r.data.session.user;phone=user.phone||null;await openApp()}}catch(e){say("authStatus","Session లోడ్ కాలేదు: "+err(e))}}
 db.auth.onAuthStateChange((_e,s)=>{if(s?.user){user=s.user;phone=s.user.phone||phone}});init();
 })();
