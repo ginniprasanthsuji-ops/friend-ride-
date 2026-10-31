@@ -43,14 +43,25 @@ nav button{background:transparent;color:var(--g);font-size:12px}
 <div class="row"><button onclick="myLocation()">📍 My Location</button><button class="alt" onclick="routePreview()">Show Route</button></div><div id="customerMap" class="map" style="margin-top:10px"></div>
 <button style="width:100%" onclick="bookPreview()">Find a Ride</button><div id="bookingMsg" class="status">Pickup, Drop, Vehicle, Fare ఎంచుకోండి.</div></div>
 <div class="card"><h3>Ride Progress</h3><div id="rideInfo">మీ Ride వివరాలు ఇక్కడ కనిపిస్తాయి.</div><button class="alt" onclick="alert('మీ existing Ride History RPC‌ను ఇక్కడ connect చేయాలి.')">My Rides</button></div>
-<div class="card"><h3>🆘 Emergency SOS</h3><div class="sos"><a href="tel:112">112<br>Emergency</a><a href="tel:100">100<br>Police</a><a href="tel:108">108<br>Ambulance</a><a href="#" onclick="personalCall();return false">Personal<br>Contact</a></div><button class="red" onclick="saveSOS()">Save SOS Location</button><div id="sosMsg" class="status">SOS record కోసం login అవసరం.</div></div>
+<div class="card"><h3>🆘 Emergency SOS</h3><div class="sos"><a href="tel:112">112<br>Emergency</a><a href="tel:100">100<br>Police</a><a href="tel:108">108<br>Ambulance</a><a href="#" onclick="callSavedEmergency('customer');return false">Personal<br>Contact</a></div>
+<label>మీ Emergency Contact పేరు (Relative / Friend)</label><input id="customerEmergencyName" placeholder="ఉదా: భార్య / తండ్రి / సోదరుడు">
+<label>వారి మొబైల్ నంబర్</label><input id="customerEmergencyPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number">
+<button class="alt" onclick="saveEmergencyContact('customer')">Save My Emergency Contact</button>
+<button class="red" onclick="saveSOS()">Save SOS Location</button><div id="sosMsg" class="status">112 / 100 / 108తో పాటు మీ బంధువు నంబర్‌ను కూడా సేవ్ చేసుకోవచ్చు.</div></div>
 <div class="card"><h3>Feedback & Complaint</h3><label>Ride ID</label><input id="rideId"><label>Feedback</label><textarea id="feedback"></textarea><button onclick="alert('మీ ప్రస్తుత feedback insert logic‌ను connect చేయాలి.')">Submit Feedback</button><label>Complaint</label><textarea id="complaint"></textarea><button class="alt" onclick="alert('మీ ప్రస్తుత complaint insert logic‌ను connect చేయాలి.')">Submit Complaint</button></div>
 </section>
 <section id="driver" class="hidden">
 <div class="card"><h2>🚗 Driver Dashboard</h2><div class="row"><button onclick="online(true)">Go Online</button><button class="alt" onclick="online(false)">Go Offline</button></div><div id="driverMsg" class="status">Online అయినప్పుడు requests చూడండి.</div><div class="stats"><div class="stat">Today Rides<b>—</b></div><div class="stat">Earnings<b>₹—</b></div><div class="stat">Subscription<b>₹500</b></div></div></div>
 <div class="card"><h3>New Ride Requests</h3><button class="alt" onclick="alert('మీ get_driver_requests RPC‌ను connect చేయాలి.')">Refresh Requests</button><div id="requests">Ride requests ఇక్కడ కనిపిస్తాయి.</div></div>
 <div class="card"><h3>Live GPS Navigation</h3><div id="driverMap" class="map"></div><button onclick="startGps()">Start Live Location</button><button class="alt" onclick="stopGps()">Stop</button><div id="gpsMsg" class="status">GPS అనుమతి ఇవ్వండి.</div></div>
-<div class="card"><h3>Subscription & Profile</h3><p>₹500 / Month</p><button onclick="alert('request_paid_driver_subscription RPC connect చేయాలి.')">Request Subscription</button><label>Vehicle Type</label><select><option>Bike</option><option>Auto</option><option>Car</option></select><label>Vehicle Model</label><input placeholder="Vehicle model"><label>Registration Number</label><input placeholder="AP.."><label>Experience</label><input placeholder="Years"><button class="alt" onclick="alert('మీ profiles update logic connect చేయాలి.')">Save Profile</button></div>
+<div class="card"><h3>Subscription & Driver Registration</h3><p>Driver monthly subscription: <b>₹500 / Month</b></p><button onclick="alert('request_paid_driver_subscription RPC connect చేయాలి.')">Request Subscription</button>
+<label>Driver Emergency Contact పేరు (Relative / Friend)</label><input id="driverEmergencyName" placeholder="ఉదా: భార్య / తండ్రి / సోదరుడు">
+<label>Emergency Contact మొబైల్ నంబర్</label><input id="driverEmergencyPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number">
+<button class="alt" onclick="saveEmergencyContact('driver')">Save Driver Emergency Contact</button><div id="driverEmergencyMsg" class="status">మీ అత్యవసర బంధువు / స్నేహితుడి నంబర్ నమోదు చేయండి.</div>
+<label>Driver Profile Photo</label><input id="driverPhoto" type="file" accept="image/*" capture="user" onchange="previewDriverPhoto(event)">
+<img id="driverPhotoPreview" class="hidden" alt="Driver photo preview" style="width:112px;height:112px;object-fit:cover;border-radius:50%;border:3px solid #078b61;margin-top:10px">
+<p class="muted">JPG / PNG ఫోటో, గరిష్ఠం 5 MB.</p><button class="alt" onclick="uploadDriverPhoto()">Upload Profile Photo</button><div id="photoMsg" class="status">ఫోటో ఎంచుకోండి.</div>
+<label>Driver Full Name</label><input id="driverFullName" placeholder="మీ పూర్తి పేరు"><label>Vehicle Type</label><select id="driverVehicleType"><option>Bike</option><option>Auto</option><option>Car</option></select><label>Vehicle Model</label><input id="driverVehicleModel" placeholder="Vehicle model"><label>Registration Number</label><input id="driverVehicleNumber" placeholder="AP.."><label>Driving Experience</label><input id="driverExperience" type="number" min="0" placeholder="Years"><button class="alt" onclick="alert('మీ profiles update logic connect చేయాలి.')">Save Registration</button></div>
 </section>
 <section id="admin" class="hidden">
 <div class="card"><h2>🛡️ Admin Dashboard</h2><div class="stats"><div class="stat">Pending Drivers<b>—</b></div><div class="stat">Subscriptions<b>—</b></div><div class="stat">Live Rides<b>—</b></div></div><button onclick="alert('Admin RPCs connect చేసిన తర్వాత dashboard data వస్తుంది.')">Refresh Dashboard</button></div>
@@ -71,7 +82,7 @@ function choose(r){role=r;$('welcome').classList.add('hidden');$('login').classL
 function back(){$('login').classList.add('hidden');$('welcome').classList.remove('hidden')}
 async function sendOtp(){try{let p=$('phone').value.trim();if(!/^[6-9][0-9]{9}$/.test(p))throw Error('సరైన 10 అంకెల నంబర్ ఇవ్వండి');let {error}=await db.auth.signInWithOtp({phone:'+91'+p});if(error)throw error;$('loginMsg').textContent='OTP పంపించాం.'}catch(e){$('loginMsg').textContent=e.message}}
 async function verifyOtp(){try{let p=$('phone').value.trim(),token=$('otp').value.trim();let {data,error}=await db.auth.verifyOtp({phone:'+91'+p,token,type:'sms'});if(error)throw error;user=data.user;openApp()}catch(e){$('loginMsg').textContent=e.message}}
-function openApp(){$('login').classList.add('hidden');$('welcome').classList.add('hidden');$('dashboard').classList.remove('hidden');$('nav').classList.remove('hidden');$('roleTag').textContent=role.toUpperCase();$('welcomeName').textContent='నమస్కారం! '+(user?.phone||'');['customer','driver','admin'].forEach(x=>$(x).classList.toggle('hidden',x!==role));setTimeout(()=>{if(role==='customer')initMap('customerMap',1);if(role==='driver')initMap('driverMap',2)},250)}
+function openApp(){loadEmergencyContact('customer');loadEmergencyContact('driver');$('login').classList.add('hidden');$('welcome').classList.add('hidden');$('dashboard').classList.remove('hidden');$('nav').classList.remove('hidden');$('roleTag').textContent=role.toUpperCase();$('welcomeName').textContent='నమస్కారం! '+(user?.phone||'');['customer','driver','admin'].forEach(x=>$(x).classList.toggle('hidden',x!==role));setTimeout(()=>{if(role==='customer')initMap('customerMap',1);if(role==='driver')initMap('driverMap',2)},250)}
 function initMap(id,n){let m=n===1?map1:map2;if(m)return;m=L.map(id).setView([18.3,83.9],13);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(m);if(n===1)map1=m;else map2=m}
 function vehicle(el,v){document.querySelectorAll('.vehicle').forEach(x=>x.classList.remove('active'));el.classList.add('active');chosenVehicle=v}
 function myLocation(){navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;$('pickup').value=lat+', '+lng;initMap('customerMap',1);map1.setView([lat,lng],16);L.marker([lat,lng]).addTo(map1).bindPopup('Pickup').openPopup()},e=>$('bookingMsg').textContent='GPS: '+e.message,{enableHighAccuracy:true})}
@@ -81,6 +92,48 @@ function online(v){$('driverMsg').textContent=v?'Online UI selected. Existing pr
 function startGps(){if(!navigator.geolocation)return;$('gpsMsg').textContent='GPS ప్రారంభమవుతోంది…';watch=navigator.geolocation.watchPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;initMap('driverMap',2);map2.setView([lat,lng],16);L.marker([lat,lng]).addTo(map2);$('gpsMsg').textContent='GPS: '+lat.toFixed(5)+', '+lng.toFixed(5)+' (map preview)'},e=>$('gpsMsg').textContent=e.message,{enableHighAccuracy:true,maximumAge:5000})}
 function stopGps(){if(watch!==null){navigator.geolocation.clearWatch(watch);watch=null;$('gpsMsg').textContent='GPS stopped'}}
 async function saveSOS(){try{if(!user)throw Error('ముందుగా login చేయండి');let a=null,b=null;try{let p=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{enableHighAccuracy:true,timeout:8000}));a=p.coords.latitude;b=p.coords.longitude}catch(_){}let {error}=await db.from('fr_ride_sos').insert({ride_id:null,sender_id:user.id,latitude:a,longitude:b,message:'Emergency SOS'});if(error)throw error;$('sosMsg').textContent='SOS record Supabaseలో save అయింది. తక్షణ ప్రమాదంలో 112కు కాల్ చేయండి.'}catch(e){$('sosMsg').textContent='SOS: '+e.message}}
+let selectedDriverPhoto=null;
+let uploadedDriverPhotoUrl=null;
+function previewDriverPhoto(event){
+ const file=event.target.files&&event.target.files[0]; if(!file)return;
+ if(!file.type.startsWith("image/")){ $("photoMsg").textContent="Image file మాత్రమే ఎంచుకోండి."; event.target.value=""; return; }
+ if(file.size>5*1024*1024){ $("photoMsg").textContent="ఫోటో 5 MB లోపు ఉండాలి."; event.target.value=""; return; }
+ selectedDriverPhoto=file; const img=$("driverPhotoPreview"); img.src=URL.createObjectURL(file); img.classList.remove("hidden"); uploadedDriverPhotoUrl=null;
+ $("photoMsg").textContent="Preview సిద్ధంగా ఉంది. Upload Profile Photo నొక్కండి.";
+}
+async function uploadDriverPhoto(){
+ try{
+  if(!user)throw Error("ముందుగా Driver Login చేయండి.");
+  if(!selectedDriverPhoto)throw Error("ముందుగా Profile Photo ఎంచుకోండి.");
+  const ext=(selectedDriverPhoto.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const path=user.id+"/profile-"+Date.now()+"."+ext;
+  const {data,error}=await db.storage.from("driver-photos").upload(path,selectedDriverPhoto,{upsert:true,contentType:selectedDriverPhoto.type});
+  if(error)throw error;
+  const {data:pub}=db.storage.from("driver-photos").getPublicUrl(data.path);
+  uploadedDriverPhotoUrl=pub.publicUrl;
+  $("photoMsg").textContent="ఫోటో Upload అయింది. Profile URL: "+uploadedDriverPhotoUrl;
+ }catch(e){$("photoMsg").textContent="Upload Error: "+e.message+" — Supabase Storageలో driver-photos bucket మరియు upload policy అవసరం."}
+}
+function saveEmergencyContact(who){
+ const name=$(who+"EmergencyName").value.trim();
+ const phone=$(who+"EmergencyPhone").value.trim();
+ if(!/^[6-9][0-9]{9}$/.test(phone)){alert("సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.");return}
+ const key="friendride_emergency_"+who;
+ localStorage.setItem(key,JSON.stringify({name,phone}));
+ const target=who==="customer"?"sosMsg":"driverEmergencyMsg";
+ $(target).textContent="Emergency contact ఈ మొబైల్‌లో సేవ్ అయింది: "+(name||"Relative")+" • "+phone;
+}
+function callSavedEmergency(who){
+ const saved=localStorage.getItem("friendride_emergency_"+who);
+ if(!saved){alert("ముందుగా మీ Emergency Contact పేరు, నంబర్ సేవ్ చేయండి.");return}
+ const c=JSON.parse(saved);
+ if(confirm((c.name||"Emergency Contact")+" కు కాల్ చేయాలా? "+c.phone)){location.href="tel:"+c.phone}
+}
+function loadEmergencyContact(who){
+ try{const raw=localStorage.getItem("friendride_emergency_"+who);if(!raw)return;const c=JSON.parse(raw);
+ const n=$(who+"EmergencyName"),p=$(who+"EmergencyPhone");if(n)n.value=c.name||"";if(p)p.value=c.phone||"";
+ }catch(e){}
+}
 function personalCall(){if(!PERSONAL_EMERGENCY_NUMBER){alert('Personal emergency number codeలో set చేయలేదు.');return}if(confirm('Emergency contact‌కు call చేయాలా?'))location.href='tel:'+PERSONAL_EMERGENCY_NUMBER}
 async function logout(){stopGps();await db.auth.signOut();user=null;$('dashboard').classList.add('hidden');$('nav').classList.add('hidden');$('welcome').classList.remove('hidden')}
 db.auth.getSession().then(({data})=>{if(data.session){user=data.session.user;role='customer';openApp()}});
