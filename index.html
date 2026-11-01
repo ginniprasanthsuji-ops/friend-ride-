@@ -22,17 +22,22 @@
 
 <section class="panel" id="loginPanel" style="max-width:480px;margin:22px auto;">
  <h2 style="margin-top:0;color:#07543d">📱 FRIEND RIDE – Login</h2>
- <p class="muted">ముందుగా Login రకాన్ని ఎంచుకోండి. Customer, Driver, Admin అందరికీ SMS OTP మాత్రమే.</p>
+ <p class="muted">Customer / Driver / Admin ఎంచుకోండి. కొత్తవారు ముందుగా Sign Up చేయాలి. Existing users Password లేదా OTPతో Login చేయవచ్చు.</p>
  <div class="login-role-grid" role="group" aria-label="Select login type">
   <button type="button" class="login-role selected" id="roleCustomerBtn" onclick="selectLoginRole('customer')"><span>🧑</span>Customer<small>Ride Booking</small></button>
   <button type="button" class="login-role" id="roleDriverBtn" onclick="selectLoginRole('driver')"><span>🚕</span>Driver<small>Drive & Earn</small></button>
   <button type="button" class="login-role" id="roleAdminBtn" onclick="selectLoginRole('admin')"><span>🛡️</span>Admin<small>Manage App</small></button>
  </div>
- <div id="loginRoleHint" class="status">Customer Login ఎంచుకున్నారు. మీ Customer accountకు లింక్ అయిన Mobile Number నమోదు చేయండి.</div>
- <label>Mobile Number</label><input id="loginPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 అంకెల మొబైల్ నంబర్" autocomplete="tel">
- <button class="btn" id="sendOtpBtn" style="width:100%;margin-top:14px" onclick="sendLoginOtp()">Send Customer SMS OTP</button>
- <div id="otpArea" class="is-hidden"><label>SMS OTP</label><input id="loginOtp" type="tel" inputmode="numeric" maxlength="6" placeholder="6 అంకెల OTP" autocomplete="one-time-code"><button class="btn" id="verifyOtpBtn" style="width:100%;margin-top:10px" onclick="verifyLoginOtp()">Verify OTP & Continue</button></div>
- <div id="loginMsg" class="status">Customer / Driver / Adminలో ఒకదాన్ని ఎంచుకుని Mobile Number నమోదు చేయండి.</div>
+ <div class="login-role-grid" style="grid-template-columns:repeat(3,1fr)">
+  <button type="button" class="btn" id="tabPassword" onclick="showAuthTab('password')">Password Login</button>
+  <button type="button" class="btn light" id="tabOtp" onclick="showAuthTab('otp')">OTP Login</button>
+  <button type="button" class="btn light" id="tabSignup" onclick="showAuthTab('signup')">Register / Sign Up</button>
+ </div>
+ <div id="loginRoleHint" class="status">Customer Login ఎంచుకున్నారు. మీ అకౌంట్ మొబైల్ నంబర్ నమోదు చేయండి.</div>
+ <div id="passwordLoginBox"><label>Mobile Number</label><input id="loginPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 అంకెల మొబైల్ నంబర్" autocomplete="tel"><label>Password</label><input id="loginPassword" type="password" placeholder="మీ Password" autocomplete="current-password"><button class="btn" style="width:100%;margin-top:12px" onclick="loginWithPassword()">Login</button><button type="button" class="btn light" style="width:100%;margin-top:8px" onclick="showAuthTab('otp')">Password మర్చిపోయారా? OTP Login ఉపయోగించండి</button></div>
+ <div id="otpLoginBox" class="is-hidden"><label>Mobile Number</label><input id="otpLoginPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="రిజిస్టర్ చేసిన 10 అంకెల నంబర్"><button class="btn" id="sendOtpBtn" style="width:100%;margin-top:12px" onclick="sendLoginOtp()">Send SMS OTP</button><div id="otpArea" class="is-hidden"><label>SMS OTP</label><input id="loginOtp" type="tel" inputmode="numeric" maxlength="6" placeholder="6 అంకెల OTP" autocomplete="one-time-code"><button class="btn" id="verifyOtpBtn" style="width:100%;margin-top:10px" onclick="verifyLoginOtp()">Verify OTP & Continue</button></div></div>
+ <div id="signupBox" class="is-hidden"><label>Full Name</label><input id="regName" placeholder="మీ పూర్తి పేరు" autocomplete="name"><label>Mobile Number</label><input id="regPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 అంకెల మొబైల్ నంబర్" autocomplete="tel"><div id="driverRegFields" class="is-hidden"><label>Vehicle Type</label><select id="regVehicleType"><option value="bike">Bike</option><option value="auto">Auto</option><option value="car">Car</option></select><label>Vehicle Company</label><input id="regVehicleCompany" placeholder="ఉదా: Honda"><label>Vehicle Model</label><input id="regVehicleModel" placeholder="ఉదా: Activa"><label>Vehicle Registration Number</label><input id="regVehicleNumber" placeholder="AP 00 AB 0000"><label>Driving Experience (Years)</label><input id="regExperience" type="number" min="0" placeholder="ఎన్ని సంవత్సరాలు"><label>Driving Licence Number</label><input id="regLicense" placeholder="Driving Licence Number"></div><label>Create Password</label><input id="regPassword" type="password" minlength="8" placeholder="కనీసం 8 అక్షరాలు" autocomplete="new-password"><label>Confirm Password</label><input id="regPassword2" type="password" minlength="8" placeholder="Password మళ్లీ నమోదు చేయండి" autocomplete="new-password"><button class="btn" id="registerBtn" style="width:100%;margin-top:12px" onclick="registerAccount()">Sign Up & Send OTP</button><div id="signupOtpArea" class="is-hidden"><label>Registration SMS OTP</label><input id="signupOtp" type="tel" inputmode="numeric" maxlength="6" placeholder="SMSలో వచ్చిన OTP"><button class="btn" style="width:100%;margin-top:10px" onclick="verifySignupOtp()">Verify OTP & Create Account</button></div></div>
+ <div id="loginMsg" class="status">ముందుగా Customer / Driver / Admin ఎంచుకోండి.</div>
 </section>
 <section id="customerApp" class="is-hidden">
  <section class="panel" id="customerHome">
@@ -136,54 +141,75 @@ async function logoutAccount(){
  }catch(e){btns.forEach(b=>{b.disabled=false;b.textContent='🚪 Logout'});alert("Logout కాలేదు: "+(e.message||e));}
 }
 
+let authTab="password", pendingSignupPhone=null, pendingSignupRole=null;
+function showAuthTab(tab){
+ if(selectedLoginRole==="admin" && tab==="signup"){show("loginMsg","Admin Sign Up అందుబాటులో లేదు. అనుమతి ఉన్న Admin మాత్రమే Login చేయాలి.");return;}
+ authTab=tab;["passwordLoginBox","otpLoginBox","signupBox"].forEach((id,i)=>$(id).classList.toggle("is-hidden",["password","otp","signup"][i]!==tab));
+ ["tabPassword","tabOtp","tabSignup"].forEach((id,i)=>$(id).classList.toggle("light",["password","otp","signup"][i]!==tab));
+ $("driverRegFields").classList.toggle("is-hidden",selectedLoginRole!=="driver");
+}
 function selectLoginRole(role){
  if(!["customer","driver","admin"].includes(role))return;
  selectedLoginRole=role;adminLoginMode=role==="admin";
- const labels={customer:"Customer Login ఎంచుకున్నారు. Customer account Mobile Number నమోదు చేయండి.",driver:"Driver Login ఎంచుకున్నారు. Driver account Mobile Number నమోదు చేయండి.",admin:"Admin Login ఎంచుకున్నారు. Admin అనుమతి ఉన్న Mobile Number మాత్రమే నమోదు చేయండి."};
+ const labels={customer:"Customer account: కొత్తవారైతే Register / Sign Up చేయండి.",driver:"Driver account: వివరాలు నమోదు చేసి Sign Up చేయండి. Admin approval తర్వాతే Driver Dashboard.",admin:"Admin Login: ముందుగా అనుమతి ఇచ్చిన Admin మొబైల్ నంబర్ మాత్రమే."};
  ["customer","driver","admin"].forEach(r=>{const id="role"+r.charAt(0).toUpperCase()+r.slice(1)+"Btn";$(id)?.classList.toggle("selected",r===role)});
- $("loginRoleHint").textContent=labels[role];
- $("sendOtpBtn").textContent="Send "+role.charAt(0).toUpperCase()+role.slice(1)+" SMS OTP";
- $("otpArea").classList.add("is-hidden");$("loginOtp").value="";
- show("loginMsg",labels[role]);$("loginPhone").focus();
+ $("loginRoleHint").textContent=labels[role];$("otpArea").classList.add("is-hidden");$("signupOtpArea").classList.add("is-hidden");
+ if(role==="admin"&&authTab==="signup")showAuthTab("password"); else showAuthTab(authTab);
 }
-function startAdminLogin(){selectLoginRole("admin")}
+function cleanPhone(id){const d=$(id).value.replace(/\D/g,"");if(!/^[6-9]\d{9}$/.test(d))throw Error("సరైన 10 అంకెల భారతీయ మొబైల్ నంబర్ ఇవ్వండి.");return "+91"+d;}
+async function loginWithPassword(){
+ try{const phone=cleanPhone("loginPhone"),password=$("loginPassword").value;if(!password)throw Error("Password నమోదు చేయండి.");
+ const {data,error}=await db.auth.signInWithPassword({phone,password});if(error)throw error;if(!data.session)throw Error("Login session రాలేదు.");
+ loginAttemptRole=selectedLoginRole;await checkSession();loginAttemptRole=null;if(user&&profile?.role==="driver")await loadAll();if(user&&profile?.role==="customer")customerShow("home");
+ }catch(e){show("loginMsg","Login కాలేదు: "+(e.message||e)+". కొత్తవారైతే Register / Sign Up చేయండి.");}
+}
 async function sendLoginOtp(){
  const btn=$("sendOtpBtn");btn.disabled=true;btn.textContent="Sending OTP…";
- try{
-  const digits=$("loginPhone").value.replace(/\D/g,"");
-  if(!/^[6-9]\d{9}$/.test(digits))throw Error("సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.");
-  const phone="+91"+digits;
-  const {error}=await db.auth.signInWithOtp({phone});
-  if(error)throw error;
-  window.friendRideOtpPhone=phone;
-  $("otpArea").classList.remove("is-hidden");
-  show("loginMsg","SMS ద్వారా OTP పంపించాం. మీ OTP నమోదు చేసి Verify చేయండి.");
- }catch(e){show("loginMsg","OTP పంపలేకపోయాం: "+(e.message||e)+". Supabase SMS provider / Auth settings తనిఖీ చేయండి.");}
+ try{const phone=cleanPhone("otpLoginPhone");const {error}=await db.auth.signInWithOtp({phone,options:{shouldCreateUser:false}});if(error)throw error;window.friendRideOtpPhone=phone;$("otpArea").classList.remove("is-hidden");show("loginMsg","రిజిస్టర్ చేసిన మొబైల్‌కు OTP పంపించాం. OTP నమోదు చేయండి.");}
+ catch(e){show("loginMsg","OTP పంపలేకపోయాం: "+(e.message||e)+". నంబర్ ముందుగా Register అయి ఉందో చూడండి.");}
  finally{btn.disabled=false;btn.textContent="Resend SMS OTP";}
 }
 async function verifyLoginOtp(){
  const btn=$("verifyOtpBtn");btn.disabled=true;btn.textContent="Verifying…";
- try{
-  const phone=window.friendRideOtpPhone||("+91"+$("loginPhone").value.replace(/\D/g,""));
-  const token=$("loginOtp").value.trim();
-  if(!/^\d{6}$/.test(token))throw Error("6 అంకెల OTP నమోదు చేయండి.");
-  const {data,error}=await db.auth.verifyOtp({phone,token,type:"sms"});
-  if(error)throw error;
-  if(!data.session)throw Error("OTP Verify అయింది కానీ Login Session రాలేదు. మళ్లీ ప్రయత్నించండి.");
-  show("loginMsg","OTP Verified ✓ Dashboard లోడ్ అవుతోంది…");
-  loginAttemptRole=selectedLoginRole;
-  await checkSession();
-  loginAttemptRole=null;adminLoginMode=false;
-  if(user&&profile?.role==="driver")await loadAll();
-  if(user&&profile?.role==="customer")customerShow("home");
- }catch(e){show("loginMsg","OTP Verify కాలేదు: "+(e.message||e));}
- finally{btn.disabled=false;btn.textContent="Verify OTP & Continue";}
+ try{const phone=window.friendRideOtpPhone||cleanPhone("otpLoginPhone"),token=$("loginOtp").value.trim();if(!/^\d{6}$/.test(token))throw Error("6 అంకెల OTP నమోదు చేయండి.");
+ const {data,error}=await db.auth.verifyOtp({phone,token,type:"sms"});if(error)throw error;if(!data.session)throw Error("OTP Verify అయింది కానీ Login Session రాలేదు.");
+ loginAttemptRole=selectedLoginRole;await checkSession();loginAttemptRole=null;if(user&&profile?.role==="driver")await loadAll();if(user&&profile?.role==="customer")customerShow("home");
+ }catch(e){show("loginMsg","OTP Verify కాలేదు: "+(e.message||e));}finally{btn.disabled=false;btn.textContent="Verify OTP & Continue";}
 }
+async function registerAccount(){
+ const btn=$("registerBtn");btn.disabled=true;btn.textContent="Registering…";
+ try{
+  if(selectedLoginRole==="admin")throw Error("Admin self-registration అనుమతించబడదు.");
+  const phone=cleanPhone("regPhone"),name=$("regName").value.trim(),pw=$("regPassword").value,pw2=$("regPassword2").value;
+  if(!name)throw Error("పేరు నమోదు చేయండి.");if(pw.length<8)throw Error("Password కనీసం 8 అక్షరాలు ఉండాలి.");if(pw!==pw2)throw Error("రెండు Passwordలు సరిపోలలేదు.");
+  const meta={full_name:name,role:selectedLoginRole};
+  if(selectedLoginRole==="driver"){
+   meta.vehicle_type=$("regVehicleType").value;meta.vehicle_company=$("regVehicleCompany").value.trim();meta.vehicle_model=$("regVehicleModel").value.trim();meta.vehicle_registration=$("regVehicleNumber").value.trim().toUpperCase();meta.driving_experience_years=Number($("regExperience").value||0);meta.driving_license_number=$("regLicense").value.trim();
+   if(!meta.vehicle_company||!meta.vehicle_model||!meta.vehicle_registration||!meta.driving_license_number)throw Error("Driver vehicle మరియు Driving Licence వివరాలు పూర్తి చేయండి.");
+  }
+  const {data,error}=await db.auth.signUp({phone,password:pw,options:{data:meta}});if(error)throw error;pendingSignupPhone=phone;pendingSignupRole=selectedLoginRole;
+  if(data.session){await finishSignup(data.user);return;}
+  $("signupOtpArea").classList.remove("is-hidden");show("loginMsg","Registration OTP పంపించాం. SMSలో వచ్చిన OTP నమోదు చేసి Verify చేయండి.");
+ }catch(e){show("loginMsg","Registration కాలేదు: "+(e.message||e));}finally{btn.disabled=false;btn.textContent="Sign Up & Send OTP";}
+}
+async function verifySignupOtp(){
+ try{const token=$("signupOtp").value.trim();if(!/^\d{6}$/.test(token))throw Error("6 అంకెల OTP నమోదు చేయండి.");const {data,error}=await db.auth.verifyOtp({phone:pendingSignupPhone,token,type:"sms"});if(error)throw error;if(!data.user||!data.session)throw Error("OTP Verify అయింది కానీ Session రాలేదు.");await finishSignup(data.user);}
+ catch(e){show("loginMsg","Registration OTP Verify కాలేదు: "+(e.message||e));}
+}
+async function finishSignup(authUser){
+ const role=pendingSignupRole||selectedLoginRole;const updates={full_name:$("regName").value.trim(),phone:pendingSignupPhone,role};
+ if(role==="driver"){updates.vehicle_type=$("regVehicleType").value;updates.vehicle_company=$("regVehicleCompany").value.trim();updates.vehicle_model=$("regVehicleModel").value.trim();updates.vehicle_registration=$("regVehicleNumber").value.trim().toUpperCase();updates.driving_experience_years=Number($("regExperience").value||0);updates.driving_license_number=$("regLicense").value.trim();updates.driver_approval_status="pending";}
+ const {error}=await db.from("profiles").update(updates).eq("id",authUser.id);if(error)throw Error("Auth account create అయింది; Profile save కాలేదు: "+error.message+". SQL registration patch / RLS తనిఖీ చేయండి.");
+ loginAttemptRole=role;await checkSession();loginAttemptRole=null;pendingSignupPhone=null;pendingSignupRole=null;
+ if(user&&profile?.role==="driver")show("session","Driver Registration విజయవంతమైంది. Admin Approval కోసం వేచి ఉండండి. Approval వచ్చే వరకు rides accept చేయలేరు.");
+ if(user&&profile?.role==="customer")customerShow("home");
+}
+function startAdminLogin(){selectLoginRole("admin");showAuthTab("password");}
 async function checkSession(){
  try{
   const {data,error}=await db.auth.getSession();if(error)throw error;
   user=data.session?.user||null;
-  if(!user){$("loginPanel").classList.remove("is-hidden");$("customerApp").classList.add("is-hidden");$("adminApp")?.classList.add("is-hidden");$("adminNav")?.classList.add("is-hidden");document.querySelectorAll("[data-panel]").forEach(x=>x.classList.add("is-hidden"));document.querySelector(".bottom-nav:not(#customerNav)")?.classList.add("is-hidden");$("customerNav")?.classList.add("is-hidden");show("loginMsg","మీ మొబైల్ నంబర్ నమోదు చేసి SMS OTP పొందండి.");return}
+  if(!user){$("loginPanel").classList.remove("is-hidden");$("customerApp").classList.add("is-hidden");$("adminApp")?.classList.add("is-hidden");$("adminNav")?.classList.add("is-hidden");document.querySelectorAll("[data-panel]").forEach(x=>x.classList.add("is-hidden"));document.querySelector(".bottom-nav:not(#customerNav)")?.classList.add("is-hidden");$("customerNav")?.classList.add("is-hidden");show("loginMsg","మీరు కొత్తవారైతే Register / Sign Up చేయండి. Existing user అయితే Password లేదా OTP Login ఎంచుకోండి.");return}
   $("loginPanel").classList.add("is-hidden");
   const {data:p,error:pe}=await db.from("profiles").select("id,full_name,phone,role,vehicle_type,vehicle_company,vehicle_model,vehicle_registration,driving_experience_years,driving_license_number,driver_approval_status").eq("id",user.id).maybeSingle();
   if(pe)throw pe;profile=p;
