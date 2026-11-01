@@ -42,7 +42,28 @@ button:disabled{opacity:.55}input{width:100%;padding:12px;border:1px solid #cfdf
   <div id="requests"></div>
  </div>
  <div class="card">
-  <h2>3. Fare Counter Offer Test</h2>
+  <h2>3. Emergency SOS</h2>
+  <p class="muted">అత్యవసర పరిస్థితిలో నేరుగా కాల్ చేయండి లేదా మీ SOS Locationను Supabaseలో సేవ్ చేయండి.</p>
+  <button class="red" onclick="location.href='tel:112'">112 Emergency</button>
+  <button class="red" onclick="location.href='tel:100'">100 Police</button>
+  <button class="red" onclick="location.href='tel:108'">108 Ambulance</button>
+  <label>Personal Emergency Contact</label><input id="emergencyPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number">
+  <button class="alt" onclick="saveEmergency()">Save Contact</button>
+  <button class="alt" onclick="callEmergency()">Call Personal Contact</button>
+  <button class="red" onclick="saveSOS()">Save SOS Location</button>
+  <div id="sosMsg" class="status">Emergency contact నమోదు చేయండి. SOS Location కోసం GPS permission అవసరం.</div>
+ </div>
+ <div class="card">
+  <h2>4. Driver Feedback & Complaint</h2>
+  <label>Ride ID (optional)</label><input id="feedbackRideId" placeholder="Ride UUID (if related to a ride)">
+  <label>Feedback</label><textarea id="driverFeedback" rows="3" style="width:100%;padding:12px;border:1px solid #cfdfd5;border-radius:10px;font:16px Arial" placeholder="మీ అభిప్రాయం నమోదు చేయండి"></textarea>
+  <button onclick="submitDriverFeedback()">Submit Feedback</button>
+  <label>Complaint</label><textarea id="driverComplaint" rows="3" style="width:100%;padding:12px;border:1px solid #cfdfd5;border-radius:10px;font:16px Arial" placeholder="మీ సమస్య / ఫిర్యాదు నమోదు చేయండి"></textarea>
+  <button class="red" onclick="submitDriverComplaint()">Submit Complaint</button>
+  <div id="feedbackMsg" class="status">Feedback / Complaint నమోదు చేయవచ్చు.</div>
+ </div>
+ <div class="card">
+  <h2>5. Fare Counter Offer Test</h2>
   <p class="muted">Ride Request వచ్చిన తర్వాత ఆ Ride IDతో counter offer పరీక్షించండి.</p>
   <label>Ride ID</label><input id="rideId" placeholder="Ride UUID">
   <label>మీ Counter Offer (₹)</label><input id="counterFare" type="number" min="1" placeholder="ఉదా: 150">
@@ -52,6 +73,28 @@ button:disabled{opacity:.55}input{width:100%;padding:12px;border:1px solid #cfdf
  <div class="card">
   <h3>Test Notes</h3>
   <div class="muted">ఈ పేజీ మీ ప్రస్తుత Supabase projectకే కనెక్ట్ అవుతుంది. Database column / RPC parameter పేర్లు సరిపోకపోతే error ఇక్కడ చూపిస్తుంది. Service role key ఏదీ ఉపయోగించదు.</div>
+ </div>
+
+ <div class="card">
+  <h2>4. Emergency SOS</h2>
+  <p class="muted">అత్యవసర పరిస్థితుల్లో నేరుగా కాల్ చేయండి లేదా SOS Locationను సేవ్ చేయండి.</p>
+  <p><a href="tel:112">📞 112 Emergency</a> &nbsp; <a href="tel:100">📞 100 Police</a> &nbsp; <a href="tel:108">📞 108 Ambulance</a></p>
+  <label>Personal Emergency Contact Number</label>
+  <input id="emergencyPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number">
+  <button class="alt" onclick="saveEmergency()">Save Contact</button>
+  <button onclick="callEmergency()">Call Personal Contact</button>
+  <button class="red" onclick="saveDriverSOS()">Save SOS Location</button>
+  <div id="sosMsg" class="status">SOS వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
+ </div>
+ <div class="card">
+  <h2>5. Feedback & Complaint</h2>
+  <label>Ride ID</label><input id="feedbackRideId" placeholder="Ride UUID">
+  <label>Feedback</label><input id="driverFeedback" placeholder="మీ అభిప్రాయం">
+  <button onclick="submitDriverFeedback()">Submit Feedback</button>
+  <label>Complaint</label><input id="driverComplaint" placeholder="మీ సమస్య వివరించండి">
+  <button class="alt" onclick="submitDriverComplaint()">Submit Complaint</button>
+  <div id="feedbackMsg" class="status">Ride IDతో Feedback లేదా Complaint నమోదు చేయండి.</div>
+  <p class="muted">గమనిక: Feedback / Complaintను Supabaseలో సేవ్ చేయడానికి మీ database table పేరు, columns అవసరం. అవి నిర్ధారించే వరకు ఈ బటన్లు placeholderగా ఉంటాయి.</p>
  </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -124,6 +167,68 @@ async function counterOffer(){
   show('counterMsg','Counter offer పంపబడింది ✓\n'+JSON.stringify(data));
  }catch(e){show('counterMsg','Counter Offer Error: '+e.message+'\nRPC parameter names మీ database functionకు సరిపోవాలి.')}
 }
+
+function saveEmergency(){
+ const p=$('emergencyPhone').value.trim();
+ if(!/^[6-9][0-9]{9}$/.test(p)){show('sosMsg','సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.');return}
+ localStorage.setItem('friendride_driver_emergency',p);
+ show('sosMsg','Emergency Contact ఈ browserలో సేవ్ అయింది: '+p);
+}
+function callEmergency(){
+ const p=$('emergencyPhone').value.trim()||localStorage.getItem('friendride_driver_emergency');
+ if(!p){show('sosMsg','ముందుగా Personal Emergency Contact సేవ్ చేయండి.');return}
+ if(confirm(p+' కు కాల్ చేయాలా?'))location.href='tel:'+p;
+}
+async function saveSOS(){
+ try{
+  if(!user)await checkSession();if(!user)throw Error('ముందుగా Driver Login చేయండి.');
+  let latitude=null,longitude=null;
+  try{
+   const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:10000}));
+   latitude=pos.coords.latitude;longitude=pos.coords.longitude;
+  }catch(e){throw Error('GPS Location అందలేదు: '+e.message)}
+  const {error}=await db.from('fr_ride_sos').insert({ride_id:$('rideId')?.value?.trim()||null,sender_id:user.id,latitude,longitude,message:'Driver Emergency SOS'});
+  if(error)throw error;
+  show('sosMsg','SOS Location Supabaseలో సేవ్ అయింది ✓\nLatitude: '+latitude+'\nLongitude: '+longitude+'\nతక్షణ ప్రమాదంలో 112కు కాల్ చేయండి.');
+ }catch(e){show('sosMsg','SOS Error: '+e.message+'\nfr_ride_sos table / INSERT policy తనిఖీ చేయాలి.')}
+}
+function submitDriverFeedback(){
+ const text=$('driverFeedback').value.trim();
+ if(!text){show('feedbackMsg','దయచేసి Feedback నమోదు చేయండి.');return}
+ show('feedbackMsg','Feedback form సిద్ధంగా ఉంది. Databaseలో సేవ్ చేయడానికి మీ Feedback table / RPC పేరు కనెక్ట్ చేయాలి.');
+}
+function submitDriverComplaint(){
+ const text=$('driverComplaint').value.trim();
+ if(!text){show('feedbackMsg','దయచేసి Complaint నమోదు చేయండి.');return}
+ show('feedbackMsg','Complaint form సిద్ధంగా ఉంది. Databaseలో సేవ్ చేయడానికి మీ Complaint table / RPC పేరు కనెక్ట్ చేయాలి.');
+}
+const savedEmergency=localStorage.getItem('friendride_driver_emergency');
+if(savedEmergency)$('emergencyPhone').value=savedEmergency;
+
+function saveEmergency(){
+ const phone=$('emergencyPhone').value.trim();
+ if(!/^[6-9][0-9]{9}$/.test(phone)){show('sosMsg','సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.');return}
+ localStorage.setItem('friendride_driver_test_emergency',phone);
+ show('sosMsg','Emergency Contact ఈ మొబైల్‌లో సేవ్ అయింది: '+phone);
+}
+function callEmergency(){
+ const phone=localStorage.getItem('friendride_driver_test_emergency');
+ if(!phone){show('sosMsg','ముందుగా Emergency Contact సేవ్ చేయండి.');return}
+ if(confirm(phone+' కు కాల్ చేయాలా?'))location.href='tel:'+phone;
+}
+async function saveDriverSOS(){
+ try{
+  if(!user)await checkSession();if(!user)throw Error('Driver Login అవసరం.');
+  let a=null,b=null;
+  try{const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:10000}));a=pos.coords.latitude;b=pos.coords.longitude;}catch(_){}
+  const {error}=await db.from('fr_ride_sos').insert({ride_id:null,sender_id:user.id,latitude:a,longitude:b,message:'Driver Emergency SOS'});
+  if(error)throw error;
+  show('sosMsg','SOS record Supabaseలో సేవ్ అయింది ✓'+(a!==null?'\nLocation: '+a+', '+b:'\nGPS location అందుబాటులో లేదు.'));
+ }catch(e){show('sosMsg','SOS Error: '+e.message)}
+}
+function submitDriverFeedback(){show('feedbackMsg','Feedback table / columns ఇంకా నిర్ధారించలేదు. Supabase schema చూసి కనెక్ట్ చేయాలి.');}
+function submitDriverComplaint(){show('feedbackMsg','Complaint table / columns ఇంకా నిర్ధారించలేదు. Supabase schema చూసి కనెక్ట్ చేయాలి.');}
+
 checkSession();
 </script>
 </body></html>
