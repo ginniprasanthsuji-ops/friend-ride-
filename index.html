@@ -1,181 +1,487 @@
 <!doctype html>
-<html lang="te"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#078b61"><title>FRIEND RIDE</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<html lang="te"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#087b55"><title>FRIEND RIDE – Customer, Driver & Admin</title>
 <style>
-:root{--g:#078b61;--dark:#123d31;--bg:#f2f8f4;--line:#dce9e1;--red:#e53945}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#18392e;font:15px Arial,sans-serif}
-header{background:linear-gradient(120deg,#056b4b,#0aa875);color:white;padding:20px;border-radius:0 0 24px 24px}
-header h1{margin:0;font-size:27px}header p{margin:4px 0 0}.wrap{max-width:950px;margin:auto;padding:12px}
-.card{background:white;border:1px solid var(--line);border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 4px 16px #123d310b}
-h2,h3{color:var(--dark);margin:0 0 12px}label{display:block;font-weight:bold;margin:12px 0 6px}
-input,select,textarea{width:100%;padding:13px;border:1px solid #cfdfd5;border-radius:11px;font-size:16px;background:white}
-button{border:0;border-radius:12px;padding:12px 16px;margin:5px 4px 0 0;background:var(--g);color:white;font-weight:bold;min-height:44px}
-button.alt{background:#edf5f0;color:var(--dark);border:1px solid var(--line)}button.red{background:var(--red)}
-.hidden{display:none!important}.roles,.vehicles,.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.role,.vehicle,.stat{border:1px solid var(--line);border-radius:14px;padding:15px;text-align:center;background:#fff}
-.role{cursor:pointer}.role strong,.vehicle strong{display:block}.emoji{font-size:28px}
-.vehicle.active{border:2px solid var(--g);background:#eaf8f1}.stat b{display:block;color:var(--g);font-size:22px}
-.map{height:310px;border-radius:15px;overflow:hidden;background:#e5eee8;border:1px solid var(--line)}
-.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}.status{padding:11px;border-radius:10px;background:#eff7f2;margin-top:10px;white-space:pre-wrap}
-.item{border:1px solid var(--line);border-radius:12px;padding:12px;margin:9px 0}.muted{color:#687c72;font-size:13px}
-.sos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.sos a{background:var(--red);color:white;text-decoration:none;text-align:center;padding:12px 4px;border-radius:10px;font-weight:bold}
-nav{position:sticky;bottom:0;background:white;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px}
-nav button{background:transparent;color:var(--g);font-size:12px}
-@media(max-width:600px){.roles{grid-template-columns:1fr}.vehicles,.stats{grid-template-columns:repeat(3,1fr)}.map{height:270px}.wrap{padding:8px}}
-</style></head><body>
-<header><h1>🚕 FRIEND RIDE</h1><p>Your Ride, Your Choice • Bike | Auto | Car</p></header>
+:root{--green:#087b55;--green2:#07966a;--deep:#07543d;--red:#d91f35;--blue:#1674d1;--bg:#f3f6fa;--ink:#142b25;--muted:#718078;--line:#dfe6e3;--card:#fff;--shadow:0 3px 12px rgba(12,44,32,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Arial,sans-serif;padding-bottom:82px}.topbar{background:linear-gradient(110deg,#006b4a,#09996a);color:white;padding:18px 18px 15px;box-shadow:0 2px 8px #0001}.brand{display:flex;align-items:center;gap:10px;font-size:25px;font-weight:850;letter-spacing:.2px}.brand small{font-size:14px;font-weight:600;display:block;margin-top:1px}.brand-icon{font-size:30px}.wrap{max-width:760px;margin:auto;padding:12px}.panel{background:var(--card);border:1px solid var(--line);border-radius:19px;margin:12px 0;padding:15px;box-shadow:var(--shadow)}.is-hidden{display:none!important}.driver-row{display:flex;align-items:center;gap:12px}.avatar{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:#e5f2eb;border:2px solid #c9dfd2;color:var(--deep);font-size:27px;font-weight:800;flex-shrink:0}.driver-name{font-size:18px;font-weight:800}.approved{display:inline-block;margin-left:6px;padding:4px 8px;border-radius:8px;background:#087b55;color:white;font-size:11px}.subline{font-size:13px;color:#5e7068;margin-top:4px}.switch-card{margin-top:13px;background:#eaf6ed;border-radius:13px;padding:11px 12px;display:flex;align-items:center;justify-content:space-between}.switch-title{font-weight:800;font-size:16px}.switch-note{font-size:12px;color:#65776d}.switch{position:relative;width:54px;height:30px;display:inline-block;flex-shrink:0}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#a8b4ae;border-radius:30px;transition:.2s}.slider:before{content:"";position:absolute;width:22px;height:22px;left:4px;top:4px;background:white;border-radius:50%;transition:.2s;box-shadow:0 1px 3px #0003}.switch input:checked+.slider{background:var(--green)}.switch input:checked+.slider:before{transform:translateX(24px)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 5px;text-align:center;box-shadow:var(--shadow);font-size:12px}.stat b{display:block;font-size:20px;color:var(--green);margin-top:4px}.menu-list{display:grid;gap:8px;margin-top:13px}.menu-link{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:var(--shadow);font-weight:750;color:#182c25;text-align:left;width:100%;min-height:48px}.menu-link .ico{width:27px;font-size:21px}.menu-link .chev{margin-left:auto;color:#6d7b74}.menu-link .count{margin-left:auto;background:#e51e36;color:white;border-radius:20px;padding:3px 8px;font-size:12px}.section-title{display:flex;align-items:center;justify-content:space-between;margin:2px 0 12px}.section-title h2{font-size:20px;margin:0;color:#15392d}.tabs{display:flex;border-bottom:1px solid var(--line);margin:-3px -2px 13px}.tab{flex:1;border:0;background:white;color:#34453d;border-radius:0;padding:12px 6px;font-weight:800;border-bottom:3px solid transparent}.tab.selected{color:var(--red);border-bottom-color:var(--red)}.tab.green.selected{color:var(--green);border-bottom-color:var(--green)}.active-ride-card{border:2px solid var(--red);border-radius:15px;overflow:hidden;background:#fff1f2;margin:8px 0 14px}.active-ride-head{background:linear-gradient(90deg,#cf142c,#ef3447);color:white;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;font-weight:850}.active-ride-head span{background:#ffe2e5;color:#b31428;border-radius:6px;padding:4px 8px;font-size:11px}.active-ride-body{padding:12px}.active-ride-body p{margin:7px 0;line-height:1.5}.active-ride-body p:first-child{font-size:16px}.contact-box{background:#eaf5ef;border-radius:11px;padding:11px;margin:11px 0;line-height:1.6}.contact-box a{color:#087b55;font-weight:800;margin-right:12px}.active-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.active-actions button{padding:10px 5px;font-size:12px}.call-action{background:#087b55!important}.wa-action{background:#159b58!important}.track-action{background:#1674d1!important}.secondary-wide{width:100%;background:#eaf1f5!important;color:#173a30!important;margin-top:7px!important}.ride-request{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;background:#fff;box-shadow:var(--shadow)}.ride-type{display:flex;align-items:center;gap:8px;font-size:15px}.vehicle-icon{font-size:22px}.request-dot{margin-left:auto;color:#087b55;background:#e7f5ed;border-radius:20px;padding:3px 8px;font-size:11px;font-weight:800}.ride-route{display:flex;align-items:center;gap:10px;margin:12px 0}.ride-route>div{flex:1;min-width:0}.ride-route small{display:block;color:var(--muted);font-size:11px}.ride-route b{display:block;overflow-wrap:anywhere}.route-arrow{color:var(--green);font-size:20px}.ride-fare{background:#f0f5f7;border-radius:9px;padding:8px;margin:8px 0}.ride-fare strong{color:var(--deep);margin-left:8px}.ride-id{font-size:11px;color:#7b8882;overflow-wrap:anywhere;margin:8px 0}.request-actions{display:grid;grid-template-columns:1fr 1fr  .8fr;gap:6px}.request-actions button{margin:0;padding:10px 4px;font-size:12px}.accept-btn{background:#078454}.counter-btn{background:#1674d1}.reject-btn{background:#d52b3e}.reject-btn:disabled{opacity:.55}.empty-state{padding:20px;text-align:center;color:var(--muted);background:#f6f8f7;border-radius:12px}.status{background:#eef6f1;padding:10px 12px;border-radius:10px;margin-top:9px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;color:#304d40}.req-status{font-size:11px}.btn{border:0;border-radius:10px;padding:11px 14px;min-height:42px;background:var(--green);color:#fff;font-weight:800;font-size:14px}.btn.light{background:#eaf3ee;color:#174536;border:1px solid var(--line)}.btn.red{background:var(--red)}label{display:block;font-weight:700;margin:10px 0 5px}input,textarea,select{width:100%;padding:11px;border:1px solid #cbd8d1;border-radius:10px;font:inherit;background:white;color:#19372c}textarea{resize:vertical}.profile-row{display:flex;align-items:center;gap:13px;padding:8px 0 13px}.profile-avatar{width:78px;height:78px;border-radius:50%;background:#e8f3ed;display:grid;place-items:center;font-size:32px;font-weight:800;color:var(--green);border:3px solid white;box-shadow:0 1px 6px #0002}.profile-lock-note{background:#e9f2ff;color:#234c76;padding:11px;border-radius:10px;margin:8px 0 12px;font-size:13px}.profile-fields{border:1px solid var(--line);border-radius:12px;overflow:hidden}.profile-field{display:grid;grid-template-columns:1.05fr 1.2fr 20px;gap:6px;align-items:center;padding:11px;border-bottom:1px solid var(--line);font-size:13px}.profile-field:last-child{border-bottom:0}.profile-field b{overflow-wrap:anywhere}.profile-field .lock{color:#6b7470;text-align:right}.profile-field.editable{background:#f4fbf6}.profile-field.editable input{padding:7px;font-size:13px;margin:0}.bottom-nav{position:fixed;z-index:20;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dce5df;display:grid;grid-template-columns:repeat(4,1fr);padding:7px 4px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -3px 12px #0000000a}.bottom-nav button{border:0;background:transparent;color:#687a70;font-size:11px;font-weight:750;padding:5px 2px}.bottom-nav button span{display:block;font-size:20px;margin-bottom:2px}.bottom-nav button.selected{color:var(--green)}.modal{display:none;position:fixed;inset:0;z-index:40;background:#0008;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-card{background:#fff;border-radius:17px;width:min(100%,430px);padding:17px;box-shadow:0 12px 40px #0004}.modal-card h3{margin:0 0 10px;font-size:19px}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.modal-actions button{margin:0}.muted{color:var(--muted);font-size:12px}.subheading{font-weight:800;margin:8px 0;color:#183c30}.sos-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.sos-grid button{margin:0}.profile-photo-note{font-size:11px;color:#75847c;margin-top:8px}@media(min-width:650px){.wrap{padding:18px}.menu-list{grid-template-columns:1fr 1fr}.topbar{padding-left:max(18px,calc((100% - 720px)/2))}}
+
+.vehicle-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}.vehicle-choice{border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);padding:13px 5px;font-weight:800}.vehicle-choice.selected{border:2px solid var(--green);background:#eaf6ed;color:var(--deep)}.reward-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;background:linear-gradient(130deg,#e8f7ed,#f7fff9);border:1px solid #cde8d5;border-radius:16px;padding:18px;margin:12px 0}.reward-hero b{font-size:38px;color:var(--green)}.reward-hero span{font-size:13px;color:#3e594c}.customer-active{border:1px solid #dbe8e0;border-radius:12px;padding:12px;margin:10px 0;background:#fff}.customer-active button{margin:4px 4px 0 0}
+
+/* Customer live nearby-driver map */
+#customerDriverMap{height:310px;width:100%;border-radius:14px;border:1px solid var(--line);overflow:hidden;background:#e8f0ec}.map-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:#52645b;margin:8px 0}.map-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}.driver-pin{font-size:25px;filter:drop-shadow(0 2px 2px #0005)}
+#driverLiveMap{height:300px;width:100%;border-radius:14px;border:1px solid var(--line);overflow:hidden;background:#e8f0ec;margin-top:10px}.live-track-card{background:#eef7f2;border:1px solid #cfe4d7;border-radius:12px;padding:10px;margin-top:10px}
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+</head><body>
+<header class="topbar"><div class="brand"><span class="brand-icon">🚕</span><div>FRIEND RIDE<small id="topSubTitle">Customer & Driver Dashboard</small></div><span style="margin-left:auto;font-size:22px">♧</span></div></header>
 <main class="wrap">
-<section id="welcome" class="card"><h2>స్వాగతం! మీ ప్రయాణం మీ ఎంపిక</h2><p class="muted">మీరు ఎవరిగా కొనసాగాలనుకుంటున్నారు?</p>
-<div class="roles">
-<div class="role" onclick="choose('customer')"><div class="emoji">🙋</div><strong>Customer</strong><span class="muted">Ride Booking</span></div>
-<div class="role" onclick="choose('driver')"><div class="emoji">🛺</div><strong>Driver</strong><span class="muted">Drive & Earn</span></div>
-<div class="role" onclick="choose('admin')"><div class="emoji">🛡️</div><strong>Admin</strong><span class="muted">Manage & Support</span></div>
-</div></section>
-<section id="login" class="card hidden"><h2 id="loginTitle">Login</h2><label>Mobile Number</label><input id="phone" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"><button onclick="sendOtp()">Send OTP</button><label>OTP</label><input id="otp" maxlength="6" inputmode="numeric" placeholder="Enter OTP"><button onclick="verifyOtp()">Verify & Continue</button><button class="alt" onclick="back()">Back</button><div id="loginMsg" class="status">మీ మొబైల్ నంబర్ నమోదు చేయండి.</div></section>
-<section id="dashboard" class="hidden">
-<div class="card"><div class="row"><div><span id="roleTag" class="muted">CUSTOMER</span><h2 id="welcomeName">నమస్కారం!</h2></div><button class="alt" onclick="logout()">Logout</button></div></div>
-<section id="customer" class="hidden">
-<div class="card"><h2>📍 Book a Ride</h2><label>Pickup Location</label><input id="pickup" placeholder="Pickup point"><label>Drop Location</label><input id="drop" placeholder="Drop point">
-<div class="vehicles"><div class="vehicle active" onclick="vehicle(this,'Bike')"><span class="emoji">🏍️</span><strong>Bike</strong></div><div class="vehicle" onclick="vehicle(this,'Auto')"><span class="emoji">🛺</span><strong>Auto</strong></div><div class="vehicle" onclick="vehicle(this,'Car')"><span class="emoji">🚘</span><strong>Car</strong></div></div>
-<label>Your Fare Offer (₹)</label><input id="fare" type="number" placeholder="Enter your offer"><label>Notes</label><textarea id="note" placeholder="Optional instructions"></textarea>
-<div class="row"><button onclick="myLocation()">📍 My Location</button><button class="alt" onclick="routePreview()">Show Route</button></div><div id="customerMap" class="map" style="margin-top:10px"></div>
-<button style="width:100%" onclick="bookPreview()">Find a Ride</button><div id="bookingMsg" class="status">Pickup, Drop, Vehicle, Fare ఎంచుకోండి.</div></div>
-<div class="card"><h3>Ride Progress</h3><div id="rideInfo">మీ Ride వివరాలు ఇక్కడ కనిపిస్తాయి.</div><button class="alt" onclick="loadMyRides()">My Rides</button><div id="ridesHistory" class="status">My Rides నొక్కితే మీ గత Ride వివరాలు కనిపిస్తాయి.</div></div>
-<div class="card"><h3>🆘 Emergency SOS</h3><div class="sos"><a href="tel:112">112<br>Emergency</a><a href="tel:100">100<br>Police</a><a href="tel:108">108<br>Ambulance</a><a href="#" onclick="callSavedEmergency('customer');return false">Personal<br>Contact</a></div>
-<label>మీ Emergency Contact పేరు (Relative / Friend)</label><input id="customerEmergencyName" placeholder="ఉదా: భార్య / తండ్రి / సోదరుడు">
-<label>వారి మొబైల్ నంబర్</label><input id="customerEmergencyPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number">
-<button class="alt" onclick="saveEmergencyContact('customer')">Save My Emergency Contact</button>
-<button class="red" onclick="saveSOS()">Save SOS Location</button><div id="sosMsg" class="status">112 / 100 / 108తో పాటు మీ బంధువు నంబర్‌ను కూడా సేవ్ చేసుకోవచ్చు.</div></div>
-<div class="card"><h3>Feedback & Complaint</h3><label>Ride ID</label><input id="rideId"><label>Feedback</label><textarea id="feedback"></textarea><button onclick="alert('మీ ప్రస్తుత feedback insert logic‌ను connect చేయాలి.')">Submit Feedback</button><label>Complaint</label><textarea id="complaint"></textarea><button class="alt" onclick="alert('మీ ప్రస్తుత complaint insert logic‌ను connect చేయాలి.')">Submit Complaint</button></div>
+
+<section class="panel" id="loginPanel" style="max-width:480px;margin:22px auto;">
+ <h2 style="margin-top:0;color:#07543d">📱 FRIEND RIDE Login</h2>
+ <p class="muted">మీరు ముందుగా ఉపయోగించిన Mobile Numberకు SMS ద్వారా OTP వస్తుంది. Password అవసరం లేదు.</p>
+ <label>Mobile Number</label><input id="loginPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 అంకెల మొబైల్ నంబర్" autocomplete="tel">
+ <button class="btn" id="sendOtpBtn" style="width:100%;margin-top:14px" onclick="sendLoginOtp()">Send SMS OTP</button><button class="btn light" id="adminLoginBtn" style="width:100%;margin-top:8px" onclick="startAdminLogin()">🛡️ Admin Login</button>
+ <div id="otpArea" class="is-hidden"><label>SMS OTP</label><input id="loginOtp" type="tel" inputmode="numeric" maxlength="6" placeholder="6 అంకెల OTP" autocomplete="one-time-code"><button class="btn" id="verifyOtpBtn" style="width:100%;margin-top:10px" onclick="verifyLoginOtp()">Verify OTP & Continue</button></div>
+ <div id="loginMsg" class="status">మీ Customer లేదా Driver మొబైల్ నంబర్ నమోదు చేయండి.</div>
 </section>
-<section id="driver" class="hidden">
-<div class="card"><h2>🚗 Driver Dashboard</h2><div class="row"><button onclick="online(true)">Go Online</button><button class="alt" onclick="online(false)">Go Offline</button></div><div id="driverMsg" class="status">Online అయినప్పుడు requests చూడండి.</div><div class="stats"><div class="stat">Today Rides<b>—</b></div><div class="stat">Earnings<b>₹—</b></div><div class="stat">Subscription<b>₹500</b></div></div></div>
-<div class="card"><h3>New Ride Requests</h3><button class="alt" onclick="alert('మీ get_driver_requests RPC‌ను connect చేయాలి.')">Refresh Requests</button><div id="requests">Ride requests ఇక్కడ కనిపిస్తాయి.</div></div>
-<div class="card"><h3>Live GPS Navigation</h3><div id="driverMap" class="map"></div><button onclick="startGps()">Start Live Location</button><button class="alt" onclick="stopGps()">Stop</button><div id="gpsMsg" class="status">GPS అనుమతి ఇవ్వండి.</div></div>
-<div class="card"><h3>Subscription & Driver Registration</h3><p>Driver monthly subscription: <b>₹500 / Month</b></p><button onclick="alert('request_paid_driver_subscription RPC connect చేయాలి.')">Request Subscription</button>
-<label>Driver Emergency Contact పేరు (Relative / Friend)</label><input id="driverEmergencyName" placeholder="ఉదా: భార్య / తండ్రి / సోదరుడు">
-<label>Emergency Contact మొబైల్ నంబర్</label><input id="driverEmergencyPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number">
-<button class="alt" onclick="saveEmergencyContact('driver')">Save Driver Emergency Contact</button><div id="driverEmergencyMsg" class="status">మీ అత్యవసర బంధువు / స్నేహితుడి నంబర్ నమోదు చేయండి.</div>
-<label>Driver Profile Photo</label><input id="driverPhoto" type="file" accept="image/*" capture="user" onchange="previewDriverPhoto(event)">
-<img id="driverPhotoPreview" class="hidden" alt="Driver photo preview" style="width:112px;height:112px;object-fit:cover;border-radius:50%;border:3px solid #078b61;margin-top:10px">
-<p class="muted">JPG / PNG ఫోటో, గరిష్ఠం 5 MB.</p><button class="alt" onclick="uploadDriverPhoto()">Upload Profile Photo</button><div id="photoMsg" class="status">ఫోటో ఎంచుకోండి.</div>
-<label>Driver Full Name</label><input id="driverFullName" placeholder="మీ పూర్తి పేరు"><label>Vehicle Type</label><select id="driverVehicleType"><option>Bike</option><option>Auto</option><option>Car</option></select><label>Vehicle Model</label><input id="driverVehicleModel" placeholder="Vehicle model"><label>Registration Number</label><input id="driverVehicleNumber" placeholder="AP.."><label>Driving Experience</label><input id="driverExperience" type="number" min="0" placeholder="Years"><button class="alt" onclick="alert('మీ profiles update logic connect చేయాలి.')">Save Registration</button></div>
+<section id="customerApp" class="is-hidden">
+ <section class="panel" id="customerHome">
+  <div class="driver-row"><div class="avatar">🚕</div><div><div class="driver-name">FRIEND RIDE</div><div class="subline" id="customerName">మీ ప్రయాణం… మీ ఎంపిక</div></div></div>
+  <div class="section-title" style="margin-top:14px"><h2>Book Your Ride</h2><span class="approved">Safe • Easy</span></div>
+  <label>Pickup Location</label><input id="cPickup" placeholder="ఎక్కడి నుంచి?">
+  <button class="btn light" type="button" onclick="customerGPS()">📍 Use My Location</button>
+  <label>Drop Location</label><input id="cDrop" placeholder="ఎక్కడికి వెళ్లాలి?">
+  <div class="section-title" style="margin-top:12px"><h2>Select Vehicle</h2></div>
+  <div class="vehicle-choices"><button class="vehicle-choice selected" data-v="Bike" onclick="chooseCustomerVehicle('Bike',this)">🏍️ Bike</button><button class="vehicle-choice" data-v="Auto" onclick="chooseCustomerVehicle('Auto',this)">🛺 Auto</button><button class="vehicle-choice" data-v="Car" onclick="chooseCustomerVehicle('Car',this)">🚗 Car</button></div>
+  <label>Your Fare Offer (₹) – Bargaining</label><input id="cFare" type="number" min="1" placeholder="మీరు ఇవ్వదలచిన ధర">
+  <p class="muted">మీరు Offer ఇచ్చిన తర్వాత Driver Accept చేయవచ్చు లేదా Counter Offer పంపవచ్చు. మీరు కూడా Counter Offerను Accept / Reject చేయవచ్చు.</p>
+  <label>Notes (Optional)</label><textarea id="cNotes" rows="2" placeholder="అదనపు వివరాలు"></textarea>
+  <button class="btn" style="width:100%" onclick="customerBook()">🔎 Find a Ride</button>
+  <div id="customerBookingMsg" class="status">Pickup, Drop, మీ Fare Offer నమోదు చేయండి.</div>
+  <section id="customerSearchPanel" class="customer-active is-hidden"><div class="section-title"><h2>🔎 Nearby Drivers</h2><button class="btn light" type="button" onclick="refreshNearbyDrivers()">↻ Refresh</button></div><div id="customerSearchStatus" class="status">మీ Ride కోసం దగ్గరలో ఉన్న Online Driversను వెతుకుతున్నాం…</div><div class="map-legend"><span><i class="map-dot" style="background:#078b61"></i>Online Driver</span><span><i class="map-dot" style="background:#1674d1"></i>Your Pickup</span></div><div id="customerDriverMap" role="img" aria-label="Nearby online drivers map"></div><p class="muted">Driver location update ప్రతి 10 సెకన్లకు ప్రయత్నించబడుతుంది. GPS, internet మరియు Supabase RLS అనుమతులు అవసరం.</p></section>
+  <div class="menu-list"><button class="menu-link" onclick="customerShow('myRides')"><span class="ico">📋</span>My Rides <span class="chev">›</span></button><button class="menu-link" onclick="customerShow('referral')"><span class="ico">🎁</span>Refer & Earn <span class="chev">›</span></button><button class="menu-link" onclick="customerShow('wallet')"><span class="ico">💰</span>Cash Reward Wallet <span class="chev">›</span></button><button class="menu-link" onclick="customerShow('sos')"><span class="ico">🆘</span>Emergency SOS <span class="chev">›</span></button><button class="menu-link" onclick="customerShow('feedback')"><span class="ico">💬</span>Feedback & Complaint <span class="chev">›</span></button><button class="menu-link" style="color:#c62828" onclick="logoutAccount()"><span class="ico">🚪</span>Logout <span class="chev">›</span></button></div>
+ </section>
+ <section class="panel is-hidden" id="customerMyRides"><div class="section-title"><h2>My Rides</h2><button class="btn light" onclick="loadCustomerRides()">↻ Refresh</button></div><div id="customerRidesList" class="status">మీ Rides లోడ్ అవుతాయి.</div></section>
+ <section class="panel is-hidden" id="customerReferral"><div class="section-title"><h2>🎁 Refer & Earn</h2><span class="approved">₹50 Cash Reward</span></div><div class="reward-hero"><b>₹50</b><span>మీ Referral ద్వారా వచ్చిన కొత్త Customer 2 విజయవంతమైన Rides పూర్తి చేస్తే మీకు ₹50 Reward.</span></div><label>My Referral Code</label><div class="muted">మీ ప్రత్యేక Referral Code backendలో సృష్టించిన తర్వాత ఇక్కడ కనిపిస్తుంది.</div><input id="customerReferralCode" readonly placeholder="Referral code ఇంకా configure కాలేదు"><button class="btn light" onclick="copyCustomerReferral()">Copy Referral Code</button><button class="btn" onclick="shareCustomerReferral()">Share on WhatsApp</button><div class="stats"><div class="stat">Referrals<b id="cReferrals">—</b></div><div class="stat">2 Rides Done<b id="cQualified">—</b></div><div class="stat">Rewards<b id="cRewards">₹—</b></div></div><div id="customerReferralMsg" class="status">Reward eligibility: referred customer 2 completed rides. Backend verification ఇంకా కనెక్ట్ చేయాలి.</div></section>
+ <section class="panel is-hidden" id="customerWallet"><div class="section-title"><h2>💰 Cash Reward Wallet</h2></div><div class="reward-hero"><b id="customerWalletAmount">₹0</b><span>Available Referral Reward Balance</span></div><label>UPI ID</label><input id="customerUpi" placeholder="name@upi"><label>Withdrawal Amount (₹)</label><input id="customerWithdrawAmount" type="number" min="50" value="50"><button class="btn" onclick="requestCustomerWithdrawal()">Withdraw to UPI</button><div id="customerWalletMsg" class="status">UPI withdrawalకు secure payout verification మరియు Admin approval backend అవసరం. ఈ demoలో నిజమైన డబ్బు పంపబడదు.</div><div class="muted">Minimum withdrawal ₹50 • UPI details secure backend ద్వారా మాత్రమే process చేయాలి.</div></section>
+ <section class="panel is-hidden" id="customerSOS"><h2>🆘 Emergency SOS</h2><button class="btn red" onclick="location.href='tel:112'">112 Emergency</button><button class="btn red" onclick="location.href='tel:108'">108 Ambulance</button><label>Personal Emergency Contact</label><input id="customerEmergencyPhone" maxlength="10" placeholder="10 digit mobile"><button class="btn light" onclick="saveCustomerEmergency()">Save Contact</button><button class="btn red" onclick="customerSOSSave()">Send SOS Location</button><div id="customerSOSMsg" class="status"></div></section>
+ <section class="panel is-hidden" id="customerFeedback"><h2>💬 Feedback & Complaint</h2><label>Ride ID (optional)</label><input id="customerFeedbackRide" placeholder="Ride UUID"><label>Rating</label><select id="customerRating"><option value="5">5 – Excellent</option><option value="4">4 – Good</option><option value="3">3 – Average</option><option value="2">2 – Poor</option><option value="1">1 – Very Poor</option></select><label>Feedback</label><textarea id="customerFeedbackText"></textarea><button class="btn" onclick="customerFeedbackSave()">Submit Feedback</button><label>Complaint</label><textarea id="customerComplaintText"></textarea><button class="btn red" onclick="customerComplaintSave()">Submit Complaint</button><div id="customerFeedbackMsg" class="status"></div></section>
+ <nav class="bottom-nav" id="customerNav"><button class="selected" onclick="customerShow('home')"><span>⌂</span>Home</button><button onclick="customerShow('myRides')"><span>🚘</span>My Rides</button><button onclick="customerShow('sos')"><span>🆘</span>SOS</button><button onclick="customerShow('referral')"><span>🎁</span>Refer</button></nav>
 </section>
-<section id="admin" class="hidden">
-<div class="card"><h2>🛡️ Admin Dashboard</h2><div class="stats"><div class="stat">Pending Drivers<b>—</b></div><div class="stat">Subscriptions<b>—</b></div><div class="stat">Live Rides<b>—</b></div></div><button onclick="alert('Admin RPCs connect చేసిన తర్వాత dashboard data వస్తుంది.')">Refresh Dashboard</button></div>
-<div class="card"><h3>Driver Approvals</h3><div id="approvals">Pending / Approved driver list</div></div><div class="card"><h3>Subscription Requests</h3><div>Approve / Reject requests</div></div><div class="card"><h3>Live Ride Monitoring</h3><div>Active ride map and driver status</div></div><div class="card"><h3>🚨 SOS Alerts</h3><div>Emergency records</div></div><div class="card"><h3>Users, Complaints & Reports</h3><div>Customer, Driver, Revenue, Feedback reports</div></div>
-</section></section>
-<div class="muted" style="text-align:center;padding:18px">FRIEND RIDE • Ride safely • Follow traffic rules</div></main>
-<nav id="nav" class="hidden"><button onclick="window.scrollTo(0,0)">🏠 Home</button><button onclick="loadMyRides();window.scrollTo(0,0)">🧾 Rides</button><button onclick="saveSOS()">🆘 SOS</button><button onclick="logout()">👤 Logout</button></nav>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-/* Supabase public client config. Never put service_role keys in browser code. */
+
+<section class="panel" data-panel="home" id="homePanel">
+ <div class="driver-row"><div class="avatar" id="profileAvatar">D</div><div><div class="driver-name" id="driverName">Driver</div><span class="approved" id="driverApproval">Checking…</span><div class="subline" id="driverVehicleLine">Driver</div></div></div>
+ <div class="switch-card"><div><div class="switch-title" id="onlineLabel">Go Offline</div><div class="switch-note">Receive new ride requests</div></div><label class="switch"><input id="onlineToggle" type="checkbox" onchange="setOnline(this.checked)"><span class="slider"></span></label></div>
+ <div id="onlineMsg" class="status">Online కావడానికి GPS permission ఇవ్వండి.</div><button class="btn light" style="width:100%;margin-top:8px" onclick="loadAll()">↻ Refresh Active Ride & Requests</button>
+ <div class="stats"><div class="stat">Today Rides<b id="todayRides">—</b></div><div class="stat">Earnings<b id="todayEarnings">₹—</b></div><div class="stat">Rating<b>—</b></div></div>
+ <div class="menu-list"><button class="menu-link" onclick="showTab('rides')"><span class="ico">🚕</span>Ride Requests<span class="count" id="requestCount">0</span></button><button class="menu-link" onclick="showTab('rides')"><span class="ico">📋</span>My Rides<span class="chev">›</span></button><button class="menu-link" onclick="showTab('sos')"><span class="ico">🆘</span>Emergency SOS<span class="chev">›</span></button><button class="menu-link" onclick="showTab('feedback')"><span class="ico">💬</span>Feedback & Complaint<span class="chev">›</span></button><button class="menu-link" onclick="showTab('profile')"><span class="ico">👤</span>My Profile<span class="chev">🔒</span></button><button class="menu-link" onclick="showTab('subscription')"><span class="ico">💳</span>Driver Subscription <span class="chev">›</span></button><button class="menu-link" onclick="showTab('driverReferral')"><span class="ico">🎁</span>Refer & Earn <span class="chev">›</span></button><button class="menu-link" style="color:#c62828" onclick="logoutAccount()"><span class="ico">🚪</span>Logout <span class="chev">›</span></button></div>
+ <div class="status" id="session">Login session తనిఖీ చేస్తున్నాం…</div><button class="btn light" onclick="checkSession()">Refresh Session</button>
+</section>
+<section class="panel is-hidden" data-panel="rides" id="ridesPanel">
+ <div class="tabs"><button class="tab selected" data-tab="active" onclick="showRideSubtab('active')">🚘 Active Ride (<span id="activeCount">0</span>)</button><button class="tab green" data-tab="requests" onclick="showRideSubtab('requests')">🟢 Ride Requests (<span id="requestCountTab">0</span>)</button></div>
+ <div id="activeSubpanel"><div class="section-title"><h2>🔴 My Active Ride</h2></div><div id="activeRide">Active ride కోసం Refresh నొక్కండి.</div></div>
+ <div id="requestsSubpanel" class="is-hidden"><div class="section-title"><h2>Other Ride Requests</h2><button class="btn light" onclick="loadAll()">↻ Refresh</button></div><div class="status" id="requestMsg">Refresh Rides నొక్కండి.</div><div id="requests"></div></div>
+</section>
+<section class="panel is-hidden" data-panel="profile" id="profilePanel"><div class="section-title"><h2>✏️ My Profile</h2></div><div class="profile-row"><div class="profile-avatar" id="profileAvatarLarge">D</div><div><b id="profileNameLarge">Driver</b><div><span class="approved" id="profileApprovalLarge">Approved</span></div></div></div><div class="profile-lock-note">🔒 Admin approval తర్వాత Profile వివరాలు Lock అవుతాయి. Mobile Number మాత్రమే మార్చవచ్చు.</div><div class="profile-fields" id="profileDetails"></div><div class="profile-field editable"><b>Mobile Number</b><input id="profilePhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile"><span style="color:green">✎</span></div><button class="btn" onclick="savePhone()">Save Mobile Number</button><div id="profileMsg" class="status">Profile వివరాలు లోడ్ అవుతాయి.</div><div class="profile-photo-note">గమనిక: ప్రస్తుతం profiles schemaలో photo column లేదు. కాబట్టి ఈ వర్షన్‌లో initials avatar మాత్రమే చూపిస్తాం; photo storage జత చేసిన తర్వాత అసలు ఫోటో చూపించవచ్చు.</div></section>
+<section class="panel is-hidden" data-panel="subscription" id="subscriptionPanel"><div class="section-title"><h2>💳 Driver Subscription</h2><span class="approved" id="driverSubStatus">Status Pending</span></div><div class="reward-hero"><b>₹500 / Month</b><span>Driver monthly subscription plan • Razorpay checkout</span></div><p class="muted">Payment success అయినా Razorpay signatureని trusted backend verify చేసిన తర్వాతే Subscription Active ✓ చూపించాలి.</p><button class="btn" onclick="show('driverSubMsg','Razorpay Order creation / signature verification Edge Function ఇంకా connect చేయాలి. ఇది demo UI మాత్రమే; payment charge చేయలేదు.')">Extend / Renew Subscription (₹500)</button><div id="driverSubMsg" class="status">Subscription status backend verification తర్వాత మాత్రమే Active అవుతుంది.</div></section>
+<section class="panel is-hidden" data-panel="driverReferral" id="driverReferralPanel"><div class="section-title"><h2>🎁 Driver Refer & Earn</h2><span class="approved">1 Month Free</span></div><p>కొత్త Driver Admin Approval పొంది తన మొదటి Subscription Payment పూర్తి చేసిన తర్వాత Referral ఇచ్చిన Driverకు ఒక నెల Free Subscription.</p><label>My Referral Code</label><input id="driverReferralCode" readonly placeholder="Referral backend code అవసరం"><button class="btn light" onclick="show('driverReferralMsg','Driver referral code RPC ఇంకా connect చేయాలి.')">Copy / Share Referral</button><div id="driverReferralMsg" class="status">Referral eligibility మరియు reward credit server-side verify చేయాలి.</div></section>
+<section class="panel is-hidden" data-panel="sos" id="sosPanel"><div class="section-title"><h2>🆘 Emergency SOS</h2></div><p class="muted">అత్యవసర పరిస్థితిలో అవసరమైన నంబర్‌కు నేరుగా కాల్ చేయండి. SOS Location మీ Databaseలో నమోదు అవుతుంది.</p><div class="sos-grid"><button class="btn red" onclick="location.href='tel:112'">112 Emergency</button><button class="btn red" onclick="location.href='tel:108'">108 Ambulance</button></div><label>Personal Emergency Contact</label><input id="emergencyPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"><button class="btn light" onclick="saveEmergency()">Save Contact</button><button class="btn light" onclick="callEmergency()">Call Personal Contact</button><button class="btn red" onclick="saveSOS()">Send SOS Location</button><div id="sosMsg" class="status">GPS permission అవసరం.</div></section>
+<section class="panel is-hidden" data-panel="feedback" id="feedbackPanel"><div class="section-title"><h2>💬 Feedback & Complaint</h2></div><label>Ride ID (optional)</label><input id="feedbackRideId" placeholder="Ride UUID"><label>Feedback Rating</label><select id="feedbackRating"><option value="5">5 – Excellent</option><option value="4">4 – Good</option><option value="3">3 – Average</option><option value="2">2 – Poor</option><option value="1">1 – Very poor</option></select><label>Feedback</label><textarea id="driverFeedback" rows="3" placeholder="మీ అభిప్రాయం"></textarea><button class="btn" onclick="submitDriverFeedback()">Submit Feedback</button><label>Complaint</label><textarea id="driverComplaint" rows="3" placeholder="మీ సమస్య / ఫిర్యాదు"></textarea><button class="btn red" onclick="submitDriverComplaint()">Submit Complaint</button><div id="feedbackMsg" class="status">Feedback లేదా Complaint నమోదు చేయండి.</div></section>
+
+<section id="adminApp" class="is-hidden">
+ <section class="panel" id="adminHome">
+  <div class="driver-row"><div class="avatar">🛡️</div><div><div class="driver-name">FRIEND RIDE Admin</div><div class="subline" id="adminWelcome">Admin Control Dashboard</div><span class="approved">Verified Admin ✓</span></div></div>
+  <div class="stats"><div class="stat">Total Rides<b id="adminRideCount">—</b></div><div class="stat">Drivers<b id="adminDriverCount">—</b></div><div class="stat">Pending SOS<b id="adminSosCount">—</b></div></div>
+  <div class="menu-list">
+   <button class="menu-link" onclick="adminShow('drivers')"><span class="ico">🚕</span>Driver Applications <span class="chev">›</span></button>
+   <button class="menu-link" onclick="adminShow('rides')"><span class="ico">📋</span>All Rides <span class="chev">›</span></button>
+   <button class="menu-link" onclick="adminShow('referrals')"><span class="ico">🎁</span>Referral Progress <span class="chev">›</span></button>
+   <button class="menu-link" onclick="adminShow('payouts')"><span class="ico">💸</span>Customer ₹50 Payouts <span class="chev">›</span></button>
+   <button class="menu-link" onclick="adminShow('sos')"><span class="ico">🆘</span>SOS Alerts <span class="chev">›</span></button>
+   <button class="menu-link" onclick="adminShow('reports')"><span class="ico">📊</span>Feedback & Complaints <span class="chev">›</span></button>
+   <button class="menu-link" style="color:#c62828" onclick="logoutAccount()"><span class="ico">🚪</span>Logout <span class="chev">›</span></button>
+  </div>
+  <button class="btn light" style="width:100%;margin-top:12px" onclick="loadAdminDashboard()">↻ Refresh Admin Dashboard</button>
+  <div id="adminStatus" class="status">Admin data లోడ్ చేయండి.</div>
+ </section>
+ <section class="panel is-hidden" id="adminDrivers"><div class="section-title"><h2>🚕 Driver Applications</h2><button class="btn light" onclick="loadAdminDrivers()">↻ Refresh</button></div><div id="adminDriversList" class="status">Admin driver list లోడ్ కాలేదు.</div></section>
+ <section class="panel is-hidden" id="adminRides"><div class="section-title"><h2>📋 All Rides</h2><button class="btn light" onclick="loadAdminRides()">↻ Refresh</button></div><div id="adminRidesList" class="status">Rides లోడ్ కాలేదు.</div></section>
+ <section class="panel is-hidden" id="adminReferrals"><div class="section-title"><h2>🎁 Referral Progress</h2><button class="btn light" onclick="loadAdminReferrals()">↻ Refresh</button></div><div class="status">Driver referral progress RPC అందుబాటులో ఉంటే చూపిస్తుంది. Customer ₹50 referralకు 2 completed rides eligibility వేరుగా server-side అమలు చేయాలి.</div><div id="adminReferralsList"></div></section>
+ <section class="panel is-hidden" id="adminPayouts"><div class="section-title"><h2>💸 Customer Referral Payouts</h2></div><div class="reward-hero"><b>₹50</b><span>ఒక referred customer 2 completed rides పూర్తి చేసిన తర్వాత Referrerకు</span></div><div id="adminPayoutStatus" class="status">Customer withdrawal table / secure admin payout RPC ఇంకా సృష్టించబడలేదు. అందువల్ల ఇక్కడ నిజమైన payout requests లేదా Approve / Paid చర్యలు కనిపించవు. Manual UPI payout చేయడానికి ముందు verified withdrawal ledger, admin-only RLS, double-payment prevention అవసరం.</div><p class="muted">UPI ద్వారా చెల్లింపు చేసిన తర్వాత మాత్రమే verified transaction referenceతో Paid status నమోదు చేయాలి. ఈ Dashboard నుంచి ప్రస్తుతం డబ్బు పంపబడదు.</p></section>
+ <section class="panel is-hidden" id="adminSos"><div class="section-title"><h2>🆘 SOS Alerts</h2><button class="btn light" onclick="loadAdminSos()">↻ Refresh</button></div><div id="adminSosList" class="status">SOS records లోడ్ కాలేదు.</div></section>
+ <section class="panel is-hidden" id="adminReports"><div class="section-title"><h2>💬 Feedback & Complaints</h2><button class="btn light" onclick="loadAdminReports()">↻ Refresh</button></div><h3>Complaints</h3><div id="adminComplaintsList" class="status">Complaints లోడ్ కాలేదు.</div><h3>Feedback</h3><div id="adminFeedbackList" class="status">Feedback లోడ్ కాలేదు.</div></section>
+ <nav class="bottom-nav" id="adminNav"><button class="selected" onclick="adminShow('home')"><span>⌂</span>Home</button><button onclick="adminShow('drivers')"><span>🚕</span>Drivers</button><button onclick="adminShow('rides')"><span>📋</span>Rides</button><button onclick="adminShow('payouts')"><span>💸</span>Payouts</button></nav>
+</section>
+</main>
+<nav class="bottom-nav"><button data-tab="home" class="selected" onclick="showTab('home')"><span>⌂</span>Home</button><button data-tab="rides" onclick="showTab('rides')"><span>🚘</span>Rides</button><button data-tab="sos" onclick="showTab('sos')"><span>🆘</span>SOS</button><button data-tab="profile" onclick="showTab('profile')"><span>👤</span>Profile</button></nav>
+<div class="modal" id="counterModal" onclick="if(event.target===this)closeCounter()"><div class="modal-card"><h3>Counter Offer (Bargain)</h3><div id="counterRideInfo" class="status"></div><label>Your Counter Offer (₹)</label><input id="counterFare" type="number" min="1" placeholder="ఉదా: 250"><div class="modal-actions"><button class="btn light" onclick="closeCounter()">Cancel</button><button class="btn" onclick="sendCounterFromModal()">➤ Send Offer</button></div><div id="counterModalMsg" class="status"></div></div></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 const SUPABASE_URL="https://fglyplxcczdjtfwobtzh.supabase.co";
 const SUPABASE_KEY="sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz";
-const PERSONAL_EMERGENCY_NUMBER=""; // మీ వ్యక్తిగత అత్యవసర నంబర్‌ను ఇక్కడ పెట్టండి
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let role="customer",user=null,chosenVehicle="Bike",map1=null,map2=null,watch=null,lat=null,lng=null,routeLine=null,pickupMarker=null,dropMarker=null;
+let user=null, profile=null, activeRide=null, isAdmin=false, adminLoginMode=false;
 const $=id=>document.getElementById(id);
-function choose(r){role=r;$('welcome').classList.add('hidden');$('login').classList.remove('hidden');$('loginTitle').textContent=r.toUpperCase()+' LOGIN'}
-function back(){$('login').classList.add('hidden');$('welcome').classList.remove('hidden')}
-async function sendOtp(){try{let p=$('phone').value.trim();if(!/^[6-9][0-9]{9}$/.test(p))throw Error('సరైన 10 అంకెల నంబర్ ఇవ్వండి');let {error}=await db.auth.signInWithOtp({phone:'+91'+p});if(error)throw error;$('loginMsg').textContent='OTP పంపించాం.'}catch(e){$('loginMsg').textContent=e.message}}
-async function verifyOtp(){try{let p=$('phone').value.trim(),token=$('otp').value.trim();let {data,error}=await db.auth.verifyOtp({phone:'+91'+p,token,type:'sms'});if(error)throw error;user=data.user;openApp()}catch(e){$('loginMsg').textContent=e.message}}
-function openApp(){loadEmergencyContact('customer');loadEmergencyContact('driver');$('login').classList.add('hidden');$('welcome').classList.add('hidden');$('dashboard').classList.remove('hidden');$('nav').classList.remove('hidden');$('roleTag').textContent=role.toUpperCase();$('welcomeName').textContent='నమస్కారం! '+(user?.phone||'');['customer','driver','admin'].forEach(x=>$(x).classList.toggle('hidden',x!==role));setTimeout(()=>{if(role==='customer')initMap('customerMap',1);if(role==='driver')initMap('driverMap',2)},250)}
-function initMap(id,n){let m=n===1?map1:map2;if(m){setTimeout(()=>m.invalidateSize(),100);return m}m=L.map(id).setView([18.3,83.9],13);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(m);if(n===1)map1=m;else map2=m;setTimeout(()=>m.invalidateSize(),150);return m}
-function vehicle(el,v){document.querySelectorAll('.vehicle').forEach(x=>x.classList.remove('active'));el.classList.add('active');chosenVehicle=v}
-function parseLatLng(text){const m=String(text||'').trim().match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);if(!m)return null;const a=Number(m[1]),b=Number(m[2]);return Math.abs(a)<=90&&Math.abs(b)<=180?[a,b]:null}
-async function geocodePlace(value){const direct=parseLatLng(value);if(direct)return direct;const url='https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q='+encodeURIComponent(value);const res=await fetch(url,{headers:{'Accept':'application/json'}});if(!res.ok)throw Error('Location search failed. మళ్లీ ప్రయత్నించండి.');const data=await res.json();if(!data.length)throw Error('ఈ Location దొరకలేదు: '+value+' . దగ్గరలోని గుర్తింపు ఉన్న ప్రదేశం పేరు ఇవ్వండి.');return [Number(data[0].lat),Number(data[0].lon)]}
-function myLocation(){if(!navigator.geolocation){$('bookingMsg').textContent='ఈ browserలో GPS అందుబాటులో లేదు.';return} $('bookingMsg').textContent='మీ Location తీసుకుంటున్నాం…';navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;$('pickup').value=lat.toFixed(6)+', '+lng.toFixed(6);const m=initMap('customerMap',1);m.setView([lat,lng],16);if(pickupMarker)pickupMarker.remove();pickupMarker=L.marker([lat,lng]).addTo(m).bindPopup('Pickup / My Location').openPopup();$('bookingMsg').textContent='Pickup Location సెట్ అయింది. ఇప్పుడు Drop Location నమోదు చేసి Show Route నొక్కండి.'},e=>$('bookingMsg').textContent='GPS అనుమతి / Location సమస్య: '+e.message,{enableHighAccuracy:true,timeout:15000,maximumAge:10000})}
-async function routePreview(){const btn=document.querySelector('button[onclick="routePreview()"]');const pickup=$('pickup').value.trim(),drop=$('drop').value.trim();if(!pickup||!drop){$('bookingMsg').textContent='ముందుగా Pickup, Drop రెండు Locations నమోదు చేయండి.';return}if(btn){btn.disabled=true;btn.textContent='Route Loading…'}$('bookingMsg').textContent='Pickup, Drop Locations వెతుకుతున్నాం…';try{if(!window.L)throw Error('Map load కాలేదు. Internet connection తనిఖీ చేయండి.');const [a,b]=await Promise.all([geocodePlace(pickup),geocodePlace(drop)]);$('bookingMsg').textContent='Route గణిస్తున్నాం…';const url=`https://router.project-osrm.org/route/v1/driving/${a[1]},${a[0]};${b[1]},${b[0]}?overview=full&geometries=geojson`;const res=await fetch(url);if(!res.ok)throw Error('Route service ప్రస్తుతం స్పందించడం లేదు. కొద్దిసేపటి తర్వాత ప్రయత్నించండి.');const data=await res.json();if(data.code!=='Ok'||!data.routes?.length)throw Error('ఈ రెండు Locations మధ్య రూట్ దొరకలేదు.');const route=data.routes[0],m=initMap('customerMap',1);if(routeLine)routeLine.remove();if(pickupMarker)pickupMarker.remove();if(dropMarker)dropMarker.remove();pickupMarker=L.marker(a).addTo(m).bindPopup('Pickup');dropMarker=L.marker(b).addTo(m).bindPopup('Drop');routeLine=L.geoJSON(route.geometry,{style:{color:'#078b61',weight:6,opacity:.9}}).addTo(m);m.fitBounds(routeLine.getBounds(),{padding:[25,25]});const km=(route.distance/1000).toFixed(1),mins=Math.round(route.duration/60);$('bookingMsg').textContent=`Route చూపించబడింది ✓\nదూరం: ${km} km • అంచనా సమయం: ${mins} నిమిషాలు\nగమనిక: ట్రాఫిక్ వల్ల సమయం మారవచ్చు.`}catch(e){$('bookingMsg').textContent='Route Error: '+e.message}finally{if(btn){btn.disabled=false;btn.textContent='Show Route'}}}
-async function bookPreview(){const pickup=$('pickup').value.trim(),drop=$('drop').value.trim(),fare=Number($('fare').value);if(!user){$('bookingMsg').textContent='ముందుగా Customer Login చేయండి.';return}if(!pickup||!drop||!Number.isFinite(fare)||fare<=0){$('bookingMsg').textContent='Pickup, Drop, సరైన Fare నమోదు చేయండి.';return}const btn=document.querySelector('button[onclick="bookPreview()"]');if(btn){btn.disabled=true;btn.textContent='Booking…'}$('bookingMsg').textContent='మీ Ride Request పంపిస్తున్నాం…';try{const row={customer_id:user.id,vehicle_type:chosenVehicle,pickup,drop,fare_offer:fare,notes:$('note').value.trim(),status:'requested'};const {data,error}=await db.from('rides').insert(row).select('id,status').single();if(error)throw error;$('bookingMsg').textContent='Ride Request విజయవంతంగా పంపబడింది ✓\nRide ID: '+data.id+'\nStatus: '+data.status+'\nDriver స్పందన కోసం My Rides చూడండి.';$('rideInfo').textContent='మీ కొత్త Ride Request: '+data.id+' • '+data.status; }catch(e){$('bookingMsg').textContent='Booking Error: '+(e.message||String(e))+'\nSupabase rides INSERT policy / table columns తనిఖీ చేయాలి.'}finally{if(btn){btn.disabled=false;btn.textContent='Find a Ride'}}}
+function show(id,msg){$(id).textContent=msg}
+function safe(v){return v===null||v===undefined||v===""?"—":String(v)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
-function escapeRideText(value){
- return String(value ?? "").replace(/[&<>"']/g, ch => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[ch]));
-}
-async function loadMyRides(){
- const box=$("ridesHistory");
- if(!user){box.textContent="ముందుగా Customer Login చేయండి.";return}
- box.textContent="మీ Ride History తీసుకుంటున్నాం…";
+async function logoutAccount(){
+ if(customerTrackTimer){clearInterval(customerTrackTimer);customerTrackTimer=null;}if(driverTrackTimer){clearInterval(driverTrackTimer);driverTrackTimer=null;}if(nearbyRefreshTimer){clearInterval(nearbyRefreshTimer);nearbyRefreshTimer=null;}
+ const btns=[...document.querySelectorAll('button[onclick="logoutAccount()"]')];btns.forEach(b=>{b.disabled=true;b.textContent='Logging out…'});
  try{
-  const {data,error}=await db.from("rides")
-   .select("*")
-   .eq("customer_id",user.id)
-   .order("created_at",{ascending:false})
-   .limit(30);
+  // Sign out must not depend on the driver_locations policy succeeding.
+  if(user && profile?.role==="driver"){
+   try{await db.from("driver_locations").update({is_online:false,updated_at:new Date().toISOString()}).eq("driver_id",user.id);}catch(_){/* continue to sign out */}
+  }
+  const {error}=await db.auth.signOut({scope:"local"});
   if(error)throw error;
-  if(!data||data.length===0){
-   box.textContent="ఇంకా మీ Ride Historyలో రికార్డులు లేవు.";
+  user=null;profile=null;activeRide=null;
+  document.getElementById("loginPanel").classList.remove("is-hidden");
+  document.getElementById("customerApp").classList.add("is-hidden");
+  document.querySelectorAll("[data-panel]").forEach(x=>x.classList.add("is-hidden"));
+  document.querySelector(".bottom-nav:not(#customerNav)")?.classList.add("is-hidden");
+  document.getElementById("customerNav")?.classList.add("is-hidden");
+  show("loginMsg","Logout విజయవంతమైంది. మళ్లీ Login చేయండి.");
+ }catch(e){btns.forEach(b=>{b.disabled=false;b.textContent='🚪 Logout'});alert("Logout కాలేదు: "+(e.message||e));}
+}
+
+function startAdminLogin(){adminLoginMode=true;$("loginMsg").textContent="Admin అనుమతి ఉన్న మొబైల్ నంబర్ నమోదు చేసి SMS OTP పొందండి.";$("sendOtpBtn").textContent="Send Admin SMS OTP";$("loginPhone").focus()}
+async function sendLoginOtp(){
+ const btn=$("sendOtpBtn");btn.disabled=true;btn.textContent="Sending OTP…";
+ try{
+  const digits=$("loginPhone").value.replace(/\D/g,"");
+  if(!/^[6-9]\d{9}$/.test(digits))throw Error("సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.");
+  const phone="+91"+digits;
+  const {error}=await db.auth.signInWithOtp({phone});
+  if(error)throw error;
+  window.friendRideOtpPhone=phone;
+  $("otpArea").classList.remove("is-hidden");
+  show("loginMsg","SMS ద్వారా OTP పంపించాం. మీ OTP నమోదు చేసి Verify చేయండి.");
+ }catch(e){show("loginMsg","OTP పంపలేకపోయాం: "+(e.message||e)+". Supabase SMS provider / Auth settings తనిఖీ చేయండి.");}
+ finally{btn.disabled=false;btn.textContent="Resend SMS OTP";}
+}
+async function verifyLoginOtp(){
+ const btn=$("verifyOtpBtn");btn.disabled=true;btn.textContent="Verifying…";
+ try{
+  const phone=window.friendRideOtpPhone||("+91"+$("loginPhone").value.replace(/\D/g,""));
+  const token=$("loginOtp").value.trim();
+  if(!/^\d{6}$/.test(token))throw Error("6 అంకెల OTP నమోదు చేయండి.");
+  const {data,error}=await db.auth.verifyOtp({phone,token,type:"sms"});
+  if(error)throw error;
+  if(!data.session)throw Error("OTP Verify అయింది కానీ Login Session రాలేదు. మళ్లీ ప్రయత్నించండి.");
+  show("loginMsg","OTP Verified ✓ Dashboard లోడ్ అవుతోంది…");
+  await checkSession();
+  adminLoginMode=false;
+  if(user&&profile?.role==="driver")await loadAll();
+  if(user&&profile?.role==="customer")customerShow("home");
+ }catch(e){show("loginMsg","OTP Verify కాలేదు: "+(e.message||e));}
+ finally{btn.disabled=false;btn.textContent="Verify OTP & Continue";}
+}
+async function checkSession(){
+ try{
+  const {data,error}=await db.auth.getSession();if(error)throw error;
+  user=data.session?.user||null;
+  if(!user){$("loginPanel").classList.remove("is-hidden");$("customerApp").classList.add("is-hidden");$("adminApp")?.classList.add("is-hidden");$("adminNav")?.classList.add("is-hidden");document.querySelectorAll("[data-panel]").forEach(x=>x.classList.add("is-hidden"));document.querySelector(".bottom-nav:not(#customerNav)")?.classList.add("is-hidden");$("customerNav")?.classList.add("is-hidden");show("loginMsg","మీ మొబైల్ నంబర్ నమోదు చేసి SMS OTP పొందండి.");return}
+  $("loginPanel").classList.add("is-hidden");
+  const {data:p,error:pe}=await db.from("profiles").select("id,full_name,phone,role,vehicle_type,vehicle_company,vehicle_model,vehicle_registration,driving_experience_years,driving_license_number,driver_approval_status").eq("id",user.id).maybeSingle();
+  if(pe)throw pe;profile=p;
+  // Admin access is verified by the existing SECURITY DEFINER RPC; never trust a browser role flag alone.
+  let adminCheck={data:false,error:null};
+  try{adminCheck=await db.rpc("is_friend_ride_admin")}catch(e){adminCheck={data:false,error:e}}
+  isAdmin=!adminCheck.error&&adminCheck.data===true;
+  if(isAdmin){
+   $("customerApp").classList.add("is-hidden");document.querySelectorAll("[data-panel]").forEach(x=>x.classList.add("is-hidden"));
+   document.querySelector(".bottom-nav:not(#customerNav)")?.classList.add("is-hidden");$("customerNav")?.classList.add("is-hidden");
+   $("adminApp").classList.remove("is-hidden");$("adminNav").classList.remove("is-hidden");
+   $("topSubTitle").textContent="Admin Dashboard";$("adminWelcome").textContent="నమస్కారం! "+safe(profile?.full_name||profile?.phone);
+   await loadAdminDashboard();return;
+  }
+  $("adminApp").classList.add("is-hidden");$("adminNav")?.classList.add("is-hidden");
+  if(profile?.role==="customer"){
+   document.getElementById('customerApp').classList.remove('is-hidden');
+   document.querySelectorAll('[data-panel]').forEach(x=>x.classList.add('is-hidden'));
+   document.querySelector('.bottom-nav:not(#customerNav)')?.classList.add('is-hidden');
+   document.getElementById('topSubTitle').textContent='Customer Dashboard';
+   document.getElementById('customerName').textContent='నమస్కారం! '+safe(profile.full_name||profile.phone);
+   document.getElementById('customerNav').classList.remove('is-hidden');
    return;
   }
-  box.innerHTML=data.map(ride=>{
-   const fare=ride.agreed_fare ?? ride.fare_offer ?? ride.offered_fare;
-   const date=ride.created_at ? new Date(ride.created_at).toLocaleString("en-IN") : "—";
-   return `<div class="item">
-    <b>${escapeRideText(ride.vehicle_type||"Ride")} • ${escapeRideText(ride.status||"—")}</b>
-    <div class="muted">Date: ${escapeRideText(date)}</div>
-    <div>Pickup: ${escapeRideText(ride.pickup||"—")}</div>
-    <div>Drop: ${escapeRideText(ride.drop||"—")}</div>
-    <div>Fare: ${fare===null||fare===undefined?"—":"₹"+escapeRideText(fare)}</div>
-    <div class="muted">Ride ID: ${escapeRideText(ride.id)}</div>
-   </div>`;
-  }).join("");
- }catch(e){
-  box.textContent="Ride History Error: "+(e.message||String(e))+
-   "\nSupabase rides SELECT policy / table columns తనిఖీ చేయాలి.";
- }
+  if(profile?.role!=="driver")throw Error("Customer లేదా Driver accountతో Login చేయండి.");
+  document.getElementById('customerApp').classList.add('is-hidden');
+  document.querySelector('.bottom-nav:not(#customerNav)')?.classList.remove('is-hidden');
+  document.getElementById('topSubTitle').textContent='Driver Dashboard';
+  show("session","Driver Login అయింది ✓\nMobile: "+safe(profile.phone)+"\nApproval: "+safe(profile.driver_approval_status));$("driverName").textContent=safe(profile.full_name);$("driverVehicleLine").textContent=safe(profile.vehicle_type)+" Driver";$("driverApproval").textContent=safe(profile.driver_approval_status)==="approved"?"Approved ✓":"Pending";$("profileAvatar").textContent=(profile.full_name||"D").trim().charAt(0).toUpperCase();
+  $("profilePhone").value=profile.phone||"";
+  $("profileDetails").innerHTML=[
+   ["Name",profile.full_name],["Role",profile.role],["Vehicle",profile.vehicle_type],
+   ["Company",profile.vehicle_company],["Model",profile.vehicle_model],
+   ["Registration",profile.vehicle_registration],["Experience (years)",profile.driving_experience_years],
+   ["Driving Licence",profile.driving_license_number],["Approval",profile.driver_approval_status]
+  ].map(([k,v])=>`<div><small>${esc(k)}</small><br><b>${esc(safe(v))}</b></div>`).join("");
+  await loadOnlineStatus();
+ }catch(e){show("session","Login / Profile Error: "+e.message)}
+}
+async function savePhone(){
+ try{
+  if(!user)throw Error("Driver Login అవసరం.");
+  const phone=$("profilePhone").value.trim();
+  if(!/^[6-9][0-9]{9}$/.test(phone))throw Error("సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.");
+  const {error}=await db.from("profiles").update({phone}).eq("id",user.id);
+  if(error)throw error;
+  show("profileMsg","Mobile number update అయింది ✓");
+ }catch(e){show("profileMsg","Mobile update కాలేదు: "+e.message+" (profiles.phone UPDATE permission / RLS తనిఖీ చేయాలి.)")}
+}
+async function loadOnlineStatus(){
+ try{
+  const {data,error}=await db.from("driver_locations").select("is_online").eq("driver_id",user.id).maybeSingle();
+  if(error)throw error;
+  const online=!!data?.is_online;$ ("onlineToggle").checked=online;$ ("onlineLabel").textContent=online?"Online":"Offline";
+  show("onlineMsg",online?"మీరు Onlineలో ఉన్నారు ✓":"మీరు Offlineలో ఉన్నారు.");
+ }catch(e){show("onlineMsg","Online status చదవలేకపోయాం: "+e.message+" — driver_locations SELECT RLS policy తనిఖీ చేయాలి.");}
+}
+async function setOnline(value){
+ const toggle=$("onlineToggle"),label=$("onlineLabel");toggle.disabled=true;show("onlineMsg",value?"GPS Location తీసుకుంటున్నాం…":"Offline చేస్తున్నాం…");
+ try{
+  if(!user)throw Error("Driver Login అవసరం.");
+  let result;
+  if(value){
+   if(!navigator.geolocation)throw Error("ఈ browserలో GPS అందుబాటులో లేదు.");
+   const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:30000}));
+   const payload={driver_id:user.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,is_online:true,updated_at:new Date().toISOString()};
+   result=await db.from("driver_locations").upsert(payload,{onConflict:"driver_id"});
+  }else{
+   // Offline does not require GPS. Update only the existing location row.
+   result=await db.from("driver_locations").update({is_online:false,updated_at:new Date().toISOString()}).eq("driver_id",user.id);
+  }
+  if(result.error)throw result.error;
+  toggle.checked=value;label.textContent=value?"Online":"Offline";
+  show("onlineMsg",value?"మీరు Onlineలో ఉన్నారు ✓ కొత్త Ride Requests కోసం సిద్ధంగా ఉన్నారు.":"మీరు Offline అయ్యారు ✓");
+  if(value)await loadAll();
+ }catch(e){toggle.checked=!value;label.textContent=!value?"Online":"Offline";show("onlineMsg","Status update కాలేదు: "+e.message+". driver_locations పై SELECT/INSERT/UPDATE RLS policies తనిఖీ చేయాలి.");}
+ finally{toggle.disabled=false;}
 }
 
-function online(v){$('driverMsg').textContent=v?'Online UI selected. Existing profiles update logic connect చేయాలి.':'Offline UI selected. Existing profiles update logic connect చేయాలి.'}
-function startGps(){if(!navigator.geolocation)return;$('gpsMsg').textContent='GPS ప్రారంభమవుతోంది…';watch=navigator.geolocation.watchPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;initMap('driverMap',2);map2.setView([lat,lng],16);L.marker([lat,lng]).addTo(map2);$('gpsMsg').textContent='GPS: '+lat.toFixed(5)+', '+lng.toFixed(5)+' (map preview)'},e=>$('gpsMsg').textContent=e.message,{enableHighAccuracy:true,maximumAge:5000})}
-function stopGps(){if(watch!==null){navigator.geolocation.clearWatch(watch);watch=null;$('gpsMsg').textContent='GPS stopped'}}
-async function saveSOS(){try{if(!user)throw Error('ముందుగా login చేయండి');let a=null,b=null;try{let p=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{enableHighAccuracy:true,timeout:8000}));a=p.coords.latitude;b=p.coords.longitude}catch(_){}let {error}=await db.from('fr_ride_sos').insert({ride_id:null,sender_id:user.id,latitude:a,longitude:b,message:'Emergency SOS'});if(error)throw error;$('sosMsg').textContent='SOS record Supabaseలో save అయింది. తక్షణ ప్రమాదంలో 112కు కాల్ చేయండి.'}catch(e){$('sosMsg').textContent='SOS: '+e.message}}
-let selectedDriverPhoto=null;
-let uploadedDriverPhotoUrl=null;
-function previewDriverPhoto(event){
- const file=event.target.files&&event.target.files[0]; if(!file)return;
- if(!file.type.startsWith("image/")){ $("photoMsg").textContent="Image file మాత్రమే ఎంచుకోండి."; event.target.value=""; return; }
- if(file.size>5*1024*1024){ $("photoMsg").textContent="ఫోటో 5 MB లోపు ఉండాలి."; event.target.value=""; return; }
- selectedDriverPhoto=file; const img=$("driverPhotoPreview"); img.src=URL.createObjectURL(file); img.classList.remove("hidden"); uploadedDriverPhotoUrl=null;
- $("photoMsg").textContent="Preview సిద్ధంగా ఉంది. Upload Profile Photo నొక్కండి.";
+function rideDetails(r){
+ return `<p><b>${esc(safe(r.vehicle_type))} • ${esc(safe(r.status))}</b></p>
+ <p>Pickup: ${esc(safe(r.pickup_text||r.pickup))}<br>Drop: ${esc(safe(r.drop_text||r.drop))}<br>Offer: ₹${esc(safe(r.fare_offer))}<br>Ride ID: ${esc(r.id)}</p>`;
 }
-async function uploadDriverPhoto(){
+async function loadActiveRide(){
+ const root=$("activeRide");root.textContent="Active Ride తనిఖీ చేస్తున్నాం…";
  try{
-  if(!user)throw Error("ముందుగా Driver Login చేయండి.");
-  if(!selectedDriverPhoto)throw Error("ముందుగా Profile Photo ఎంచుకోండి.");
-  const ext=(selectedDriverPhoto.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
-  const path=user.id+"/profile-"+Date.now()+"."+ext;
-  const {data,error}=await db.storage.from("driver-photos").upload(path,selectedDriverPhoto,{upsert:true,contentType:selectedDriverPhoto.type});
+  const {data,error}=await db.from("rides").select("*").eq("driver_id",user.id).order("created_at",{ascending:false}).limit(30);
   if(error)throw error;
-  const {data:pub}=db.storage.from("driver-photos").getPublicUrl(data.path);
-  uploadedDriverPhotoUrl=pub.publicUrl;
-  $("photoMsg").textContent="ఫోటో Upload అయింది. Profile URL: "+uploadedDriverPhotoUrl;
- }catch(e){$("photoMsg").textContent="Upload Error: "+e.message+" — Supabase Storageలో driver-photos bucket మరియు upload policy అవసరం."}
+  const terminal=["completed","complete","cancelled","canceled","rejected","declined","expired"];
+  const active=(data||[]).filter(r=>!terminal.includes(String(r.status||"").toLowerCase()) && !["counter_offered"].includes(String(r.status||"").toLowerCase()));
+  if(!active.length){activeRide=null;root.innerHTML='<div class="empty-state">ప్రస్తుతం మీకు Accepted / Active Ride లేదు.</div>';return}
+  activeRide=active[0];
+  root.innerHTML=`<article class="active-ride-card"><div class="active-ride-head"><b>🚘 My Active Ride</b><span>${esc(String(activeRide.status||"ACTIVE").toUpperCase())}</span></div><div class="active-ride-body">${rideDetails(activeRide)}<div id="activeContact" class="contact-box">Customer contact వివరాలు లోడ్ అవుతున్నాయి…</div><div class="active-actions"><button class="call-action" onclick="document.querySelector('#activeContact a[href^=tel]')?.click()">☎ Call</button><button class="wa-action" onclick="document.querySelector('#activeContact a[href*=wa.me]')?.click()">WhatsApp</button><button class="track-action" onclick="openRideMap()">📍 Live Track / Route</button></div><div class="live-track-card"><b>📍 Customer Live Location</b><div id="driverTrackStatus" class="status">Customer Location permission మరియు active ride అవసరం.</div><div id="driverLiveMap"></div></div><button class="secondary-wide" onclick="shareDriverLocation()">Share My Location</button></div></article>`;
+  await loadCustomerContact(activeRide.customer_id);
+  startDriverLiveTracking(activeRide.id);
+ }catch(e){activeRide=null;root.innerHTML='<div class="empty-state">Active Ride Error: '+esc(e.message)+'. rides SELECT RLS policy తనిఖీ చేయండి.</div>';}
 }
-function saveEmergencyContact(who){
- const name=$(who+"EmergencyName").value.trim();
- const phone=$(who+"EmergencyPhone").value.trim();
- if(!/^[6-9][0-9]{9}$/.test(phone)){alert("సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.");return}
- const key="friendride_emergency_"+who;
- localStorage.setItem(key,JSON.stringify({name,phone}));
- const target=who==="customer"?"sosMsg":"driverEmergencyMsg";
- $(target).textContent="Emergency contact ఈ మొబైల్‌లో సేవ్ అయింది: "+(name||"Relative")+" • "+phone;
+
+async function loadCustomerContact(customerId){
+ const box=$("activeContact");if(!box)return;
+ if(!customerId){box.textContent="Customer ID అందుబాటులో లేదు.";return}
+ const {data,error}=await db.from("profiles").select("full_name,phone").eq("id",customerId).maybeSingle();
+ if(error){box.textContent="Customer contact చదవలేకపోయాం: "+error.message;return}
+ const phone=(data?.phone||"").replace(/\D/g,"");
+ box.innerHTML=`Customer: ${esc(safe(data?.full_name))}<br>Mobile: ${esc(safe(data?.phone))}`+
+ (phone?`<br><a href="tel:${phone}">📞 Call Customer</a> &nbsp; <a target="_blank" rel="noopener" href="https://wa.me/91${phone.replace(/^91/,'')}">WhatsApp</a>`:"");
 }
-function callSavedEmergency(who){
- const saved=localStorage.getItem("friendride_emergency_"+who);
- if(!saved){alert("ముందుగా మీ Emergency Contact పేరు, నంబర్ సేవ్ చేయండి.");return}
- const c=JSON.parse(saved);
- if(confirm((c.name||"Emergency Contact")+" కు కాల్ చేయాలా? "+c.phone)){location.href="tel:"+c.phone}
+function openRideMap(){
+ if(!activeRide)return;
+ const r=activeRide;
+ if(r.pickup_lat!=null&&r.pickup_lng!=null&&r.drop_lat!=null&&r.drop_lng!=null){
+  window.open(`https://www.google.com/maps/dir/${r.pickup_lat},${r.pickup_lng}/${r.drop_lat},${r.drop_lng}`,"_blank");
+ }else{
+  const q=encodeURIComponent((r.pickup_text||r.pickup||"")+" to "+(r.drop_text||r.drop||""));
+  window.open("https://www.google.com/maps/dir/?api=1&origin="+q,"_blank");
+ }
 }
-function loadEmergencyContact(who){
- try{const raw=localStorage.getItem("friendride_emergency_"+who);if(!raw)return;const c=JSON.parse(raw);
- const n=$(who+"EmergencyName"),p=$(who+"EmergencyPhone");if(n)n.value=c.name||"";if(p)p.value=c.phone||"";
- }catch(e){}
+async function shareDriverLocation(){
+ try{
+  if(!activeRide)throw Error("Active ride లేదు.");
+  const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:12000}));
+  const url=`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+  if(navigator.share)await navigator.share({title:"FRIEND RIDE – Driver Location",text:"నా ప్రస్తుత లొకేషన్: "+url});
+  else{await navigator.clipboard.writeText(url);alert("Location link copy అయింది.");}
+ }catch(e){show("requestMsg","Location share కాలేదు: "+e.message)}
 }
-function personalCall(){if(!PERSONAL_EMERGENCY_NUMBER){alert('Personal emergency number codeలో set చేయలేదు.');return}if(confirm('Emergency contact‌కు call చేయాలా?'))location.href='tel:'+PERSONAL_EMERGENCY_NUMBER}
-async function logout(){stopGps();await db.auth.signOut();user=null;$('dashboard').classList.add('hidden');$('nav').classList.add('hidden');$('welcome').classList.remove('hidden')}
-db.auth.getSession().then(({data})=>{if(data.session){user=data.session.user;role='customer';openApp()}});
+let selectedCounterRide=null;
+function openCounter(id, vehicle, pickup, drop, offer){
+ selectedCounterRide=id;
+ $('counterRideInfo').textContent=`${vehicle} • ${pickup} → ${drop} • Customer Offer ₹${safe(offer)}`;
+ $('counterFare').value='';$('counterModal').classList.add('show');
+}
+function closeCounter(){ $('counterModal').classList.remove('show'); selectedCounterRide=null; }
+async function sendCounterFromModal(){
+ if(!selectedCounterRide)return;
+ const id=selectedCounterRide, fare=$('counterFare').value;
+ $('counterModalMsg').textContent='పంపిస్తున్నాం…';
+ await counterOffer(id,fare,'counterModalMsg');
+ if($('counterModalMsg').textContent.includes('పంపబడింది')) closeCounter();
+}
+function renderRequests(rows){
+ const root=$('requests');root.innerHTML='';
+ $('requestCount').textContent=String(rows?.length||0);
+ if(!rows?.length){root.innerHTML='<div class="empty-state">ప్రస్తుతం కొత్త Ride Requests లేవు.</div>';return;}
+ rows.forEach((r,i)=>{
+  const el=document.createElement('article');el.className='ride-request';
+  const pickup= r.pickup_text||r.pickup||'—', drop=r.drop_text||r.drop||'—';
+  el.innerHTML=`<div class="ride-type"><span class="vehicle-icon">${String(r.vehicle_type||'Ride').toLowerCase()==='bike'?'🏍️':String(r.vehicle_type||'').toLowerCase()==='car'?'🚗':'🛺'}</span><b>${esc(safe(r.vehicle_type))} • Requested</b><span class="request-dot">New</span></div>
+   <div class="ride-route"><div><small>Pickup</small><b>${esc(safe(pickup))}</b></div><span class="route-arrow">→</span><div><small>Drop</small><b>${esc(safe(drop))}</b></div></div>
+   <div class="ride-fare">Customer Offer <strong>₹${esc(safe(r.fare_offer))}</strong></div>
+   <div class="ride-id">Ride ID: ${esc(r.id)}</div>
+   <div class="request-actions"><button class="accept-btn" data-accept="${i}">✓ Accept</button><button class="counter-btn" data-counter="${i}">₹ Counter Offer</button><button class="reject-btn" disabled title="reject_ride RPC databaseలో లేదు">Reject</button></div>
+   <div class="status req-status" id="reqmsg_${i}">Action చేయండి. Reject option database RPC సిద్ధమైన తర్వాత పనిచేస్తుంది.</div>`;
+  el.querySelector('[data-accept]').onclick=()=>rideAction('accept_ride',r.id,'reqmsg_'+i);
+  el.querySelector('[data-counter]').onclick=()=>openCounter(r.id,r.vehicle_type,pickup,drop,r.fare_offer);
+  root.appendChild(el);
+ });
+}
+function showTab(tab){
+ document.querySelectorAll('[data-panel]').forEach(p=>p.classList.toggle('is-hidden',p.dataset.panel!==tab));
+ document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('selected',b.dataset.tab===tab));
+ if(tab==='rides')loadAll();
+ if(tab==='home')loadAll();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function goSection(id,tab){ showTab(tab||'home'); setTimeout(()=>$(id)?.scrollIntoView({behavior:'smooth',block:'start'}),80); }
+
+async function loadAll(){
+ try{
+  if(!user)await checkSession();if(!user)throw Error("Driver Login అవసరం.");
+  show("requestMsg","Ride Requests లోడ్ అవుతున్నాయి…");
+  await loadActiveRide();
+  let data=null, rpcError=null;
+  const rpc=await db.rpc("get_driver_requests");
+  if(!rpc.error)data=rpc.data||[];else rpcError=rpc.error;
+  if(data===null){
+   // Fallback query helps distinguish a missing/broken RPC from table RLS.
+   const q=await db.from("rides").select("*").is("driver_id",null).eq("status","requested").order("created_at",{ascending:false}).limit(50);
+   if(q.error)throw Error("get_driver_requests: "+rpcError.message+" | rides fallback: "+q.error.message);
+   data=q.data||[];
+  }
+  renderRequests(data);
+  show("requestMsg",`Ride Requests లోడ్ అయ్యాయి ✓ (${data.length})`);
+ }catch(e){show("requestMsg","Ride Requests Error: "+e.message+"\nSupabaseలో get_driver_requests RPC, driver approval, rides SELECT policy తనిఖీ చేయాలి.");}
+}
+
+async function rideAction(rpc,id,msgId){
+ try{
+  const {data,error}=await db.rpc(rpc,{p_ride_id:id});if(error)throw error;
+  show(msgId,"Ride Accept అయింది ✓");
+  await loadAll();
+ }catch(e){show(msgId,"Accept Error: "+e.message)}
+}
+async function counterOffer(id,fare,msgId){
+ try{
+  if(!fare||Number(fare)<=0)throw Error("సరైన Counter Offer నమోదు చేయండి.");
+  const {data,error}=await db.rpc("counter_offer_ride",{p_ride_id:id,p_counter_fare:Number(fare)});
+  if(error)throw error;
+  show(msgId,"Counter Offer పంపబడింది ✓");await loadAll();
+ }catch(e){show(msgId,"Counter Offer Error: "+e.message)}
+}
+function saveEmergency(){
+ const p=$("emergencyPhone").value.trim();
+ if(!/^[6-9][0-9]{9}$/.test(p)){show("sosMsg","సరైన 10 అంకెల నంబర్ ఇవ్వండి.");return}
+ localStorage.setItem("friendride_driver_emergency",p);show("sosMsg","Emergency contact ఈ deviceలో సేవ్ అయింది ✓");
+}
+function callEmergency(){
+ const p=$("emergencyPhone").value.trim()||localStorage.getItem("friendride_driver_emergency");
+ if(!p){show("sosMsg","ముందుగా emergency contact సేవ్ చేయండి.");return}
+ location.href="tel:"+p;
+}
+async function saveSOS(){
+ try{
+  if(!user)throw Error("Driver Login అవసరం.");
+  const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:12000}));
+  const {error}=await db.from("fr_ride_sos").insert({ride_id:activeRide?.id||null,sender_id:user.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,message:"Driver Emergency SOS"});
+  if(error)throw error;
+  show("sosMsg","SOS location సేవ్ అయింది ✓\nLatitude: "+pos.coords.latitude+"\nLongitude: "+pos.coords.longitude+"\nఅత్యవసర పరిస్థితిలో 112కు కూడా కాల్ చేయండి.");
+ }catch(e){show("sosMsg","SOS Error: "+e.message)}
+}
+async function submitDriverFeedback(){
+ try{
+  if(!user)throw Error("Driver Login అవసరం.");
+  const comments=$("driverFeedback").value.trim();if(!comments)throw Error("Feedback నమోదు చేయండి.");
+  const rideId=$("feedbackRideId").value.trim();
+  const row={reviewer_id:user.id,rating:Number($("feedbackRating").value),comments};
+  if(rideId)row.ride_id=rideId;
+  const {error}=await db.from("fr_ride_feedback").insert(row);if(error)throw error;
+  show("feedbackMsg","Feedback విజయవంతంగా సేవ్ అయింది ✓");$("driverFeedback").value="";
+ }catch(e){show("feedbackMsg","Feedback Error: "+e.message)}
+}
+async function submitDriverComplaint(){
+ try{
+  if(!user)throw Error("Driver Login అవసరం.");
+  const complaint=$("driverComplaint").value.trim();if(!complaint)throw Error("Complaint నమోదు చేయండి.");
+  const rideId=$("feedbackRideId").value.trim();
+  const row={reporter_id:user.id,complaint};
+  if(rideId)row.ride_id=rideId;
+  const {error}=await db.from("fr_ride_complaints").insert(row);if(error)throw error;
+  show("feedbackMsg","Complaint విజయవంతంగా సేవ్ అయింది ✓");$("driverComplaint").value="";
+ }catch(e){show("feedbackMsg","Complaint Error: "+e.message)}
+}
+
+function showRideSubtab(which){$('activeSubpanel').classList.toggle('is-hidden',which!=='active');$('requestsSubpanel').classList.toggle('is-hidden',which!=='requests');document.querySelectorAll('.tabs .tab').forEach(b=>b.classList.toggle('selected',b.dataset.tab===which));if(which==='requests')loadAll();}
+// Keep the existing Supabase actions and schema mappings. Update labels and mirror counts for the reference layout.
+async function loadDriverStats(){
+ try{
+  if(!user)return;
+  const d=new Date();d.setHours(0,0,0,0);
+  const {data,error}=await db.from('rides').select('status,agreed_fare,fare_offer,created_at').eq('driver_id',user.id).gte('created_at',d.toISOString());
+  if(error)throw error;
+  const done=(data||[]).filter(r=>['completed','complete'].includes(String(r.status||'').toLowerCase()));
+  $('todayRides').textContent=String(done.length);
+  const total=done.reduce((sum,r)=>sum+Number(r.agreed_fare??r.fare_offer??0),0);
+  $('todayEarnings').textContent='₹'+(Number.isFinite(total)?total.toLocaleString('en-IN'):'—');
+ }catch(e){$('todayRides').textContent='—';$('todayEarnings').textContent='₹—';}
+}
+const _loadAllOriginal=loadAll;
+loadAll=async function(){await _loadAllOriginal();$('requestCountTab').textContent=$('requestCount').textContent||'0';$('activeCount').textContent=activeRide?'1':'0';await loadDriverStats();};
+const _checkSessionOriginal=checkSession;
+checkSession=async function(){await _checkSessionOriginal();if(profile){$('profileNameLarge').textContent=safe(profile.full_name);$('profileApprovalLarge').textContent=safe(profile.driver_approval_status);$('profileAvatarLarge').textContent=(profile.full_name||'D').trim().charAt(0).toUpperCase();}};
+
+let customerVehicle='Bike';
+function customerShow(which){['customerHome','customerMyRides','customerReferral','customerWallet','customerSOS','customerFeedback'].forEach(id=>$(id).classList.toggle('is-hidden',id!==({home:'customerHome',myRides:'customerMyRides',referral:'customerReferral',wallet:'customerWallet',sos:'customerSOS',feedback:'customerFeedback'}[which]||'customerHome')));document.querySelectorAll('#customerNav button').forEach((b,i)=>b.classList.toggle('selected',['home','myRides','sos','referral'][i]===which));if(which==='myRides')loadCustomerRides();}
+function chooseCustomerVehicle(v,el){customerVehicle=v;document.querySelectorAll('.vehicle-choice').forEach(x=>x.classList.remove('selected'));el.classList.add('selected')}
+function customerGPS(){if(!navigator.geolocation)return show('customerBookingMsg','GPS అందుబాటులో లేదు.');show('customerBookingMsg','Location తీసుకుంటున్నాం…');navigator.geolocation.getCurrentPosition(p=>{$('cPickup').value=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);show('customerBookingMsg','Pickup GPS Location set అయింది ✓')},e=>show('customerBookingMsg','GPS Error: '+e.message),{enableHighAccuracy:true,timeout:12000})}
+let customerMap=null,customerPickupMarker=null,nearbyDriverMarkers={},nearbyRefreshTimer=null,currentCustomerRideId=null,currentPickupCoords=null;
+function parseCoords(v){const m=String(v||'').trim().match(/^\s*(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);if(!m)return null;const lat=Number(m[1]),lng=Number(m[2]);return Number.isFinite(lat)&&Number.isFinite(lng)&&Math.abs(lat)<=90&&Math.abs(lng)<=180?[lat,lng]:null}
+function initCustomerMap(coords){if(!window.L){show('customerSearchStatus','Map load కాలేదు. Internet connection తనిఖీ చేయండి.');return}if(!customerMap){customerMap=L.map('customerDriverMap').setView(coords,14);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(customerMap)}else customerMap.setView(coords,14);if(customerPickupMarker)customerMap.removeLayer(customerPickupMarker);customerPickupMarker=L.marker(coords).addTo(customerMap).bindPopup('మీ Pickup Location').openPopup();setTimeout(()=>customerMap.invalidateSize(),250)}
+function startNearbyDriverSearch(rideId,pickup){currentCustomerRideId=rideId;currentPickupCoords=parseCoords(pickup);$('customerSearchPanel').classList.remove('is-hidden');if(!currentPickupCoords){show('customerSearchStatus','Mapలో Drivers చూడటానికి ముందుగా Use My Location ద్వారా GPS Pickup ఎంచుకుని Ride Book చేయండి.');return}initCustomerMap(currentPickupCoords);refreshNearbyDrivers();if(nearbyRefreshTimer)clearInterval(nearbyRefreshTimer);nearbyRefreshTimer=setInterval(()=>{if(!document.hidden&&user?.id&&profile?.role==='customer')refreshNearbyDrivers()},10000);$('customerSearchPanel').scrollIntoView({behavior:'smooth',block:'start'})}
+function distanceKm(a,b){const rad=x=>x*Math.PI/180,R=6371,dLat=rad(b[0]-a[0]),dLng=rad(b[1]-a[1]),x=Math.sin(dLat/2)**2+Math.cos(rad(a[0]))*Math.cos(rad(b[0]))*Math.sin(dLng/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
+async function refreshNearbyDrivers(){try{if(!currentPickupCoords)return;const {data,error}=await db.from('driver_locations').select('driver_id,latitude,longitude,is_online,updated_at').eq('is_online',true);if(error)throw error;const now=Date.now(),near=(data||[]).filter(d=>d.latitude!=null&&d.longitude!=null&&d.is_online===true).map(d=>({...d,dist:distanceKm(currentPickupCoords,[Number(d.latitude),Number(d.longitude)])})).filter(d=>d.dist<=15&&(!d.updated_at||now-new Date(d.updated_at).getTime()<5*60*1000));Object.keys(nearbyDriverMarkers).forEach(id=>{customerMap?.removeLayer(nearbyDriverMarkers[id]);delete nearbyDriverMarkers[id]});near.forEach(d=>{const id=String(d.driver_id);const marker=L.marker([Number(d.latitude),Number(d.longitude)],{icon:L.divIcon({className:'',html:'<span class="driver-pin">🚕</span>',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(customerMap).bindPopup('Online Driver • '+d.dist.toFixed(1)+' km');nearbyDriverMarkers[id]=marker});show('customerSearchStatus',near.length?near.length+' దగ్గరలో Online Drivers కనిపించారు. Driver Accept చేసిన తర్వాత Ride వివరాలు My Ridesలో కనిపిస్తాయి.':'15 km పరిధిలో ప్రస్తుతం Online Drivers కనిపించలేదు. Refresh లేదా కొద్దిసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.');}catch(e){show('customerSearchStatus','Nearby Drivers లోడ్ కాలేదు: '+e.message+'. driver_locations SELECT RLS policyలో authenticated customersకు Online locations చదివే అనుమతి అవసరం.')}}
+async function customerBook(){try{if(!user)throw Error('Login అవసరం');let pickup=$('cPickup').value.trim(),drop=$('cDrop').value.trim(),fare=Number($('cFare').value);if(!pickup||!drop||!Number.isFinite(fare)||fare<=0)throw Error('Pickup, Drop, సరైన Fare Offer నమోదు చేయండి');const coords=parseCoords(pickup);const ridePayload={customer_id:user.id,vehicle_type:customerVehicle,pickup,drop,fare_offer:fare,notes:$('cNotes').value.trim(),status:'requested'};if(coords){ridePayload.pickup_lat=coords[0];ridePayload.pickup_lng=coords[1]}let {data,error}=await db.from('rides').insert(ridePayload).select('id,status').single();if(error)throw error;show('customerBookingMsg','Ride Request పంపబడింది ✓\nమీ Offer: ₹'+fare+'\nదగ్గరలో ఉన్న Online Driversను Mapలో వెతుకుతున్నాం…');startNearbyDriverSearch(data.id,pickup);}catch(e){show('customerBookingMsg','Booking Error: '+e.message)}}
+async function loadCustomerRides(){try{if(!user)throw Error('Login అవసరం');let {data,error}=await db.from('rides').select('*').eq('customer_id',user.id).order('created_at',{ascending:false}).limit(30);if(error)throw error;let box=$('customerRidesList');box.innerHTML='';if(!data?.length){box.textContent='ఇంకా Rides లేవు.';return}data.forEach(r=>{let el=document.createElement('div');el.className='customer-active';let fare=r.agreed_fare??r.fare_offer??'—';el.innerHTML='<b>'+esc(safe(r.vehicle_type))+' • '+esc(safe(r.status))+'</b><p>'+esc(safe(r.pickup))+' → '+esc(safe(r.drop))+'</p><p>Your Offer: ₹'+esc(safe(r.fare_offer))+(r.status==='counter_offered'?' • Driver Counter Offer: ₹'+esc(safe(r.agreed_fare)):'')+'</p><small>Ride ID: '+esc(r.id)+'</small>';if(r.status==='counter_offered'){let a=document.createElement('button');a.className='btn';a.textContent='Accept Counter Offer';a.onclick=async()=>{let x=await db.rpc('accept_counter_offer',{p_ride_id:r.id});if(x.error)alert('Accept failed: '+x.error.message);else loadCustomerRides()};let d=document.createElement('button');d.className='btn light';d.textContent='Reject Counter Offer';d.onclick=async()=>{let x=await db.rpc('decline_counter_offer',{p_ride_id:r.id});if(x.error)alert('Reject failed: '+x.error.message);else loadCustomerRides()};el.append(a,d)}let map=document.createElement('button');map.className='btn light';map.textContent='📍 Route';map.onclick=()=>window.open('https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(r.pickup||'')+'&destination='+encodeURIComponent(r.drop||''),'_blank');el.append(map);if(['accepted','in_progress','started'].includes(String(r.status||'').toLowerCase())){let t=document.createElement('button');t.className='btn';t.textContent='🛰️ Live Track Driver & Share My Location';t.onclick=()=>startCustomerLiveTracking(r.id,r);el.append(t)}box.append(el)})}catch(e){show('customerRidesList','Rides Error: '+e.message)}}
+
+// Two-way live tracking. Customer location is written only after an accepted ride and explicit user action.
+let customerTrackTimer=null,driverTrackTimer=null,driverTrackMap=null,customerTrackMap=null,customerTrackMarkers={},driverTrackMarkers={};
+function getPosition(){return new Promise((resolve,reject)=>{if(!navigator.geolocation)return reject(Error('ఈ Browserలో GPS లేదు'));navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:5000})})}
+async function startDriverLiveTracking(rideId){
+ if(!user||profile?.role!=='driver'||!rideId)return;
+ if(driverTrackTimer)clearInterval(driverTrackTimer);
+ const send=async()=>{try{const pos=await getPosition();const now=new Date().toISOString();const payload={driver_id:user.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,is_online:true,updated_at:now};const {error}=await db.from('driver_locations').upsert(payload,{onConflict:'driver_id'});if(error)throw error;const live={ride_id:rideId,user_id:user.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,updated_at:now};const {error:liveError}=await db.from('ride_live_locations').upsert(live,{onConflict:'ride_id,user_id'});if(liveError)throw liveError;show('driverTrackStatus','మీ Driver Location Customerకు Liveగా Share అవుతోంది ✓ ('+new Date().toLocaleTimeString()+')');await refreshDriverCustomerLocation(rideId)}catch(e){show('driverTrackStatus','Driver Location update కాలేదు: '+e.message+' — driver_locations INSERT/UPDATE policy తనిఖీ చేయండి.')}};
+ await send();driverTrackTimer=setInterval(()=>{if(!document.hidden&&user?.id&&profile?.role==='driver')send()},10000);
+}
+async function refreshDriverCustomerLocation(rideId){
+ try{const {data,error}=await db.from('ride_live_locations').select('user_id,latitude,longitude,updated_at').eq('ride_id',rideId).neq('user_id',user.id).order('updated_at',{ascending:false}).limit(1).maybeSingle();if(error)throw error;if(!data)return;const pt=[Number(data.latitude),Number(data.longitude)];if(!driverTrackMap){driverTrackMap=L.map('driverLiveMap').setView(pt,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(driverTrackMap)}driverTrackMap.setView(pt,15);if(driverTrackMarkers.customer)driverTrackMap.removeLayer(driverTrackMarkers.customer);driverTrackMarkers.customer=L.marker(pt).addTo(driverTrackMap).bindPopup('Customer Live Location').openPopup();setTimeout(()=>driverTrackMap.invalidateSize(),200);show('driverTrackStatus','Customer Live Location కనిపిస్తోంది ✓ • '+new Date(data.updated_at).toLocaleTimeString())}catch(e){show('driverTrackStatus','Customer Location ఇంకా అందుబాటులో లేదు: '+e.message+' — ride_customer_locations SELECT policy / SQL setup అవసరం.')}
+}
+async function startCustomerLiveTracking(rideId,ride){
+ try{if(!user||profile?.role!=='customer')throw Error('Customer Login అవసరం');const {data:rd,error:re}=await db.from('rides').select('id,status,driver_id').eq('id',rideId).eq('customer_id',user.id).maybeSingle();if(re)throw re;if(!rd||!rd.driver_id||!['accepted','in_progress','started'].includes(String(rd.status||'').toLowerCase()))throw Error('Driver Ride Accept చేసిన తర్వాత మాత్రమే Live Tracking ప్రారంభమవుతుంది.');
+ $('customerSearchPanel').classList.remove('is-hidden');if(currentPickupCoords)initCustomerMap(currentPickupCoords);$('customerSearchStatus').textContent='Customer మరియు Driver రెండు వైపులా Live Location Share అవుతోంది…';
+ if(customerTrackTimer)clearInterval(customerTrackTimer);
+ const send=async()=>{try{const pos=await getPosition();const row={ride_id:rideId,user_id:user.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,updated_at:new Date().toISOString()};const {error}=await db.from('ride_live_locations').upsert(row,{onConflict:'ride_id,user_id'});if(error)throw error;await refreshCustomerDriverLocation(rideId);show('customerSearchStatus','మీ Location Driverకు Share అవుతోంది ✓ • '+new Date().toLocaleTimeString())}catch(e){show('customerSearchStatus','Customer Location update కాలేదు: '+e.message+' — ride_customer_locations INSERT/UPDATE RLS policy తనిఖీ చేయండి.')}};
+ await send();customerTrackTimer=setInterval(()=>{if(!document.hidden&&user?.id&&profile?.role==='customer')send()},10000);$('customerSearchPanel').scrollIntoView({behavior:'smooth',block:'start'});
+ }catch(e){alert('Live Tracking: '+e.message)}
+}
+async function refreshCustomerDriverLocation(rideId){
+ try{const {data:rd,error:re}=await db.from('rides').select('driver_id,status').eq('id',rideId).eq('customer_id',user.id).maybeSingle();if(re)throw re;if(!rd?.driver_id)return;const {data,error}=await db.from('ride_live_locations').select('user_id,latitude,longitude,updated_at').eq('ride_id',rideId).eq('user_id',rd.driver_id).maybeSingle();if(error)throw error;if(data?.latitude!=null&&data?.longitude!=null){const pt=[Number(data.latitude),Number(data.longitude)];if(!customerMap&&currentPickupCoords)initCustomerMap(currentPickupCoords);if(customerMap){if(nearbyDriverMarkers.live)customerMap.removeLayer(nearbyDriverMarkers.live);nearbyDriverMarkers.live=L.marker(pt,{icon:L.divIcon({className:'',html:'<span class="driver-pin">🚕</span>',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(customerMap).bindPopup('Assigned Driver • Live Location');customerMap.fitBounds([pt,...(currentPickupCoords?[currentPickupCoords]:[])],{padding:[25,25]})}}}catch(e){show('customerSearchStatus','Driver Location చదవలేకపోయాం: '+e.message+' — driver_locations SELECT policy తనిఖీ చేయాలి.')}
+}
+
+function copyCustomerReferral(){let c=$('customerReferralCode').value;if(!c)return show('customerReferralMsg','Referral Code backendలో ఇంకా configure కాలేదు.');navigator.clipboard?.writeText(c).then(()=>show('customerReferralMsg','Referral Code copied ✓')).catch(()=>show('customerReferralMsg','Copy చేయలేకపోయాం.'))}
+function shareCustomerReferral(){let c=$('customerReferralCode').value;if(!c)return show('customerReferralMsg','Referral Code backendలో configure అయిన తర్వాత Share పనిచేస్తుంది.');let u=location.origin+location.pathname+'?ref='+encodeURIComponent(c);window.open('https://wa.me/?text='+encodeURIComponent('FRIEND RIDEలో Join అవ్వండి: '+u),'_blank')}
+function requestCustomerWithdrawal(){let upi=$('customerUpi').value.trim(),amt=Number($('customerWithdrawAmount').value);if(!/^[\w.\-]{2,}@[\w]{2,}$/.test(upi))return show('customerWalletMsg','సరైన UPI ID నమోదు చేయండి.');if(!Number.isFinite(amt)||amt<50)return show('customerWalletMsg','Minimum withdrawal ₹50.');show('customerWalletMsg','UPI ID format సరైంది. కానీ secure payout backend, wallet balance verification, Admin approval ఇంకా connect కాలేదు. నిజమైన withdrawal పంపలేదు.')}
+function saveCustomerEmergency(){let p=$('customerEmergencyPhone').value.trim();if(!/^[6-9][0-9]{9}$/.test(p))return show('customerSOSMsg','సరైన 10 అంకెల నంబర్ ఇవ్వండి.');localStorage.setItem('friendride_customer_emergency',p);show('customerSOSMsg','Emergency Contact సేవ్ అయింది ✓')}
+async function customerSOSSave(){try{let pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{enableHighAccuracy:true,timeout:10000}));let {error}=await db.from('fr_ride_sos').insert({ride_id:null,sender_id:user.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,message:'Customer Emergency SOS'});if(error)throw error;show('customerSOSMsg','SOS location save అయింది ✓. అత్యవసర పరిస్థితిలో 112కు కాల్ చేయండి.')}catch(e){show('customerSOSMsg','SOS Error: '+e.message)}}
+async function customerFeedbackSave(){try{let comments=$('customerFeedbackText').value.trim();if(!comments)throw Error('Feedback నమోదు చేయండి');let row={reviewer_id:user.id,rating:Number($('customerRating').value),comments};let rid=$('customerFeedbackRide').value.trim();if(rid)row.ride_id=rid;let {error}=await db.from('fr_ride_feedback').insert(row);if(error)throw error;show('customerFeedbackMsg','Feedback సేవ్ అయింది ✓')}catch(e){show('customerFeedbackMsg','Feedback Error: '+e.message)}}
+async function customerComplaintSave(){try{let complaint=$('customerComplaintText').value.trim();if(!complaint)throw Error('Complaint నమోదు చేయండి');let row={reporter_id:user.id,complaint};let rid=$('customerFeedbackRide').value.trim();if(rid)row.ride_id=rid;let {error}=await db.from('fr_ride_complaints').insert(row);if(error)throw error;show('customerFeedbackMsg','Complaint సేవ్ అయింది ✓')}catch(e){show('customerFeedbackMsg','Complaint Error: '+e.message)}}
+
+
+function adminShow(which){const ids={home:'adminHome',drivers:'adminDrivers',rides:'adminRides',referrals:'adminReferrals',payouts:'adminPayouts',sos:'adminSos',reports:'adminReports'};Object.values(ids).forEach(id=>$(id)?.classList.add('is-hidden'));$(ids[which]||ids.home)?.classList.remove('is-hidden');document.querySelectorAll('#adminNav button').forEach((b,i)=>b.classList.toggle('selected',['home','drivers','rides','payouts'][i]===which));if(which==='drivers')loadAdminDrivers();if(which==='rides')loadAdminRides();if(which==='referrals')loadAdminReferrals();if(which==='sos')loadAdminSos();if(which==='reports')loadAdminReports()}
+async function adminCount(table){const r=await db.from(table).select('*',{count:'exact',head:true});if(r.error)throw r.error;return r.count??0}
+async function loadAdminDashboard(){if(!isAdmin)return;try{const [rides,drivers,sos]=await Promise.all([adminCount('rides'),db.from('profiles').select('*',{count:'exact',head:true}).eq('role','driver'),adminCount('fr_ride_sos')]);if(drivers.error)throw drivers.error;$('adminRideCount').textContent=rides;$('adminDriverCount').textContent=drivers.count??0;$('adminSosCount').textContent=sos;show('adminStatus','Admin access verified ✓ Dashboard counts updated.')}catch(e){show('adminStatus','కొన్ని Dashboard counts లోడ్ కాలేదు: '+e.message+'. సంబంధిత Table SELECT RLS / Admin RPC permissions తనిఖీ చేయాలి.')}}
+async function loadAdminDrivers(){if(!isAdmin)return;const box=$('adminDriversList');box.textContent='Driver applications లోడ్ అవుతున్నాయి…';try{const r=await db.rpc('admin_list_driver_applications');if(r.error)throw r.error;box.replaceChildren();const rows=r.data||[];if(!rows.length){box.textContent='Driver Applications లేవు.';return}rows.forEach(d=>{const el=document.createElement('div');el.className='ride-request';const h=document.createElement('b');h.textContent=(d.full_name||'Driver')+' • '+(d.driver_approval_status||'pending');const p=document.createElement('p');p.textContent=(d.phone||'')+' • '+(d.vehicle_type||'')+' '+(d.vehicle_model||'');el.append(h,p);if(d.driver_approval_status!=='approved'){const b=document.createElement('button');b.className='btn';b.textContent='Approve Driver';b.onclick=async()=>{b.disabled=true;try{const a=await db.rpc('admin_approve_driver',{p_driver_id:d.id});if(a.error)throw a.error;await loadAdminDrivers();show('adminStatus','Driver approval updated ✓')}catch(e){b.disabled=false;show('adminStatus','Approval failed: '+e.message)}};el.append(b)}box.append(el)})}catch(e){box.textContent='Driver list లోడ్ కాలేదు: '+e.message+' • admin_list_driver_applications RPC / Admin permission తనిఖీ చేయండి.'}}
+async function loadAdminRides(){if(!isAdmin)return;const box=$('adminRidesList');box.textContent='Rides లోడ్ అవుతున్నాయి…';try{const r=await db.from('rides').select('id,customer_id,driver_id,vehicle_type,pickup,drop,fare_offer,agreed_fare,status,created_at').order('created_at',{ascending:false}).limit(100);if(r.error)throw r.error;box.replaceChildren();(r.data||[]).forEach(x=>{const el=document.createElement('div');el.className='ride-request';el.innerHTML='<b>'+esc(safe(x.vehicle_type))+' • '+esc(safe(x.status))+'</b><p>'+esc(safe(x.pickup))+' → '+esc(safe(x.drop))+'</p><p>Offer ₹'+esc(safe(x.fare_offer))+' • Agreed ₹'+esc(safe(x.agreed_fare))+'</p><small>'+esc(x.id)+'</small>';box.append(el)});if(!r.data?.length)box.textContent='Rides లేవు.'}catch(e){box.textContent='Rides లోడ్ కాలేదు: '+e.message+' • Admin SELECT permission అవసరం.'}}
+async function loadAdminReferrals(){if(!isAdmin)return;const box=$('adminReferralsList');box.textContent='Referral records లోడ్ అవుతున్నాయి…';try{const r=await db.rpc('admin_list_referral_progress');if(r.error)throw r.error;box.replaceChildren();(r.data||[]).forEach(x=>{const el=document.createElement('div');el.className='ride-request';el.textContent=(x.referrer_name||'Referrer')+' → '+(x.referred_name||'Referred driver')+' • '+(x.completed_rides||0)+' completed rides • '+(x.reward_status||'In progress');box.append(el)});if(!r.data?.length)box.textContent='Driver referral records లేవు. Customer ₹50 referral RPC ఇంకా వేరుగా నిర్మించాలి.'}catch(e){box.textContent='Referral list RPC అందుబాటులో లేదు: '+e.message+'. Customer ₹50 payouts కోసం ప్రత్యేక backend అవసరం.'}}
+async function loadAdminSos(){if(!isAdmin)return;const box=$('adminSosList');box.textContent='SOS alerts లోడ్ అవుతున్నాయి…';try{const r=await db.from('fr_ride_sos').select('*').limit(100);if(r.error)throw r.error;box.replaceChildren();(r.data||[]).forEach(x=>{const el=document.createElement('div');el.className='ride-request';el.textContent='SOS • '+safe(x.message)+' • '+safe(x.sender_id)+' • '+safe(x.latitude)+', '+safe(x.longitude);box.append(el)});if(!r.data?.length)box.textContent='SOS alerts లేవు.'}catch(e){box.textContent='SOS లోడ్ కాలేదు: '+e.message+'. Admin SELECT permission అవసరం.'}}
+async function loadAdminReports(){if(!isAdmin)return;for(const [table,id,label] of [['fr_ride_complaints','adminComplaintsList','Complaints'],['fr_ride_feedback','adminFeedbackList','Feedback']]){const box=$(id);box.textContent=label+' లోడ్ అవుతున్నాయి…';try{const r=await db.from(table).select('*').limit(100);if(r.error)throw r.error;box.replaceChildren();(r.data||[]).forEach(x=>{const el=document.createElement('div');el.className='ride-request';el.textContent=label+': '+safe(x.complaint||x.comments||x.message)+' • '+safe(x.status||x.rating);box.append(el)});if(!r.data?.length)box.textContent=label+' లేవు.'}catch(e){box.textContent=label+' లోడ్ కాలేదు: '+e.message+'. Admin SELECT permission అవసరం.'}}}
+
+const oldPhone=localStorage.getItem("friendride_driver_emergency");if(oldPhone)$('emergencyPhone').value=oldPhone;
+let refreshBusy=false;
+async function safeAutoRefresh(){if(document.hidden||!user||profile?.role!=="driver"||refreshBusy)return;refreshBusy=true;try{await loadAll();}finally{refreshBusy=false;}}
+checkSession().then(()=>{if(user&&profile?.role==="driver")safeAutoRefresh();});
+setInterval(safeAutoRefresh,20000);
 </script></body></html>
