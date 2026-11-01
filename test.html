@@ -9,6 +9,14 @@
 <header class="topbar"><div class="brand"><span class="brand-icon">🚕</span><div>FRIEND RIDE<small id="topSubTitle">Customer & Driver Dashboard</small></div><span style="margin-left:auto;font-size:22px">♧</span></div></header>
 <main class="wrap">
 
+<section class="panel" id="loginPanel" style="max-width:480px;margin:22px auto;">
+ <h2 style="margin-top:0;color:#07543d">🔐 FRIEND RIDE Login</h2>
+ <p class="muted">ఇప్పటికే FRIEND RIDEలో నమోదు చేసిన Mobile Number + Password ఉపయోగించండి.</p>
+ <label>Mobile Number</label><input id="loginPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 అంకెల మొబైల్ నంబర్" autocomplete="tel">
+ <label>Password</label><input id="loginPassword" type="password" placeholder="మీ Password" autocomplete="current-password">
+ <button class="btn" id="loginBtn" style="width:100%;margin-top:14px" onclick="loginWithPhonePassword()">Login</button>
+ <div id="loginMsg" class="status">Login చేసిన తర్వాత మీ Customer లేదా Driver Dashboard తెరుచుకుంటుంది.</div>
+</section>
 <section id="customerApp" class="is-hidden">
  <section class="panel" id="customerHome">
   <div class="driver-row"><div class="avatar">🚕</div><div><div class="driver-name">FRIEND RIDE</div><div class="subline" id="customerName">మీ ప్రయాణం… మీ ఎంపిక</div></div></div>
@@ -36,7 +44,7 @@
 <section class="panel" data-panel="home" id="homePanel">
  <div class="driver-row"><div class="avatar" id="profileAvatar">D</div><div><div class="driver-name" id="driverName">Driver</div><span class="approved" id="driverApproval">Checking…</span><div class="subline" id="driverVehicleLine">Driver</div></div></div>
  <div class="switch-card"><div><div class="switch-title" id="onlineLabel">Go Offline</div><div class="switch-note">Receive new ride requests</div></div><label class="switch"><input id="onlineToggle" type="checkbox" onchange="setOnline(this.checked)"><span class="slider"></span></label></div>
- <div id="onlineMsg" class="status">Online కావడానికి GPS permission ఇవ్వండి.</div>
+ <div id="onlineMsg" class="status">Online కావడానికి GPS permission ఇవ్వండి.</div><button class="btn light" style="width:100%;margin-top:8px" onclick="loadAll()">↻ Refresh Active Ride & Requests</button>
  <div class="stats"><div class="stat">Today Rides<b id="todayRides">—</b></div><div class="stat">Earnings<b id="todayEarnings">₹—</b></div><div class="stat">Rating<b>—</b></div></div>
  <div class="menu-list"><button class="menu-link" onclick="showTab('rides')"><span class="ico">🚕</span>Ride Requests<span class="count" id="requestCount">0</span></button><button class="menu-link" onclick="showTab('rides')"><span class="ico">📋</span>My Rides<span class="chev">›</span></button><button class="menu-link" onclick="showTab('sos')"><span class="ico">🆘</span>Emergency SOS<span class="chev">›</span></button><button class="menu-link" onclick="showTab('feedback')"><span class="ico">💬</span>Feedback & Complaint<span class="chev">›</span></button><button class="menu-link" onclick="showTab('profile')"><span class="ico">👤</span>My Profile<span class="chev">🔒</span></button><button class="menu-link" onclick="showTab('subscription')"><span class="ico">💳</span>Driver Subscription <span class="chev">›</span></button><button class="menu-link" onclick="showTab('driverReferral')"><span class="ico">🎁</span>Refer & Earn <span class="chev">›</span></button><button class="menu-link" style="color:#c62828" onclick="logoutAccount()"><span class="ico">🚪</span>Logout <span class="chev">›</span></button></div>
  <div class="status" id="session">Login session తనిఖీ చేస్తున్నాం…</div><button class="btn light" onclick="checkSession()">Refresh Session</button>
@@ -65,23 +73,49 @@ function safe(v){return v===null||v===undefined||v===""?"—":String(v)}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
 async function logoutAccount(){
+ const btns=[...document.querySelectorAll('button[onclick="logoutAccount()"]')];btns.forEach(b=>{b.disabled=true;b.textContent='Logging out…'});
  try{
+  // Sign out must not depend on the driver_locations policy succeeding.
   if(user && profile?.role==="driver"){
-   // Best-effort: mark driver offline before ending the session.
-   await db.from("driver_locations").upsert({driver_id:user.id,is_online:false,updated_at:new Date().toISOString()},{onConflict:"driver_id"});
+   try{await db.from("driver_locations").update({is_online:false,updated_at:new Date().toISOString()}).eq("driver_id",user.id);}catch(_){/* continue to sign out */}
   }
-  const {error}=await db.auth.signOut();
+  const {error}=await db.auth.signOut({scope:"local"});
   if(error)throw error;
   user=null;profile=null;activeRide=null;
-  location.reload();
- }catch(e){alert("Logout కాలేదు: "+e.message);}
+  document.getElementById("loginPanel").classList.remove("is-hidden");
+  document.getElementById("customerApp").classList.add("is-hidden");
+  document.querySelectorAll("[data-panel]").forEach(x=>x.classList.add("is-hidden"));
+  document.querySelector(".bottom-nav:not(#customerNav)")?.classList.add("is-hidden");
+  document.getElementById("customerNav")?.classList.add("is-hidden");
+  show("loginMsg","Logout విజయవంతమైంది. మళ్లీ Login చేయండి.");
+ }catch(e){btns.forEach(b=>{b.disabled=false;b.textContent='🚪 Logout'});alert("Logout కాలేదు: "+(e.message||e));}
 }
 
+async function loginWithPhonePassword(){
+ const btn=$("loginBtn");btn.disabled=true;btn.textContent="Logging in…";
+ try{
+  const digits=$("loginPhone").value.replace(/\D/g,"");
+  const phone=digits.length===10?"+91"+digits:(digits.startsWith("91")&&digits.length===12?"+"+digits:"");
+  const password=$("loginPassword").value;
+  if(!phone)throw Error("సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.");
+  if(!password)throw Error("Password నమోదు చేయండి.");
+  const {data,error}=await db.auth.signInWithPassword({phone,password});
+  if(error)throw error;
+  if(!data.session)throw Error("Login Session రాలేదు. Supabase Auth Phone/Password settings తనిఖీ చేయండి.");
+  show("loginMsg","Login విజయవంతమైంది ✓ Dashboard లోడ్ అవుతోంది…");
+  $("loginPanel").classList.add("is-hidden");
+  await checkSession();
+  if(user&&profile?.role==="driver")await loadAll();
+  if(user&&profile?.role==="customer")customerShow("home");
+ }catch(e){show("loginMsg","Login కాలేదు: "+(e.message||e)+". మీ నమోదైన మొబైల్ నంబర్, Password మరియు Supabase Phone Auth సెట్టింగ్స్ తనిఖీ చేయండి.");}
+ finally{btn.disabled=false;btn.textContent="Login";}
+}
 async function checkSession(){
  try{
   const {data,error}=await db.auth.getSession();if(error)throw error;
   user=data.session?.user||null;
-  if(!user){show("session","Login session లేదు. Main FRIEND RIDEలో Customer లేదా Driver Login చేసి ఇదే browserలో test.html తెరవండి.");return}
+  if(!user){$("loginPanel").classList.remove("is-hidden");$("customerApp").classList.add("is-hidden");document.querySelectorAll("[data-panel]").forEach(x=>x.classList.add("is-hidden"));document.querySelector(".bottom-nav:not(#customerNav)")?.classList.add("is-hidden");$("customerNav")?.classList.add("is-hidden");show("loginMsg","మీరు test.htmlలోనే నేరుగా Login చేయవచ్చు.");return}
+  $("loginPanel").classList.add("is-hidden");
   const {data:p,error:pe}=await db.from("profiles").select("id,full_name,phone,role,vehicle_type,vehicle_company,vehicle_model,vehicle_registration,driving_experience_years,driving_license_number,driver_approval_status").eq("id",user.id).maybeSingle();
   if(pe)throw pe;profile=p;
   if(profile?.role==="customer"){
@@ -119,34 +153,53 @@ async function savePhone(){
  }catch(e){show("profileMsg","Mobile update కాలేదు: "+e.message+" (profiles.phone UPDATE permission / RLS తనిఖీ చేయాలి.)")}
 }
 async function loadOnlineStatus(){
- const {data,error}=await db.from("driver_locations").select("is_online").eq("driver_id",user.id).maybeSingle();
- if(error){show("onlineMsg","Online status చదవలేకపోయాం: "+error.message);return}
- $("onlineToggle").checked=!!data?.is_online;$("onlineLabel").textContent=data?.is_online?"Online":"Offline";
+ try{
+  const {data,error}=await db.from("driver_locations").select("is_online").eq("driver_id",user.id).maybeSingle();
+  if(error)throw error;
+  const online=!!data?.is_online;$ ("onlineToggle").checked=online;$ ("onlineLabel").textContent=online?"Online":"Offline";
+  show("onlineMsg",online?"మీరు Onlineలో ఉన్నారు ✓":"మీరు Offlineలో ఉన్నారు.");
+ }catch(e){show("onlineMsg","Online status చదవలేకపోయాం: "+e.message+" — driver_locations SELECT RLS policy తనిఖీ చేయాలి.");}
 }
 async function setOnline(value){
+ const toggle=$("onlineToggle"),label=$("onlineLabel");toggle.disabled=true;show("onlineMsg",value?"GPS Location తీసుకుంటున్నాం…":"Offline చేస్తున్నాం…");
  try{
   if(!user)throw Error("Driver Login అవసరం.");
-  const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:12000}));
-  const payload={driver_id:user.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,is_online:value,updated_at:new Date().toISOString()};
-  const {error}=await db.from("driver_locations").upsert(payload,{onConflict:"driver_id"});
-  if(error)throw error;
-  $("onlineToggle").checked=value;$("onlineLabel").textContent=value?"Online":"Offline";
-  show("onlineMsg",value?"మీరు Onlineలో ఉన్నారు ✓":"మీరు Offline అయ్యారు ✓");
- }catch(e){$("onlineToggle").checked=!value;show("onlineMsg","Online status update కాలేదు: "+e.message+" (driver_locations INSERT/UPDATE policy తనిఖీ చేయాలి.)")}
+  let result;
+  if(value){
+   if(!navigator.geolocation)throw Error("ఈ browserలో GPS అందుబాటులో లేదు.");
+   const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:30000}));
+   const payload={driver_id:user.id,latitude:pos.coords.latitude,longitude:pos.coords.longitude,is_online:true,updated_at:new Date().toISOString()};
+   result=await db.from("driver_locations").upsert(payload,{onConflict:"driver_id"});
+  }else{
+   // Offline does not require GPS. Update only the existing location row.
+   result=await db.from("driver_locations").update({is_online:false,updated_at:new Date().toISOString()}).eq("driver_id",user.id);
+  }
+  if(result.error)throw result.error;
+  toggle.checked=value;label.textContent=value?"Online":"Offline";
+  show("onlineMsg",value?"మీరు Onlineలో ఉన్నారు ✓ కొత్త Ride Requests కోసం సిద్ధంగా ఉన్నారు.":"మీరు Offline అయ్యారు ✓");
+  if(value)await loadAll();
+ }catch(e){toggle.checked=!value;label.textContent=!value?"Online":"Offline";show("onlineMsg","Status update కాలేదు: "+e.message+". driver_locations పై SELECT/INSERT/UPDATE RLS policies తనిఖీ చేయాలి.");}
+ finally{toggle.disabled=false;}
 }
+
 function rideDetails(r){
  return `<p><b>${esc(safe(r.vehicle_type))} • ${esc(safe(r.status))}</b></p>
  <p>Pickup: ${esc(safe(r.pickup_text||r.pickup))}<br>Drop: ${esc(safe(r.drop_text||r.drop))}<br>Offer: ₹${esc(safe(r.fare_offer))}<br>Ride ID: ${esc(r.id)}</p>`;
 }
 async function loadActiveRide(){
- const root=$("activeRide");
- const {data,error}=await db.from("rides").select("*").eq("driver_id",user.id).not("status","in",'("completed","complete","cancelled","canceled","rejected","declined","expired")').order("created_at",{ascending:false}).limit(5);
- if(error){root.textContent="Active ride చదవలేకపోయాం: "+error.message;return}
- if(!data?.length){activeRide=null;root.textContent="ప్రస్తుతం మీకు active ride లేదు.";return}
- activeRide=data[0];
- root.innerHTML=`<article class="active-ride-card"><div class="active-ride-head"><b>🚘 My Active Ride</b><span>ACCEPTED</span></div><div class="active-ride-body">${rideDetails(activeRide)}<div id="activeContact" class="contact-box">Customer contact వివరాలు లోడ్ అవుతున్నాయి…</div><div class="active-actions"><button class="call-action" onclick="document.querySelector('#activeContact a[href^=tel]')?.click()">☎ Call</button><button class="wa-action" onclick="document.querySelector('#activeContact a[href*=wa.me]')?.click()">WhatsApp</button><button class="track-action" onclick="openRideMap()">📍 Live Track / Route</button></div><button class="secondary-wide" onclick="shareDriverLocation()">Share My Location</button></div></article>`;
- await loadCustomerContact(activeRide.customer_id);
+ const root=$("activeRide");root.textContent="Active Ride తనిఖీ చేస్తున్నాం…";
+ try{
+  const {data,error}=await db.from("rides").select("*").eq("driver_id",user.id).order("created_at",{ascending:false}).limit(30);
+  if(error)throw error;
+  const terminal=["completed","complete","cancelled","canceled","rejected","declined","expired"];
+  const active=(data||[]).filter(r=>!terminal.includes(String(r.status||"").toLowerCase()) && !["counter_offered"].includes(String(r.status||"").toLowerCase()));
+  if(!active.length){activeRide=null;root.innerHTML='<div class="empty-state">ప్రస్తుతం మీకు Accepted / Active Ride లేదు.</div>';return}
+  activeRide=active[0];
+  root.innerHTML=`<article class="active-ride-card"><div class="active-ride-head"><b>🚘 My Active Ride</b><span>${esc(String(activeRide.status||"ACTIVE").toUpperCase())}</span></div><div class="active-ride-body">${rideDetails(activeRide)}<div id="activeContact" class="contact-box">Customer contact వివరాలు లోడ్ అవుతున్నాయి…</div><div class="active-actions"><button class="call-action" onclick="document.querySelector('#activeContact a[href^=tel]')?.click()">☎ Call</button><button class="wa-action" onclick="document.querySelector('#activeContact a[href*=wa.me]')?.click()">WhatsApp</button><button class="track-action" onclick="openRideMap()">📍 Live Track / Route</button></div><button class="secondary-wide" onclick="shareDriverLocation()">Share My Location</button></div></article>`;
+  await loadCustomerContact(activeRide.customer_id);
+ }catch(e){activeRide=null;root.innerHTML='<div class="empty-state">Active Ride Error: '+esc(e.message)+'. rides SELECT RLS policy తనిఖీ చేయండి.</div>';}
 }
+
 async function loadCustomerContact(customerId){
  const box=$("activeContact");if(!box)return;
  if(!customerId){box.textContent="Customer ID అందుబాటులో లేదు.";return}
@@ -219,12 +272,22 @@ function goSection(id,tab){ showTab(tab||'home'); setTimeout(()=>$(id)?.scrollIn
 async function loadAll(){
  try{
   if(!user)await checkSession();if(!user)throw Error("Driver Login అవసరం.");
-  show("requestMsg","Rides లోడ్ అవుతున్నాయి…");
+  show("requestMsg","Ride Requests లోడ్ అవుతున్నాయి…");
   await loadActiveRide();
-  const {data,error}=await db.rpc("get_driver_requests");if(error)throw error;
-  renderRequests(data||[]);show("requestMsg","Ride Requests లోడ్ అయ్యాయి ✓");
- }catch(e){show("requestMsg","Ride Requests Error: "+e.message)}
+  let data=null, rpcError=null;
+  const rpc=await db.rpc("get_driver_requests");
+  if(!rpc.error)data=rpc.data||[];else rpcError=rpc.error;
+  if(data===null){
+   // Fallback query helps distinguish a missing/broken RPC from table RLS.
+   const q=await db.from("rides").select("*").is("driver_id",null).eq("status","requested").order("created_at",{ascending:false}).limit(50);
+   if(q.error)throw Error("get_driver_requests: "+rpcError.message+" | rides fallback: "+q.error.message);
+   data=q.data||[];
+  }
+  renderRequests(data);
+  show("requestMsg",`Ride Requests లోడ్ అయ్యాయి ✓ (${data.length})`);
+ }catch(e){show("requestMsg","Ride Requests Error: "+e.message+"\nSupabaseలో get_driver_requests RPC, driver approval, rides SELECT policy తనిఖీ చేయాలి.");}
 }
+
 async function rideAction(rpc,id,msgId){
  try{
   const {data,error}=await db.rpc(rpc,{p_ride_id:id});if(error)throw error;
@@ -316,5 +379,8 @@ async function customerFeedbackSave(){try{let comments=$('customerFeedbackText')
 async function customerComplaintSave(){try{let complaint=$('customerComplaintText').value.trim();if(!complaint)throw Error('Complaint నమోదు చేయండి');let row={reporter_id:user.id,complaint};let rid=$('customerFeedbackRide').value.trim();if(rid)row.ride_id=rid;let {error}=await db.from('fr_ride_complaints').insert(row);if(error)throw error;show('customerFeedbackMsg','Complaint సేవ్ అయింది ✓')}catch(e){show('customerFeedbackMsg','Complaint Error: '+e.message)}}
 
 const oldPhone=localStorage.getItem("friendride_driver_emergency");if(oldPhone)$('emergencyPhone').value=oldPhone;
-checkSession().then(()=>{if(user&&profile?.role==="driver")loadAll();});
+let refreshBusy=false;
+async function safeAutoRefresh(){if(document.hidden||!user||profile?.role!=="driver"||refreshBusy)return;refreshBusy=true;try{await loadAll();}finally{refreshBusy=false;}}
+checkSession().then(()=>{if(user&&profile?.role==="driver")safeAutoRefresh();});
+setInterval(safeAutoRefresh,20000);
 </script></body></html>
