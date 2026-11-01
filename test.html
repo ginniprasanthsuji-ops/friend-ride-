@@ -38,7 +38,7 @@
  <div class="switch-card"><div><div class="switch-title" id="onlineLabel">Go Offline</div><div class="switch-note">Receive new ride requests</div></div><label class="switch"><input id="onlineToggle" type="checkbox" onchange="setOnline(this.checked)"><span class="slider"></span></label></div>
  <div id="onlineMsg" class="status">Online కావడానికి GPS permission ఇవ్వండి.</div>
  <div class="stats"><div class="stat">Today Rides<b id="todayRides">—</b></div><div class="stat">Earnings<b id="todayEarnings">₹—</b></div><div class="stat">Rating<b>—</b></div></div>
- <div class="menu-list"><button class="menu-link" onclick="showTab('rides')"><span class="ico">🚕</span>Ride Requests<span class="count" id="requestCount">0</span></button><button class="menu-link" onclick="showTab('rides')"><span class="ico">📋</span>My Rides<span class="chev">›</span></button><button class="menu-link" onclick="showTab('sos')"><span class="ico">🆘</span>Emergency SOS<span class="chev">›</span></button><button class="menu-link" onclick="showTab('feedback')"><span class="ico">💬</span>Feedback & Complaint<span class="chev">›</span></button><button class="menu-link" onclick="showTab('profile')"><span class="ico">👤</span>My Profile<span class="chev">🔒</span></button><button class="menu-link" onclick="showTab('subscription')"><span class="ico">💳</span>Driver Subscription <span class="chev">›</span></button><button class="menu-link" onclick="showTab('driverReferral')"><span class="ico">🎁</span>Refer & Earn <span class="chev">›</span></button></div>
+ <div class="menu-list"><button class="menu-link" onclick="showTab('rides')"><span class="ico">🚕</span>Ride Requests<span class="count" id="requestCount">0</span></button><button class="menu-link" onclick="showTab('rides')"><span class="ico">📋</span>My Rides<span class="chev">›</span></button><button class="menu-link" onclick="showTab('sos')"><span class="ico">🆘</span>Emergency SOS<span class="chev">›</span></button><button class="menu-link" onclick="showTab('feedback')"><span class="ico">💬</span>Feedback & Complaint<span class="chev">›</span></button><button class="menu-link" onclick="showTab('profile')"><span class="ico">👤</span>My Profile<span class="chev">🔒</span></button><button class="menu-link" onclick="showTab('subscription')"><span class="ico">💳</span>Driver Subscription <span class="chev">›</span></button><button class="menu-link" onclick="showTab('driverReferral')"><span class="ico">🎁</span>Refer & Earn <span class="chev">›</span></button><button class="menu-link" style="color:#c62828" onclick="logoutAccount()"><span class="ico">🚪</span>Logout <span class="chev">›</span></button></div>
  <div class="status" id="session">Login session తనిఖీ చేస్తున్నాం…</div><button class="btn light" onclick="checkSession()">Refresh Session</button>
 </section>
 <section class="panel is-hidden" data-panel="rides" id="ridesPanel">
@@ -63,6 +63,19 @@ const $=id=>document.getElementById(id);
 function show(id,msg){$(id).textContent=msg}
 function safe(v){return v===null||v===undefined||v===""?"—":String(v)}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+async function logoutAccount(){
+ try{
+  if(user && profile?.role==="driver"){
+   // Best-effort: mark driver offline before ending the session.
+   await db.from("driver_locations").upsert({driver_id:user.id,is_online:false,updated_at:new Date().toISOString()},{onConflict:"driver_id"});
+  }
+  const {error}=await db.auth.signOut();
+  if(error)throw error;
+  user=null;profile=null;activeRide=null;
+  location.reload();
+ }catch(e){alert("Logout కాలేదు: "+e.message);}
+}
 
 async function checkSession(){
  try{
