@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#32106d"><title>FRIEND RIDE — Super App</title>
+<meta name="theme-color" content="#08284f"><title>FRIEND RIDE — Navy Blue Premium</title>
 <style>
 :root{--purple:#5b16b7;--purple2:#842fe1;--deep:#271052;--ink:#211638;--muted:#7c728d;--bg:#f7f4fc;--line:#ece5f5;--green:#07966a;--red:#d83248;--gold:#f0ad28;--white:#fff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:78px}button,input,select,textarea{font:inherit}button{cursor:pointer}
@@ -28,6 +28,33 @@ main{max-width:1100px;margin:0 auto;padding:15px}.page{display:none}.page.active
 .mapreal{height:320px;border-radius:17px;overflow:hidden;border:1px solid var(--line);background:#e9f1e9}
 .actionrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 @media(max-width:600px){.dashboardgrid{grid-template-columns:1fr 1fr}.mapreal{height:280px}}
+
+/* FRIEND RIDE DESIGN OPTION 2: NAVY BLUE + WHITE + ORANGE */
+:root{--purple:#0b3970;--purple2:#1557a0;--deep:#061d3a;--ink:#10243c;--muted:#65758a;--bg:#f3f7fb;--line:#dce6f1;--green:#07966a;--red:#d83248;--gold:#f5a623;--white:#fff}
+header{background:linear-gradient(110deg,#061d3a,#0b3970 68%,#1557a0)}
+.brandlogo{color:#0b3970}
+.hero{background:linear-gradient(115deg,#061d3a,#0b3970 65%,#1760a8)}
+.btn{background:linear-gradient(100deg,#f07800,#ff9b19);box-shadow:0 5px 14px #ed7b1426}
+.btn.light{background:#eaf2fb;color:#0b3970}.btn.ghost{background:#f1f5fa;color:#40536a}
+.service i,.dashcard .ico{background:#eaf2fb;color:#0b3970}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#f28a16;box-shadow:0 0 0 3px #f28a161a}
+.pill{background:#eaf2fb;color:#0b3970}
+.notice{background:#edf4fc;color:#244c77}
+.tile .big,.price{color:#0b3970}
+.bottom button.active{color:#f07800}
+.drawerhead{background:linear-gradient(120deg,#061d3a,#0b3970)}
+.rolegrid button.active{border-color:#f28a16;background:#fff5e9;color:#9a4b00}
+.plan{border-color:#dce6f1;background:linear-gradient(150deg,#fff,#f5f8fc)}
+.plan.featured{border-color:#f28a16}
+.shop .pic,.product .pic{background:#edf4fc}
+.head-actions button{color:#0b3970}
+.iconbtn{background:#ffffff20}
+.service{background:linear-gradient(150deg,#fff,#f6f9fd)}
+.dashcard{background:linear-gradient(145deg,#fff,#f5f8fc)}
+.invoice{border-color:#9db2c9}
+/* Orange highlights for primary actions; navy remains the navigation identity */
+.sos{background:linear-gradient(110deg,#bd1635,#ef3e4e)}
+
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></head>
 <body>
 <header>
