@@ -24,6 +24,14 @@ h2{font-size:20px;margin:0 0 13px}h3{font-size:16px;margin:0 0 8px}.muted{color:
 #rideMap,#trackingMap{height:260px;border-radius:16px;border:1px solid #ddd5eb;overflow:hidden;z-index:1}.location-action{border:1px solid #d9c9ef;background:#f5efff;color:#5120a9;border-radius:12px;padding:10px;font-weight:800}.coordline{font-size:11px;color:#77718a;margin-top:5px;overflow-wrap:anywhere}.track-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.track-actions button{border:1px solid #e4d9f1;border-radius:12px;background:#fff;padding:11px;color:#482080;font-weight:750}#mapPlaceholder{height:210px;border-radius:16px;background:linear-gradient(135deg,#e3f2e8,#d9e9f5);display:grid;place-items:center;color:#315d47;text-align:center;border:1px solid #cde0d5}
 hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 @media(min-width:650px){.modal{align-items:center}.modalbox{border-radius:22px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stats{grid-template-columns:repeat(4,1fr)}}
+
+.home-pro-services{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:8px 0 20px}
+.home-pro-service{border:1px solid #eee0d5;border-radius:18px;background:linear-gradient(145deg,#fff,#fff8f2);padding:12px 5px 10px;text-align:center;box-shadow:0 7px 15px #5b32151a,inset 0 1px 0 #fff;color:#211b18;min-width:0}
+.home-pro-service .home-pro-art{height:66px;width:66px;margin:0 auto 7px;border-radius:21px;display:grid;place-items:center;font-size:39px;background:radial-gradient(circle at 28% 20%,#fff 0,#fff8 18%,transparent 42%),linear-gradient(145deg,var(--svc-a),var(--svc-b));box-shadow:inset 0 3px 5px #fff9,0 7px 10px #38201425;text-shadow:0 4px 3px #35201455;filter:drop-shadow(0 2px 1px #fff)}
+.home-pro-service b{font-size:12px;display:block;line-height:1.2}
+.home-pro-service:active{transform:translateY(2px);box-shadow:0 3px 8px #5b32151a}
+@media(min-width:600px){.home-pro-services{grid-template-columns:repeat(6,minmax(0,1fr))}}
+
 </style>
 <style>
 .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0}.kpi{background:linear-gradient(145deg,#fff,#f6f0ff);border:1px solid #e7def3;border-radius:15px;padding:12px}.kpi strong{display:block;font-size:20px;color:#4b2091}.kpi span{font-size:11px;color:#77718a}.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.feature-box{border:1px solid #e8e0f2;background:#fff;border-radius:15px;padding:13px}.feature-box small{color:#77718a}.inline-actions{display:flex;gap:8px;flex-wrap:wrap}.inline-actions button{flex:1;min-width:90px}.offer-card{border:1px solid #e5d9f1;border-radius:15px;padding:13px;margin:9px 0;background:linear-gradient(135deg,#fff,#faf6ff)}.offer-price{font-size:22px;font-weight:900;color:#4d1da1}.tag{display:inline-block;background:#f0e7ff;color:#5420a8;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800}@media(min-width:650px){.kpi-grid{grid-template-columns:repeat(4,1fr)}.feature-grid{grid-template-columns:repeat(3,1fr)}}
@@ -49,12 +57,21 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <section id="home" class="page active">
  <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('offers')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Now ↗</span></div><div class="banner-art">🛵</div></div><div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
  <div class="home-service-grid">
-  <button class="home-service" onclick="requireLogin(()=>showPage('shops'))"><span class="service-art grocery-art">🛒<i>🥬</i></span><b>Ashwaa Mart</b><small>Groceries & daily needs</small></button>
+  <button class="home-service" onclick="requireLogin(()=>showPage('shops'))"><span class="service-art grocery-art">🛒<i>🥬</i></span><b>Friend Mart</b><small>Groceries & daily needs</small></button>
   <button class="home-service" onclick="requireLogin(()=>showPage('food'))"><span class="service-art food-art">🍱<i>🥗</i></span><b>Food Delivery</b><small>Fresh food near you</small></button>
  </div>
  <button class="cab-feature" onclick="requireLogin(()=>showPage('ride'))"><div class="cab-art"><span>🚕</span><span>🛺</span><span>🏍️</span></div><b>Book Cab</b><small>Bike • Auto • Car — choose your ride</small></button>
  <div class="home-section-title"><h2>Featured Stores</h2><button onclick="showPage('shops')">See All →</button></div>
  <div class="store-strip"><button class="store-card" onclick="requireLogin(()=>showPage('shops'))"><span>🥦</span><b>Fresh Grocery</b><small>Daily essentials</small></button><button class="store-card" onclick="requireLogin(()=>showPage('food'))"><span>🍛</span><b>Popular Food</b><small>Meals & snacks</small></button><button class="store-card" onclick="requireLogin(()=>showPage('shops'))"><span>💊</span><b>Medical Store</b><small>Health essentials</small></button></div>
+ <div class="home-section-title"><h2>Home Services</h2><button onclick="showPage('homeServices')">See All →</button></div>
+ <div class="home-pro-services">
+  <button class="home-pro-service" style="--svc-a:#ffe39a;--svc-b:#ff9b32" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">👨‍🔧</span><b>Electrician</b></button>
+  <button class="home-pro-service" style="--svc-a:#bcecff;--svc-b:#4aa9ed" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🔧</span><b>Plumber</b></button>
+  <button class="home-pro-service" style="--svc-a:#d9f4ff;--svc-b:#7cc8f4" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">❄️</span><b>AC Service</b></button>
+  <button class="home-pro-service" style="--svc-a:#e9dcff;--svc-b:#a78bfa" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🧺</span><b>Appliance Repair</b></button>
+  <button class="home-pro-service" style="--svc-a:#d8f7d7;--svc-b:#69c981" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🧹</span><b>House Cleaning</b></button>
+  <button class="home-pro-service" style="--svc-a:#ffd9e5;--svc-b:#f58aaa" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🖌️</span><b>Painting</b></button>
+ </div>
  <div class="home-section-title"><h2>More Services</h2><button onclick="showPage('explore')">View All →</button></div>
  <div class="home-more-grid"><button onclick="requireLogin(()=>showPage('parcel'))">📦<b>Parcel</b></button><button onclick="requireLogin(()=>showPage('goods'))">🚚<b>Goods</b></button><button onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b></button><button onclick="requireLogin(()=>showPage('scheduled'))">🗓️<b>Schedule</b></button></div>
  <div class="card join-card"><h2>Join FRIEND RIDE</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')"><span class="emoji">👤</span><b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')"><span class="emoji">🚗</span><b>Driver Registration</b></button><button class="tile" onclick="openAuth('register','partner')"><span class="emoji">🏪</span><b>Partner Registration</b></button></div></div>
@@ -111,12 +128,12 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <section id="notifications" class="page"><div class="card"><h2>Notifications</h2><div class="notice">Push notifications require service worker, push subscription storage and server-side sender.</div></div></section>
 <section id="support" class="page"><div class="card"><h2>Help & Support</h2><div class="field"><label>Issue</label><textarea id="supportIssue"></textarea></div><button class="btn purple" onclick="showMessage('Support request UI సిద్ధంగా ఉంది; support table mapping ఇంకా చేయాలి.','good')">Submit Support Request</button></div></section>
 <section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
-<section id="cart" class="page"><div class="card"><h2>🛒 My Cart</h2><p class="muted">మీ Ashwaa Mart / Food Delivery items ఇక్కడ కనిపిస్తాయి.</p><div class="notice">Cart items మరియు checkout integration తదుపరి దశలో connect చేద్దాం.</div><button class="btn purple" onclick="showPage('shops')">Explore Stores</button></div></section>
+<section id="cart" class="page"><div class="card"><h2>🛒 My Cart</h2><p class="muted">మీ Friend Mart / Food Delivery items ఇక్కడ కనిపిస్తాయి.</p><div class="notice">Cart items మరియు checkout integration తదుపరి దశలో connect చేద్దాం.</div><button class="btn purple" onclick="showPage('shops')">Explore Stores</button></div></section>
 </main>
 
 <nav class="bottom premium-bottom">
  <button class="active" data-page="home" onclick="showPage('home')"><span>🏠</span>Home</button>
- <button data-page="shops" onclick="showPage('shops')"><span>🛍️</span>Ashwaa<br>Mart</button>
+ <button data-page="shops" onclick="showPage('shops')"><span>🛍️</span>Friend<br>Mart</button>
  <button data-page="food" onclick="showPage('food')"><span>🍱</span>Food<br>Delivery</button>
  <button class="cart-tab" data-page="cart" onclick="showPage('cart')"><span>🛒</span></button>
  <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Categories</button>
