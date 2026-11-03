@@ -3,108 +3,212 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101b35">
-<title>FRIEND RIDE</title>
+<meta name="theme-color" content="#24105f">
+<title>FRIEND RIDE Ultimate</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--navy:#101b35;--navy2:#1b2c50;--orange:#ff8a25;--bg:#f3f5fa;--ink:#18233b;--muted:#68738a;--line:#e3e8f1;--green:#13875b;--red:#c83c4c}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:76px}
-button,input,textarea,select{font:inherit}button{cursor:pointer}
-header{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 15px #101b3528}
-.logo{width:42px;height:42px;border-radius:13px;background:var(--orange);color:#17223b;display:grid;place-items:center;font-weight:1000;font-size:19px}
-.brand{flex:1}.brand b{display:block;font-size:17px;letter-spacing:.5px}.brand small{color:#c8d2e5;font-size:11px}
-main{max-width:850px;margin:auto;padding:16px}.page{display:none}.page.active{display:block}
-.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:14px;box-shadow:0 5px 18px #13213b09}
-.hero{background:linear-gradient(120deg,var(--navy),#294574);color:white;padding:23px;border:0}.hero h1{margin:5px 0;font-size:27px}.hero p{color:#dbe4f3;margin:4px 0}
-h2{margin:0 0 12px;font-size:20px}h3{margin:0 0 8px;font-size:16px}.muted{color:var(--muted)}.tiny{font-size:12px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff;text-align:left;color:var(--ink);min-height:86px}.tile b{display:block;margin-top:5px}
-.btn{border:0;border-radius:12px;background:var(--orange);color:#18233b;font-weight:800;padding:12px 16px;width:100%;margin-top:8px}
-.btn.dark{background:var(--navy);color:#fff}.btn.light{background:#eef2f8;color:var(--navy)}.btn.red{background:#fae8eb;color:var(--red)}
-.field{margin:12px 0}.field label{display:block;font-size:13px;font-weight:750;margin-bottom:5px}
-input,textarea,select{width:100%;border:1px solid #d7deea;border-radius:11px;padding:12px;background:#fff;color:var(--ink);outline:none}
-input:focus,textarea:focus,select:focus{border-color:#5479b5;box-shadow:0 0 0 3px #5479b51c}
-textarea{min-height:80px;resize:vertical}.hide{display:none!important}
-.rolegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
-.role{padding:11px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:750}.role.active{border:2px solid var(--orange);background:#fff7ef}
-.notice{padding:11px 12px;border-radius:11px;background:#f1f5fb;color:#47546b;font-size:12px;margin:10px 0}
-.status{display:inline-block;padding:5px 10px;border-radius:99px;background:#fff0d8;color:#87530d;font-weight:800;font-size:12px}
-.status.ok{background:#e1f5ec;color:#116d49}
-.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:5}
-.bottom button{border:0;background:none;color:#68738a;font-size:11px;min-width:55px}.bottom button span{display:block;font-size:20px}.bottom button.active{color:var(--navy);font-weight:900}
-.row{display:flex;gap:8px}.row>*{flex:1}
+:root{--purple:#4b16a8;--purple2:#7429d8;--navy:#101b35;--orange:#ff791c;--bg:#f5f2fb;--ink:#17152a;--muted:#77748a;--line:#e9e3f2;--green:#13875b;--red:#c83c4c;--white:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.48 system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:82px}button,input,textarea,select{font:inherit}button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:20;background:linear-gradient(105deg,#321078,#7627d6);color:white;padding:11px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 5px 18px #30106428}
+.iconbtn{border:0;border-radius:13px;background:#ffffff20;color:#fff;width:45px;height:45px;font-size:24px;display:grid;place-items:center}.logo{width:42px;height:42px;border-radius:14px;background:#fff;color:var(--purple);display:grid;place-items:center;font-weight:1000;font-size:19px;flex-shrink:0}.brand{flex:1;min-width:0}.brand b{display:block;font-size:16px;letter-spacing:.4px}.brand small{display:block;color:#e7d9ff;font-size:11px}.top-action{border:0;border-radius:12px;background:#fff;color:var(--purple);font-weight:800;padding:10px 13px}
+main{max-width:920px;margin:auto;padding:14px}.page{display:none}.page.active{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:21px;padding:17px;margin-bottom:14px;box-shadow:0 6px 22px #28104e09}.hero{background:linear-gradient(120deg,#27105f,#6d20c7);color:white;border:0;padding:22px;overflow:hidden;position:relative}.hero h1{font-size:26px;line-height:1.2;margin:6px 0}.hero p{color:#e8dcff;margin:5px 0}.hero .eyebrow{font-size:11px;letter-spacing:1px;color:#e4d2ff;font-weight:800}
+h2{font-size:20px;margin:0 0 13px}h3{font-size:16px;margin:0 0 8px}.muted{color:var(--muted)}.tiny{font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{border:1px solid var(--line);border-radius:17px;padding:14px;background:linear-gradient(150deg,#fff,#fbf9ff);text-align:left;color:var(--ink);min-height:112px;box-shadow:0 4px 12px #24105f08}.tile .emoji{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:#f1e7ff;font-size:26px;margin-bottom:8px}.tile b{display:block;font-size:15px}.tile small{display:block;color:var(--muted);margin-top:3px}
+.btn{border:0;border-radius:13px;background:linear-gradient(100deg,#ff791c,#ff9a2e);color:#fff;font-weight:850;padding:13px 16px;width:100%;margin-top:8px;box-shadow:0 5px 12px #ff791c22}.btn.purple{background:linear-gradient(100deg,#4b16a8,#792bd8);box-shadow:0 5px 12px #4b16a822}.btn.dark{background:var(--navy)}.btn.light{background:#f1e9ff;color:var(--purple);box-shadow:none}.btn.red{background:#fae8eb;color:var(--red);box-shadow:none}.btn.green{background:var(--green)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.field{margin:12px 0}.field label{display:block;font-size:13px;font-weight:800;margin-bottom:5px}.field input,.field textarea,.field select,input,textarea,select{width:100%;border:1px solid #ded8e9;border-radius:12px;padding:12px;background:#fff;color:var(--ink);outline:none}.field textarea,textarea{min-height:78px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:#7b42ce;box-shadow:0 0 0 3px #7b42ce18}
+.row{display:flex;gap:9px}.row>*{flex:1;min-width:0}.hide{display:none!important}.notice{padding:11px 13px;border-radius:12px;background:#f4effb;color:#5b4a75;font-size:12px;margin:10px 0}.status{display:inline-block;padding:5px 10px;border-radius:99px;background:#fff0d8;color:#87530d;font-weight:800;font-size:12px}.status.ok{background:#e1f5ec;color:#116d49}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:7px 4px calc(7px + env(safe-area-inset-bottom));z-index:20}.bottom button{border:0;background:none;color:#898398;font-size:11px;font-weight:650}.bottom button span{display:block;font-size:21px;line-height:1.3}.bottom button.active{color:var(--purple);font-weight:900}
+.drawer-backdrop{position:fixed;inset:0;background:#0c0824a8;z-index:30;display:none}.drawer-backdrop.show{display:block}.drawer{position:absolute;top:0;bottom:0;left:0;width:min(86vw,355px);background:#fff;padding:17px 14px 25px;overflow:auto;box-shadow:10px 0 35px #0002}.drawer-head{background:linear-gradient(120deg,#321078,#7429d8);color:#fff;border-radius:18px;padding:16px;margin-bottom:12px}.drawer-head .logo{margin-bottom:9px}.drawer-head small{color:#e6d9ff}.menu-item{display:flex;align-items:center;gap:13px;width:100%;border:0;background:#fff;padding:12px 10px;border-radius:12px;text-align:left;color:#28233b;font-weight:650}.menu-item:active,.menu-item:hover{background:#f4edff;color:var(--purple)}.menu-item .mi{width:25px;text-align:center;font-size:19px}.menu-label{font-size:11px;font-weight:900;color:#968ca7;padding:13px 10px 5px;text-transform:uppercase;letter-spacing:.7px}
 #message{display:none;padding:12px;border-radius:12px;margin:10px 0;font-size:13px}#message.show{display:block}#message.error{background:#fae8eb;color:#9d2535}#message.good{background:#e1f5ec;color:#116d49}
-.modal{position:fixed;inset:0;background:#071124b8;z-index:10;display:none;align-items:flex-end;justify-content:center;padding:12px}.modal.show{display:flex}
-.modalbox{background:white;border-radius:22px 22px 16px 16px;width:min(100%,520px);max-height:92vh;overflow:auto;padding:19px}
-.modalhead{display:flex;align-items:center;justify-content:space-between}.close{border:0;background:#eef2f8;border-radius:50%;width:36px;height:36px;font-size:18px}
+.modal{position:fixed;inset:0;background:#100a2dbb;z-index:40;display:none;align-items:flex-end;justify-content:center;padding:10px}.modal.show{display:flex}.modalbox{background:#fff;border-radius:23px 23px 16px 16px;width:min(100%,530px);max-height:94vh;overflow:auto;padding:19px}.modalhead{display:flex;align-items:center;justify-content:space-between}.close{border:0;background:#f1edf7;border-radius:50%;width:38px;height:38px;font-size:20px}.rolegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.role{padding:11px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:750}.role.active{border:2px solid var(--orange);background:#fff6ed}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.stat{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.stat b{display:block;font-size:19px}.stat small{color:var(--muted)}.listrow{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:13px;padding:12px;margin:8px 0;background:#fff}.listrow .grow{flex:1}.pill{font-size:11px;border-radius:20px;padding:4px 8px;background:#f0e8ff;color:var(--purple);font-weight:800}
+#mapPlaceholder{height:210px;border-radius:16px;background:linear-gradient(135deg,#e3f2e8,#d9e9f5);display:grid;place-items:center;color:#315d47;text-align:center;border:1px solid #cde0d5}
 hr{border:0;border-top:1px solid var(--line);margin:15px 0}
-@media(min-width:650px){.modal{align-items:center}.modalbox{border-radius:22px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:650px){.modal{align-items:center}.modalbox{border-radius:22px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stats{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
-<header><div class="logo">FR</div><div class="brand"><b>FRIEND RIDE</b><small>Ride • Delivery • Local Services</small></div><button class="btn" style="width:auto;margin:0;padding:10px 13px" onclick="openAuth('login')">Login</button></header>
+<header class="topbar">
+ <button class="iconbtn" aria-label="Open menu" onclick="openDrawer()">☰</button>
+ <div class="logo">FR</div><div class="brand"><b>FRIEND RIDE <span style="color:#ffd45a">ULTIMATE</span></b><small>One app. Every local need.</small></div>
+ <button class="top-action" id="headerAuth" onclick="openAuth('login')">Login</button>
+</header>
 <main>
 <section id="home" class="page active">
- <div class="card hero"><div class="tiny">WELCOME TO FRIEND RIDE</div><h1>మీ ప్రయాణం… మీ నిర్ణయం.</h1><p>Bike, Auto, Car rides మరియు local delivery సేవలు ఒకే చోట.</p><button class="btn" onclick="requireLogin(()=>showPage('ride'))">Book a Ride</button></div>
- <div class="card"><h2>మా సేవలు</h2><div class="grid">
-  <button class="tile" onclick="requireLogin(()=>showPage('ride'))">🛵<b>Ride Booking</b><small class="muted">Bike / Auto / Car</small></button>
-  <button class="tile" onclick="requireLogin(()=>showPage('goods'))">📦<b>Goods Delivery</b><small class="muted">Local transport</small></button>
-  <button class="tile" onclick="requireLogin(()=>showPage('food'))">🍱<b>Food Delivery</b><small class="muted">Local food orders</small></button>
-  <button class="tile" onclick="requireLogin(()=>showPage('shops'))">🏪<b>Local Stores</b><small class="muted">Shop and order</small></button>
-  <button class="tile" onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b><small class="muted">Electrician, plumber, cleaning</small></button>
-  <button class="tile" onclick="requireLogin(()=>showPage('parcel'))">🚚<b>Parcel Delivery</b><small class="muted">Send and receive parcels</small></button>
+ <div class="card hero"><div class="eyebrow">WELCOME TO FRIEND RIDE</div><h1>మీ ఊరి ప్రయాణం… మీ చేతిలో!</h1><p>Ride • Parcel • Food • Shops • Home Services</p><button class="btn" onclick="requireLogin(()=>showPage('ride'))">Get Started →</button></div>
+ <div class="card"><h2>Explore All Services</h2><div class="grid">
+  <button class="tile" onclick="requireLogin(()=>showPage('ride'))"><span class="emoji">🛵</span><b>Ride Booking</b><small>Bike • Auto • Car</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('goods'))"><span class="emoji">📦</span><b>Goods Delivery</b><small>Local transport</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('food'))"><span class="emoji">🍱</span><b>Food Delivery</b><small>Restaurants nearby</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('homeServices'))"><span class="emoji">🧰</span><b>Home Services</b><small>Repairs • Cleaning</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('parcel'))"><span class="emoji">🚚</span><b>Parcel Delivery</b><small>Pickup • Drop</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('shops'))"><span class="emoji">🏪</span><b>Local Stores</b><small>Grocery • Medical etc.</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('shopping'))"><span class="emoji">🛍️</span><b>Shopping</b><small>Everyday essentials</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('scheduled'))"><span class="emoji">🗓️</span><b>Scheduled Booking</b><small>Book for later</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('orders'))"><span class="emoji">🧾</span><b>My Bookings & Tracking</b><small>All your requests</small></button>
+  <button class="tile" onclick="requireLogin(()=>showPage('offers'))"><span class="emoji">🎁</span><b>Offers & Rewards</b><small>Refer and earn</small></button>
  </div></div>
- <div class="card"><h2>FRIEND RIDE లో చేరండి</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')">👤<b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')">🚗<b>Driver Registration</b></button></div></div>
+ <div class="card"><h2>Join FRIEND RIDE</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')"><span class="emoji">👤</span><b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')"><span class="emoji">🚗</span><b>Driver Registration</b></button><button class="tile" onclick="openAuth('register','partner')"><span class="emoji">🏪</span><b>Partner Registration</b></button></div></div>
 </section>
-<section id="ride" class="page"><div class="card"><h2>Ride Booking</h2><div class="field"><label>వాహనం</label><select id="rideVehicle"><option>Bike</option><option>Auto</option><option>Car</option></select></div><div class="field"><label>Pickup Address</label><textarea id="pickup" placeholder="మీరు ఎక్కడి నుంచి వెళ్లాలి?"></textarea></div><div class="field"><label>Drop Address</label><textarea id="drop" placeholder="ఎక్కడికి వెళ్లాలి?"></textarea></div><div class="field"><label>మీరు ఆఫర్ చేసే Fare (₹)</label><input id="fare" type="number" min="1" placeholder="ఉదా: 100"></div><div class="field"><label>గమనికలు</label><textarea id="rideNotes" placeholder="అదనపు వివరాలు"></textarea></div><button class="btn" onclick="saveRideRequest()">Submit Ride Request</button><div class="notice">ఈ వెర్షన్‌లో ride request UI సిద్ధంగా ఉంది. మీ database rides table columns పరిశీలించిన తర్వాత live booking insert అనుసంధానం చేయాలి.</div></div></section>
-<section id="goods" class="page"><div class="card"><h2>Goods Delivery</h2><p class="muted">మీ వస్తువుల రవాణా వివరాలు నమోదు చేయండి.</p><div class="field"><label>Pickup</label><textarea placeholder="Pickup address"></textarea></div><div class="field"><label>Delivery Address</label><textarea placeholder="Drop address"></textarea></div><div class="field"><label>వస్తువు వివరాలు</label><input placeholder="Goods description"></div><button class="btn" onclick="showMessage('Goods delivery form సిద్ధంగా ఉంది. Backend table mapping తర్వాత live అవుతుంది.','good')">Continue</button></div></section>
-<section id="food" class="page"><div class="card"><h2>Food Delivery</h2><p>మీ ప్రాంతంలోని భాగస్వామ్య హోటళ్ల నుంచి ఆర్డర్ చేసే విభాగం.</p><div class="notice">Partner restaurants/menu database అనుసంధానం పెండింగ్‌లో ఉంది.</div></div></section>
-<section id="shops" class="page"><div class="card"><h2>Local Stores</h2><p>స్థానిక కిరాణా మరియు ఇతర షాపుల ఆర్డర్లు.</p><div class="notice">Shop catalogue మరియు stock database అనుసంధానం పెండింగ్‌లో ఉంది.</div></div></section>
-<section id="homeServices" class="page"><div class="card"><h2>Home & Utility Services</h2><p class="muted">ఇంటి అవసరాలకు స్థానిక service providersను బుక్ చేయండి.</p><div class="field"><label>Service Type</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Repair</option><option>Refrigerator Repair</option><option>Washing Machine Repair</option><option>Carpenter</option><option>House Cleaning</option><option>Painting</option><option>Appliance Installation</option><option>Other</option></select></div><div class="field"><label>మీ పూర్తి చిరునామా</label><textarea id="homeServiceAddress" placeholder="House, Street, Village, Mandal, District, PIN"></textarea></div><div class="field"><label>సమస్య / అవసరం వివరించండి</label><textarea id="homeServiceNotes" placeholder="ఏ పని చేయించాలి?"></textarea></div><div class="field"><label>మీరు కోరుకునే తేదీ</label><input id="homeServiceDate" type="date"></div><button class="btn" onclick="submitServiceRequest()">Request Home Service</button><div class="notice">Service provider availability మరియు booking confirmation backend అనుసంధానం తర్వాత live అవుతుంది.</div></div></section>
-<section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><p class="muted">చిన్న పార్సెల్స్‌ను ఒక చోటు నుంచి మరోచోటుకు పంపండి.</p><div class="field"><label>Sender Name</label><input id="parcelSender" placeholder="పంపేవారి పేరు"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup" placeholder="Parcel pickup address"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver" placeholder="పొందేవారి పేరు"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop" placeholder="Parcel delivery address"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription" placeholder="పార్సెల్‌లో ఏముంది?"></div><div class="field"><label>Approximate Weight (kg)</label><input id="parcelWeight" type="number" min="0.1" step="0.1" placeholder="ఉదా: 1.5"></div><button class="btn" onclick="submitParcelRequest()">Request Parcel Delivery</button><div class="notice">Prohibited / dangerous items పంపకూడదు. ధర మరియు delivery partner confirmation backend integration తర్వాత వస్తాయి.</div></div></section>
-<section id="orders" class="page"><div class="card"><h2>My Orders</h2><p class="muted">మీ ride మరియు delivery చరిత్ర ఇక్కడ కనిపిస్తుంది.</p><div id="ordersInfo" class="notice">ఇంకా ఆర్డర్లు లేవు.</div></div></section>
-<section id="customerDashboard" class="page"><div class="card hero"><div class="tiny">CUSTOMER SPACE</div><h1>Customer Dashboard</h1><p id="customerWelcome">Welcome</p></div><div class="grid"><button class="tile" onclick="showPage('ride')">🚘<b>Book Ride</b></button><button class="tile" onclick="showPage('orders')">🧾<b>My Orders</b></button><button class="tile" onclick="showPage('profile')">👤<b>My Profile</b></button></div></section>
-<section id="driverDashboard" class="page"><div class="card hero"><div class="tiny">DRIVER PARTNER</div><h1>Driver Dashboard</h1><p id="driverWelcome">Driver account</p></div><div class="card"><h3>Driver Verification</h3><span id="driverApproval" class="status">Approval Pending</span><p class="muted tiny">Admin approval వచ్చే వరకు Online అవ్వలేరు.</p><div class="field"><label>Vehicle Type</label><select id="driverVehicle"><option>Bike</option><option>Auto</option><option>Car</option></select></div><div class="field"><label>Vehicle Registration Number</label><input id="driverReg" placeholder="APxx XX 0000"></div><div class="field"><label>Driving Licence Number</label><input id="driverLicense" placeholder="DL number"></div><div class="notice">Aadhaar / Licence documentsను private Supabase Storage bucket మరియు server-side policies సిద్ధం చేసిన తర్వాత మాత్రమే upload చేయాలి. ఈ ఫైల్‌లో document upload ఇంకా active కాదు.</div><button class="btn dark" onclick="showMessage('Driver details form UI మాత్రమే. Secure document storage మరియు profile columns verify చేసిన తర్వాత save enable చేస్తాం.','good')">Save Driver Details</button></div><div class="card"><h3>Driver Availability</h3><button id="onlineBtn" class="btn" disabled onclick="toggleOnline()">Go Online</button></div></section>
-<section id="partnerDashboard" class="page"><div class="card hero"><div class="tiny">BUSINESS PARTNER</div><h1>Partner Dashboard</h1><p>మీ business account</p></div><div class="notice">Partner approval మరియు partner database mapping అవసరం. Partner registrationను Admin approvalతో మాత్రమే activate చేయాలి.</div></section>
-<section id="adminDashboard" class="page"><div class="card hero"><div class="tiny">ADMIN CONTROL</div><h1>Admin Dashboard</h1><p>Authorised administrator access</p></div><div class="notice">Admin status `admin_users` table ద్వారా ధృవీకరించబడుతుంది. Client-side role ఎంపికతో Admin access ఇవ్వబడదు.</div></section>
+
+<section id="explore" class="page"><div class="card"><h2>Explore Services</h2><p class="muted">మీకు కావాల్సిన సేవను ఎంచుకోండి.</p><div class="grid">
+<button class="tile" onclick="showPage('ride')">🛵<b>Ride Booking</b><small>Bike / Auto / Car</small></button><button class="tile" onclick="showPage('parcel')">📦<b>Parcel Delivery</b></button><button class="tile" onclick="showPage('goods')">🚚<b>Goods Delivery</b></button><button class="tile" onclick="showPage('food')">🍱<b>Food Delivery</b></button><button class="tile" onclick="showPage('homeServices')">🧰<b>Home Services</b></button><button class="tile" onclick="showPage('shops')">🏪<b>Local Stores</b></button><button class="tile" onclick="showPage('shopping')">🛍️<b>Shopping</b></button><button class="tile" onclick="showPage('scheduled')">🗓️<b>Scheduled Booking</b></button></div></div></section>
+
+<section id="ride" class="page"><div class="card"><h2>Book a Ride</h2><div class="row"><button class="btn purple" onclick="setRideType('Bike')">🏍️ Bike</button><button class="btn light" onclick="setRideType('Auto')">🛺 Auto</button><button class="btn light" onclick="setRideType('Car')">🚘 Car</button></div><div class="field"><label>Pickup Location</label><textarea id="pickup" placeholder="Pickup address / current location"></textarea></div><div class="field"><label>Drop Location</label><textarea id="drop" placeholder="Enter drop location"></textarea></div><div class="field"><label>Your Fare Offer (Negotiable) ₹</label><div class="row"><button class="btn light" onclick="adjustFare(-10)">−</button><input id="fare" type="number" min="1" value="100"><button class="btn light" onclick="adjustFare(10)">+</button></div><small class="muted">మీరు మీకు అనుకూలమైన ధరను ఆఫర్ చేయవచ్చు.</small></div><div class="field"><label>Ride Time</label><select id="rideWhen"><option value="now">Now – Ride immediately</option><option value="later">Schedule for later</option></select></div><div class="field"><label>Notes (Optional)</label><textarea id="rideNotes" placeholder="Passengers, luggage, pickup details..."></textarea></div><button class="btn purple" onclick="saveRideRequest()">Find Drivers</button><div class="notice">Fare negotiation flow UI సిద్ధంగా ఉంది. Live driver matching కోసం మీ `rides` table schemaతో field mapping అవసరం.</div></div></section>
+
+<section id="scheduled" class="page"><div class="card"><h2>Scheduled Booking</h2><div class="field"><label>Service</label><select id="scheduleType"><option>Ride</option><option>Parcel</option><option>Home Service</option></select></div><div class="field"><label>Date</label><input id="scheduleDate" type="date"></div><div class="field"><label>Time</label><input id="scheduleTime" type="time"></div><div class="field"><label>Pickup / Service Address</label><textarea id="scheduleAddress"></textarea></div><button class="btn purple" onclick="validateSchedule()">Continue</button></div></section>
+
+<section id="goods" class="page"><div class="card"><h2>Goods Delivery</h2><div class="field"><label>Pickup Address</label><textarea id="goodsPickup"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="goodsDrop"></textarea></div><div class="field"><label>Goods Description</label><input id="goodsDescription" placeholder="What do you want to transport?"></div><div class="field"><label>Approx. Weight (kg)</label><input id="goodsWeight" type="number" min=".1" step=".1"></div><button class="btn purple" onclick="validateGoods()">Request Goods Delivery</button></div></section>
+
+<section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><div class="field"><label>Sender Name</label><input id="parcelSender"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription"></div><div class="field"><label>Weight (kg)</label><input id="parcelWeight" type="number" min=".1" step=".1"></div><button class="btn purple" onclick="submitParcelRequest()">Request Parcel Delivery</button></div></section>
+
+<section id="food" class="page"><div class="card"><h2>Food Delivery</h2><p class="muted">మీ ప్రాంతంలోని భాగస్వామ్య హోటళ్ల నుంచి ఆర్డర్ చేయండి.</p><div class="field"><label>Delivery Address</label><textarea id="foodAddress"></textarea></div><div class="field"><label>Restaurant / Food Items</label><textarea id="foodItems" placeholder="Restaurant name and items"></textarea></div><button class="btn purple" onclick="simpleRequest('Food order','foodAddress','foodItems')">Continue</button><div class="notice">Restaurant list, menu, prices, and live ordering require partner catalogue integration.</div></div></section>
+
+<section id="shops" class="page"><div class="card"><h2>Local Stores</h2><div class="field"><label>Store Category</label><select id="shopCategory"><option>Grocery</option><option>Medical</option><option>Vegetables</option><option>Stationery</option><option>Other</option></select></div><div class="field"><label>Delivery Address</label><textarea id="shopAddress"></textarea></div><div class="field"><label>Items Required</label><textarea id="shopItems"></textarea></div><button class="btn purple" onclick="simpleRequest('Store order','shopAddress','shopItems')">Find Stores</button></div></section>
+
+<section id="shopping" class="page"><div class="card"><h2>Shopping</h2><div class="field"><label>What do you need?</label><textarea id="shoppingItems" placeholder="List your items"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="shoppingAddress"></textarea></div><button class="btn purple" onclick="simpleRequest('Shopping request','shoppingAddress','shoppingItems')">Submit Shopping Request</button></div></section>
+
+<section id="homeServices" class="page"><div class="card"><h2>Home Services</h2><div class="field"><label>Service Type</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Repair</option><option>Refrigerator Repair</option><option>Washing Machine Repair</option><option>Carpenter</option><option>House Cleaning</option><option>Painting</option><option>Appliance Installation</option><option>Other</option></select></div><div class="field"><label>Full Address</label><textarea id="homeServiceAddress"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><button class="btn purple" onclick="submitServiceRequest()">Request Home Service</button></div></section>
+
+<section id="orders" class="page"><div class="card"><h2>My Bookings & Orders</h2><p class="muted">Ride, parcel, food, shop and service bookings.</p><div id="ordersInfo" class="notice">మీ bookings ఇక్కడ కనిపిస్తాయి. Database mapping తర్వాత history load అవుతుంది.</div><button class="btn light" onclick="showPage('tracking')">Open Live Tracking</button></div></section>
+<section id="tracking" class="page"><div class="card"><h2>Live Tracking</h2><div class="row"><button class="btn purple">Ride</button><button class="btn light">Parcel</button><button class="btn light">Food / Shop</button></div><div id="mapPlaceholder">📍<br>Live map will appear here<br><small>Map + realtime driver location integration pending</small></div><div class="listrow"><div class="grow"><b>Booking Status</b><br><small class="muted">Waiting for booking data</small></div><span class="pill">Pending</span></div></div></section>
+<section id="wallet" class="page"><div class="card"><h2>Wallet & Payments</h2><div class="stats"><div class="stat"><small>Wallet Balance</small><b>₹0.00</b></div><div class="stat"><small>Reward Points</small><b>0</b></div></div><div class="notice">Cashfree payment gateway / wallet ledger / refunds require verified merchant configuration and server-side payment verification. Do not collect live money using frontend-only code.</div><button class="btn purple" onclick="showMessage('Payment gateway configuration అవసరం.','error')">Add Money</button></div></section>
+<section id="offers" class="page"><div class="card"><h2>Offers & Rewards</h2><div class="card"><h3>🎁 Refer & Earn</h3><p class="muted">Invite friends to FRIEND RIDE.</p><button class="btn purple" onclick="shareInvite()">Share Invite</button></div><div class="notice">Referral rewards should be credited only after server-side verification of eligible activity.</div></div></section>
+
+<section id="customerDashboard" class="page"><div class="card hero"><div class="eyebrow">CUSTOMER SPACE</div><h1>Customer Dashboard</h1><p id="customerWelcome">Welcome</p></div><div class="stats"><div class="stat"><small>Wallet</small><b>₹0</b></div><div class="stat"><small>Reward Points</small><b>0</b></div><div class="stat"><small>Bookings</small><b>—</b></div><div class="stat"><small>Status</small><b>Active</b></div></div><div class="grid" style="margin-top:12px"><button class="tile" onclick="showPage('ride')">🚘<b>Book Ride</b></button><button class="tile" onclick="showPage('orders')">🧾<b>My Orders</b></button><button class="tile" onclick="showPage('wallet')">💳<b>Wallet</b></button><button class="tile" onclick="showPage('profile')">👤<b>My Profile</b></button></div></section>
+
+<section id="driverDashboard" class="page"><div class="card hero"><div class="eyebrow">DRIVER PARTNER</div><h1>Driver Dashboard</h1><p id="driverWelcome">Driver account</p></div><div class="card"><div class="row" style="align-items:center"><h3 style="flex:1">Availability</h3><span id="driverApproval" class="status">Approval Pending</span></div><button id="onlineBtn" class="btn green" disabled onclick="toggleOnline()">Go Online</button><div class="notice">Admin approval వచ్చే వరకు Online అవ్వలేరు.</div></div><div class="stats"><div class="stat"><small>Today Earnings</small><b>₹0</b></div><div class="stat"><small>Today Rides</small><b>0</b></div><div class="stat"><small>New Requests</small><b>0</b></div><div class="stat"><small>Rating</small><b>—</b></div></div><div class="card"><h3>Driver Documents & Vehicle</h3><div class="field"><label>Vehicle Type</label><select id="driverVehicle"><option>Bike</option><option>Auto</option><option>Car</option></select></div><div class="field"><label>Vehicle Model</label><input id="driverModel"></div><div class="field"><label>Registration Number</label><input id="driverReg"></div><div class="field"><label>Driving Licence Number</label><input id="driverLicense"></div><div class="field"><label>Driving Experience</label><input id="driverExperience" type="number" min="0" placeholder="Years"></div><div class="field"><label>Aadhaar Document (private upload)</label><input id="aadhaarFile" type="file" accept="image/*,.pdf"></div><div class="field"><label>Driving Licence Document</label><input id="licenseFile" type="file" accept="image/*,.pdf"></div><div class="field"><label>Vehicle RC Document</label><input id="rcFile" type="file" accept="image/*,.pdf"></div><button class="btn purple" onclick="saveDriverDetails()">Save Driver Details</button><div class="notice">ఈ document fields UI మాత్రమే. Upload చేయడానికి private Supabase Storage bucket, file size/type validation, RLS మరియు secure review workflow configure చేయాలి. Aadhaar numberను public profileలో నిల్వ చేయవద్దు.</div></div><div class="card"><h3>Driver Requests</h3><div class="notice">Live requests, accept / reject / negotiate, earnings and history require rides table field mapping and Supabase Realtime setup.</div></div></section>
+
+<section id="partnerDashboard" class="page"><div class="card hero"><div class="eyebrow">BUSINESS PARTNER</div><h1>Partner Dashboard</h1><p>Shop / Restaurant business center</p></div><div class="stats"><div class="stat"><small>Today Orders</small><b>0</b></div><div class="stat"><small>Revenue</small><b>₹0</b></div><div class="stat"><small>Pending</small><b>0</b></div><div class="stat"><small>Rating</small><b>—</b></div></div><div class="grid" style="margin-top:12px"><button class="tile" onclick="showPage('partnerOrders')">🛒<b>Orders</b></button><button class="tile" onclick="showPage('products')">📦<b>Products & Stock</b></button><button class="tile" onclick="showPage('inventory')">⚠️<b>Inventory</b></button><button class="tile" onclick="showPage('gst')">🧾<b>GST Billing</b></button></div></section>
+<section id="partnerOrders" class="page"><div class="card"><h2>Partner Orders</h2><div class="notice">Partner orders need database table mapping.</div></div></section>
+<section id="products" class="page"><div class="card"><h2>Products & Stock</h2><div class="field"><label>Product Name</label><input id="productName"></div><div class="field"><label>Price ₹</label><input id="productPrice" type="number"></div><div class="field"><label>Available Stock</label><input id="productStock" type="number"></div><button class="btn purple" onclick="validateProduct()">Save Product</button></div></section>
+<section id="inventory" class="page"><div class="card"><h2>Inventory & Low Stock</h2><p class="muted">Stock minimum levels మరియు auto reorder list.</p><div class="notice">Automatic low-stock report requires product inventory table and reorder threshold mapping.</div></div></section>
+<section id="gst" class="page"><div class="card"><h2>GST Bills & Invoices</h2><div class="field"><label>Business Name</label><input id="gstBusiness"></div><div class="field"><label>GSTIN</label><input id="gstNumber" maxlength="15"></div><div class="field"><label>Customer Name</label><input id="gstCustomer"></div><div class="field"><label>Invoice Amount ₹</label><input id="gstAmount" type="number"></div><div class="field"><label>GST Rate</label><select id="gstRate"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div><button class="btn purple" onclick="previewGST()">Calculate Invoice</button><div id="gstResult" class="notice">GST calculation preview will appear here.</div><div class="notice">This is a calculation preview, not a compliant tax invoice. Confirm HSN/SAC, place of supply, tax split and statutory invoice details before issuing.</div></div></section>
+
+<section id="adminDashboard" class="page"><div class="card hero"><div class="eyebrow">SUPER CONTROL PANEL</div><h1>Admin Dashboard</h1><p>Authorised platform administration</p></div><div class="stats"><div class="stat"><small>Total Users</small><b>—</b></div><div class="stat"><small>Drivers</small><b>—</b></div><div class="stat"><small>Partners</small><b>—</b></div><div class="stat"><small>Today Revenue</small><b>—</b></div></div><div class="card"><h3>Admin Controls</h3><div class="grid"><button class="tile" onclick="showPage('users')">👥<b>User Management</b></button><button class="tile" onclick="showPage('driverApprovals')">🛡️<b>Driver Approvals</b></button><button class="tile" onclick="showPage('partnerApprovals')">🏪<b>Partner Management</b></button><button class="tile" onclick="showPage('adminOrders')">🧾<b>Orders & Rides</b></button><button class="tile" onclick="showPage('reports')">📊<b>Reports & Analytics</b></button><button class="tile" onclick="showPage('settings')">⚙️<b>System Settings</b></button></div></div><div class="notice">Admin access is verified against `admin_users`. Counts and management actions are not live until the corresponding tables and policies are mapped.</div></section>
+<section id="users" class="page"><div class="card"><h2>User Management</h2><div class="notice">User listing and role management require secure Admin Edge Function / RLS setup. Do not expose service_role key in this HTML.</div></div></section>
+<section id="driverApprovals" class="page"><div class="card"><h2>Driver Approvals</h2><div class="notice">Driver verification queue requires private document bucket and admin-only read policies.</div></div></section>
+<section id="partnerApprovals" class="page"><div class="card"><h2>Partner Management</h2><div class="notice">Partner approval, subscription and business verification need backend mapping.</div></div></section>
+<section id="adminOrders" class="page"><div class="card"><h2>All Orders & Rides</h2><div class="notice">Live order management requires existing schema mapping.</div></div></section>
+<section id="reports" class="page"><div class="card"><h2>Reports & Analytics</h2><div class="notice">Revenue and activity reports will be populated from verified database records.</div></div></section>
+<section id="settings" class="page"><div class="card"><h2>System Settings</h2><div class="notice">Platform-wide settings must be managed through protected admin APIs.</div></div></section>
+
 <section id="profile" class="page"><div class="card"><h2>My Profile</h2><div id="profileInfo" class="muted">Login చేయండి.</div><button class="btn red" onclick="logout()">Logout</button></div></section>
+<section id="notifications" class="page"><div class="card"><h2>Notifications</h2><div class="notice">Push notifications require service worker, push subscription storage and server-side sender.</div></div></section>
+<section id="support" class="page"><div class="card"><h2>Help & Support</h2><div class="field"><label>Issue</label><textarea id="supportIssue"></textarea></div><button class="btn purple" onclick="showMessage('Support request UI సిద్ధంగా ఉంది; support table mapping ఇంకా చేయాలి.','good')">Submit Support Request</button></div></section>
+<section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
 </main>
-<nav class="bottom"><button class="active" data-page="home" onclick="showPage('home')"><span>⌂</span>Home</button><button data-page="ride" onclick="requireLogin(()=>showPage('ride'))"><span>🛵</span>Ride</button><button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>▤</span>Orders</button><button data-page="homeServices" onclick="requireLogin(()=>showPage('homeServices'))"><span>🧰</span>Services</button><button data-page="parcel" onclick="requireLogin(()=>showPage('parcel'))"><span>📦</span>Parcel</button><button data-page="profile" onclick="requireLogin(()=>showPage('profile'))"><span>◉</span>Profile</button></nav>
-<div id="authModal" class="modal"><div class="modalbox"><div class="modalhead"><h2 id="authTitle">Login</h2><button class="close" onclick="closeAuth()">✕</button></div>
-<div id="message"></div><div class="rolegrid">
-<button class="role active" data-role="customer" onclick="chooseRole('customer')">👤 Customer</button><button class="role" data-role="driver" onclick="chooseRole('driver')">🚗 Driver</button><button class="role" data-role="partner" onclick="chooseRole('partner')">🏪 Partner</button><button class="role" data-role="admin" onclick="chooseRole('admin')">🛡️ Admin</button></div>
-<div id="loginForm"><div class="field"><label>Mobile Number</label><input id="loginPhone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><div class="field"><label>Password</label><input id="loginPassword" type="password" placeholder="Password"></div><button class="btn" onclick="login()">Login</button><button class="btn light" onclick="switchAuth('register')">Create New Account</button></div>
-<div id="registerForm" class="hide"><div class="field"><label>Full Name</label><input id="regName" placeholder="మీ పూర్తి పేరు"></div><div class="field"><label>Mobile Number</label><input id="regPhone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><div id="addressField" class="field"><label>Full Address</label><textarea id="regAddress" placeholder="House, Street, Village, Mandal, District, PIN"></textarea></div><div class="field"><label>Password (minimum 8 characters)</label><input id="regPassword" type="password" placeholder="Create password"></div><div class="field"><label>Confirm Password</label><input id="regConfirm" type="password" placeholder="Re-enter password"></div><div class="notice">OTP లేకుండా Registration కోసం Supabase Authenticationలో Phone provider enable చేసి Phone confirmations OFF చేయాలి. Driver accounts Admin approval తర్వాత మాత్రమే active అవుతాయి.</div><button class="btn" onclick="register()">Create Account</button><button class="btn light" onclick="switchAuth('login')">Back to Login</button></div>
+
+<nav class="bottom">
+ <button class="active" data-page="home" onclick="showPage('home')"><span>⌂</span>Home</button>
+ <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Explore</button>
+ <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>▤</span>Orders</button>
+ <button data-page="profile" onclick="requireLogin(()=>showPage('profile'))"><span>◉</span>Account</button>
+</nav>
+
+<div id="drawerBackdrop" class="drawer-backdrop" onclick="if(event.target===this)closeDrawer()"><aside class="drawer">
+ <div class="drawer-head"><button class="close" style="float:right" onclick="closeDrawer()">✕</button><div class="logo">FR</div><b>FRIEND RIDE ULTIMATE</b><br><small id="drawerUser">One app. Every local need.</small></div>
+ <button class="menu-item" onclick="menuGo('home')"><span class="mi">🏠</span>Home</button>
+ <div class="menu-label">Dashboards</div>
+ <button class="menu-item" onclick="menuGo('customerDashboard')"><span class="mi">👤</span>Customer Dashboard</button>
+ <button class="menu-item" onclick="menuGo('driverDashboard')"><span class="mi">🚗</span>Driver Dashboard</button>
+ <button class="menu-item" onclick="menuGo('partnerDashboard')"><span class="mi">🏪</span>Partner Dashboard</button>
+ <button class="menu-item" onclick="menuGo('adminDashboard')"><span class="mi">🛡️</span>Admin Dashboard</button>
+ <div class="menu-label">Services</div>
+ <button class="menu-item" onclick="menuGo('ride')"><span class="mi">🛵</span>Ride Booking</button>
+ <button class="menu-item" onclick="menuGo('goods')"><span class="mi">🚚</span>Goods Delivery</button>
+ <button class="menu-item" onclick="menuGo('parcel')"><span class="mi">📦</span>Parcel Delivery</button>
+ <button class="menu-item" onclick="menuGo('food')"><span class="mi">🍱</span>Food Delivery</button>
+ <button class="menu-item" onclick="menuGo('homeServices')"><span class="mi">🧰</span>Home Services</button>
+ <button class="menu-item" onclick="menuGo('shops')"><span class="mi">🏪</span>Local Stores</button>
+ <button class="menu-item" onclick="menuGo('shopping')"><span class="mi">🛍️</span>Shopping</button>
+ <button class="menu-item" onclick="menuGo('scheduled')"><span class="mi">🗓️</span>Scheduled Booking</button>
+ <div class="menu-label">My Account</div>
+ <button class="menu-item" onclick="menuGo('orders')"><span class="mi">🧾</span>My Orders & Bookings</button>
+ <button class="menu-item" onclick="menuGo('tracking')"><span class="mi">📍</span>Live Tracking</button>
+ <button class="menu-item" onclick="menuGo('wallet')"><span class="mi">💳</span>Wallet & Payments</button>
+ <button class="menu-item" onclick="menuGo('offers')"><span class="mi">🎁</span>Offers & Rewards</button>
+ <button class="menu-item" onclick="menuGo('notifications')"><span class="mi">🔔</span>Notifications</button>
+ <div class="menu-label">Business & Admin</div>
+ <button class="menu-item" onclick="menuGo('partnerOrders')"><span class="mi">🛒</span>Partner Orders</button>
+ <button class="menu-item" onclick="menuGo('products')"><span class="mi">📦</span>Products & Stock</button>
+ <button class="menu-item" onclick="menuGo('inventory')"><span class="mi">⚠️</span>Inventory / Low Stock</button>
+ <button class="menu-item" onclick="menuGo('gst')"><span class="mi">🧾</span>GST Bills & Invoices</button>
+ <button class="menu-item" onclick="menuGo('users')"><span class="mi">👥</span>User Management</button>
+ <button class="menu-item" onclick="menuGo('driverApprovals')"><span class="mi">🪪</span>Driver Approvals</button>
+ <button class="menu-item" onclick="menuGo('partnerApprovals')"><span class="mi">🏬</span>Partner Management</button>
+ <button class="menu-item" onclick="menuGo('adminOrders')"><span class="mi">📋</span>All Orders</button>
+ <button class="menu-item" onclick="menuGo('reports')"><span class="mi">📊</span>Reports & Analytics</button>
+ <button class="menu-item" onclick="menuGo('settings')"><span class="mi">⚙️</span>System Settings</button>
+ <div class="menu-label">More</div>
+ <button class="menu-item" onclick="menuGo('support')"><span class="mi">❓</span>Help & Support</button>
+ <button class="menu-item" onclick="menuGo('about')"><span class="mi">ℹ️</span>About Us</button>
+ <button class="menu-item" onclick="logout()"><span class="mi">🚪</span>Logout</button>
+</aside></div>
+
+<div id="authModal" class="modal"><div class="modalbox">
+ <div class="modalhead"><h2 id="authTitle">Login to FRIEND RIDE</h2><button class="close" onclick="closeAuth()">✕</button></div>
+ <div id="message"></div>
+ <div class="rolegrid">
+  <button class="role active" data-role="customer" onclick="chooseRole('customer')">👤 Customer</button>
+  <button class="role" data-role="driver" onclick="chooseRole('driver')">🚗 Driver</button>
+  <button class="role" data-role="partner" onclick="chooseRole('partner')">🏪 Partner</button>
+  <button class="role" data-role="admin" onclick="chooseRole('admin')">🛡️ Admin</button>
+ </div>
+ <div id="loginForm">
+  <div class="field"><label>Mobile Number</label><input id="loginPhone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div>
+  <div class="field"><label>Password</label><input id="loginPassword" type="password" placeholder="Password"></div>
+  <button class="btn" onclick="login()">Login →</button>
+  <button class="btn light" onclick="switchAuth('register')">Register New Account</button>
+  <button class="btn light" onclick="forgotPassword()">Forgot Password?</button>
+ </div>
+ <div id="registerForm" class="hide">
+  <div class="field"><label>Full Name *</label><input id="regName" placeholder="మీ పూర్తి పేరు"></div>
+  <div class="field"><label>Mobile Number *</label><input id="regPhone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile"></div>
+  <div class="field"><label>Email (Optional)</label><input id="regEmail" type="email" placeholder="Email"></div>
+  <div id="addressField" class="field"><label>Complete Address *</label><textarea id="regAddress" placeholder="House, Street, Village, Mandal, District, PIN"></textarea></div>
+  <div class="field"><label>Create Password *</label><input id="regPassword" type="password" placeholder="Minimum 8 characters"></div>
+  <div class="field"><label>Confirm Password *</label><input id="regConfirm" type="password" placeholder="Re-enter password"></div>
+  <label class="tiny"><input id="terms" type="checkbox" style="width:auto"> I agree to Terms & Privacy Policy</label>
+  <div class="notice">OTP లేని Mobile + Password registration కోసం Supabase Authలో Phone provider enable చేసి Phone confirmation OFF చేయాలి. Driver / Partner approval తప్పనిసరి.</div>
+  <button class="btn" onclick="register()">Register →</button><button class="btn light" onclick="switchAuth('login')">Already have an account? Login</button>
+ </div>
 </div></div>
+
 <script>
 const SUPABASE_URL='https://fglyplxcczdjtfwobtzh.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-let selectedRole='customer',currentUser=null,currentProfile=null,afterLoginAction=null,online=false;
+let selectedRole='customer',currentUser=null,currentProfile=null,afterLoginAction=null,rideVehicle='Bike',online=false;
 const $=id=>document.getElementById(id);
+function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function showMessage(msg,type='error'){const el=$('message');if(!el)return;el.textContent=msg;el.className='show '+type;}
-function clearMessage(){const el=$('message');el.className='';el.textContent='';}
+function clearMessage(){const el=$('message');if(el){el.className='';el.textContent='';}}
 function normalizePhone(v){let p=String(v||'').replace(/\D/g,'');if(p.length===10)p='91'+p;if(p.length!==12||!p.startsWith('91'))return '';return '+'+p;}
+function openDrawer(){$('drawerBackdrop').classList.add('show');}
+function closeDrawer(){$('drawerBackdrop').classList.remove('show');}
+function menuGo(id){closeDrawer();if(['customerDashboard','driverDashboard','partnerDashboard','adminDashboard','wallet','orders','tracking','profile','notifications','gst','products','inventory','partnerOrders','users','driverApprovals','partnerApprovals','adminOrders','reports','settings'].includes(id)&&!currentUser){afterLoginAction=()=>showPage(id);openAuth('login');return;}if(id==='adminDashboard'||['users','driverApprovals','partnerApprovals','adminOrders','reports','settings'].includes(id)){if(selectedRole!=='admin'){alert('Admin account మాత్రమే ఈ విభాగాన్ని ఉపయోగించగలదు.');return;}}if(id==='driverDashboard'&&selectedRole!=='driver'){alert('Driver login అవసరం.');return;}if(id==='partnerDashboard'&&selectedRole!=='partner'&&selectedRole!=='admin'){alert('Partner login అవసరం.');return;}showPage(id);}
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});}
+function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function openAuth(mode='login',role='customer'){selectedRole=role;document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));switchAuth(mode);$('authModal').classList.add('show');}
 function closeAuth(){$('authModal').classList.remove('show');clearMessage();}
 function chooseRole(r){selectedRole=r;document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===r));$('addressField').classList.toggle('hide',r!=='customer');}
-function switchAuth(mode){clearMessage();const reg=mode==='register';$('authTitle').textContent=reg?'Create FRIEND RIDE Account':'Welcome to FRIEND RIDE';$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');}
-function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
-function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function switchAuth(mode){clearMessage();const reg=mode==='register';$('authTitle').textContent=reg?'Register to FRIEND RIDE':'Login to Your Account';$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');}
+function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||'customerDashboard';}
 async function register(){
- clearMessage();const name=$('regName').value.trim(),phone=normalizePhone($('regPhone').value),password=$('regPassword').value,confirm=$('regConfirm').value,address=$('regAddress').value.trim();
- if(!name||!phone||password.length<8||password!==confirm){showMessage('పేరు, సరైన 10 digit mobile, కనీసం 8 అక్షరాల password మరియు matching confirmation ఇవ్వండి.');return;}
- if(selectedRole==='admin'){showMessage('Admin registration publicగా అనుమతించబడదు. Existing authorised admin accountతో మాత్రమే login చేయండి.');return;}
- if(selectedRole==='partner'){showMessage('Partner accountను admin invitation/approval workflow ద్వారా సృష్టించాలి.');return;}
+ clearMessage();const name=$('regName').value.trim(),phone=normalizePhone($('regPhone').value),password=$('regPassword').value,confirm=$('regConfirm').value,address=$('regAddress').value.trim(),email=$('regEmail').value.trim();
+ if(!name||!phone||password.length<8||password!==confirm||!$('terms').checked){showMessage('పేరు, సరైన మొబైల్, 8+ అక్షరాల password, matching password మరియు Terms అంగీకారం అవసరం.');return;}
+ if(selectedRole==='admin'){showMessage('Admin registration publicగా అనుమతించబడదు.');return;}
+ if(selectedRole==='partner'){showMessage('Partner registration కోసం ముందుగా customer/partner invitation లేదా admin approval workflow అవసరం.');return;}
  if(selectedRole==='customer'&&!address){showMessage('పూర్తి చిరునామా నమోదు చేయండి.');return;}
- const {data,error}=await sb.auth.signUp({phone,password,options:{data:{full_name:name,role:selectedRole,address:selectedRole==='customer'?address:null}}});
+ const meta={full_name:name,role:selectedRole,address:selectedRole==='customer'?address:null,email:email||null};
+ const {data,error}=await sb.auth.signUp({phone,password,options:{data:meta,email:email||undefined}});
  if(error){showMessage(error.message);return;}
- if(data.session){await acceptSession(data.user);return;}
- showMessage('Signup request పంపబడింది. Phone confirmation OFF ఉందో తనిఖీ చేసి Login చేయండి.','good');
+ if(data.session){try{await acceptSession(data.user);}catch(e){showMessage(e.message);};return;}
+ showMessage('Signup request పంపబడింది. Phone confirmation OFF ఉందో చూసి Login చేయండి.','good');
 }
 async function login(){
  clearMessage();const phone=normalizePhone($('loginPhone').value),password=$('loginPassword').value;
- if(!phone||!password){showMessage('సరైన mobile number మరియు password ఇవ్వండి.');return;}
+ if(!phone||!password){showMessage('సరైన 10 digit mobile number మరియు password ఇవ్వండి.');return;}
  const {data,error}=await sb.auth.signInWithPassword({phone,password});
  if(error){showMessage(error.message);return;}
  try{await acceptSession(data.user);}catch(e){await sb.auth.signOut();showMessage(e.message||String(e));}
@@ -116,40 +220,30 @@ async function acceptSession(user){
  if(!profile){q=await sb.from('profiles').select('*').eq('user_id',user.id).maybeSingle();if(!q.error)profile=q.data;}
  currentProfile=profile;
  let dbRole=profile?.role||user.user_metadata?.role||'customer';
- if(dbRole==='admin'){
-   const a=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();
-   if(a.error||!a.data)throw new Error('ఈ ఖాతాకు Admin permission లేదు.');
- }
+ if(dbRole==='admin'){const a=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();if(a.error||!a.data)throw new Error('ఈ ఖాతాకు Admin permission లేదు.');}
  if(!['customer','driver','partner','admin'].includes(dbRole))dbRole='customer';
- if(selectedRole!=='admin'&&selectedRole!==dbRole&&selectedRole!=='customer')throw new Error('ఈ మొబైల్ ఖాతా ఎంచుకున్న account typeతో సరిపోలడం లేదు.');
- if(dbRole==='driver'){
-   const approval=String(profile?.driver_approval_status||user.user_metadata?.driver_approval_status||'pending').toLowerCase();
-   if(!['approved','verified','active'].includes(approval))throw new Error('Driver account Admin approval కోసం Pendingలో ఉంది.');
-   $('driverApproval').textContent='Approved';$('driverApproval').className='status ok';$('onlineBtn').disabled=false;
- }
+ if(selectedRole!=='customer'&&selectedRole!==dbRole)throw new Error('మీరు ఎంచుకున్న account type ఈ ఖాతాతో సరిపోలడం లేదు.');
+ if(dbRole==='driver'){const approval=String(profile?.driver_approval_status||user.user_metadata?.driver_approval_status||'pending').toLowerCase();if(!['approved','verified','active'].includes(approval))throw new Error('Driver account Admin approval కోసం Pendingలో ఉంది.');$('driverApproval').textContent='Approved';$('driverApproval').className='status ok';$('onlineBtn').disabled=false;}
  selectedRole=dbRole;$('profileInfo').innerHTML='<b>'+safe(profile?.full_name||profile?.name||user.user_metadata?.full_name||'User')+'</b><p>Mobile: '+safe(user.phone||'')+'</p><p>Account: '+safe(dbRole.toUpperCase())+'</p><p>'+safe(profile?.address||user.user_metadata?.address||'')+'</p>';
- $('customerWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Customer');
- $('driverWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Driver');
- closeAuth();showPage(dbRole==='admin'?'adminDashboard':dbRole==='driver'?'driverDashboard':dbRole==='partner'?'partnerDashboard':'customerDashboard');
- if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
+ $('customerWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Customer');$('driverWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Driver');
+ $('drawerUser').textContent=(profile?.full_name||user.user_metadata?.full_name||'FRIEND RIDE user')+' • '+dbRole.toUpperCase();$('headerAuth').textContent='Account';
+ closeAuth();showPage(dashboardFor(dbRole));if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
 }
-async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;selectedRole='customer';online=false;showPage('home');}
-async function saveRideRequest(){
- if(!$('pickup').value.trim()||!$('drop').value.trim()||Number($('fare').value)<=0){showMessage('Pickup, Drop మరియు సరైన fare నమోదు చేయండి.');return;}
- $('ordersInfo').textContent='Ride request details సిద్ధంగా ఉన్నాయి. Database schema map చేసిన తర్వాత booking save అవుతుంది.';
- showMessage('Ride వివరాలు నమోదు అయ్యాయి. Live driver matching ఇంకా connect చేయలేదు.','good');
-}
-function submitServiceRequest(){
- if(!$('homeServiceAddress').value.trim()||!$('homeServiceNotes').value.trim()){alert('చిరునామా మరియు service వివరాలు నమోదు చేయండి.');return;}
- alert('Home Service request వివరాలు సిద్ధంగా ఉన్నాయి. Live booking database integration ఇంకా చేయాలి.');
-}
-function submitParcelRequest(){
- const fields=['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription'];
- if(fields.some(id=>!$(id).value.trim())||Number($('parcelWeight').value)<=0){alert('పార్సెల్ వివరాలన్నీ సరిగా నమోదు చేయండి.');return;}
- if(!/^\\d{10}$/.test($('parcelSenderPhone').value.replace(/\\D/g,''))||!/^\\d{10}$/.test($('parcelReceiverPhone').value.replace(/\\D/g,''))){alert('సరైన 10 digit mobile numbers ఇవ్వండి.');return;}
- alert('Parcel request వివరాలు సిద్ధంగా ఉన్నాయి. Live delivery booking database integration ఇంకా చేయాలి.');
-}
-function toggleOnline(){if(!currentUser||selectedRole!=='driver')return;online=!online;$('onlineBtn').textContent=online?'Go Offline':'Go Online';$('onlineBtn').className=online?'btn red':'btn';}
+async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;selectedRole='customer';online=false;$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');}
+async function forgotPassword(){const phone=normalizePhone($('loginPhone').value);if(!phone){showMessage('ముందుగా మీ 10 digit mobile number నమోదు చేయండి.');return;}showMessage('Phone password reset కోసం మీ Supabase Auth providerలో recovery విధానం configure చేయాలి. ఈ appలో SMS OTP reset ఇంకా configure కాలేదు.');}
+function setRideType(v){rideVehicle=v;document.querySelectorAll('#ride .row button').forEach((b,i)=>b.className='btn '+(['Bike','Auto','Car'][i]===v?'purple':'light'));}
+function adjustFare(n){$('fare').value=Math.max(1,Number($('fare').value||0)+n);}
+function saveRideRequest(){if(!$('pickup').value.trim()||!$('drop').value.trim()||Number($('fare').value)<=0){alert('Pickup, Drop మరియు సరైన Fare నమోదు చేయండి.');return;}alert('Ride details validate అయ్యాయి. Live booking insert కోసం మీ existing rides table columnsతో mapping అవసరం.');}
+function validateSchedule(){if(!$('scheduleDate').value||!$('scheduleTime').value||!$('scheduleAddress').value.trim()){alert('Date, Time మరియు Address నమోదు చేయండి.');return;}alert('Schedule వివరాలు validate అయ్యాయి. Database mapping తర్వాత booking save అవుతుంది.');}
+function validateGoods(){if(!$('goodsPickup').value.trim()||!$('goodsDrop').value.trim()||!$('goodsDescription').value.trim()){alert('Pickup, Drop మరియు Goods వివరాలు నమోదు చేయండి.');return;}alert('Goods request వివరాలు validate అయ్యాయి. Live save కోసం database mapping అవసరం.');}
+function submitParcelRequest(){const ids=['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription'];if(ids.some(id=>!$(id).value.trim())||Number($('parcelWeight').value)<=0){alert('పార్సెల్ వివరాలన్నీ నమోదు చేయండి.');return;}const d=v=>v.replace(/\D/g,'');if(d($('parcelSenderPhone').value).length!==10||d($('parcelReceiverPhone').value).length!==10){alert('సరైన 10 digit mobile numbers ఇవ్వండి.');return;}alert('Parcel details validate అయ్యాయి. Live booking కోసం parcel table mapping అవసరం.');}
+function submitServiceRequest(){if(!$('homeServiceAddress').value.trim()||!$('homeServiceNotes').value.trim()){alert('చిరునామా మరియు service వివరాలు నమోదు చేయండి.');return;}alert('Home Service వివరాలు validate అయ్యాయి. Live save కోసం database mapping అవసరం.');}
+function simpleRequest(label,addressId,itemsId){if(!$(addressId).value.trim()||!$(itemsId).value.trim()){alert('Address మరియు items వివరాలు నమోదు చేయండి.');return;}alert(label+' వివరాలు validate అయ్యాయి. Live save కోసం database mapping అవసరం.');}
+function validateProduct(){if(!$('productName').value.trim()||Number($('productPrice').value)<0||Number($('productStock').value)<0){alert('Product వివరాలు సరిగా నమోదు చేయండి.');return;}alert('Product details validate అయ్యాయి. Live product save కోసం table mapping అవసరం.');}
+function saveDriverDetails(){if(!$('driverReg').value.trim()||!$('driverLicense').value.trim()){alert('Vehicle registration మరియు Driving Licence number నమోదు చేయండి.');return;}alert('Driver వివరాలు validate అయ్యాయి. Private document storage మరియు profiles schema mapping తర్వాత save/upload enable అవుతుంది.');}
+function previewGST(){const amt=Number($('gstAmount').value),rate=Number($('gstRate').value);if(amt<=0){$('gstResult').textContent='సరైన invoice amount నమోదు చేయండి.';return;}const tax=amt*rate/100;$('gstResult').textContent='Taxable value: ₹'+amt.toFixed(2)+' | GST: ₹'+tax.toFixed(2)+' | Total: ₹'+(amt+tax).toFixed(2)+(rate>0?' | Intra-state అయితే CGST/SGST split అవసరం.':'');}
+function toggleOnline(){if(!currentUser||selectedRole!=='driver')return;online=!online;$('onlineBtn').textContent=online?'Go Offline':'Go Online';$('onlineBtn').className='btn '+(online?'red':'green');}
+function shareInvite(){const text='Join FRIEND RIDE – Local Ride, Delivery & Services';if(navigator.share)navigator.share({title:'FRIEND RIDE',text});else if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>alert('Invite text copied.'));else alert(text);}
 sb.auth.getSession().then(async({data})=>{if(data.session){try{await acceptSession(data.session.user);}catch(e){await sb.auth.signOut();}}});
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;}});
 </script>
