@@ -54,6 +54,28 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 .fr-poster-dots span:first-child{background:#6b35bd;width:17px}
 @media(min-width:700px){.fr-poster{flex-basis:calc(50% - 6px)}}
 
+
+.market-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 12px}
+.market-heading h2{margin:0;font-size:20px}
+.market-search{display:flex;gap:8px;margin:12px 0}
+.market-search input{flex:1;min-width:0}
+.market-store-grid,.market-product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.market-store,.market-product{border:1px solid #e9e3f2;border-radius:17px;background:#fff;overflow:hidden;box-shadow:0 6px 18px #21104410}
+.market-store{padding:0;text-align:left;color:var(--ink)}
+.market-store-art{height:104px;display:grid;place-items:center;font-size:53px;background:radial-gradient(circle at 25% 20%,#fff9,transparent 30%),linear-gradient(135deg,var(--a),var(--b));text-shadow:0 5px 5px #28104455}
+.market-store-info{padding:10px}.market-store-info b{display:block;font-size:14px}.market-store-info small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.market-product{padding:0 0 10px}
+.market-product-art{height:92px;display:grid;place-items:center;font-size:44px;background:linear-gradient(145deg,#fff7ef,#f1eaff)}
+.market-product-info{padding:8px 10px}.market-product-info b{font-size:13px;display:block;min-height:38px}
+.market-price{font-weight:900;color:#4f1da7;margin:4px 0;font-size:14px}
+.market-product button{margin:0 9px;width:calc(100% - 18px);padding:8px;border-radius:11px}
+.market-category-row{display:flex;gap:8px;overflow:auto;padding:4px 0 10px}
+.market-category-row button{white-space:nowrap;border:1px solid #e8dff3;background:#fff;border-radius:20px;padding:8px 12px;color:#4f1da7;font-weight:800}
+.market-category-row button.active{background:#5420b8;color:#fff}
+.market-cart-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
+.market-cart-row small{display:block;color:var(--muted)}
+.market-empty{padding:22px;text-align:center;border:1px dashed #d9cde9;border-radius:16px;color:var(--muted);background:#fff}
+
 </style>
 <style>
 .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0}.kpi{background:linear-gradient(145deg,#fff,#f6f0ff);border:1px solid #e7def3;border-radius:15px;padding:12px}.kpi strong{display:block;font-size:20px;color:#4b2091}.kpi span{font-size:11px;color:#77718a}.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.feature-box{border:1px solid #e8e0f2;background:#fff;border-radius:15px;padding:13px}.feature-box small{color:#77718a}.inline-actions{display:flex;gap:8px;flex-wrap:wrap}.inline-actions button{flex:1;min-width:90px}.offer-card{border:1px solid #e5d9f1;border-radius:15px;padding:13px;margin:9px 0;background:linear-gradient(135deg,#fff,#faf6ff)}.offer-price{font-size:22px;font-weight:900;color:#4d1da1}.tag{display:inline-block;background:#f0e7ff;color:#5420a8;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800}@media(min-width:650px){.kpi-grid{grid-template-columns:repeat(4,1fr)}.feature-grid{grid-template-columns:repeat(3,1fr)}}
@@ -138,15 +160,66 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><div class="field"><label>Sender Name</label><input id="parcelSender"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription"></div><div class="field"><label>Weight (kg)</label><input id="parcelWeight" type="number" min=".1" step=".1"></div><div class="notice">Payment is collected at delivery. Recipient OTP is issued only after verified payment. Driver confirms payment in app before parcel release.</div><button class="btn purple" onclick="submitParcelRequest()">Request Parcel Delivery</button><button class="btn light" onclick="showPage('parcelRelease')">Driver Parcel Release Screen</button></div></section>
 
-<section id="food" class="page"><div class="card"><h2>Food Delivery</h2><p class="muted">మీ ప్రాంతంలోని భాగస్వామ్య హోటళ్ల నుంచి ఆర్డర్ చేయండి.</p><div class="field"><label>Delivery Address</label><textarea id="foodAddress"></textarea></div><div class="field"><label>Choose Restaurant</label><select id="foodRestaurant"><option value="">Approved restaurants load here</option></select></div><div class="field"><label>Restaurant Menu / Items</label><textarea id="foodItems" placeholder="Choose menu items and quantity"></textarea></div><label class="tiny"><input id="foodAskPrice" type="checkbox" style="width:auto"> Price on Request – ధర లేని itemsకు Restaurant ధర పంపాలి</label><button class="btn purple" onclick="submitPartnerPriceRequest('Food order','foodAddress','foodItems','foodRestaurant','foodAskPrice')">Add to Cart / Ask Restaurant</button><div class="notice">Restaurant catalogue prices are entered by the partner. Customer payment goes to the selected restaurant UPI/QR. Driver details and live tracking appear after dispatch. Backend payment verification is required.</div></div></section>
-
+<section id="food" class="page">
+ <div class="card">
+  <div class="market-heading"><h2>🍽️ Food Delivery</h2><span class="pill">Restaurants</span></div>
+  <p class="muted">ముందుగా రెస్టారెంట్ ఎంచుకోండి. తర్వాత ఆ రెస్టారెంట్ మెనూ ఫోటోలు, ఐటమ్స్, ధరలతో ఓపెన్ అవుతుంది.</p>
+  <div class="field"><label>Delivery Address</label><textarea id="foodAddress" placeholder="Saved address or enter another delivery address"></textarea></div>
+  <div class="market-search"><input id="restaurantSearch" placeholder="Search restaurant / cuisine" oninput="renderRestaurantList()"></div>
+  <div id="restaurantVisualList" class="market-store-grid"></div>
+  <div class="notice">Actual restaurant photos, menu, partner prices, UPI/QR and delivery availability will be loaded from approved partner records after SQL integration.</div>
+ </div>
+</section>
+<section id="restaurantCatalogue" class="page">
+ <div class="card">
+  <button class="btn light" style="width:auto" onclick="showPage('food')">← Back to Restaurants</button>
+  <div class="market-heading"><h2 id="restaurantCatalogueTitle">Restaurant Menu</h2><span class="pill">Food Menu</span></div>
+  <p class="muted">ఈ రెస్టారెంట్‌కు సంబంధించిన మెనూ క్యాటలాగ్ నుంచి ఐటమ్స్ ఎంచుకోండి.</p>
+  <div class="market-category-row" id="restaurantMenuCategories"></div>
+  <div class="market-search"><input id="restaurantMenuSearch" placeholder="Search menu item" oninput="renderRestaurantMenu()"></div>
+  <div id="restaurantMenuGrid" class="market-product-grid"></div>
+  <button class="btn purple" onclick="showPage('marketCart')">🛒 View Cart & Checkout</button>
+ </div>
+</section>
 <section id="shops" class="page"><div class="card"><h2>Local Stores</h2><div class="field"><label>Store Category</label><select id="shopCategory"><option>Grocery</option><option>Medical</option><option>Vegetables</option><option>Stationery</option><option>Other</option></select></div><div class="field"><label>Delivery Address</label><textarea id="shopAddress"></textarea></div><div class="field"><label>Select Store</label><select id="shopSelectedStore"><option value="">Choose approved store</option></select></div><div class="field"><label>FRIEND RIDE Common Catalogue Items & Quantity</label><textarea id="shopItems" placeholder="Select catalogue items and quantity"></textarea></div><label class="tiny"><input id="shopAskPrice" type="checkbox" style="width:auto"> Price on Request – ధర లేని itemsకు Shop Owner ధర పంపాలి</label><button class="btn purple" onclick="submitPartnerPriceRequest('Store order','shopAddress','shopItems','shopSelectedStore','shopAskPrice')">Add to Cart / Ask Store</button><div class="notice">Common catalogue is supplied by FRIEND RIDE; each shop owner sets their own price. Checkout routes payment to the selected partner UPI/QR after server verification.</div></div></section>
 
 <section id="shopping" class="page"><div class="card"><h2>Shopping</h2><div class="field"><label>What do you need?</label><textarea id="shoppingItems" placeholder="List your items"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="shoppingAddress"></textarea></div><button class="btn purple" onclick="simpleRequest('Shopping request','shoppingAddress','shoppingItems')">Submit Shopping Request</button></div></section>
 
 <section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painting</option><option>Carpenter</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Choose technician (approved technicians load from database)</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">Minimum advance payment: ₹50. Booking request is confirmed only after server verifies the advance payment.</div><button class="btn purple" onclick="submitServiceRequest()">Pay ₹50 Advance & Book</button></div><div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button></div></section>
 
-<section id="storeBrowse" class="page"><div class="card"><h2>Friend Mart – Select Store</h2><p class="muted">ముందుగా మీకు కావాల్సిన local store ఎంచుకోండి. ప్రతి approved storeకు FRIEND RIDE ఇచ్చే common catalogue ఉంటుంది; store owner ధరలను నమోదు చేస్తారు.</p><div class="field"><label>Store Category</label><select id="friendMartCategory"><option>Grocery</option><option>Vegetables & Fruits</option><option>Medical</option><option>Stationery</option><option>Other Local Store</option></select></div><div class="field"><label>Search Store</label><input id="friendMartSearch" placeholder="Store name / area"></div><div class="listrow"><div class="grow"><b>Nearby approved stores</b><br><small class="muted">Approved partner stores will appear here after database connection.</small></div><span class="pill">Store list</span></div><button class="btn purple" onclick="showMessage('Approved store list and catalogue will load from partner/store tables in the SQL integration step.','good')">Load Stores</button><div class="notice">Store selection → shared catalogue → partner pricing → cart → partner QR/UPI payment → order tracking.</div></div></section>
+<section id="storeBrowse" class="page">
+ <div class="card">
+  <div class="market-heading"><h2>🏪 Friend Mart – Local Stores</h2><span class="pill">Shop by store</span></div>
+  <p class="muted">ముందుగా మీకు కావాల్సిన షాపును ఎంచుకోండి. షాప్ ఓపెన్ చేసిన తర్వాత దాని విజువల్ క్యాటలాగ్ కనిపిస్తుంది.</p>
+  <div class="field"><label>Store Category</label><select id="friendMartCategory" onchange="renderFriendStores()"><option value="all">All Local Stores</option><option value="local_store">Grocery & Kirana</option><option value="medical">Medical Stores</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery</option></select></div>
+  <div class="market-search"><input id="friendMartSearch" placeholder="Search store name / area" oninput="renderFriendStores()"></div>
+  <div id="friendMartStoreGrid" class="market-store-grid"></div>
+  <div class="notice">Store photos, real shop names, distance and approved partner catalogue will load from Supabase after partner/store records are connected. Demo cards below show the intended customer flow.</div>
+ </div>
+</section>
+<section id="customerCatalogue" class="page">
+ <div class="card">
+  <button class="btn light" style="width:auto" onclick="showPage('storeBrowse')">← Back to Stores</button>
+  <div class="market-heading"><h2 id="customerCatalogueTitle">Store Catalogue</h2><span class="pill" id="customerCatalogueType">Friend Mart</span></div>
+  <p class="muted" id="customerCatalogueSub">Choose products from this store's catalogue.</p>
+  <div class="field"><label>Delivery Address</label><textarea id="customerMarketAddress" placeholder="Use saved address or enter delivery address"></textarea></div>
+  <div id="customerCatalogueCategories" class="market-category-row"></div>
+  <div class="market-search"><input id="customerCatalogueSearch" placeholder="Search products in catalogue" oninput="renderCustomerCatalogue()"></div>
+  <div id="customerCatalogueGrid" class="market-product-grid"></div>
+  <div class="notice">Partner sets the selling price for each item. Items without a price can be requested from the partner.</div>
+  <button class="btn purple" onclick="showPage('marketCart')">🛒 View Cart & Checkout</button>
+ </div>
+</section>
+<section id="marketCart" class="page">
+ <div class="card">
+  <button class="btn light" style="width:auto" onclick="showPage('customerCatalogue')">← Continue Shopping</button>
+  <h2>🛒 Your Cart</h2><div id="marketCartItems"></div>
+  <div class="listrow"><b>Estimated Total</b><strong id="marketCartTotal">₹0.00</strong></div>
+  <div class="field"><label>Delivery Address</label><textarea id="marketCartAddress" placeholder="Enter / confirm delivery address"></textarea></div>
+  <div class="notice">Price on Request items are sent to the selected partner for a quote. Payment can be initiated only after partner price confirmation and secure payment integration.</div>
+  <button class="btn purple" onclick="marketCheckout()">Continue to Payment</button>
+ </div>
+</section>
 <section id="technicianRegister" class="page"><div class="card"><h2>Home Service Technician Registration</h2><div class="field"><label>Profession *</label><select id="techProfession"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painter</option><option>Carpenter</option><option>Other</option></select></div><div class="field"><label>Full Name *</label><input id="techName"></div><div class="field"><label>Mobile Number *</label><input id="techPhone" maxlength="10" inputmode="numeric"></div><div class="field"><label>Work Experience (Years) *</label><input id="techExperience" type="number" min="0"></div><div class="field"><label>Complete Address *</label><textarea id="techAddress"></textarea></div><div class="field"><label>Aadhaar Card Number *</label><input id="techAadhaar" maxlength="12" inputmode="numeric"></div><div class="field"><label>Aadhaar File *</label><input id="techAadhaarFile" type="file" accept="image/*,.pdf"></div><div class="field"><label>UPI ID / QR Code</label><input id="techUPI" placeholder="UPI ID"></div><div class="field"><label>QR Code Image</label><input id="techQR" type="file" accept="image/*"></div><div class="field"><label>PhonePe Number * (Mandatory)</label><input id="techPhonePe" maxlength="10" inputmode="numeric"></div><button class="btn purple" onclick="validateTechnicianRegistration()">Submit Technician Application</button><div class="notice">Technician account will remain pending until document review and Admin approval.</div></div></section>
 <section id="parcelRelease" class="page"><div class="card"><h2>Parcel Delivery – Secure Handover</h2><p>Delivery OTP will be generated only after verified payment. Driver enters OTP and confirms payment before parcel release.</p><div class="field"><label>Tracking ID</label><input id="parcelTrackingId" placeholder="FR-PARCEL-000001"></div><div class="field"><label>Delivery OTP</label><input id="parcelDeliveryOtp" maxlength="6" inputmode="numeric"></div><button class="btn purple" onclick="confirmParcelRelease()">Driver: Confirm Payment & Release Parcel</button><div id="parcelReleaseStatus" class="notice">Awaiting verified payment and recipient OTP.</div><div class="notice">Payment status, OTP issue/verify and release must be enforced server-side; this screen is not a secure payment verification by itself.</div></div></section>
 <section id="orders" class="page"><div class="card"><h2>My Bookings & Orders</h2><p class="muted">Ride, parcel, food, shop and service bookings.</p><div id="ordersInfo" class="notice">మీ bookings ఇక్కడ కనిపిస్తాయి. Database mapping తర్వాత history load అవుతుంది.</div><button class="btn light" onclick="showPage('tracking')">Open Live Tracking</button></div></section>
@@ -398,6 +471,98 @@ function filterPartnerOrders(s){$('partnerOrderList').textContent='Showing '+s+'
 function savePlatformDetails(){alert('Toll-Free number మరియు GSTIN secure Admin settings tableలో save చేయడానికి backend mapping అవసరం.');}
 sb.auth.getSession().then(async({data})=>{if(data.session){try{await acceptSession(data.session.user);}catch(e){await sb.auth.signOut();}}});
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;}});
+
+// FRIEND RIDE visual marketplace: demo presentation until approved partner records are connected.
+const FR_DEMO_STORES=[
+ {id:'s1',name:'Sri Lakshmi Kirana & General Store',type:'local_store',category:'Grocery & Kirana',area:'Your Local Area',art:'🏪',a:'#ffe2a8',b:'#ff9a3c'},
+ {id:'s2',name:'City Medical & Pharmacy',type:'medical',category:'Medical Store',area:'Your Local Area',art:'💊',a:'#d8f7e7',b:'#65c99a'},
+ {id:'s3',name:'Fresh Basket Vegetables',type:'vegetables',category:'Vegetables & Fruits',area:'Your Local Area',art:'🥬',a:'#e4f7c8',b:'#8dcc56'},
+ {id:'s4',name:'Sweet Oven Bakery',type:'bakery',category:'Bakery & Sweets',area:'Your Local Area',art:'🥐',a:'#ffe0c7',b:'#ed9a65'},
+ {id:'s5',name:'Sai Stationery & Xerox',type:'stationery',category:'Stationery',area:'Your Local Area',art:'📚',a:'#e5e1ff',b:'#9c8ae8'}
+];
+const FR_DEMO_RESTAURANTS=[
+ {id:'r1',name:'Spice Garden Restaurant',area:'Your Local Area',cuisine:'Biryani • Meals • Curries',art:'🍛',a:'#ffd5a3',b:'#f18b3d'},
+ {id:'r2',name:'South Indian Tiffins',area:'Your Local Area',cuisine:'Idli • Dosa • Vada',art:'🥞',a:'#fff0b8',b:'#e6ad45'},
+ {id:'r3',name:'Urban Pizza & Fast Food',area:'Your Local Area',cuisine:'Pizza • Burgers • Snacks',art:'🍕',a:'#ffd5dc',b:'#ec7791'},
+ {id:'r4',name:'Family Meals & Andhra Kitchen',area:'Your Local Area',cuisine:'Meals • Thali • Specials',art:'🍱',a:'#ffe2ba',b:'#dc9651'}
+];
+const FR_FOOD_MENU=[
+ ['Breakfast','Idli (2 pcs)','🥘'],['Breakfast','Plain Dosa','🥞'],['Breakfast','Masala Dosa','🥞'],['Breakfast','Vada (2 pcs)','🍩'],['Breakfast','Pongal','🍚'],['Breakfast','Poori (2 pcs)','🫓'],
+ ['Meals','South Indian Meals','🍱'],['Meals','Veg Meals','🍛'],['Meals','Mini Meals','🍱'],['Meals','Curd Rice','🍚'],['Meals','Lemon Rice','🍋'],
+ ['Biryani','Chicken Biryani','🍗'],['Biryani','Veg Biryani','🍛'],['Biryani','Paneer Biryani','🍲'],['Biryani','Egg Biryani','🥚'],['Biryani','Mutton Biryani','🍖'],
+ ['Curries','Paneer Curry','🍲'],['Curries','Dal Tadka','🥣'],['Curries','Chicken Curry','🍗'],['Curries','Sambar','🥣'],['Curries','Rasam','🥣'],
+ ['Fast Food','Veg Burger','🍔'],['Fast Food','Pizza','🍕'],['Fast Food','French Fries','🍟'],['Fast Food','Sandwich','🥪'],['Fast Food','Noodles','🍜'],
+ ['Beverages','Tea','☕'],['Beverages','Coffee','☕'],['Beverages','Fresh Lime Soda','🍹'],['Beverages','Lassi','🥛']
+];
+const FR_STORE_MENU={
+ local_store:[['Rice & Grains','Rice – 1 kg','🍚'],['Rice & Grains','Toor Dal – 1 kg','🫘'],['Rice & Grains','Wheat Flour – 1 kg','🌾'],['Oil & Spices','Sunflower Oil – 1 L','🫗'],['Oil & Spices','Turmeric Powder – 100 g','🟡'],['Oil & Spices','Chilli Powder – 100 g','🌶️'],['Daily Needs','Sugar – 1 kg','🍚'],['Daily Needs','Salt – 1 kg','🧂'],['Daily Needs','Tea Powder – 250 g','🫖'],['Snacks','Biscuits','🍪'],['Snacks','Chips','🍟']],
+ medical:[['OTC & Wellness','ORS Sachet','💧'],['OTC & Wellness','Digital Thermometer','🌡️'],['First Aid','Cotton Roll','🩹'],['First Aid','Adhesive Bandage','🩹'],['Personal Care','Hand Sanitizer','🧴'],['Personal Care','Toothpaste','🪥'],['Personal Care','Soap','🧼']],
+ vegetables:[['Vegetables','Tomato – 1 kg','🍅'],['Vegetables','Potato – 1 kg','🥔'],['Vegetables','Onion – 1 kg','🧅'],['Vegetables','Green Chilli – 250 g','🌶️'],['Vegetables','Carrot – 500 g','🥕'],['Fruits','Banana – 1 dozen','🍌'],['Fruits','Apple – 1 kg','🍎'],['Fruits','Orange – 1 kg','🍊']],
+ bakery:[['Bread & Cakes','Milk Bread','🍞'],['Bread & Cakes','Chocolate Cake Slice','🍰'],['Biscuits & Snacks','Cookies','🍪'],['Sweets','Gulab Jamun','🍮'],['Sweets','Laddu','🟠']],
+ stationery:[['Books & Paper','A4 Paper – 1 pack','📄'],['Writing','Ball Pen','🖊️'],['Writing','Pencil','✏️'],['School Supplies','Notebook','📓'],['School Supplies','Geometry Box','📐']]
+};
+let frActiveStore=null,frActiveRestaurant=null,frMarketCategory='All',frRestaurantCategory='All',frMarketCart=[];
+function renderFriendStores(){
+ const cat=$('friendMartCategory')?.value||'all',q=($('friendMartSearch')?.value||'').toLowerCase();
+ const el=$('friendMartStoreGrid');if(!el)return;
+ const items=FR_DEMO_STORES.filter(x=>(cat==='all'||x.type===cat)&&(!q||(x.name+' '+x.area+' '+x.category).toLowerCase().includes(q)));
+ el.innerHTML=items.map(x=>`<button class="market-store" onclick="openFriendStore('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small><small>View store & visual catalogue →</small></div></button>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో షాపులు లేవు.</div>';
+}
+function openFriendStore(id){
+ frActiveStore=FR_DEMO_STORES.find(x=>x.id===id);if(!frActiveStore)return;
+ frMarketCategory='All';$('customerCatalogueTitle').textContent=frActiveStore.name;$('customerCatalogueType').textContent=frActiveStore.category;
+ $('customerCatalogueSub').textContent='Shop catalogue • Partner prices • Add to cart';
+ $('customerCatalogueSearch').value='';renderStoreCategories();renderCustomerCatalogue();showPage('customerCatalogue');
+}
+function renderStoreCategories(){
+ const rows=FR_STORE_MENU[frActiveStore?.type]||[];const cats=['All',...new Set(rows.map(x=>x[0]))];
+ $('customerCatalogueCategories').innerHTML=cats.map(c=>`<button class="${frMarketCategory===c?'active':''}" onclick="frMarketCategory='${c}';renderStoreCategories();renderCustomerCatalogue()">${safe(c)}</button>`).join('');
+}
+function renderCustomerCatalogue(){
+ if(!frActiveStore)return;const rows=FR_STORE_MENU[frActiveStore.type]||[],q=($('customerCatalogueSearch')?.value||'').toLowerCase();
+ const items=rows.filter(x=>(frMarketCategory==='All'||x[0]===frMarketCategory)&&(!q||x[1].toLowerCase().includes(q)));
+ $('customerCatalogueGrid').innerHTML=items.map((x,i)=>`<div class="market-product"><div class="market-product-art">${x[2]}</div><div class="market-product-info"><b>${safe(x[1])}</b><small class="muted">${safe(x[0])}</small><div class="market-price">Price set by partner</div></div><button class="btn purple" onclick="addMarketCart('${safe(x[1])}','${safe(frActiveStore.name)}','request')">＋ Add / Ask Price</button></div>`).join('')||'<div class="market-empty">Items not found.</div>';
+}
+function renderRestaurantList(){
+ const q=($('restaurantSearch')?.value||'').toLowerCase(),el=$('restaurantVisualList');if(!el)return;
+ const items=FR_DEMO_RESTAURANTS.filter(x=>(x.name+' '+x.cuisine).toLowerCase().includes(q));
+ el.innerHTML=items.map(x=>`<button class="market-store" onclick="openRestaurant('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.cuisine)}</small><small>${safe(x.area)} • View Menu →</small></div></button>`).join('')||'<div class="market-empty">Restaurants not found.</div>';
+}
+function openRestaurant(id){
+ frActiveRestaurant=FR_DEMO_RESTAURANTS.find(x=>x.id===id);if(!frActiveRestaurant)return;
+ frRestaurantCategory='All';$('restaurantCatalogueTitle').textContent=frActiveRestaurant.name;$('restaurantMenuSearch').value='';
+ const cats=['All',...new Set(FR_FOOD_MENU.map(x=>x[0]))];
+ $('restaurantMenuCategories').innerHTML=cats.map(c=>`<button class="${frRestaurantCategory===c?'active':''}" onclick="frRestaurantCategory='${c}';renderRestaurantCategories();renderRestaurantMenu()">${safe(c)}</button>`).join('');
+ renderRestaurantMenu();showPage('restaurantCatalogue');
+}
+function renderRestaurantCategories(){
+ const cats=['All',...new Set(FR_FOOD_MENU.map(x=>x[0]))];
+ $('restaurantMenuCategories').innerHTML=cats.map(c=>`<button class="${frRestaurantCategory===c?'active':''}" onclick="frRestaurantCategory='${c}';renderRestaurantCategories();renderRestaurantMenu()">${safe(c)}</button>`).join('');
+}
+function renderRestaurantMenu(){
+ const q=($('restaurantMenuSearch')?.value||'').toLowerCase();
+ const items=FR_FOOD_MENU.filter(x=>(frRestaurantCategory==='All'||x[0]===frRestaurantCategory)&&x[1].toLowerCase().includes(q));
+ $('restaurantMenuGrid').innerHTML=items.map(x=>`<div class="market-product"><div class="market-product-art">${x[2]}</div><div class="market-product-info"><b>${safe(x[1])}</b><small class="muted">${safe(x[0])}</small><div class="market-price">Price set by restaurant</div></div><button class="btn purple" onclick="addMarketCart('${safe(x[1])}','${safe(frActiveRestaurant.name)}','request')">＋ Add / Ask Price</button></div>`).join('')||'<div class="market-empty">Menu item not found.</div>';
+}
+function addMarketCart(name,partner,pricing){
+ const found=frMarketCart.find(x=>x.name===name&&x.partner===partner);
+ if(found)found.qty++;else frMarketCart.push({name,partner,qty:1,price:null,pricing});
+ renderMarketCart();showMessage('Item cartలో జోడించబడింది. Partner ధర నిర్ధారించాల్సి ఉంది.','good');
+}
+function renderMarketCart(){
+ const el=$('marketCartItems');if(!el)return;
+ if(!frMarketCart.length){el.innerHTML='<div class="market-empty">Your cart is empty. Shop లేదా Restaurant ఎంచుకోండి.</div>';$('marketCartTotal').textContent='₹0.00';return;}
+ el.innerHTML=frMarketCart.map((x,i)=>`<div class="market-cart-row"><div><b>${safe(x.name)}</b><small>${safe(x.partner)} • ${x.pricing==='request'?'Price on Request':'Partner price'}</small></div><div><b>${x.price===null?'Ask Partner':'₹'+x.price}</b><br><small>Qty ${x.qty}</small><button class="btn light" style="width:auto;padding:3px 8px" onclick="frMarketCart.splice(${i},1);renderMarketCart()">Remove</button></div></div>`).join('');
+ $('marketCartTotal').textContent='Partner quote pending';
+}
+function marketCheckout(){
+ if(!frMarketCart.length){alert('ముందుగా Cartలో items జోడించండి.');return;}
+ const addr=($('marketCartAddress')?.value||$('customerMarketAddress')?.value||$('foodAddress')?.value||'').trim();
+ if(!addr){alert('Delivery address నమోదు చేయండి.');return;}
+ alert('Cart సిద్ధంగా ఉంది. అన్ని itemsకు Partner ధర నిర్ధారణ, UPI/QR payment routing, verified payment మరియు order tracking కోసం Supabase + payment backend కనెక్ట్ చేయాలి. ప్రస్తుతం నిజమైన payment ప్రారంభించలేదు.');
+}
+document.addEventListener('DOMContentLoaded',()=>{renderFriendStores();renderRestaurantList();renderMarketCart();});
+
 </script>
 </body>
 </html>
