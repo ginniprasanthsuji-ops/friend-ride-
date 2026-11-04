@@ -807,12 +807,17 @@ async function acceptSession(authUser){
   if(q.error)throw q.error;
   if(!q.data)throw Error('ఈ మొబైల్‌కు FRIEND RIDE Profile లేదు. ముందుగా Registration చేయండి.');
   currentProfile=q.data;
-  const role=currentProfile.role||authUser.user_metadata?.role||'customer';
+  let role=currentProfile.role||authUser.user_metadata?.role||'customer';
   if(!['customer','driver','partner','admin'].includes(role))throw Error('Invalid account role.');
-  if(selectedRole!==role)throw Error('మీరు ఎంచుకున్న '+selectedRole+' account ఈ మొబైల్‌లో లేదు. సరైన Role ఎంచుకోండి.');
-  if(role==='admin'){
+  // Admin authorization is determined by admin_users, not profiles.role.
+  // This supports an approved admin whose existing profile role is still customer/driver/partner.
+  if(selectedRole==='admin'){
     const a=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
-    if(a.error||!a.data)throw Error('ఈ మొబైల్‌కు Admin అనుమతి లేదు.');
+    if(a.error)throw Error('Admin permission check failed: '+a.error.message);
+    if(!a.data)throw Error('ఈ మొబైల్‌కు Admin అనుమతి లేదు.');
+    role='admin';
+  } else if(selectedRole!==role){
+    throw Error('మీరు ఎంచుకున్న '+selectedRole+' account ఈ మొబైల్‌లో లేదు. సరైన Role ఎంచుకోండి.');
   }
   const addr=currentProfile.address||'';
   ['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{if($(id)&&!$(id).value)$(id).value=addr;});
