@@ -151,6 +151,8 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 </style>
 </head>
 <body>
+<button id="frSuperShortcut" onclick="frOpenSuperHub()" style="position:fixed;right:14px;bottom:82px;z-index:9998;border:0;border-radius:28px;padding:13px 17px;background:#5724a5;color:#fff;font-weight:800;box-shadow:0 5px 18px #25104455">FR Super App</button>
+
 
 <div id="roleLauncher" class="fr-role-launcher" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
@@ -956,7 +958,43 @@ async function adminTestApitxtSms(){
 }
 // Keep active trip GPS alive while the page is visible; stop timers on logout / ride end.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentProfile?.role==='driver'&&frActiveRideId)startDriverLiveTracking(frActiveRideId);});
+
+// FRIEND RIDE Super App additions (catalogue and multi-shop cart UI)
+const frSuperCategories=[
+ ['🚕','Ride Booking','Bike, Auto, Car'],['🍲','Food & Restaurants','Meals, tiffin, bakery, snacks'],['💊','Medical & Pharmacy','Medicines, medical supplies'],['🛒','General & Grocery','Kirana, household, daily needs'],['📺','Electronics','TV, fridge, washing machine, mixer'],['💡','Electrical','Wires, switches, bulbs, LED, MCB, inverter, batteries'],['💄','Ladies Accessories','Clips, pins, rubber bands, bangles, combs'],['🍗','Chicken & Fresh','Chicken, mushrooms, paneer'],['📦','Parcel','Local parcel pickup and delivery'],['🧰','Home Services','Electrician, plumber, mason, AC mechanic'],['🚽','Septic Tank Service','Cleaning and maintenance'],['🛠️','Tools & Hardware','Tools, fittings, repair items'],['📱','Mobiles & Accessories','Phones, chargers, cables'],['👕','Clothing & Fashion','Clothes, footwear, accessories'],['🧸','Kids & Toys','Toys, school and baby items'],['🐾','Pet Supplies','Food and daily pet needs'],['🌱','Agriculture','Seeds, garden and farm supplies'],['🎁','Gifts & Stationery','Gifts, books, stationery']
+];
+let frMultiCart=[];
+function frOpenSuperHub(){if(typeof showPage==='function')showPage('frSuperHub');else document.getElementById('frSuperHub')?.scrollIntoView();frRenderSuperHub();}
+function frOpenExisting(id){const el=document.getElementById(id);if(el&&typeof showPage==='function')showPage(id);else{alert('ఈ విభాగం ప్రస్తుత V7లో వేరే పేరుతో ఉండవచ్చు. సంబంధిత Dashboard నుంచి తెరవండి.');}}
+function frRenderSuperHub(){const grid=document.getElementById('frCategoryGrid');if(grid&&!grid.dataset.ready){grid.innerHTML=frSuperCategories.map((c,i)=>`<button class="btn light" style="text-align:left;min-height:72px" onclick="frCategoryInfo(${i})"><b>${c[0]} ${c[1]}</b><br><small>${c[2]}</small></button>`).join('');grid.dataset.ready='1';}frRenderMultiCart();}
+function frCategoryInfo(i){const c=frSuperCategories[i];alert(c[1]+'\n'+c[2]+'\n\nPartner catalogue నుంచి live products, images, prices, stock backend connect అయిన తర్వాత కనిపిస్తాయి.');}
+function frAddCartItem(shop,name,price){const p=Number(price);if(!shop||!name||!Number.isFinite(p)||p<0)return;frMultiCart.push({shop,name,price:p});frRenderMultiCart();}
+function frRenderMultiCart(){const el=document.getElementById('frMultiCartList');if(!el)return;if(!frMultiCart.length){el.textContent='Cart ఖాళీగా ఉంది.';}else{const groups={};frMultiCart.forEach(x=>(groups[x.shop]??=[]).push(x));el.innerHTML=Object.entries(groups).map(([shop,items])=>`<div style="padding:10px 0;border-bottom:1px solid #eee"><b>${frEsc(shop)}</b>${items.map(x=>`<div>${frEsc(x.name)} — ₹${x.price.toFixed(2)}</div>`).join('')}</div>`).join('');}const total=frMultiCart.reduce((a,x)=>a+x.price,0);const t=document.getElementById('frCartTotal');if(t)t.textContent='Total: ₹'+total.toFixed(2);}
+function frEsc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function frMultiCheckout(){if(!frMultiCart.length){alert('ముందుగా products Cartలో add చేయండి.');return;}const groups={};frMultiCart.forEach(x=>(groups[x.shop]??=[]).push(x));const summary=Object.entries(groups).map(([s,a])=>s+': '+a.length+' item(s)').join('\n');document.getElementById('frCartNotice').textContent='Checkout preview సిద్ధమైంది. Shop-wise child orders సృష్టించడానికి secure order/payment backend అవసరం.\n'+summary;alert('One Checkout preview\n'+summary+'\n\nఇది ఇంకా live order/payment create చేయలేదు.');}
+window.addEventListener('DOMContentLoaded',frRenderSuperHub);
+
 </script>
+
+<section id="frSuperHub" class="page">
+ <div class="hero card"><div class="eyebrow">FRIEND RIDE • CITY SUPER APP</div><h1>FRIEND RIDE Super App</h1><p>Rides • Food • Medicine • Shopping • Local Services • Parcel</p><button class="btn light" onclick="showPage('home')">← Home</button></div>
+ <div class="card"><h3>Customer Services</h3><div class="grid2" id="frServiceTiles">
+  <button class="btn purple" onclick="frOpenExisting('ride')">🚕 Book Ride</button><button class="btn light" onclick="frOpenExisting('customerCatalogue')">🛍️ Friend Mart</button>
+  <button class="btn light" onclick="frOpenExisting('food')">🍲 Food Delivery</button><button class="btn light" onclick="frOpenExisting('medical')">💊 Medicine</button>
+  <button class="btn light" onclick="frOpenExisting('parcel')">📦 Parcel</button><button class="btn light" onclick="frOpenExisting('homeServices')">🧰 Local Services</button>
+  <button class="btn light" onclick="frOpenExisting('cart')">🛒 Shopping Cart</button><button class="btn light" onclick="frOpenExisting('orders')">📋 My Orders</button>
+ </div></div>
+ <div class="card"><h3>All Local Shop Categories</h3><p class="muted">Admin సృష్టించే కొత్త categories / subcategories కూడా ఈ catalogueలో చేర్చవచ్చు.</p><div id="frCategoryGrid" class="grid2"></div></div>
+ <div class="card"><h3>One Cart • One Checkout • Multiple Shop Orders</h3><p>వేర్వేరు షాపుల వస్తువులు ఒకే Cartలో చేర్చి ఒకసారి Checkout చేయండి. ప్రతి షాపుకు ప్రత్యేక Order ID, Partner view, pickup, delivery, invoice ఉంటాయి.</p><div id="frMultiCartList">Cart ఖాళీగా ఉంది.</div><div class="row" style="justify-content:space-between;align-items:center"><b id="frCartTotal">Total: ₹0</b><button class="btn purple" onclick="frMultiCheckout()">One Checkout</button></div><small id="frCartNotice" class="muted">Demo cart state మాత్రమే. Live payment / order creation కోసం backend mapping అవసరం.</small></div>
+ <div class="card"><h3>Delivery Charges</h3><div class="table-wrap"><table><tr><th>Distance</th><th>Charge</th></tr><tr><td>0–3 KM</td><td>₹50</td></tr><tr><td>Above 3–8 KM</td><td>₹80</td></tr><tr><td>Above 8 KM</td><td>₹120</td></tr></table></div><small class="muted">Food, Medicine, Local Store, Chicken, Electrical, Electronics, Ladies accessories తదితర local deliveriesకు.</small></div>
+ <div class="card"><h3>Order & Notification Flow</h3><ol><li>Customer ఒక Checkout చేస్తారు.</li><li>ప్రతి Shopకు ప్రత్యేక Child Order సృష్టించాలి.</li><li>సంబంధిత Partnerకు App + WhatsApp notification.</li><li>Partner Accept చేసిన తర్వాతే ఆ Orderకు Driverకు App + WhatsApp request.</li><li>ప్రతి Shopకు వేర్వేరు pickup, delivery status, invoice.</li><li>Customer ఒకే My Orders screenలో అన్ని shop orders చూడగలరు.</li></ol></div>
+ <div class="card"><h3>Partner Workspace</h3><p>Shop profile • Product catalogue • Add/Edit product • Price/Stock • Orders • Accept/Reject • QR/UPI • Reports • Subscription ₹299</p><button class="btn light" onclick="frOpenExisting('partnerDashboard')">Open Partner Dashboard</button></div>
+ <div class="card"><h3>Driver Workspace</h3><p>Driver approval • Online/Offline • Nearby requests • Pickup/Delivery • Live GPS • Subscription ₹500</p><button class="btn light" onclick="frOpenExisting('driverDashboard')">Open Driver Dashboard</button></div>
+ <div class="card"><h3>Admin Workspace</h3><p>Partner/Driver approvals • Categories • Shops • Orders • Delivery charges • GST settings • WhatsApp settings • Free number settings • Payment settings</p><button class="btn light" onclick="frOpenExisting('adminDashboard')">Open Admin Dashboard</button></div>
+ <div class="card"><h3>Security Rules</h3><ul><li>Ride live trackingకు OTP అవసరం లేదు.</li><li>Food / Parcel / ఇతర Order tracking ప్రారంభించడానికి ఒకసారి OTP verification.</li><li>Customer తన Order మాత్రమే; Partner తన Shop Order మాత్రమే చూడాలి.</li><li>Driverకు assign చేసిన delivery మాత్రమే కనిపించాలి.</li><li>Payment successను screenshot/UTR text ఆధారంగా నమ్మకూడదు; server-side gateway verification అవసరం.</li></ul></div>
+ <div class="card"><h3>Future Integrations – Admin Controlled</h3><p>Razorpay credentials, GSTIN, WhatsApp Business Cloud API, contact/free numbers, approved templates, seller GST details అన్నీ secure backend/Admin settings ద్వారా నిర్వహించాలి. API secrets HTMLలో ఉంచకూడదు.</p><p class="muted">Multi-seller checkoutలో ప్రతి sellerకు వేరు invoice / settlement records అవసరం. Platform invoice మరియు seller invoice వేర్వేరు కావచ్చు.</p></div>
+</section>
+
 </body>
 </html>
 <style>
