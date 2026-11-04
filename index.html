@@ -429,10 +429,10 @@ async function acceptSession(user){
  if(dbRole==='driver'){const approval=String(profile?.driver_approval_status||user.user_metadata?.driver_approval_status||'pending').toLowerCase();if(!['approved','verified','active'].includes(approval))throw new Error('Driver account Admin approval కోసం Pendingలో ఉంది.');$('driverApproval').textContent='Approved';$('driverApproval').className='status ok';$('onlineBtn').disabled=false;}
  selectedRole=dbRole;$('profileInfo').innerHTML='<b>'+safe(profile?.full_name||profile?.name||user.user_metadata?.full_name||'User')+'</b><p>Mobile: '+safe(user.phone||'')+'</p><p>Account: '+safe(dbRole.toUpperCase())+'</p><p>'+safe(profile?.address||user.user_metadata?.address||'')+'</p>';
  $('customerWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Customer');$('driverWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Driver');
- $('drawerUser').textContent=(profile?.full_name||user.user_metadata?.full_name||'FRIEND RIDE user')+' • '+dbRole.toUpperCase();$('headerAuth').textContent='Account';
+ $('drawerUser').textContent=(profile?.full_name||user.user_metadata?.full_name||'FRIEND RIDE user')+' • '+dbRole.toUpperCase();if($('headerAuth'))$('headerAuth').textContent='Account';
  closeAuth();showPage(dashboardFor(dbRole));if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
 }
-async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;selectedRole='customer';online=false;$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');}
+async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;selectedRole='customer';online=false;if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');}
 async function forgotPassword(){showMessage('FRIEND RIDEలో Password Login లేదు. Mobile SMS OTP ఉపయోగించండి.');}
 function setRideType(v){rideVehicle=v;document.querySelectorAll('#ride .row button').forEach((b,i)=>b.className='btn '+(['Bike','Auto','Car'][i]===v?'purple':'light'));}
 function adjustFare(n){$('fare').value=Math.max(1,Number($('fare').value||0)+n);}
@@ -778,7 +778,7 @@ async function acceptSession(authUser){
   ['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{if($(id)&&!$(id).value)$(id).value=addr;});
   $('profileInfo').innerHTML='<b>'+safe(currentProfile.full_name||'User')+'</b><p>Mobile: '+safe(authUser.phone||currentProfile.phone||'')+'</p><p>Account: '+safe(role.toUpperCase())+'</p><p>'+safe(addr)+'</p>';
   $('customerWelcome').textContent='Welcome, '+(currentProfile.full_name||'Customer');$('driverWelcome').textContent='Welcome, '+(currentProfile.full_name||'Driver');
-  $('drawerUser').textContent=(currentProfile.full_name||'FRIEND RIDE user')+' • '+role.toUpperCase();$('headerAuth').textContent='Account';
+  $('drawerUser').textContent=(currentProfile.full_name||'FRIEND RIDE user')+' • '+role.toUpperCase();if($('headerAuth'))$('headerAuth').textContent='Account';
   if(role==='driver'){
     const approved=['approved','verified','active'].includes(String(currentProfile.driver_approval_status||'pending').toLowerCase());
     $('driverApproval').textContent=approved?'Approved':'Approval Pending';$('driverApproval').className=approved?'status ok':'status';$('onlineBtn').disabled=!approved;
@@ -792,7 +792,7 @@ async function acceptSession(authUser){
 async function logout(){
   if(frDriverTrackTimer)clearInterval(frDriverTrackTimer);if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);if(frNearbyTimer)clearInterval(frNearbyTimer);if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);
   if(driverWatchId!==null){navigator.geolocation?.clearWatch(driverWatchId);driverWatchId=null;}
-  await sb.auth.signOut();currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');
+  await sb.auth.signOut();currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');
 }
 
 function frPosition(){return new Promise((resolve,reject)=>{if(!navigator.geolocation)return reject(Error('ఈ Browserలో GPS లేదు'));navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:5000});});}
