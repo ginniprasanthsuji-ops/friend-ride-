@@ -791,7 +791,19 @@ async function verifyRegistrationOtpAndRegister(){
     const row={id:data.user.id,full_name:v.name,phone:normalizePhone(v.phone),role:selectedRole,address:selectedRole==='customer'?v.address:(selectedRole==='partner'?$('regBusinessAddress').value.trim():null)};
     if(selectedRole==='driver')Object.assign(row,{driver_approval_status:'pending',vehicle_type:'Bike',vehicle_company:$('regVehicleCompany').value.trim(),vehicle_model:$('regVehicleModel').value.trim(),vehicle_number:$('regVehicleNumber').value.trim(),driver_license_number:$('regLicenseNumber').value.trim(),driver_aadhaar_number:$('regAadhaarNumber').value.trim(),driving_experience_years:Number($('regExperience').value||0)});
     if(selectedRole==='partner')Object.assign(row,{partner_approval_status:'pending',business_name:$('regBusinessName').value.trim(),partner_category:$('regPartnerCategory').value,gstin:$('regGSTIN').value.trim(),upi_id:$('regUPI').value.trim(),phonepe_number:$('regPhonePe').value.trim()});
-    const saved=await sb.from('profiles').upsert(row,{onConflict:'id'});if(saved.error)throw saved.error;
+    // Never upsert role: the database trigger correctly blocks role changes.
+    const existing=await sb.from('profiles').select('id,role').eq('id',data.user.id).maybeSingle();
+    if(existing.error)throw existing.error;
+    if(existing.data){
+      const existingRole=String(existing.data.role||'customer').toLowerCase();
+      if(existingRole!==selectedRole)throw Error('ఈ మొబైల్ ఇప్పటికే '+existingRole.toUpperCase()+' accountగా ఉంది. Role మార్చలేము. అదే accountతో Login చేయండి.');
+      const updateRow={...row};delete updateRow.id;delete updateRow.role;
+      const saved=await sb.from('profiles').update(updateRow).eq('id',data.user.id);
+      if(saved.error)throw saved.error;
+    } else {
+      const saved=await sb.from('profiles').insert(row);
+      if(saved.error)throw saved.error;
+    }
     await acceptSession(data.user);showMessage('Registration విజయవంతమైంది.','good');
   } catch(e){showMessage('Registration పూర్తి కాలేదు: '+e.message);}
 }
@@ -807,16 +819,15 @@ async function acceptSession(authUser){
   if(q.error)throw q.error;
   if(!q.data)throw Error('ఈ మొబైల్‌కు FRIEND RIDE Profile లేదు. ముందుగా Registration చేయండి.');
   currentProfile=q.data;
-  let role=currentProfile.role||authUser.user_metadata?.role||'customer';
+  let role=String(currentProfile.role||authUser.user_metadata?.role||'customer').toLowerCase();
   if(!['customer','driver','partner','admin'].includes(role))throw Error('Invalid account role.');
-  // Admin authorization is determined by admin_users, not profiles.role.
-  // This supports an approved admin whose existing profile role is still customer/driver/partner.
+  // Admin membership table is authoritative; profiles.role need not be changed to admin.
   if(selectedRole==='admin'){
     const a=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
     if(a.error)throw Error('Admin permission check failed: '+a.error.message);
     if(!a.data)throw Error('ఈ మొబైల్‌కు Admin అనుమతి లేదు.');
     role='admin';
-  } else if(selectedRole!==role){
+  } else if(selectedRole!==role) {
     throw Error('మీరు ఎంచుకున్న '+selectedRole+' account ఈ మొబైల్‌లో లేదు. సరైన Role ఎంచుకోండి.');
   }
   const addr=currentProfile.address||'';
