@@ -126,6 +126,12 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 .market-product-3d .btn{margin:8px 10px 11px;width:calc(100% - 20px);border-radius:13px}
 @media(prefers-reduced-motion:reduce){.product-art-object{animation:none}}
 
+
+.fr-cart-top{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:11px;margin:8px 14px;padding:10px 13px;border:1px solid #e7ddf4;border-radius:16px;background:rgba(255,255,255,.97);box-shadow:0 5px 18px #32145a16;cursor:pointer}
+.fr-cart-top-icon{font-size:25px}.fr-cart-top b{display:block;color:#291342;font-size:14px}.fr-cart-top small{display:block;color:#777;font-size:11px;margin-top:2px}.fr-cart-top>strong{margin-left:auto;min-width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#5920ad;color:#fff}.fr-cart-top-arrow{font-size:12px;font-weight:700;color:#5721a8}
+.fr-cart-heading-count{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:50%;background:#5920ad;color:white;font-size:14px}
+.fr-cart-line{display:grid;grid-template-columns:1fr auto;gap:10px;padding:13px 0;border-bottom:1px solid #eee}.fr-cart-line b{display:block}.fr-cart-line small{display:block;color:#777;margin-top:4px}.fr-qty-control{display:flex;align-items:center;gap:9px;margin-top:8px}.fr-qty-control button{width:30px;height:30px;border:0;border-radius:9px;background:#eee5fb;color:#4c188f;font-weight:800;font-size:18px}.fr-payment-panel{margin-top:18px;padding:15px;border:1px solid #e7d9f7;border-radius:18px;background:#fbf8ff}.fr-payment-method{padding:13px;margin:10px 0;border:1px solid #e4d8f1;border-radius:14px;background:white}.fr-payment-method b{display:block;margin-bottom:6px}.fr-payment-method img{max-width:180px;max-height:180px;object-fit:contain;display:block;margin:8px auto}
+
 </style>
 <style>
 .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0}.kpi{background:linear-gradient(145deg,#fff,#f6f0ff);border:1px solid #e7def3;border-radius:15px;padding:12px}.kpi strong{display:block;font-size:20px;color:#4b2091}.kpi span{font-size:11px;color:#77718a}.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.feature-box{border:1px solid #e8e0f2;background:#fff;border-radius:15px;padding:13px}.feature-box small{color:#77718a}.inline-actions{display:flex;gap:8px;flex-wrap:wrap}.inline-actions button{flex:1;min-width:90px}.offer-card{border:1px solid #e5d9f1;border-radius:15px;padding:13px;margin:9px 0;background:linear-gradient(135deg,#fff,#faf6ff)}.offer-price{font-size:22px;font-weight:900;color:#4d1da1}.tag{display:inline-block;background:#f0e7ff;color:#5420a8;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800}@media(min-width:650px){.kpi-grid{grid-template-columns:repeat(4,1fr)}.feature-grid{grid-template-columns:repeat(3,1fr)}}
@@ -207,6 +213,9 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
  <button class="notify-btn" aria-label="Login / Account" onclick="currentUser?showPage('profile'):openAuth('login','customer')">♙</button><button class="notify-btn" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i></button>
 </header>
+<div id="frCartTop" class="fr-cart-top" role="button" tabindex="0" onclick="showPage('marketCart')" onkeydown="if(event.key==='Enter')showPage('marketCart')">
+ <span class="fr-cart-top-icon">🛒</span><span><b>My Cart / నా కార్ట్</b><small id="frCartTopMeta">0 items • 0 stores</small></span><strong id="frCartTopCount">0</strong><span class="fr-cart-top-arrow">View →</span>
+</div>
 <main>
 <section id="home" class="page active">
  <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('offers')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Now ↗</span></div><div class="banner-art">🛵</div></div><div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
@@ -336,11 +345,19 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <section id="marketCart" class="page">
  <div class="card">
   <button class="btn light" style="width:auto" onclick="showPage('customerCatalogue')">← Continue Shopping</button>
-  <h2>🛒 Your Cart</h2><div id="marketCartItems"></div>
-  <div class="listrow"><b>Estimated Total</b><strong id="marketCartTotal">₹0.00</strong></div>
+  <h2>🛒 My Cart / నా కార్ట్ <span class="fr-cart-heading-count" id="frCartHeadingCount">0</span></h2>
+  <div class="notice" id="frCartQuoteNotice">Partner ధర నిర్ధారించిన తర్వాత మాత్రమే Final Total చూపిస్తాం.</div>
+  <div id="marketCartItems"></div>
+  <div class="listrow"><b>Estimated Total</b><strong id="marketCartTotal">Price pending</strong></div>
   <div class="field"><label>Delivery Address</label><textarea id="marketCartAddress" placeholder="Enter / confirm delivery address"></textarea></div>
   <div class="notice">Price on Request items are sent to the selected partner for a quote. Payment can be initiated only after partner price confirmation and secure payment integration.</div>
-  <button class="btn purple" onclick="marketCheckout()">Continue to Payment</button>
+  <button class="btn purple" id="frContinuePaymentBtn" onclick="marketCheckout()">Continue to Payment</button>
+  <div id="frPaymentOptions" class="fr-payment-panel" style="display:none">
+   <h3>Choose Store Payment / చెల్లింపు విధానం</h3>
+   <p class="muted">ఈ స్టోర్‌లో Partner నమోదు చేసిన చెల్లింపు వివరాలు మాత్రమే ఇక్కడ చూపిస్తాం.</p>
+   <div id="frPaymentMethods"></div>
+   <div class="notice">Payment option చూపించడం మాత్రమే. Secure payment verification మరియు order confirmation backend అనుసంధానం తర్వాతే నిజమైన payment/Order complete అవుతుంది.</div>
+  </div>
  </div>
 </section>
 <section id="technicianRegister" class="page"><div class="card"><h2>Home Service Technician Registration</h2><div class="field"><label>Technician Passport-size Photo * Required</label><input id="techProfilePhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label>Profession *</label><select id="techProfession"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painter</option><option>Carpenter</option><option>Other</option></select></div><div class="field"><label>Full Name *</label><input id="techName"></div><div class="field"><label>Mobile Number *</label><input id="techPhone" maxlength="10" inputmode="numeric"></div><div class="field"><label>Work Experience (Years) *</label><input id="techExperience" type="number" min="0"></div><div class="field"><label>Complete Address *</label><textarea id="techAddress"></textarea></div><div class="field"><label>Aadhaar Card Number *</label><input id="techAadhaar" maxlength="12" inputmode="numeric"></div><div class="field"><label>Aadhaar File *</label><input id="techAadhaarFile" type="file" accept="image/*,.pdf"></div><div class="field"><label>UPI ID / QR Code</label><input id="techUPI" placeholder="UPI ID"></div><div class="field"><label>QR Code Image</label><input id="techQR" type="file" accept="image/*"></div><div class="field"><label>PhonePe Number * (Mandatory)</label><input id="techPhonePe" maxlength="10" inputmode="numeric"></div><button class="btn purple" onclick="validateTechnicianRegistration()">Submit Technician Application</button><div class="notice">Technician account will remain pending until document review and Admin approval.</div></div></section>
@@ -788,31 +805,50 @@ function renderRestaurantMenu(){
  const items=FR_FOOD_MENU.filter(x=>(frRestaurantCategory==='All'||x[0]===frRestaurantCategory)&&x[1].toLowerCase().includes(q));
  $('restaurantMenuGrid').innerHTML=items.map(x=>`<div class="market-product"><div class="market-product-art">${x[2]}</div><div class="market-product-info"><b>${safe(x[1])}</b><small class="muted">${safe(x[0])}</small><div class="market-price">Price set by restaurant</div></div><button class="btn purple" onclick="addMarketCart('${safe(x[1])}','${safe(frActiveRestaurant.name)}','request')">＋ Add / Ask Price</button></div>`).join('')||'<div class="market-empty">Menu item not found.</div>';
 }
+function frCartUpdateBadges(){
+ const count=frMarketCart.reduce((n,x)=>n+(x.qty||0),0),stores=new Set(frMarketCart.map(x=>x.storeId||x.partner)).size;
+ const a=$('frCartTopCount'),b=$('frCartTopMeta'),c=$('frCartHeadingCount');
+ if(a)a.textContent=count;if(c)c.textContent=count;if(b)b.textContent=count+' items • '+stores+' stores';
+}
 function addMarketCart(name,partner,pricing){
  const isPrescription=/prescription medicine/i.test(name);
- if(isPrescription){
-  const file=$('customerPrescriptionFile')?.files?.[0];
-  if(!file){alert('ఈ మందుకు డాక్టర్ Prescription తప్పనిసరిగా అప్‌లోడ్ చేయాలి.');return;}
-  if(file.size>5*1024*1024){alert('Prescription file 5 MBలోపు ఉండాలి.');return;}
- }
- const found=frMarketCart.find(x=>x.name===name&&x.partner===partner);
- if(found)found.qty++;else frMarketCart.push({name,partner,qty:1,price:null,pricing,prescriptionRequired:isPrescription});
- renderMarketCart();showMessage(isPrescription?'Prescription file ఎంపికైంది. Pharmacy verification అవసరం.':'Item cartలో జోడించబడింది. Partner ధర నిర్ధారించాల్సి ఉంది.','good');
+ if(isPrescription){const file=$('customerPrescriptionFile')?.files?.[0];if(!file){alert('ఈ మందుకు డాక్టర్ Prescription తప్పనిసరిగా అప్‌లోడ్ చేయాలి.');return;}if(file.size>5*1024*1024){alert('Prescription file 5 MBలోపు ఉండాలి.');return;}}
+ const storeId=frActiveStore?.id||null,storeName=frActiveStore?.name||partner;
+ const found=frMarketCart.find(x=>x.name===name&&x.storeId===storeId&&x.partner===storeName);
+ if(found)found.qty++;else frMarketCart.push({name,partner:storeName,storeId,qty:1,price:null,pricing:'request',prescriptionRequired:isPrescription});
+ renderMarketCart();showMessage('Item కార్ట్‌లో చేరింది. '+storeName+' ధర నిర్ధారణ కోసం వేచి ఉంది.','good');
 }
+function frChangeCartQty(i,delta){if(!frMarketCart[i])return;frMarketCart[i].qty+=delta;if(frMarketCart[i].qty<=0)frMarketCart.splice(i,1);renderMarketCart();}
 function renderMarketCart(){
  const el=$('marketCartItems');if(!el)return;
- if(!frMarketCart.length){el.innerHTML='<div class="market-empty">Your cart is empty. Shop లేదా Restaurant ఎంచుకోండి.</div>';$('marketCartTotal').textContent='₹0.00';return;}
- el.innerHTML=frMarketCart.map((x,i)=>`<div class="market-cart-row"><div><b>${safe(x.name)}</b><small>${safe(x.partner)} • ${x.pricing==='request'?'Price on Request':'Partner price'}</small></div><div><b>${x.price===null?'Ask Partner':'₹'+x.price}</b><br><small>Qty ${x.qty}</small><button class="btn light" style="width:auto;padding:3px 8px" onclick="frMarketCart.splice(${i},1);renderMarketCart()">Remove</button></div></div>`).join('');
- $('marketCartTotal').textContent='Partner quote pending';
+ if(!frMarketCart.length){el.innerHTML='<div class="market-empty">మీ Cart ఖాళీగా ఉంది. Store Catalogue నుంచి వస్తువులు జోడించండి.</div>';$('marketCartTotal').textContent='₹0.00';const p=$('frPaymentOptions');if(p)p.style.display='none';frCartUpdateBadges();return;}
+ el.innerHTML=frMarketCart.map((x,i)=>`<div class="fr-cart-line"><div><b>${safe(x.name)}</b><small>${safe(x.partner)} • Partner price confirmation pending</small><div class="fr-qty-control"><button onclick="frChangeCartQty(${i},-1)">−</button><b>${x.qty}</b><button onclick="frChangeCartQty(${i},1)">＋</button></div></div><div style="text-align:right"><b>${x.price==null?'Ask Store':'₹'+(Number(x.price)*x.qty).toFixed(2)}</b><button class="btn light" style="width:auto;padding:5px 9px;margin-top:8px" onclick="frChangeCartQty(${i},-${x.qty})">Remove</button></div></div>`).join('');
+ $('marketCartTotal').textContent=frMarketCart.some(x=>x.price==null)?'Partner quote pending':'₹'+frMarketCart.reduce((n,x)=>n+x.price*x.qty,0).toFixed(2);
+ const p=$('frPaymentOptions');if(p)p.style.display='none';frCartUpdateBadges();
 }
-function marketCheckout(){
+async function frLoadStorePaymentOptions(storeId){
+ const panel=$('frPaymentOptions'),methods=$('frPaymentMethods');if(!panel||!methods)return;
+ panel.style.display='block';methods.innerHTML='<div class="notice">Store payment details loading…</div>';
+ try{
+  const {data,error}=await sb.rpc('fr_customer_store_payment_options',{p_store_id:storeId});if(error)throw error;
+  const p=Array.isArray(data)?data[0]:data;if(!p){methods.innerHTML='<div class="notice">ఈ Store Payment Details ఇంకా నమోదు చేయలేదు.</div>';return;}
+  let out='';
+  if(p.partner_qr_path){const {data:sd,error:se}=await sb.storage.from('partner-qr').createSignedUrl(p.partner_qr_path,300);if(!se&&sd?.signedUrl)out+=`<div class="fr-payment-method"><b>1. Store QR Scan</b><img src="${sd.signedUrl}" alt="Store payment QR"></div>`;}
+  if(p.upi_id)out+=`<div class="fr-payment-method"><b>2. UPI ID</b><div>${safe(p.upi_id)}</div><button class="btn light" onclick="navigator.clipboard?.writeText('${safe(p.upi_id)}')">Copy UPI ID</button></div>`;
+  if(p.phonepe_number)out+=`<div class="fr-payment-method"><b>3. PhonePe Number</b><div>${safe(p.phonepe_number)}</div><button class="btn light" onclick="navigator.clipboard?.writeText('${safe(p.phonepe_number)}')">Copy Number</button></div>`;
+  methods.innerHTML=out||'<div class="notice">ఈ Store QR / UPI / PhonePe వివరాలు ఇంకా నమోదు చేయలేదు.</div>';
+ }catch(e){methods.innerHTML='<div class="notice">Payment details load కాలేదు: '+safe(e.message)+'</div>';}
+}
+async function marketCheckout(){
  if(!frMarketCart.length){alert('ముందుగా Cartలో items జోడించండి.');return;}
  if(frMarketCart.some(x=>x.prescriptionRequired)&&!$('customerPrescriptionFile')?.files?.[0]){alert('Prescription medicines కోసం Doctor Prescription అప్‌లోడ్ చేయాలి.');return;}
- const addr=($('marketCartAddress')?.value||$('customerMarketAddress')?.value||$('foodAddress')?.value||'').trim();
- if(!addr){alert('Delivery address నమోదు చేయండి.');return;}
- alert('Cart సిద్ధంగా ఉంది. అన్ని itemsకు Partner ధర నిర్ధారణ, UPI/QR payment routing, verified payment మరియు order tracking కోసం Supabase + payment backend కనెక్ట్ చేయాలి. ప్రస్తుతం నిజమైన payment ప్రారంభించలేదు.');
+ const addr=($('marketCartAddress')?.value||$('customerMarketAddress')?.value||$('foodAddress')?.value||'').trim();if(!addr){alert('Delivery address నమోదు చేయండి.');return;}
+ const ids=[...new Set(frMarketCart.map(x=>x.storeId).filter(Boolean))];if(ids.length!==1){alert('ఒకే Store వస్తువులతో Checkout చేయండి.');return;}
+ if(frMarketCart.some(x=>x.price==null)){alert('Store Owner ధర ఇంకా నిర్ధారించలేదు. ధర నిర్ధారణ అయ్యాక Payment Options చూపిస్తాం.');return;}
+ await frLoadStorePaymentOptions(ids[0]);
 }
-document.addEventListener('DOMContentLoaded',()=>{loadApprovedStores();renderRestaurantList();renderMarketCart();});
+
+document.addEventListener('DOMContentLoaded',()=>{loadApprovedStores();renderRestaurantList();renderMarketCart();frCartUpdateBadges();});
 
 
 // Expanded premium catalogue visual helpers.
