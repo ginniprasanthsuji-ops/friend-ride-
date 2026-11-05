@@ -111,6 +111,21 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 
 
 #trackingMap{height:300px;min-height:260px;border-radius:14px;z-index:1}.live-driver-card{border:1px solid var(--line,#ddd);border-radius:12px;padding:12px;margin:10px 0}.live-driver-card button{margin:4px 4px 4px 0}
+
+/* FRIEND RIDE unified 3D catalogue cards — shared by every store category */
+.market-product-3d{border-radius:20px;overflow:hidden;background:linear-gradient(155deg,#fff 0%,#faf7ff 58%,#f1eaff 100%);box-shadow:0 12px 24px rgba(48,20,88,.12),inset 0 1px 0 #fff;transition:transform .18s ease,box-shadow .18s ease}
+.market-product-3d:active{transform:translateY(2px) scale(.99)}
+.market-product-art-3d{height:148px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(ellipse at 50% 25%,#fff 0%,#f4eaff 44%,#e7dcff 100%);perspective:600px}
+.market-product-art-3d:before{content:"";position:absolute;width:112px;height:24px;bottom:20px;border-radius:50%;background:radial-gradient(ellipse,#4b2a7950 0%,#8062a522 55%,transparent 75%);filter:blur(5px)}
+.product-art-glow{position:absolute;width:116px;height:116px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#fff8 38%,transparent 72%);top:5px}
+.product-art-object{position:relative;z-index:1;font-size:76px;line-height:1;text-shadow:0 7px 5px #25113a38,0 0 22px #fff;filter:drop-shadow(0 11px 7px #39215b35);transform:translateY(-3px) rotateX(8deg);animation:frProductFloat 4s ease-in-out infinite}
+.market-product-art-3d>small{position:absolute;bottom:7px;right:9px;font-size:8px;letter-spacing:1.1px;color:#71569a;font-weight:800;z-index:2}
+@keyframes frProductFloat{0%,100%{transform:translateY(-3px) rotateX(8deg)}50%{transform:translateY(-8px) rotateX(8deg)}}
+.market-product-3d .market-product-info{padding:11px 12px 5px}
+.market-product-3d .market-product-info b{min-height:36px;line-height:1.25}
+.market-product-3d .btn{margin:8px 10px 11px;width:calc(100% - 20px);border-radius:13px}
+@media(prefers-reduced-motion:reduce){.product-art-object{animation:none}}
+
 </style>
 <style>
 .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0}.kpi{background:linear-gradient(145deg,#fff,#f6f0ff);border:1px solid #e7def3;border-radius:15px;padding:12px}.kpi strong{display:block;font-size:20px;color:#4b2091}.kpi span{font-size:11px;color:#77718a}.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.feature-box{border:1px solid #e8e0f2;background:#fff;border-radius:15px;padding:13px}.feature-box small{color:#77718a}.inline-actions{display:flex;gap:8px;flex-wrap:wrap}.inline-actions button{flex:1;min-width:90px}.offer-card{border:1px solid #e5d9f1;border-radius:15px;padding:13px;margin:9px 0;background:linear-gradient(135deg,#fff,#faf6ff)}.offer-price{font-size:22px;font-weight:900;color:#4d1da1}.tag{display:inline-block;background:#f0e7ff;color:#5420a8;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800}@media(min-width:650px){.kpi-grid{grid-template-columns:repeat(4,1fr)}.feature-grid{grid-template-columns:repeat(3,1fr)}}
@@ -706,18 +721,51 @@ function openFriendStore(id){
  $('customerCatalogueSub').textContent='Shop catalogue • Partner prices • Add to cart';
  $('customerCatalogueSearch').value='';renderStoreCategories();renderCustomerCatalogue();if(frActiveStore.type==='vegetables')$('customerCatalogueSub').textContent='🥬 Fresh arrivals • Daily partner stock and prices can change';showPage('customerCatalogue');
 }
+function frStoreMasterType(type){
+ const map={local_store:'local_store',medical:'medical',vegetables:'vegetables',bakery:'bakery',stationery:'local_store',restaurant:'restaurant'};
+ return map[type]||type||'local_store';
+}
+function frProductArt(item){
+ const s=((item?.name||'')+' '+(item?.category||'')).toLowerCase();
+ if(/rice|grain|flour|dal|pulse|wheat|atta/.test(s))return '🌾';
+ if(/fruit|apple|banana|orange|mango|grape|papaya/.test(s))return '🍎';
+ if(/vegetable|tomato|potato|onion|carrot|chilli|spinach/.test(s))return '🥦';
+ if(/milk|dairy|curd|paneer|cheese|butter/.test(s))return '🥛';
+ if(/bread|cake|biscuit|cookie|bakery|sweet|chocolate/.test(s))return '🧁';
+ if(/medicine|tablet|capsule|syrup|medical|pharma|ors|bandage|thermometer/.test(s))return '💊';
+ if(/soap|shampoo|toothpaste|sanitizer|personal care|cosmetic/.test(s))return '🧴';
+ if(/pen|pencil|notebook|paper|book|stationery|geometry/.test(s))return '📚';
+ if(/clean|detergent|dishwash|brush|home care/.test(s))return '🧹';
+ if(/phone|charger|cable|electronic|battery|bulb/.test(s))return '🔌';
+ if(/chicken|meat|fish|egg|seafood/.test(s))return '🍗';
+ if(/drink|juice|water|beverage|tea|coffee/.test(s))return '🧃';
+ if(/hardware|tool|paint|cement|pipe|electrical/.test(s))return '🛠️';
+ if(/restaurant|meal|biryani|snack|food|curry/.test(s))return '🍱';
+ return '🛍️';
+}
 function renderStoreCategories(){
- const rows=FR_STORE_MENU[frActiveStore?.type]||[];const cats=['All',...new Set(rows.map(x=>x[0]))];
+ const businessType=frStoreMasterType(frActiveStore?.type);
+ const rows=(FRIEND_MASTER_ITEMS||[]).filter(x=>x.businessType===businessType);
+ let cats=['All',...new Set(rows.map(x=>x.category).filter(Boolean))];
+ if(!rows.length){const fallback=FR_STORE_MENU[frActiveStore?.type]||[];cats=['All',...new Set(fallback.map(x=>x[0]))];}
  const sel=$('customerCatalogueCategorySelect');
  if(sel){sel.innerHTML=cats.map(c=>`<option value="${safe(c)}">${c==='All'?'All Items / అన్ని వస్తువులు':safe(c)}</option>`).join('');sel.value=cats.includes(frMarketCategory)?frMarketCategory:'All';}
 }
 function renderCustomerCatalogue(){
  if(!frActiveStore)return;
- const rows=FR_STORE_MENU[frActiveStore.type]||[],q=($('customerCatalogueSearch')?.value||'').toLowerCase();
- const items=rows.filter(x=>(frMarketCategory==='All'||x[0]===frMarketCategory)&&(!q||x[1].toLowerCase().includes(q)));
+ const businessType=frStoreMasterType(frActiveStore.type);
+ const master=(FRIEND_MASTER_ITEMS||[]).filter(x=>x.businessType===businessType);
+ const fallback=FR_STORE_MENU[frActiveStore.type]||[];
+ const q=($('customerCatalogueSearch')?.value||'').toLowerCase();
+ const items=(master.length?master:fallback.map((x,i)=>({id:'fallback-'+i,category:x[0],name:x[1],unit:'',description:'Partner confirms price and availability.'})))
+  .filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.name+' '+x.category+' '+(x.id||'')).toLowerCase().includes(q)));
  const isMedical=frActiveStore.type==='medical';
  const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=isMedical?'block':'none';
- $('customerCatalogueGrid').innerHTML=items.map((x,i)=>`<div class="market-product"><div class="market-product-art" aria-label="3D style product illustration">${x[2]}</div><div class="market-product-info"><b>${safe(x[1])}</b><small class="muted">${safe(x[0])}</small><div class="market-price">Partner price: confirmation required</div><span class="stock-mark no">Stock: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${safe(x[1])}','${safe(frActiveStore.name)}','request')">＋ Add / Ask Price</button></div>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
+ const grid=$('customerCatalogueGrid');
+ if(grid)grid.innerHTML=items.map(x=>{
+  const art=frProductArt(x),name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||'');
+  return `<article class="market-product market-product-3d"><div class="market-product-art market-product-art-3d"><span class="product-art-glow"></span><span class="product-art-object">${art}</span><small>FR 3D CATALOGUE</small></div><div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small><div class="market-price">Partner price: confirm with store</div><span class="stock-mark no">Availability: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${name.replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','request')">＋ Add / Ask Price</button></article>`;
+ }).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
 }
 function renderRestaurantList(){
  const q=($('restaurantSearch')?.value||'').toLowerCase(),el=$('restaurantVisualList');if(!el)return;
