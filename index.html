@@ -284,7 +284,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="field"><label>Store Category</label><select id="friendMartCategory" onchange="renderFriendStores()"><option value="all">All Local Stores</option><option value="local_store">Grocery & Kirana</option><option value="medical">Medical Stores</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery</option></select></div>
   <div class="market-search"><input id="friendMartSearch" placeholder="Search store name / area" oninput="renderFriendStores()"></div>
   <div id="friendMartStoreGrid" class="market-store-grid"></div>
-  <div class="notice">Store photos, real shop names, distance and approved partner catalogue will load from Supabase after partner/store records are connected. Demo cards below show the intended customer flow.</div>
+  <div class="notice">Admin Approved చేసిన నిజమైన Partner Stores మాత్రమే ఇక్కడ కనిపిస్తాయి. Partner catalogue sync తర్వాత items, ధరలు, stock వివరాలు చూపబడతాయి.</div>
  </div>
 </section>
 <section id="customerCatalogue" class="page">
@@ -632,14 +632,40 @@ function savePlatformDetails(){alert('Toll-Free number మరియు GSTIN sec
 sb.auth.getSession().then(async({data})=>{if(data.session){try{await acceptSession(data.session.user);}catch(e){await sb.auth.signOut();}}});
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;}});
 
-// FRIEND RIDE visual marketplace: demo presentation until approved partner records are connected.
-const FR_DEMO_STORES=[
- {id:'s1',name:'Sri Lakshmi Kirana & General Store',type:'local_store',category:'Grocery & Kirana',area:'Your Local Area',art:'🏪',a:'#ffe2a8',b:'#ff9a3c'},
- {id:'s2',name:'City Medical & Pharmacy',type:'medical',category:'Medical Store',area:'Your Local Area',art:'💊',a:'#d8f7e7',b:'#65c99a'},
- {id:'s3',name:'Fresh Basket Vegetables',type:'vegetables',category:'Vegetables & Fruits',area:'Your Local Area',art:'🥬',a:'#e4f7c8',b:'#8dcc56'},
- {id:'s4',name:'Sweet Oven Bakery',type:'bakery',category:'Bakery & Sweets',area:'Your Local Area',art:'🥐',a:'#ffe0c7',b:'#ed9a65'},
- {id:'s5',name:'Sai Stationery & Xerox',type:'stationery',category:'Stationery',area:'Your Local Area',art:'📚',a:'#e5e1ff',b:'#9c8ae8'}
-];
+// FRIEND RIDE marketplace: show only real, Admin-approved Partner stores from Supabase.
+let FR_APPROVED_STORES=[];
+const FR_STORE_STYLE={
+ local_store:{category:'Grocery & Kirana',art:'🏪',a:'#ffe2a8',b:'#ff9a3c'},
+ medical:{category:'Medical Store',art:'💊',a:'#d8f7e7',b:'#65c99a'},
+ vegetables:{category:'Vegetables & Fruits',art:'🥬',a:'#e4f7c8',b:'#8dcc56'},
+ bakery:{category:'Bakery & Sweets',art:'🥐',a:'#ffe0c7',b:'#ed9a65'},
+ stationery:{category:'Stationery',art:'📚',a:'#e5e1ff',b:'#9c8ae8'}
+};
+function frNormalizePartnerCategory(value){
+ const v=String(value||'').trim().toLowerCase();
+ if(['medical','pharmacy','medical store','medicine','medical & pharmacy'].includes(v))return 'medical';
+ if(['grocery','kirana','local_store','general','general store','grocery & kirana'].includes(v))return 'local_store';
+ if(['vegetables','vegetable','fruits','vegetables & fruits'].includes(v))return 'vegetables';
+ if(['bakery','sweets','bakery & sweets'].includes(v))return 'bakery';
+ if(['stationery','stationery & xerox'].includes(v))return 'stationery';
+ return v.replace(/[^a-z0-9]+/g,'_');
+}
+async function loadApprovedPartnerStores(){
+ const grid=$('friendMartStoreGrid');
+ if(grid)grid.innerHTML='<div class="market-empty">Approved stores లోడ్ అవుతున్నాయి…</div>';
+ try{
+  const {data,error}=await sb.rpc('fr_list_approved_partner_stores');
+  if(error)throw error;
+  FR_APPROVED_STORES=(data||[]).map(row=>{
+   const type=frNormalizePartnerCategory(row.partner_category),style=FR_STORE_STYLE[type]||{category:row.partner_category||'Local Store',art:'🏪',a:'#eee5ff',b:'#c7b5ee'};
+   return {id:row.id,name:row.business_name||'Partner Store',type,category:style.category,area:row.address||'Local Area',art:style.art,a:style.a,b:style.b};
+  });
+  renderFriendStores();
+ }catch(e){
+  FR_APPROVED_STORES=[];
+  if(grid)grid.innerHTML='<div class="market-empty">Approved stores లోడ్ కాలేదు. Supabase RPC / permissions తనిఖీ చేయాలి: '+safe(e.message||String(e))+'</div>';
+ }
+}
 const FR_DEMO_RESTAURANTS=[
  {id:'r1',name:'Spice Garden Restaurant',area:'Your Local Area',cuisine:'Biryani • Meals • Curries',art:'🍛',a:'#ffd5a3',b:'#f18b3d'},
  {id:'r2',name:'South Indian Tiffins',area:'Your Local Area',cuisine:'Idli • Dosa • Vada',art:'🥞',a:'#fff0b8',b:'#e6ad45'},
@@ -665,11 +691,11 @@ let frActiveStore=null,frActiveRestaurant=null,frMarketCategory='All',frRestaura
 function renderFriendStores(){
  const cat=$('friendMartCategory')?.value||'all',q=($('friendMartSearch')?.value||'').toLowerCase();
  const el=$('friendMartStoreGrid');if(!el)return;
- const items=FR_DEMO_STORES.filter(x=>(cat==='all'||x.type===cat)&&(!q||(x.name+' '+x.area+' '+x.category).toLowerCase().includes(q)));
- el.innerHTML=items.map(x=>`<button class="market-store" onclick="openFriendStore('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small><small>View store & visual catalogue →</small></div></button>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో షాపులు లేవు.</div>';
+ const items=FR_APPROVED_STORES.filter(x=>(cat==='all'||x.type===cat)&&(!q||(x.name+' '+x.area+' '+x.category).toLowerCase().includes(q)));
+ el.innerHTML=items.map(x=>`<button class="market-store" onclick="openFriendStore('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small><small>Approved Store • View catalogue →</small></div></button>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో Approved Partner Stores లేవు.</div>';
 }
 function openFriendStore(id){
- frActiveStore=FR_DEMO_STORES.find(x=>x.id===id);if(!frActiveStore)return;
+ frActiveStore=FR_APPROVED_STORES.find(x=>x.id===id);if(!frActiveStore)return;
  frMarketCategory='All';$('customerCatalogueTitle').textContent=frActiveStore.name;$('customerCatalogueType').textContent=frActiveStore.category;
  $('customerCatalogueSub').textContent='Shop catalogue • Partner prices • Add to cart';
  $('customerCatalogueSearch').value='';renderStoreCategories();renderCustomerCatalogue();if(frActiveStore.type==='vegetables')$('customerCatalogueSub').textContent='🥬 Fresh arrivals • Daily partner stock and prices can change';showPage('customerCatalogue');
@@ -731,7 +757,7 @@ function marketCheckout(){
  if(!addr){alert('Delivery address నమోదు చేయండి.');return;}
  alert('Cart సిద్ధంగా ఉంది. అన్ని itemsకు Partner ధర నిర్ధారణ, UPI/QR payment routing, verified payment మరియు order tracking కోసం Supabase + payment backend కనెక్ట్ చేయాలి. ప్రస్తుతం నిజమైన payment ప్రారంభించలేదు.');
 }
-document.addEventListener('DOMContentLoaded',()=>{renderFriendStores();renderRestaurantList();renderMarketCart();});
+document.addEventListener('DOMContentLoaded',()=>{loadApprovedPartnerStores();renderRestaurantList();renderMarketCart();});
 
 
 // Expanded premium catalogue visual helpers.
