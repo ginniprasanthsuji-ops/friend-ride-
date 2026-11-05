@@ -157,12 +157,24 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 @media(min-width:700px){.fr-service-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.fr-visual-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.fr-premium-hero{min-height:350px;padding:35px}.fr-premium-orbit{right:7%;width:38%;transform:scale(1.15)}}
 </style>
 
+
+<style id="fr-v8-dashboard-catalogue-fix">
+/* Keep the public home interface stable; dashboards are entered only after account login. */
+#roleLauncher{pointer-events:none}
+.market-product{overflow:hidden;border:1px solid #e8e0f2;border-radius:20px;background:linear-gradient(145deg,#fff,#f8f5ff);box-shadow:0 10px 22px #29134a12;transform:translateZ(0)}
+.market-product-art{height:126px;display:grid;place-items:center;font-size:66px;background:radial-gradient(circle at 28% 20%,#fff 0,#fff9 18%,transparent 43%),linear-gradient(145deg,#f4eaff,#fff0df);text-shadow:0 9px 7px #26104435;filter:drop-shadow(0 9px 6px #28133b25);transform:perspective(240px) rotateX(3deg)}
+.market-product-info{padding:11px 12px 5px}.market-product-info b{font-size:14px}.market-product .btn{margin:8px 10px 11px;width:calc(100% - 20px)}
+.market-store{transition:transform .16s ease,box-shadow .16s ease}.market-store:active{transform:translateY(2px) scale(.99)}
+#customerCatalogueGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(min-width:700px){#customerCatalogueGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.market-product-art{height:150px}}
+</style>
+
 </head>
 <body>
 <button id="frSuperShortcut" onclick="frOpenSuperHub()" style="position:fixed;right:14px;bottom:82px;z-index:9998;border:0;border-radius:28px;padding:13px 17px;background:#5724a5;color:#fff;font-weight:800;box-shadow:0 5px 18px #25104455">FR Super App</button>
 
 
-<div id="roleLauncher" class="fr-role-launcher" aria-label="Choose FRIEND RIDE account type">
+<div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
   <div class="fr-launcher-brand"><div class="fr-launcher-logo">FR</div><div><div class="fr-launcher-kicker">WELCOME TO</div><h1>FRIEND RIDE</h1><p>మీ ప్రయాణం • మీ సేవలు • మీ వ్యాపారం</p></div></div>
   <div class="fr-launcher-title"><h2>మీరు ఎవరు?</h2><p>మీకు సంబంధించిన విభాగాన్ని ఎంచుకోండి</p></div>
@@ -178,7 +190,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <header class="topbar home-topbar">
  <button class="iconbtn menu-open" aria-label="Open side menu" onclick="openDrawer()">☰</button>
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
- <button class="notify-btn" aria-label="Notifications" onclick="showPage('notifications')">♧<i></i></button>
+ <button class="notify-btn" aria-label="Login / Account" onclick="currentUser?showPage('profile'):openAuth('login','customer')">♙</button><button class="notify-btn" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i></button>
 </header>
 <main>
 <section id="home" class="page active">
@@ -271,7 +283,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <button class="btn purple" onclick="showPage('marketCart')">🛒 View Cart & Checkout</button>
  </div>
 </section>
-<section id="shops" class="page"><div class="card"><h2>Local Stores</h2><div class="field"><label>Store Category</label><select id="shopCategory"><option>Grocery</option><option>Medical</option><option>Vegetables</option><option>Stationery</option><option>Other</option></select></div><div class="field"><label>Delivery Address</label><textarea id="shopAddress"></textarea></div><div class="field"><label>Select Store</label><select id="shopSelectedStore"><option value="">Choose approved store</option></select></div><div class="field"><label>FRIEND RIDE Common Catalogue Items & Quantity</label><textarea id="shopItems" placeholder="Select catalogue items and quantity"></textarea></div><label class="tiny"><input id="shopAskPrice" type="checkbox" style="width:auto"> Price on Request – ధర లేని itemsకు Shop Owner ధర పంపాలి</label><button class="btn purple" onclick="submitPartnerPriceRequest('Store order','shopAddress','shopItems','shopSelectedStore','shopAskPrice')">Add to Cart / Ask Store</button><div class="notice">Common catalogue is supplied by FRIEND RIDE; each shop owner sets their own price. Checkout routes payment to the selected partner UPI/QR after server verification.</div></div></section>
+<section id="shops" class="page"><div class="card"><h2>Local Stores</h2><div class="field"><label>Store Category</label><select id="shopCategory" onchange="loadApprovedStores()"><option value="all">All Approved Stores</option><option value="local_store">Grocery & Kirana</option><option value="medical">Medical</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery</option><option value="other">Other</option></select></div><div class="field"><label>Delivery Address</label><textarea id="shopAddress"></textarea></div><div class="field"><label>Select Store</label><select id="shopSelectedStore"><option value="">Loading approved stores…</option></select><small id="approvedStoreStatus" class="muted">Approved stores are loading from FRIEND RIDE.</small></div><div class="field"><label>FRIEND RIDE Common Catalogue Items & Quantity</label><textarea id="shopItems" placeholder="Select catalogue items and quantity"></textarea></div><label class="tiny"><input id="shopAskPrice" type="checkbox" style="width:auto"> Price on Request – ధర లేని itemsకు Shop Owner ధర పంపాలి</label><button class="btn purple" onclick="submitPartnerPriceRequest('Store order','shopAddress','shopItems','shopSelectedStore','shopAskPrice')">Add to Cart / Ask Store</button><div class="notice">Common catalogue is supplied by FRIEND RIDE; each shop owner sets their own price. Checkout routes payment to the selected partner UPI/QR after server verification.</div></div></section>
 
 <section id="shopping" class="page"><div class="card"><h2>Shopping</h2><div class="field"><label>What do you need?</label><textarea id="shoppingItems" placeholder="List your items"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="shoppingAddress"></textarea></div><button class="btn purple" onclick="simpleRequest('Shopping request','shoppingAddress','shoppingItems')">Submit Shopping Request</button></div></section>
 
@@ -284,7 +296,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="field"><label>Store Category</label><select id="friendMartCategory" onchange="renderFriendStores()"><option value="all">All Local Stores</option><option value="local_store">Grocery & Kirana</option><option value="medical">Medical Stores</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery</option></select></div>
   <div class="market-search"><input id="friendMartSearch" placeholder="Search store name / area" oninput="renderFriendStores()"></div>
   <div id="friendMartStoreGrid" class="market-store-grid"></div>
-  <div class="notice">Store photos, real shop names, distance and approved partner catalogue will load from Supabase after partner/store records are connected. Demo cards below show the intended customer flow.</div>
+  <div class="notice">ఇక్కడ Admin Approved చేసిన నిజమైన Partner Stores మాత్రమే కనిపిస్తాయి. Store ఎంచుకున్న వెంటనే దాని కేటగిరీ వారీ పూర్తి visual catalogue తెరుచుకుంటుంది.</div>
  </div>
 </section>
 <section id="customerCatalogue" class="page">
@@ -299,7 +311,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
    <label>Upload Prescription (JPG / PNG / PDF)</label><input id="customerPrescriptionFile" type="file" accept="image/*,.pdf">
    <small id="prescriptionFileStatus" class="muted">Prescription medicine cart కోసం ఫైల్ అవసరం.</small>
   </div>
-  <div id="customerCatalogueCategories" class="market-category-row"></div>
+  <div class="field"><label>Catalogue Category / క్యాటలాగ్ కేటగిరీ</label><select id="customerCatalogueCategorySelect" onchange="frMarketCategory=this.value;renderCustomerCatalogue()"><option value="All">All Items</option></select></div>
   <div class="market-search"><input id="customerCatalogueSearch" placeholder="Search products in catalogue" oninput="renderCustomerCatalogue()"></div>
   <div id="customerCatalogueGrid" class="market-product-grid"></div>
   <div class="notice">Partner sets the selling price for each item. Items without a price can be requested from the partner.</div>
@@ -496,7 +508,7 @@ function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){selectedRole=role;const gate=$('roleLauncher');if(gate)gate.classList.add('hide');openAuth('login',role);$('authModal').classList.add('fr-role-locked');}
 function openAuth(mode='login',role='customer'){selectedRole=role;document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));switchAuth(mode);$('authModal').classList.add('show');}
-function closeAuth(){$('authModal').classList.remove('show','fr-role-locked');clearMessage();if(!currentUser){const gate=$('roleLauncher');if(gate)gate.classList.remove('hide');}}
+function closeAuth(){$('authModal').classList.remove('show','fr-role-locked');clearMessage();if(!currentUser){const gate=$('roleLauncher');if(gate)gate.classList.add('hide');}}
 function chooseRole(r){selectedRole=r;document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===r));$('addressField').classList.toggle('hide',r!=='customer');$('driverRegDocs').classList.toggle('hide',r!=='driver');$('partnerRegFields').classList.toggle('hide',r!=='partner');$('driverExtraFields').classList.toggle('hide',r!=='driver');$('partnerExtraFields').classList.toggle('hide',r!=='partner');}
 function switchAuth(mode){clearMessage();const reg=mode==='register';const roleTitle=({customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'})[selectedRole]||'FRIEND RIDE';$('authTitle').textContent=roleTitle+(reg?' Registration':' Login');$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');$('driverRegDocs').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerRegFields').classList.toggle('hide',!reg||selectedRole!=='partner');$('driverExtraFields').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerExtraFields').classList.toggle('hide',!reg||selectedRole!=='partner');}
 function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||'customerDashboard';}
@@ -527,7 +539,7 @@ async function acceptSession(user){
  $('drawerUser').textContent=(profile?.full_name||user.user_metadata?.full_name||'FRIEND RIDE user')+' • '+dbRole.toUpperCase();if($('headerAuth'))$('headerAuth').textContent='Account';
  closeAuth();showPage(dashboardFor(dbRole));if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
 }
-async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;selectedRole='customer';online=false;if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');const gate=$('roleLauncher');if(gate)gate.classList.remove('hide');}
+async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;selectedRole='customer';online=false;if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');const gate=$('roleLauncher');if(gate)gate.classList.add('hide');}
 async function forgotPassword(){showMessage('FRIEND RIDEలో Password Login లేదు. Mobile SMS OTP ఉపయోగించండి.');}
 function setRideType(v){rideVehicle=v;document.querySelectorAll('#ride .row button').forEach((b,i)=>b.className='btn '+(['Bike','Auto','Car'][i]===v?'purple':'light'));}
 function adjustFare(n){$('fare').value=Math.max(1,Number($('fare').value||0)+n);}
@@ -633,7 +645,26 @@ function savePlatformDetails(){alert('Toll-Free number మరియు GSTIN sec
 sb.auth.getSession().then(async({data})=>{if(data.session){try{await acceptSession(data.session.user);}catch(e){await sb.auth.signOut();}}});
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;}});
 
-// FRIEND RIDE visual marketplace: demo presentation until approved partner records are connected.
+// FRIEND RIDE marketplace: show only Admin-approved Partner records from Supabase.
+let frApprovedStores=[];
+async function loadApprovedStores(){
+ const status=$('approvedStoreStatus'),select=$('shopSelectedStore');
+ if(status)status.textContent='Approved stores loading…';
+ if(select)select.innerHTML='<option value="">Loading approved stores…</option>';
+ try{
+  const category=$('shopCategory')?.value||'all';
+  const {data,error}=await sb.rpc('fr_customer_list_approved_stores',{p_category:null});
+  if(error)throw error;
+  frApprovedStores=(data||[]).map(p=>({id:p.id,name:p.business_name||'Partner Store',type:p.partner_category||'other',category:({local_store:'Grocery & Kirana',medical:'Medical Store',vegetables:'Vegetables & Fruits',bakery:'Bakery & Sweets',stationery:'Stationery'}[p.partner_category]||'Other Store'),area:p.address||'',art:({medical:'💊',vegetables:'🥬',bakery:'🥐',stationery:'📚'}[p.partner_category]||'🏪'),a:'#e6e8ff',b:'#aab5ff'}));
+  if(select){const visibleStores=frApprovedStores.filter(x=>category==='all'||x.type===category);select.innerHTML='<option value="">Choose approved store</option>'+visibleStores.map(x=>`<option value="${safe(x.id)}">${safe(x.name)} — ${safe(x.category)}</option>`).join('');}
+  if(status){const n=frApprovedStores.filter(x=>category==='all'||x.type===category).length;status.textContent=n?`${n} approved store(s) available.`:'ఈ categoryలో Approved Stores లేవు.';}
+  renderFriendStores();
+ }catch(e){
+  if(select)select.innerHTML='<option value="">Approved stores load కాలేదు</option>';
+  if(status)status.textContent='Store list error: '+e.message+' (SQL migration అవసరం కావచ్చు)';
+  const grid=$('friendMartStoreGrid');if(grid)grid.innerHTML='<div class="market-empty">Approved stores load కాలేదు. Supabase SQL migration అమలు చేసి మళ్లీ ప్రయత్నించండి.</div>';
+ }
+}
 const FR_DEMO_STORES=[
  {id:'s1',name:'Sri Lakshmi Kirana & General Store',type:'local_store',category:'Grocery & Kirana',area:'Your Local Area',art:'🏪',a:'#ffe2a8',b:'#ff9a3c'},
  {id:'s2',name:'City Medical & Pharmacy',type:'medical',category:'Medical Store',area:'Your Local Area',art:'💊',a:'#d8f7e7',b:'#65c99a'},
@@ -666,18 +697,19 @@ let frActiveStore=null,frActiveRestaurant=null,frMarketCategory='All',frRestaura
 function renderFriendStores(){
  const cat=$('friendMartCategory')?.value||'all',q=($('friendMartSearch')?.value||'').toLowerCase();
  const el=$('friendMartStoreGrid');if(!el)return;
- const items=FR_DEMO_STORES.filter(x=>(cat==='all'||x.type===cat)&&(!q||(x.name+' '+x.area+' '+x.category).toLowerCase().includes(q)));
+ const items=frApprovedStores.filter(x=>(cat==='all'||x.type===cat)&&(!q||(x.name+' '+x.area+' '+x.category).toLowerCase().includes(q)));
  el.innerHTML=items.map(x=>`<button class="market-store" onclick="openFriendStore('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small><small>View store & visual catalogue →</small></div></button>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో షాపులు లేవు.</div>';
 }
 function openFriendStore(id){
- frActiveStore=FR_DEMO_STORES.find(x=>x.id===id);if(!frActiveStore)return;
+ frActiveStore=frApprovedStores.find(x=>x.id===id);if(!frActiveStore)return;
  frMarketCategory='All';$('customerCatalogueTitle').textContent=frActiveStore.name;$('customerCatalogueType').textContent=frActiveStore.category;
  $('customerCatalogueSub').textContent='Shop catalogue • Partner prices • Add to cart';
  $('customerCatalogueSearch').value='';renderStoreCategories();renderCustomerCatalogue();if(frActiveStore.type==='vegetables')$('customerCatalogueSub').textContent='🥬 Fresh arrivals • Daily partner stock and prices can change';showPage('customerCatalogue');
 }
 function renderStoreCategories(){
  const rows=FR_STORE_MENU[frActiveStore?.type]||[];const cats=['All',...new Set(rows.map(x=>x[0]))];
- $('customerCatalogueCategories').innerHTML=cats.map(c=>`<button class="${frMarketCategory===c?'active':''}" onclick="frMarketCategory='${c}';renderStoreCategories();renderCustomerCatalogue()">${safe(c)}</button>`).join('');
+ const sel=$('customerCatalogueCategorySelect');
+ if(sel){sel.innerHTML=cats.map(c=>`<option value="${safe(c)}">${c==='All'?'All Items / అన్ని వస్తువులు':safe(c)}</option>`).join('');sel.value=cats.includes(frMarketCategory)?frMarketCategory:'All';}
 }
 function renderCustomerCatalogue(){
  if(!frActiveStore)return;
@@ -685,7 +717,7 @@ function renderCustomerCatalogue(){
  const items=rows.filter(x=>(frMarketCategory==='All'||x[0]===frMarketCategory)&&(!q||x[1].toLowerCase().includes(q)));
  const isMedical=frActiveStore.type==='medical';
  const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=isMedical?'block':'none';
- $('customerCatalogueGrid').innerHTML=items.map((x,i)=>`<div class="market-product"><div class="market-product-art">${x[2]}</div><div class="market-product-info"><b>${safe(x[1])}</b><small class="muted">${safe(x[0])}</small><div class="market-price">Partner price will be shown after partner catalogue sync</div><span class="stock-mark no">✕ Stock confirmation pending</span></div><button class="btn purple" onclick="addMarketCart('${safe(x[1])}','${safe(frActiveStore.name)}','request')">＋ Add / Ask Price</button></div>`).join('')||'<div class="market-empty">Items not found.</div>';
+ $('customerCatalogueGrid').innerHTML=items.map((x,i)=>`<div class="market-product"><div class="market-product-art" aria-label="3D style product illustration">${x[2]}</div><div class="market-product-info"><b>${safe(x[1])}</b><small class="muted">${safe(x[0])}</small><div class="market-price">Partner price: confirmation required</div><span class="stock-mark no">Stock: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${safe(x[1])}','${safe(frActiveStore.name)}','request')">＋ Add / Ask Price</button></div>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
 }
 function renderRestaurantList(){
  const q=($('restaurantSearch')?.value||'').toLowerCase(),el=$('restaurantVisualList');if(!el)return;
@@ -732,7 +764,7 @@ function marketCheckout(){
  if(!addr){alert('Delivery address నమోదు చేయండి.');return;}
  alert('Cart సిద్ధంగా ఉంది. అన్ని itemsకు Partner ధర నిర్ధారణ, UPI/QR payment routing, verified payment మరియు order tracking కోసం Supabase + payment backend కనెక్ట్ చేయాలి. ప్రస్తుతం నిజమైన payment ప్రారంభించలేదు.');
 }
-document.addEventListener('DOMContentLoaded',()=>{renderFriendStores();renderRestaurantList();renderMarketCart();});
+document.addEventListener('DOMContentLoaded',()=>{loadApprovedStores();renderRestaurantList();renderMarketCart();});
 
 
 // Expanded premium catalogue visual helpers.
