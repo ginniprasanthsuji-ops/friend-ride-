@@ -211,7 +211,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <header class="topbar home-topbar">
  <button class="iconbtn menu-open" aria-label="Open side menu" onclick="openDrawer()">☰</button>
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
- <button class="notify-btn" aria-label="Login / Account" onclick="currentUser?showPage('profile'):openAuth('login','customer')">♙</button><button class="notify-btn" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i></button>
+ <button class="notify-btn" aria-label="Login / Account" onclick="currentUser?showPage('profile'):openAuth('login','customer')">♙</button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
 </header>
 <div id="frCartTop" class="fr-cart-top" role="button" tabindex="0" onclick="showPage('marketCart')" onkeydown="if(event.key==='Enter')showPage('marketCart')">
  <span class="fr-cart-top-icon">🛒</span><span><b>My Cart / నా కార్ట్</b><small id="frCartTopMeta">0 items • 0 stores</small></span><strong id="frCartTopCount">0</strong><span class="fr-cart-top-arrow">View →</span>
@@ -402,7 +402,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <section id="settings" class="page"><div class="card"><h2>System Settings</h2><div class="notice">Platform-wide settings must be managed through protected admin APIs.</div></div></section>
 
 <section id="profile" class="page"><div class="card"><h2>My Profile</h2><div id="profileInfo" class="muted">Login చేయండి.</div><button class="btn red" onclick="logout()">Logout</button></div></section>
-<section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div></section>
+<section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div></section>
 <section id="support" class="page"><div class="card"><h2>Help & Support</h2><div class="field"><label>Issue</label><textarea id="supportIssue"></textarea></div><button class="btn purple" onclick="showMessage('Support request UI సిద్ధంగా ఉంది; support table mapping ఇంకా చేయాలి.','good')">Submit Support Request</button></div></section>
 <section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
 <section id="cart" class="page"><div class="card"><h2>🛒 My Cart</h2><p class="muted">మీ Friend Mart / Food Delivery items ఇక్కడ కనిపిస్తాయి.</p><div class="notice">మీరు ఎంచుకున్న వస్తువులు ఇక్కడ కనిపిస్తాయి. షాపింగ్ కొనసాగించండి.</div><button class="btn purple" onclick="showPage('shops')">Explore Stores</button></div></section>
@@ -1203,6 +1203,259 @@ if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.
 function frCrmRefresh(){const feed=document.getElementById('crmActivityFeed');if(feed)feed.innerHTML='<div class="fr-crm-feed-item"><i>↻</i><div><b>Refresh requested</b><small>Connect the secure CRM data endpoint to load live customer activity.</small></div></div>';}
 function frCrmSearch(){const q=(document.getElementById('crmSearch')?.value||'').toLowerCase();const seg=document.getElementById('crmSegment')?.value||'all';document.querySelectorAll('#crmCustomerRows tr[data-segment]').forEach(r=>{r.hidden=!((seg==='all'||r.dataset.segment===seg)&&r.textContent.toLowerCase().includes(q));});}
 function frCrmAddTask(){const title=prompt('Follow-up task title');if(!title)return;const el=document.getElementById('crmTaskList');if(!el)return;const d=document.createElement('div');d.className='fr-crm-task';d.textContent=title;const sm=document.createElement('small');sm.textContent='Local draft • Save to CRM backend when connected';d.appendChild(sm);el.prepend(d);}
+</script>
+
+
+<!-- FRIEND RIDE V8: Live ride notifications. Additive patch; existing app flows remain unchanged. -->
+<style id="fr-v8-live-notification-style">
+.notify-btn.fr-notify-bell{position:relative}
+.fr-ride-unread-badge{position:absolute;right:-5px;top:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:99px;background:#e33b52;color:#fff;font-size:10px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff}
+.fr-ride-unread-badge[hidden]{display:none}
+#frRideLiveToast{position:fixed;z-index:99999;left:14px;right:14px;top:14px;max-width:520px;margin:auto;background:#24153b;color:#fff;border:1px solid #7654a4;border-radius:18px;padding:14px 16px;box-shadow:0 14px 38px #0005;display:none}
+#frRideLiveToast.show{display:block;animation:frRideToastIn .22s ease-out}
+#frRideLiveToast b{display:block;font-size:14px;margin-bottom:5px}
+#frRideLiveToast p{font-size:12px;line-height:1.45;margin:0;color:#eee5f8}
+#frRideLiveToast button{margin-top:10px;border:0;border-radius:10px;padding:8px 12px;font-weight:800;background:#f4d6a8;color:#342047}
+.fr-ride-notification{padding:13px;margin:9px 0;border:1px solid #eee7f5;border-radius:15px;background:#fff}
+.fr-ride-notification.unread{border-color:#9c76d2;background:#fbf8ff}
+.fr-ride-notification small{display:block;color:#82768f;font-size:10px;margin-top:7px}
+.fr-ride-notification p{margin:6px 0 0;font-size:12px;color:#5c5269}
+.fr-ride-notification button{margin-top:9px;border:0;border-radius:9px;padding:7px 11px;background:#eee7f8;color:#3c245b;font-weight:800}
+@keyframes frRideToastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+<div id="frRideLiveToast" role="status" aria-live="polite"><b id="frRideLiveToastTitle">FRIEND RIDE</b><p id="frRideLiveToastMessage"></p><button onclick="frOpenNotifications()">View notification</button></div>
+<script id="fr-v8-live-ride-notifications">
+let frRideNotifChannel = null;
+let frRideNotifRows = [];
+let frRideNotifSeenInSession = new Set();
+let frRideToastTimer = null;
+let frRideNotificationStartedFor = null;
+
+function frRideNotifStatus(message, isError=false){
+  const el=document.getElementById('frRideNotificationStatus');
+  if(el){el.textContent=message;el.style.color=isError?'#b42335':'';}
+  const permission=document.getElementById('frNotifyPermissionStatus');
+  if(permission && isError) permission.textContent=message;
+}
+function frRideFormatTime(value){
+  try{return new Date(value).toLocaleString([], {dateStyle:'medium',timeStyle:'short'});}
+  catch(_){return String(value||'');}
+}
+function frRideSetUnread(count){
+  const badge=document.getElementById('frRideUnreadBadge');
+  if(!badge)return;
+  const n=Math.max(0,Number(count)||0);
+  badge.textContent=n>99?'99+':String(n);
+  badge.hidden=n===0;
+}
+function frRideRenderNotifications(){
+  const feed=document.getElementById('frNotificationFeed');
+  if(!feed)return;
+  const unread=frRideNotifRows.filter(n=>!n.is_read).length;
+  frRideSetUnread(unread);
+  if(!frRideNotifRows.length){
+    feed.className='empty-state';
+    feed.textContent='ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.';
+    return;
+  }
+  feed.className='';
+  feed.innerHTML=frRideNotifRows.map(n=>{
+    const title=safe(n.title||'FRIEND RIDE Update');
+    const message=safe(n.message||'');
+    const id=safe(n.id);
+    const ride=safe(n.ride_id||'');
+    return `<article class="fr-ride-notification ${n.is_read?'':'unread'}">
+      <b>${title}</b><p>${message}</p>
+      <small>${frRideFormatTime(n.created_at)}${n.is_read?' • Read':' • New'}</small>
+      ${n.is_read?'':`<button data-notification-id="${id}" data-ride-id="${ride}" onclick="frRideMarkNotificationRead(this.dataset.notificationId,this.dataset.rideId)">Mark as read</button>`}
+    </article>`;
+  }).join('');
+}
+function frRideShowToast(n, browserAlert=false){
+  const box=document.getElementById('frRideLiveToast');
+  if(box){
+    document.getElementById('frRideLiveToastTitle').textContent=n.title||'FRIEND RIDE';
+    document.getElementById('frRideLiveToastMessage').textContent=n.message||'మీ Ride update వచ్చింది.';
+    box.classList.add('show');
+    clearTimeout(frRideToastTimer);
+    frRideToastTimer=setTimeout(()=>box.classList.remove('show'),9000);
+  }
+  try{if(navigator.vibrate)navigator.vibrate([140,70,140]);}catch(_){}
+  if(browserAlert && 'Notification' in window && Notification.permission==='granted' && document.hidden){
+    try{
+      const notice=new Notification(n.title||'FRIEND RIDE', {
+        body:n.message||'మీ Ride update వచ్చింది.',
+        icon:'./icons/icon-192.png',
+        tag:'fr-ride-'+(n.ride_id||n.id),
+        data:{url:'./'}
+      });
+      notice.onclick=()=>{window.focus();frOpenNotifications();notice.close();};
+    }catch(_){}
+  }
+}
+function frOpenNotifications(){
+  const box=document.getElementById('frRideLiveToast');
+  if(box)box.classList.remove('show');
+  if(typeof showPage==='function')showPage('notifications');
+}
+async function frRideMarkNotificationRead(id,rideId){
+  if(!currentUser?.id)return;
+  try{
+    const {error}=await sb.from('fr_ride_notifications')
+      .update({is_read:true,read_at:new Date().toISOString()})
+      .eq('id',id).eq('user_id',currentUser.id);
+    if(error)throw error;
+    const row=frRideNotifRows.find(x=>String(x.id)===String(id));
+    if(row){row.is_read=true;row.read_at=new Date().toISOString();}
+    frRideRenderNotifications();
+  }catch(e){frRideNotifStatus('Notification update కాలేదు: '+e.message,true);}
+}
+async function frRideLoadNotifications(silent=false){
+  if(!currentUser?.id)return;
+  try{
+    const {data,error}=await sb.from('fr_ride_notifications')
+      .select('id,user_id,ride_id,title,message,created_at,is_read,read_at')
+      .eq('user_id',currentUser.id)
+      .order('created_at',{ascending:false})
+      .limit(50);
+    if(error)throw error;
+    frRideNotifRows=data||[];
+    frRideRenderNotifications();
+    frRideNotifStatus('Live notifications connected • '+frRideNotifRows.length+' recent update(s).');
+  }catch(e){
+    frRideNotifStatus('Notification load error: '+e.message,true);
+  }
+}
+function frRideStartRealtime(){
+  if(!currentUser?.id || !sb?.channel)return;
+  const uid=currentUser.id;
+  if(frRideNotificationStartedFor===uid && frRideNotifChannel)return;
+  if(frRideNotifChannel){try{sb.removeChannel(frRideNotifChannel);}catch(_){}frRideNotifChannel=null;}
+  frRideNotificationStartedFor=uid;
+  frRideLoadNotifications(true);
+  frRideNotifChannel=sb.channel('fr-ride-notifications-'+uid)
+    .on('postgres_changes',{
+      event:'INSERT',schema:'public',table:'fr_ride_notifications',
+      filter:'user_id=eq.'+uid
+    },payload=>{
+      const n=payload.new;
+      if(!n || String(n.user_id)!==String(uid))return;
+      if(frRideNotifRows.some(x=>String(x.id)===String(n.id)))return;
+      const row={...n,is_read:!!n.is_read};
+      frRideNotifRows.unshift(row);
+      frRideNotifRows=frRideNotifRows.slice(0,50);
+      frRideRenderNotifications();
+      if(!frRideNotifSeenInSession.has(String(n.id))){
+        frRideNotifSeenInSession.add(String(n.id));
+        frRideShowToast(row,true);
+      }
+    })
+    .on('postgres_changes',{
+      event:'UPDATE',schema:'public',table:'fr_ride_notifications',
+      filter:'user_id=eq.'+uid
+    },payload=>{
+      const n=payload.new;
+      const i=frRideNotifRows.findIndex(x=>String(x.id)===String(n.id));
+      if(i>=0){frRideNotifRows[i]={...frRideNotifRows[i],...n};frRideRenderNotifications();}
+    })
+    .subscribe(status=>{
+      if(status==='SUBSCRIBED')frRideNotifStatus('Real-time notifications active.');
+      else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')frRideNotifStatus('Realtime reconnecting… '+status,true);
+    });
+}
+function frRideStopRealtime(){
+  if(frRideNotifChannel){try{sb.removeChannel(frRideNotifChannel);}catch(_){}}
+  frRideNotifChannel=null;frRideNotificationStartedFor=null;frRideNotifRows=[];frRideSetUnread(0);
+}
+function frRideStartAfterLogin(){
+  if(currentUser?.id)frRideStartRealtime();
+}
+
+// Set this to the VAPID public key generated for the deployed push sender.
+// Keep the matching VAPID private key ONLY in Supabase Edge Function secrets.
+const FR_VAPID_PUBLIC_KEY = '';
+function frV8UrlBase64ToUint8Array(base64String){
+  const padding='='.repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const raw=atob(base64);
+  return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)));
+}
+async function frEnableDeviceAlerts(){
+  const out=document.getElementById('frNotifyPermissionStatus');
+  if(!currentUser?.id){if(out)out.textContent='ముందుగా Customer / Driver Login చేయండి.';return;}
+  if(!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)){
+    if(out)out.textContent='ఈ Browserలో Web Push అందుబాటులో లేదు. Chromeలో FRIEND RIDE తెరవండి.';
+    return;
+  }
+  try{
+    const permission=await Notification.requestPermission();
+    if(permission!=='granted'){if(out)out.textContent='Notification permission ఇవ్వలేదు.';return;}
+    const registration=await navigator.serviceWorker.register('./service-worker.js');
+    await navigator.serviceWorker.ready;
+    if(!FR_VAPID_PUBLIC_KEY){
+      if(out)out.textContent='ఫోన్ Notification permission ON అయింది. Background Push కోసం VAPID public key + Supabase Edge Function deploy చేయాలి.';
+      return;
+    }
+    const applicationServerKey=frV8UrlBase64ToUint8Array(FR_VAPID_PUBLIC_KEY);
+    let subscription=await registration.pushManager.getSubscription();
+    if(!subscription){
+      subscription=await registration.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey
+      });
+    }
+    const json=subscription.toJSON();
+    const row={
+      user_id:currentUser.id,
+      endpoint:json.endpoint,
+      p256dh:json.keys?.p256dh,
+      auth_key:json.keys?.auth,
+      user_agent:navigator.userAgent,
+      is_active:true,
+      updated_at:new Date().toISOString()
+    };
+    const {error}=await sb.from('fr_push_subscriptions').upsert(row,{onConflict:'endpoint'});
+    if(error)throw error;
+    if(out)out.textContent='ఈ పరికరం Background Push కోసం నమోదు అయింది.';
+  }catch(e){
+    if(out)out.textContent='Notification setup error: '+(e.message||e);
+  }
+}
+
+(function frRideInstallHooks(){
+  if(typeof acceptSession==='function'){
+    const originalAcceptSession=acceptSession;
+    acceptSession=async function(user){
+      const result=await originalAcceptSession.apply(this,arguments);
+      frRideStartAfterLogin();
+      return result;
+    };
+  }
+  if(typeof logout==='function'){
+    const originalLogout=logout;
+    logout=async function(){
+      frRideStopRealtime();
+      return originalLogout.apply(this,arguments);
+    };
+  }
+  if(sb?.auth?.onAuthStateChange){
+    sb.auth.onAuthStateChange((event,session)=>{
+      if(event==='SIGNED_IN' && session?.user){
+        currentUser=session.user;
+        frRideStartAfterLogin();
+      }
+      if(event==='SIGNED_OUT')frRideStopRealtime();
+    });
+  }
+  if(currentUser?.id)frRideStartRealtime();
+  window.addEventListener('online',()=>{if(currentUser?.id)frRideStartRealtime();});
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden && currentUser?.id)frRideLoadNotifications(true);
+  });
+  document.addEventListener('DOMContentLoaded',()=>{
+    if(currentUser?.id)frRideStartRealtime();
+  });
+})();
 </script>
 
 </body>
