@@ -460,7 +460,12 @@ async function loadPartnerApprovals(){
  try{if(!currentUser||selectedRole!=='admin')throw Error('Admin login అవసరం.');
  const {data,error}=await sb.rpc('fr_admin_list_partner_applications'); if(error)throw error;
  if(!data?.length){box.textContent='Partner applications లేవు.';return;}
- box.innerHTML=data.map(p=>`<div class="card" style="margin:12px 0"><h3>${safe(p.business_name||'Business name లేదు')}</h3><p><b>Owner:</b> ${safe(p.full_name)}<br><b>Phone:</b> ${safe(p.phone)}<br><b>Category:</b> ${safe(p.partner_category)}<br><b>Address:</b> ${safe(p.address)}<br><b>Status:</b> ${safe(p.partner_approval_status)}</p><div class="row"><button class="btn purple" onclick="reviewPartner('${safe(p.id)}','approved')">Approve</button><button class="btn red" onclick="reviewPartner('${safe(p.id)}','rejected')">Reject</button></div></div>`).join('');
+ box.innerHTML=data.map(p=>{
+  const status=String(p.partner_approval_status||'pending').toLowerCase();
+  const statusLabel=status==='approved'?'APPROVED / అప్రూవ్డ్':status==='rejected'?'REJECTED / తిరస్కరించబడింది':'PENDING / పెండింగ్';
+  const actions=status==='pending'?`<div class="row"><button class="btn purple" onclick="reviewPartner('${safe(p.id)}','approved')">Approve</button><button class="btn red" onclick="reviewPartner('${safe(p.id)}','rejected')">Reject</button></div>`:`<p><b>${statusLabel}</b></p>`;
+  return `<div class="card" style="margin:12px 0"><h3>${safe(p.business_name||'Business name లేదు')}</h3><p><b>Owner:</b> ${safe(p.full_name)}<br><b>Phone:</b> ${safe(p.phone)}<br><b>Category:</b> ${safe(p.partner_category)}<br><b>Address:</b> ${safe(p.address)}<br><b>Status:</b> ${safe(statusLabel)}</p>${actions}</div>`;
+ }).join('');
  }catch(e){box.textContent='Partner applications load కాలేదు: '+e.message;}
 }
 async function reviewPartner(id,decision){
