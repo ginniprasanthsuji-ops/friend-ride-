@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#24105f">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>FRIEND RIDE V8 PRO – Super App</title>
+<title>FRIEND RIDE V8 PRO – Full V8 Features</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--purple:#5420b8;--purple2:#7b35df;--navy:#211044;--orange:#ff8a24;--bg:#f6f4fb;--ink:#201936;--muted:#77718a;--line:#e9e3f2;--green:#13875b;--red:#c83c4c;--white:#fff;--gold:#ffc65a}
@@ -202,81 +202,102 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 @media(min-width:700px){#customerCatalogueGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.fr-catalogue-photo-wrap{height:190px}}
 </style>
 
-<style id="friend-ride-v8-pro-interface-skin">
+<style id="fr-v8pro-reference-interface">
 :root{
- --frpro-purple:#4b08b8;--frpro-purple2:#7000d8;--frpro-deep:#310078;
- --frpro-yellow:#ffd83d;--frpro-orange:#f28a18;--frpro-bg:#f5f2fa;
- --frpro-ink:#24133d;--frpro-line:#e8e1f0;--frpro-green:#079b55;
+ --frp:#5100b8;--frp2:#7400d4;--frpdeep:#26005f;
+ --fro:#f28a18;--fry:#ffd83d;--frbg:#f5f2fa;--frink:#25133e;
+ --frline:#e8e1f0;--frgreen:#079b55;
 }
-html,body{background:var(--frpro-bg)!important;color:var(--frpro-ink)!important}
-.topbar,header.topbar,.home-topbar{
- background:linear-gradient(115deg,var(--frpro-deep),var(--frpro-purple),var(--frpro-purple2))!important;
- color:#fff!important;box-shadow:0 4px 18px #26004b30!important;
+html,body{background:var(--frbg)!important;color:var(--frink)!important}
+.topbar,.home-topbar{
+ background:linear-gradient(110deg,#300078 0%,#5100b8 58%,#7100d0 100%)!important;
+ color:#fff!important;border:0!important;box-shadow:0 5px 18px #28004d30!important;
 }
-.topbar button,.home-topbar button,.iconbtn,.notify-btn{
- border-radius:14px!important;
+.home-topbar .menu-open{background:#ffffff20!important;color:#fff!important;border:1px solid #ffffff25!important}
+.home-topbar .location-head b,.home-topbar .location-head span{color:#fff!important}
+.home-topbar .notify-btn{background:#ffffff20!important;color:#fff!important;border-radius:13px!important}
+#frCartTop{border:1px solid #e6dcf2!important;border-radius:16px!important;box-shadow:0 4px 14px #28004d0d!important}
+.fr-role-launcher{
+ background:radial-gradient(circle at 50% 0%,#7900d8 0%,#4b009d 43%,#23005b 100%)!important;
+ color:#fff!important;
 }
-main,.app-main,.page-wrap{background:transparent}
-.card,.panel,.section-card,.modalbox,.drawer,.shop-card,.store-card,.order-card{
- border:1px solid var(--frpro-line)!important;border-radius:18px!important;
- box-shadow:0 5px 18px #33105b0c!important;
-}
-button,.btn,.primary-btn{
- border-radius:12px!important;font-weight:800!important;
-}
-button:not(.alt):not(.secondary):not(.close):not(.menu-item):not(.nav button):not(.role):not(.fr-role-card){
- background:linear-gradient(115deg,var(--frpro-purple),var(--frpro-purple2))!important;color:#fff!important;
-}
-button.orange,.btn.orange,.fr-orange{background:linear-gradient(115deg,#ed7900,var(--frpro-orange))!important;color:#fff!important}
-button.yellow,.btn.yellow,.fr-yellow{background:linear-gradient(115deg,#f6c928,var(--frpro-yellow))!important;color:#382400!important}
-button.alt,button.secondary,.secondary,.alt{
- background:#f0e9fa!important;color:var(--frpro-purple)!important;border:1px solid #e2d5f3!important;
-}
-input,select,textarea{
- border:1px solid #d9cfe6!important;border-radius:11px!important;background:#fff!important;color:var(--frpro-ink)!important;
-}
-.fr-role-launcher{background:linear-gradient(145deg,#2c006e,#5b08b5 58%,#f28a18 150%)!important}
-.fr-launcher-inner{border-radius:24px!important;box-shadow:0 14px 40px #1d003b40!important}
-.fr-launcher-brand h1,.fr-launcher-kicker{color:#fff!important}
-.fr-launcher-brand p{color:#ffe68a!important}
+.fr-launcher-logo{background:linear-gradient(135deg,#ffe34d,#f28a18)!important;color:#35006d!important}
+.fr-launcher-kicker{color:#ffe66c!important}
+.fr-launcher-brand h1{color:#fff!important}
+.fr-launcher-brand p,.fr-launcher-title p{color:#eee2ff!important}
+.fr-launcher-title h2{color:#fff!important}
 .fr-role-card{
- border-radius:17px!important;border:1px solid #e9e0f2!important;
- box-shadow:0 4px 14px #22004410!important;
+ background:#fff!important;border:1px solid #eee6f6!important;border-radius:18px!important;
+ box-shadow:0 7px 20px #15002d30!important;min-height:150px!important;
 }
-.fr-role-card.customer{border-bottom:4px solid var(--frpro-purple)!important}
-.fr-role-card.driver{border-bottom:4px solid var(--frpro-orange)!important}
-.fr-role-card.partner{border-bottom:4px solid var(--frpro-yellow)!important}
-.fr-role-card.admin{border-bottom:4px solid var(--frpro-purple2)!important}
-.drawer-head{background:linear-gradient(125deg,#310078,#6500bd 65%,#f28a18)!important;color:#fff!important}
-.drawer .menu-label{color:var(--frpro-purple)!important;font-weight:900!important}
-.drawer .menu-item{border-radius:12px!important;margin:5px 0!important;background:#fff!important;border:1px solid #eee5f8!important}
-.drawer .menu-item:nth-of-type(3n){border-left:5px solid var(--frpro-orange)!important}
-.drawer .menu-item:nth-of-type(3n+1){border-left:5px solid var(--frpro-yellow)!important}
-.drawer .menu-item:nth-of-type(3n+2){border-left:5px solid var(--frpro-purple)!important}
-.bottom,.bottom-nav,.nav{background:#fff!important;border-top:1px solid var(--frpro-line)!important}
-.bottom button.active,.nav button.active{color:var(--frpro-purple)!important}
-.market-product,.product-card,.fr-product-card{
- border:1px solid var(--frpro-line)!important;border-radius:15px!important;background:#fff!important;
- box-shadow:0 3px 12px #3110520a!important;overflow:hidden;
+.fr-role-card b{color:#4e0aa2!important}
+.fr-role-card small{color:#6f6480!important}
+.fr-role-card.customer{border-bottom:5px solid #5b0bb7!important}
+.fr-role-card.driver{border-bottom:5px solid #f28a18!important}
+.fr-role-card.partner{border-bottom:5px solid #ffd83d!important}
+.fr-role-card.admin{border-bottom:5px solid #7a20d1!important}
+.fr-role-card.home-service{border-bottom:5px solid #f28a18!important}
+.drawer-head{
+ background:linear-gradient(125deg,#26005f 0%,#5900b8 65%,#f28a18 160%)!important;
+ color:#fff!important;border-radius:20px!important;
 }
-.fr-product-price,.market-product-info .price{color:#d51c36!important;font-weight:900!important}
-.pill,.badge{border-radius:20px!important}
-.status,.notice{border-radius:12px!important}
+.drawer .menu-label{color:#5a16ad!important;font-weight:950!important}
+.drawer .menu-item{
+ background:#fff!important;border:1px solid #eee5f8!important;border-radius:12px!important;
+ margin:5px 0!important;color:#2b2040!important;
+}
+.drawer .menu-item:nth-of-type(3n){border-left:5px solid var(--fro)!important}
+.drawer .menu-item:nth-of-type(3n+1){border-left:5px solid var(--fry)!important}
+.drawer .menu-item:nth-of-type(3n+2){border-left:5px solid var(--frp)!important}
+.drawer .menu-item:active,.drawer .menu-item:hover{background:#f5edff!important;color:#4e0aa2!important}
+.home-banner{
+ background:linear-gradient(115deg,#26005f 0%,#5100b8 60%,#f28a18 160%)!important;
+ border-radius:20px!important;box-shadow:0 7px 20px #29004d20!important;
+}
+.home-banner h1,.home-banner p,.home-banner small{color:#fff!important}
+.banner-cta{background:linear-gradient(90deg,#ffd83d,#f28a18)!important;color:#2d0757!important}
+.home-category,.category-card,.category-tile,.home-pro-service{
+ border-radius:16px!important;border:1px solid #e9e0f2!important;box-shadow:0 3px 12px #29004d0b!important;
+}
+.card,.panel,.section-card,.modalbox,.shop-card,.store-card,.order-card{
+ border:1px solid var(--frline)!important;border-radius:18px!important;
+ box-shadow:0 4px 16px #33105b0c!important;
+}
+button,.btn{border-radius:12px!important;font-weight:800!important}
+.btn.purple,.btn.primary,.btn:not(.light):not(.red):not(.close),button.primary{
+ background:linear-gradient(110deg,#5100b8,#7600d6)!important;color:#fff!important;
+}
+.btn.orange,button.orange{background:linear-gradient(110deg,#e97908,#f6a21a)!important;color:#fff!important}
+.btn.yellow,button.yellow{background:linear-gradient(110deg,#f5c928,#ffe45b)!important;color:#3b2700!important}
+input,select,textarea{border-radius:11px!important;border-color:#d9cfe6!important}
+.market-product,.market-product-card,.fr-market-product,.product-card{
+ background:#fff!important;border:1px solid #e8e1f0!important;border-radius:15px!important;
+ box-shadow:0 3px 13px #27004d0d!important;overflow:hidden!important;
+}
+.market-product-art{border-radius:12px!important}
+.market-product-info .price,.fr-product-price{color:#d51c36!important;font-weight:950!important}
+.bottom{background:#fff!important;border-top:1px solid #e8e1f0!important}
+.bottom button.active{color:#5b0bb7!important}
+#frV8ProFloatingMenu{box-shadow:0 8px 24px #26004c55!important}
 @media(max-width:520px){
- .fr-launcher-inner{margin:12px!important}
- .market-product,.product-card,.fr-product-card{border-radius:13px!important}
+ .fr-launcher-brand{margin-bottom:22px!important}
+ .fr-role-card{min-height:136px!important;padding:14px 12px!important}
+ .home-banner{border-radius:17px!important}
 }
 </style>
 
 </head>
 <body>
+
+<button id="frV8ProFloatingMenu" type="button" aria-label="Open FRIEND RIDE full menu"
+ onclick="openDrawer()"
+ style="position:fixed;right:15px;bottom:148px;z-index:9997;width:68px;height:68px;
+ border:3px solid #fff;border-radius:50%;background:linear-gradient(145deg,#7600d6,#26005f);
+ color:#fff;font-size:22px;font-weight:950;box-shadow:0 8px 24px #26004c55">
+ FR<small style="display:block;font-size:9px;line-height:1">MENU</small></button>
+
 <button id="frSuperShortcut" onclick="frOpenSuperHub()" style="position:fixed;right:14px;bottom:82px;z-index:9998;border:0;border-radius:28px;padding:13px 17px;background:#5724a5;color:#fff;font-weight:800;box-shadow:0 5px 18px #25104455">FR Super App</button>
 
-<button id="frV8ProFloatingMenu" type="button" aria-label="Open FRIEND RIDE menu"
- onclick="openDrawer()"
- style="position:fixed;right:15px;bottom:88px;z-index:9997;width:66px;height:66px;border:3px solid #fff;
- border-radius:50%;background:linear-gradient(145deg,#7000d8,#310078);color:#fff;font-size:22px;
- font-weight:900;box-shadow:0 7px 22px #26004c55">FR<small style="display:block;font-size:9px;line-height:1">MENU</small></button>
 
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
@@ -287,6 +308,7 @@ input,select,textarea{
    <button class="fr-role-card driver" onclick="enterRole('driver')"><span class="fr-role-icon">🚗</span><b>Driver</b><small>Ride Requests • GPS • Earnings</small><span class="fr-role-arrow">తదుపరి →</span></button>
    <button class="fr-role-card partner" onclick="enterRole('partner')"><span class="fr-role-icon">🏪</span><b>Partner</b><small>Orders • Catalogue • Stock • QR</small><span class="fr-role-arrow">తదుపరి →</span></button>
    <button class="fr-role-card admin" onclick="enterRole('admin')"><span class="fr-role-icon">🛡️</span><b>Admin</b><small>Approvals • Reports • Management</small><span class="fr-role-arrow">తదుపరి →</span></button>
+   <button class="fr-role-card home-service" onclick="enterRole('customer');setTimeout(()=>{if(typeof showPage==='function')showPage('homeServices')},700)"><span class="fr-role-icon">🧰</span><b>Home Services</b><small>Electrician • Plumber • AC • Repairs</small><span class="fr-role-arrow">Customer Login →</span></button>
   </div>
   <div class="fr-launcher-foot">ఒకే FRIEND RIDE యాప్ • మీకు అవసరమైన Dashboard మాత్రమే</div>
  </div>
