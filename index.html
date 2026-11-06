@@ -132,7 +132,10 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 .fr-cart-heading-count{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:50%;background:#5920ad;color:white;font-size:14px}
 .fr-cart-line{display:grid;grid-template-columns:1fr auto;gap:10px;padding:13px 0;border-bottom:1px solid #eee}.fr-cart-line b{display:block}.fr-cart-line small{display:block;color:#777;margin-top:4px}.fr-qty-control{display:flex;align-items:center;gap:9px;margin-top:8px}.fr-qty-control button{width:30px;height:30px;border:0;border-radius:9px;background:#eee5fb;color:#4c188f;font-weight:800;font-size:18px}.fr-payment-panel{margin-top:18px;padding:15px;border:1px solid #e7d9f7;border-radius:18px;background:#fbf8ff}.fr-payment-method{padding:13px;margin:10px 0;border:1px solid #e4d8f1;border-radius:14px;background:white}.fr-payment-method b{display:block;margin-bottom:6px}.fr-payment-method img{max-width:180px;max-height:180px;object-fit:contain;display:block;margin:8px auto}
 
-</style>
+
+.cart-tab{position:relative}
+.fr-bottom-cart-count{position:absolute;top:2px;right:calc(50% - 27px);min-width:18px;height:18px;padding:0 4px;border-radius:10px;background:#e95a18;color:#fff;font-size:10px;line-height:18px;text-align:center;font-weight:800}
+
 <style>
 .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0}.kpi{background:linear-gradient(145deg,#fff,#f6f0ff);border:1px solid #e7def3;border-radius:15px;padding:12px}.kpi strong{display:block;font-size:20px;color:#4b2091}.kpi span{font-size:11px;color:#77718a}.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.feature-box{border:1px solid #e8e0f2;background:#fff;border-radius:15px;padding:13px}.feature-box small{color:#77718a}.inline-actions{display:flex;gap:8px;flex-wrap:wrap}.inline-actions button{flex:1;min-width:90px}.offer-card{border:1px solid #e5d9f1;border-radius:15px;padding:13px;margin:9px 0;background:linear-gradient(135deg,#fff,#faf6ff)}.offer-price{font-size:22px;font-weight:900;color:#4d1da1}.tag{display:inline-block;background:#f0e7ff;color:#5420a8;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800}@media(min-width:650px){.kpi-grid{grid-template-columns:repeat(4,1fr)}.feature-grid{grid-template-columns:repeat(3,1fr)}}
 </style><style>
@@ -195,9 +198,6 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 </style>
 </head>
 <body>
-<button id="frSuperShortcut" onclick="frOpenSuperHub()" style="position:fixed;right:14px;bottom:82px;z-index:9998;border:0;border-radius:28px;padding:13px 17px;background:#5724a5;color:#fff;font-weight:800;box-shadow:0 5px 18px #25104455">FR Super App</button>
-
-
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
   <div class="fr-launcher-brand"><div class="fr-launcher-logo">FR</div><div><div class="fr-launcher-kicker">WELCOME TO</div><h1>FRIEND RIDE</h1><p>మీ ప్రయాణం • మీ సేవలు • మీ వ్యాపారం</p></div></div>
@@ -216,9 +216,6 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
  <button class="notify-btn" aria-label="Login / Account" onclick="currentUser?showPage('profile'):openAuth('login','customer')">♙</button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
 </header>
-<div id="frCartTop" class="fr-cart-top" role="button" tabindex="0" onclick="showPage('marketCart')" onkeydown="if(event.key==='Enter')showPage('marketCart')">
- <span class="fr-cart-top-icon">🛒</span><span><b>My Cart / నా కార్ట్</b><small id="frCartTopMeta">0 items • 0 stores</small></span><strong id="frCartTopCount">0</strong><span class="fr-cart-top-arrow">View →</span>
-</div>
 <main>
 <section id="home" class="page active">
  <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('explore')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Services ↗</span></div><div class="banner-art">🛵</div></div><div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
@@ -447,7 +444,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <button class="active" data-page="home" onclick="showPage('home')"><span>🏠</span>Home</button>
  <button data-page="shops" onclick="showPage('shops')"><span>🛍️</span>Friend<br>Mart</button>
  <button data-page="food" onclick="showPage('food')"><span>🍱</span>Food<br>Delivery</button>
- <button class="cart-tab" data-page="cart" onclick="showPage('cart')"><span>🛒</span></button>
+ <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span><small>My Cart</small><b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
  <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Categories</button>
  <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>🧾</span>Orders</button>
  <button data-page="menu" onclick="openDrawer()"><span>☰</span>Menu</button>
@@ -1717,63 +1714,7 @@ loadMasterItems=function(){frOldLoadMasterItems();if(currentProfile?.role==='par
 .fr-scope-item{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #eeeaf3;font-size:13px}
 .fr-scope-item input{width:18px;height:18px;accent-color:#5b2aa0;flex:none;margin:0}.fr-scope-note{font-size:12px;color:#685d75;line-height:1.5}
 </style>
-<button id="frMasterScopeFab" type="button" onclick="frToggleMasterScope(true)">✓ Master Scope</button>
-<div id="frMasterScopePanel" role="dialog" aria-modal="true" aria-label="Approved FRIEND RIDE feature scope">
- <div class="fr-master-scope-inner">
-  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><small style="color:#69449a;font-weight:800">FRIEND RIDE V8 • APPROVED SCOPE</small><h2>Master Feature Checklist</h2></div><button type="button" class="btn light" onclick="frToggleMasterScope(false)">Close ✕</button></div>
-  <p class="fr-scope-note"><b>All items below are marked as approved requirements</b> based on your instruction and screenshot. This is not a test report: no feature is marked technically PASS until it is actually tested.</p>
-  <div id="frMasterScopeChecks">
-   <h3>Customer & Rides</h3>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Mobile OTP login, customer profile and full address</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Bike, Auto, Car booking, fare, pickup and drop</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Ride history, live driver tracking, SOS and support</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Shop, food, parcel and home-service discovery</label>
-   <h3>FRIEND MART Catalogue & Stores</h3>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Amazon / Flipkart style visual product grid, search and filters</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Real product photos, product name, unit, stock and details</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner-set selling / offer price or Ask Price when blank</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Master catalogue plus partner-specific products and photos</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Grocery, Kirana, supermarket, rice, pulses, dairy and water</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Chicken, mutton, fish, seafood and egg shops</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Medical, pharmacy, surgical and healthcare products</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Electronics, electrical, mobile and accessories</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Hardware, cement, steel, paints, plumbing and tiles</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Fruits, vegetables, bakery, sweets, food and restaurants</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Fashion, clothing, footwear, cosmetics, furniture and agriculture</label>
-   <h3>Partner & Orders</h3>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner registration, passport photo, approval and dashboard</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Product photo upload/capture, edit price, offer, stock and availability</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Real-time new-order alert, customer name, phone, Call, WhatsApp and address</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner quote, customer accept/counter-offer and quote notifications</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner earnings only from verified ledger/payment records</label>
-   <h3>Payment, Delivery & Rating</h3>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Secure gateway payment, webhook verification and payment status</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Payment verification required before preparation / completion gates</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Approved online nearby driver request and single-driver assignment</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner sees assigned driver details and live location</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Customer sees picked-up / on-the-way status, driver details and live GPS</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Animated bike-on-route indicator on customer tracking map</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Customer delivery OTP; verify before marking delivery complete</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner receives completed status and customer can rate/review partner</label>
-   <h3>Driver, Home Services, Food & Parcel</h3>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Driver registration, photo, Aadhaar/licence/vehicle documents and approval</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Driver online/offline, ride/delivery requests, GPS, OTP and history</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Electrician, plumber, mason, carpenter, AC, appliance, septic and cleaning services</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Home-service provider photo, registration, approval, quote and booking</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Restaurant menu/photos, food orders, delivery and parcel pickup/drop tracking</label>
-   <h3>Admin, Security & Master Testing</h3>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Admin login, customer/driver/partner/service approvals and store/category management</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Order/payment monitoring, complaints, SOS, referrals, subscriptions and reports</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Role-based access, RLS, secure storage, OTP and webhook security</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> Database, RPC, RLS, photo, order, realtime, payment, GPS and delivery OTP test suite</label>
-   <label class="fr-scope-item"><input type="checkbox" checked disabled> PASS / FAIL / NEEDS REAL DEVICE TEST report</label>
-  </div>
-  <div class="notice" style="margin-top:16px">Scope approval saved in this HTML as a checklist display. Technical PASS results will be produced separately in the Master Test HTML after backend configuration and real tests.</div>
-  <button class="btn purple" style="width:100%;margin-top:10px" onclick="frToggleMasterScope(false)">Close – Scope Approved</button>
- </div>
-</div>
 <script id="fr-master-scope-script">
-function frToggleMasterScope(open){const p=document.getElementById('frMasterScopePanel');if(p)p.classList.toggle('open',!!open)}
 // Refresh Partner Orders when Supabase Realtime reports a new/changed market order.
 let frMarketOrderRealtimeChannel=null;
 function frStartMarketOrderRealtime(){
