@@ -362,7 +362,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 </section>
 <section id="technicianRegister" class="page"><div class="card"><h2>Home Service Technician Registration</h2><div class="field"><label>Technician Passport-size Photo * Required</label><input id="techProfilePhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label>Profession *</label><select id="techProfession"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painter</option><option>Carpenter</option><option>Other</option></select></div><div class="field"><label>Full Name *</label><input id="techName"></div><div class="field"><label>Mobile Number *</label><input id="techPhone" maxlength="10" inputmode="numeric"></div><div class="field"><label>Work Experience (Years) *</label><input id="techExperience" type="number" min="0"></div><div class="field"><label>Complete Address *</label><textarea id="techAddress"></textarea></div><div class="field"><label>Aadhaar Card Number *</label><input id="techAadhaar" maxlength="12" inputmode="numeric"></div><div class="field"><label>Aadhaar File *</label><input id="techAadhaarFile" type="file" accept="image/*,.pdf"></div><div class="field"><label>UPI ID / QR Code</label><input id="techUPI" placeholder="UPI ID"></div><div class="field"><label>QR Code Image</label><input id="techQR" type="file" accept="image/*"></div><div class="field"><label>PhonePe Number * (Mandatory)</label><input id="techPhonePe" maxlength="10" inputmode="numeric"></div><button class="btn purple" onclick="validateTechnicianRegistration()">Submit Technician Application</button><div class="notice">Technician account will remain pending until document review and Admin approval.</div></div></section>
 <section id="parcelRelease" class="page"><div class="card"><h2>Parcel Delivery – Secure Handover</h2><p>Delivery OTP will be generated only after verified payment. Driver enters OTP and confirms payment before parcel release.</p><div class="field"><label>Tracking ID</label><input id="parcelTrackingId" placeholder="FR-PARCEL-000001"></div><div class="field"><label>Delivery OTP</label><input id="parcelDeliveryOtp" maxlength="6" inputmode="numeric"></div><button class="btn purple" onclick="confirmParcelRelease()">Driver: Confirm Payment & Release Parcel</button><div id="parcelReleaseStatus" class="notice">Awaiting verified payment and recipient OTP.</div><div class="notice">Payment status, OTP issue/verify and release must be enforced server-side; this screen is not a secure payment verification by itself.</div></div></section>
-<section id="orders" class="page"><div class="card"><h2>My Bookings & Orders</h2><p class="muted">Ride, parcel, food, shop and service bookings.</p><div id="ordersInfo" class="notice">మీ bookings ఇక్కడ కనిపిస్తాయి. Database mapping తర్వాత history load అవుతుంది.</div><button class="btn light" onclick="showPage('tracking')">Open Live Tracking</button></div></section>
+<section id="orders" class="page"><div class="card"><h2>My Bookings & Orders</h2><p class="muted">Ride, parcel, food, shop and service bookings.</p><div id="ordersInfo" class="notice">మీ bookings ఇక్కడ కనిపిస్తాయి.</div><h3>Shop Orders / ధరల వివరాలు</h3><div id="frCustomerMarketOrders" class="empty-state">Shop orders loading…</div><button class="btn light" onclick="showPage('tracking')">Open Live Tracking</button></div></section>
 <section id="tracking" class="page"><div class="card"><h2>Live Tracking</h2><div class="row"><button class="btn purple">Ride</button><button class="btn light">Parcel</button><button class="btn light">Food / Shop</button></div><div class="track-actions"><button onclick="showTrackingMode('driver')">🚗 Track Driver</button><button onclick="showTrackingMode('route')">🧭 View Route</button><button onclick="showTrackingMode('pickup')">📍 Pickup Point</button><button onclick="showTrackingMode('support')">🆘 SOS / Help</button></div><div id="trackingMap" style="margin-top:12px"></div><div class="listrow"><div class="grow"><b id="trackingTitle">Live Driver Tracking</b><br><small id="trackingStatus" class="muted">Booking confirm అయిన తర్వాత driver location కనిపిస్తుంది.</small></div><span id="trackingPill" class="pill">Waiting</span></div><div class="row"><button class="btn light" onclick="refreshTracking()">↻ Refresh Location</button><button class="btn light" onclick="callDriver()">📞 Call Driver</button></div><div id="liveRideStatus" class="notice">మీ Active Ride వివరాలు ఇక్కడ కనిపిస్తాయి.</div><div class="row"><button class="btn light" onclick="loadMyRideTracking()">My Active Ride</button><button class="btn light" onclick="startCustomerTrackingFromPanel()">Share My Live Location</button></div><div class="card" style="margin-top:12px"><h3>🆘 Emergency & Personal Contact</h3><div class="row"><a class="btn red" href="tel:112">112 Emergency</a><a class="btn light" href="tel:100">100 Police</a><a class="btn light" href="tel:108">108 Ambulance</a></div><div class="field"><label>Personal Emergency Contact Name</label><input id="emergencyContactName" placeholder="Relative / Friend"></div><div class="field"><label>Personal Emergency Mobile</label><input id="emergencyContactPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><div class="row"><button class="btn light" onclick="savePersonalEmergencyContact()">Save Contact</button><button class="btn light" onclick="callPersonalEmergencyContact()">Call Personal Contact</button></div><button class="btn red" style="width:100%;margin-top:8px" onclick="sendRideSOS()">🆘 SEND SOS LOCATION</button><div id="sosStatus" class="notice">Emergency call links are available. SOS records the current GPS location when signed in.</div></div></div></section>
 <section id="wallet" class="page"><div class="card"><h2>Wallet & Payments</h2><div class="stats"><div class="stat"><small>Wallet Balance</small><b>₹0.00</b></div><div class="stat"><small>Reward Points</small><b>0</b></div></div><div class="notice">Cashfree payment gateway / wallet ledger / refunds require verified merchant configuration and server-side payment verification. Do not collect live money using frontend-only code.</div><button class="btn purple" onclick="showMessage('Payment gateway configuration అవసరం.','error')">Add Money</button></div></section>
 <section id="offers" class="page"><div class="card"><h2>Offers & Rewards</h2><div class="card"><h3>🎁 Refer & Earn</h3><p class="muted">Invite friends to FRIEND RIDE.</p><button class="btn purple" onclick="shareInvite()">Share Invite</button></div><div class="notice">Referral rewards should be credited only after server-side verification of eligible activity.</div></div></section>
@@ -894,7 +894,7 @@ async function marketCheckout(){
   if(!addr)throw Error('Delivery address నమోదు చేయండి.');
   const ids=[...new Set(frMarketCart.map(x=>x.storeId).filter(Boolean))];
   if(ids.length!==1)throw Error('ఒకే Store వస్తువులతో Checkout చేయండి.');
-  const items=frMarketCart.map(x=>({name:String(x.name||'').trim(),quantity:Math.max(1,Math.min(99,Number(x.qty)||1)),prescription_required:!!x.prescriptionRequired}));
+  const items=frMarketCart.map(x=>({name:String(x.name||'').trim(),quantity:Math.max(1,Math.min(99,Number(x.qty)||1)),prescription_required:!!x.prescriptionRequired,catalogue_item_id:x.catalogueItemId||null,image_url:x.imageUrl||null,unit_price_paise:x.price==null?null:Math.round(Number(x.price)*100)}));
   if(items.some(x=>!x.name))throw Error('Cart item పేరు సరిగా లేదు.');
   const btn=$('frContinuePaymentBtn');if(btn){btn.disabled=true;btn.textContent='Order పంపిస్తున్నాం…';}
   const {data,error}=await sb.rpc('fr_customer_place_market_order',{p_store_id:ids[0],p_delivery_address:addr,p_items:items});
@@ -1519,6 +1519,219 @@ async function frEnableDeviceAlerts(){
     if(currentUser?.id)frRideStartRealtime();
   });
 })();
+</script>
+
+
+<script>
+// FRIEND RIDE V8.1: persistent catalogue photos, partner prices, customer phone and counter offers.
+function frRupeesToPaise(v){return Math.round(Number(v||0)*100);}
+function frPaiseToRupees(v){return v==null?'':(Number(v)/100).toFixed(2);}
+function frPublicCatalogueImage(path){return path||'';}
+async function frUploadCataloguePhoto(file,sku){
+ if(!file)return '';
+ if(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>5*1024*1024)throw Error('Product photo JPG/PNG/WEBP అయి ఉండాలి; 5 MB లోపు ఉండాలి.');
+ const ext=file.type==='image/png'?'png':(file.type==='image/webp'?'webp':'jpg');
+ const path=currentUser.id+'/'+String(sku).replace(/[^a-zA-Z0-9_-]/g,'_')+'_'+Date.now()+'.'+ext;
+ const {error}=await sb.storage.from('fr-partner-catalogue').upload(path,file,{upsert:true,contentType:file.type});
+ if(error)throw error;
+ const {data}=sb.storage.from('fr-partner-catalogue').getPublicUrl(path);
+ return data.publicUrl;
+}
+async function frSavePartnerCatalogueRecord(x,photoFile=null){
+ if(!currentUser||currentProfile?.role!=='partner')throw Error('Partner login అవసరం.');
+ let imageUrl=x.image_url||'';
+ if(photoFile)imageUrl=await frUploadCataloguePhoto(photoFile,x.sku);
+ const {data,error}=await sb.rpc('fr_partner_save_catalogue_item',{p_master_sku:String(x.sku),p_item_name:String(x.name),p_category:String(x.cat),p_unit:x.unit||'',p_description:x.description||'',p_price_paise:x.price==null?null:frRupeesToPaise(x.price),p_offer_price_paise:x.offer?frRupeesToPaise(x.offer):null,p_image_url:imageUrl||null,p_available:!!x.available,p_prescription_required:!!x.prescriptionCheck});
+ if(error)throw error;
+ x.image_url=imageUrl; x.saved=true; return data;
+}
+async function frLoadPartnerCatalogue(){
+ const {data,error}=await sb.rpc('fr_partner_list_catalogue');if(error)throw error;
+ const map=new Map((data||[]).map(x=>[x.master_sku,x]));
+ localCatalogue=(localCatalogue||[]).map(x=>{const r=map.get(x.sku);return r?{...x,price:r.price_paise==null?null:Number(r.price_paise)/100,offer:r.offer_price_paise==null?0:Number(r.offer_price_paise)/100,available:r.available,image_url:r.image_url,saved:true}:x;});
+ renderCatalogue();
+}
+// Save each partner-selected master item with its own selling price and optional real product photo.
+async function addCatalogueItem(){
+ const name=$('catalogueItemName')?.value.trim(),cat=$('catalogueCategorySelect')?.value,raw=$('cataloguePrice')?.value,price=raw===''?null:Number(raw),pricing=$('cataloguePricingType')?.value;
+ const master=FRIEND_MASTER_ITEMS.find(x=>x.id===$('masterCatalogueItem')?.value);
+ if(!master&&!name){alert('Master Catalogue నుంచి item ఎంచుకోండి.');return;}
+ if(!cat){alert('Catalogue Category ఎంచుకోండి.');return;}
+ if(pricing==='fixed'&&(price===null||!Number.isFinite(price)||price<=0)){alert('సరైన Selling Price నమోదు చేయండి.');return;}
+ const x={sku:master?.id||('CUSTOM-'+Date.now()),name:name||master.name,cat,businessType:$('catalogueBusinessType')?.value,unit:master?.unit||'',description:$('catalogueDescription')?.value.trim()||master?.description||'',price,offer:Number($('catalogueOfferPrice')?.value||0),pricing,available:$('catalogueAvailable')?.value==='true',prescriptionCheck:!!master?.prescriptionCheck};
+ try{await frSavePartnerCatalogueRecord(x,$('cataloguePhoto')?.files?.[0]||null);const ix=localCatalogue.findIndex(z=>z.sku===x.sku);if(ix>=0)localCatalogue[ix]={...localCatalogue[ix],...x};else localCatalogue.push(x);renderCatalogue();if($('cataloguePhoto'))$('cataloguePhoto').value='';alert('మీ Catalogue item, ధర మరియు ఫోటో Databaseలో Save అయ్యాయి.');}
+ catch(e){alert('Catalogue Save కాలేదు: '+(e.message||e));}
+}
+async function updatePartnerCataloguePrice(i){
+ const x=localCatalogue[i];if(!x)return;
+ const raw=$('partnerPrice_'+i)?.value||'',offerRaw=$('partnerOffer_'+i)?.value||'';
+ const price=raw===''?null:Number(raw),offer=offerRaw===''?0:Number(offerRaw);
+ if(raw!==''&&(!Number.isFinite(price)||price<=0)){alert('సరైన Selling Price నమోదు చేయండి.');return;}
+ if(offerRaw!==''&&(!Number.isFinite(offer)||offer<0||offer>price)){alert('Offer Price, Selling Price కంటే ఎక్కువ ఉండకూడదు.');return;}
+ x.price=price;x.offer=offer;x.pricing=price==null?'request':'fixed';
+ try{await frSavePartnerCatalogueRecord(x);renderCatalogue();showMessage('Partner ధర Databaseలో Save అయింది.','good');}
+ catch(e){alert('ధర Save కాలేదు: '+(e.message||e));}
+}
+async function togglePartnerItemAvailability(i){const x=localCatalogue[i];if(!x)return;x.available=!x.available;try{await frSavePartnerCatalogueRecord(x);renderCatalogue();}catch(e){x.available=!x.available;alert('Availability Save కాలేదు: '+(e.message||e));}}
+
+// Customer sees only this approved shop's published catalogue, with actual uploaded product photos and partner prices.
+async function renderCustomerCatalogue(){
+ if(!frActiveStore)return;
+ const grid=$('customerCatalogueGrid');if(!grid)return;
+ grid.innerHTML='<div class="notice">Partner Catalogue loading…</div>';
+ try{
+  const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:frActiveStore.id});if(error)throw error;
+  const q=($('customerCatalogueSearch')?.value||'').toLowerCase();
+  const all=data||[];const cats=['All',...new Set(all.map(x=>x.category).filter(Boolean))];
+  const sel=$('customerCatalogueCategorySelect');if(sel){sel.innerHTML=cats.map(c=>`<option value="${safe(c)}">${c==='All'?'All Items / అన్ని వస్తువులు':safe(c)}</option>`).join('');if(!cats.includes(frMarketCategory))frMarketCategory='All';sel.value=frMarketCategory;}
+  const items=all.filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.item_name+' '+x.category+' '+x.master_sku).toLowerCase().includes(q)));
+  grid.innerHTML=items.map(x=>{
+   const price=x.offer_price_paise??x.price_paise;const priceText=price==null?'ధర అడగండి':('₹'+frPaiseToRupees(price));
+   const img=x.image_url?`<img src="${safe(x.image_url)}" alt="${safe(x.item_name)}" style="width:100%;height:145px;object-fit:cover;border-radius:14px">`:`<div class="market-product-art market-product-art-3d"><span class="product-art-object">${frProductArt({name:x.item_name,category:x.category})}</span><small>PRODUCT PHOTO NOT UPLOADED</small></div>`;
+   return `<article class="market-product market-product-3d"><div class="market-product-art">${img}</div><div class="market-product-info"><b>${safe(x.item_name)}</b><small class="muted">${safe(x.category)}${x.unit?' • '+safe(x.unit):''}</small><div class="market-price">${priceText}${x.offer_price_paise!=null&&x.price_paise!=null?` <s>₹${frPaiseToRupees(x.price_paise)}</s>`:''}</div><span class="stock-mark yes">Available</span></div><button class="btn purple" onclick="frAddPartnerCatalogueItem('${x.id}')">＋ Add to Cart</button></article>`;
+  }).join('')||'<div class="market-empty">ఈ Shop ఇంకా తన Catalogueలో Items, ధరలు జోడించలేదు. Partnerను ధర అడగండి.</div>';
+ }catch(e){grid.innerHTML='<div class="notice">Catalogue Load కాలేదు: '+safe(e.message||e)+'</div>';}
+}
+async function frAddPartnerCatalogueItem(id){
+ const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:frActiveStore.id});if(error){alert(error.message);return;}
+ const x=(data||[]).find(z=>z.id===id);if(!x)return;
+ const price=x.offer_price_paise??x.price_paise;
+ const found=frMarketCart.find(z=>z.catalogueItemId===id&&String(z.storeId)===String(frActiveStore.id));
+ if(found)found.qty++;else frMarketCart.push({name:x.item_name,partner:frActiveStore.name,storeId:frActiveStore.id,qty:1,price:price==null?null:Number(price)/100,pricing:price==null?'request':'fixed',prescriptionRequired:!!x.prescription_required,catalogueItemId:x.id,imageUrl:x.image_url||''});
+ renderMarketCart();frCartUpdateBadges();showMessage('Catalogue Item Cartలో చేరింది.','good');
+}
+
+// Partner live orders: show the customer phone, line-item prices, and quote/counter-quote controls.
+async function loadPartnerOrders(status='all'){
+ const el=$('partnerOrderList');if(!el)return;
+ if(!currentUser||currentProfile?.role!=='partner'){el.textContent='Partner Login అవసరం.';return;}
+ el.innerHTML='<div class="notice">Orders loading…</div>';
+ try{
+  const dbStatus=status==='new'?'quote_requested':(status==='all'?null:status);
+  const {data,error}=await sb.rpc('fr_partner_list_market_orders',{p_status:dbStatus});if(error)throw error;
+  if(!data?.length){el.innerHTML='<div class="empty-state">ఇంకా Orders రాలేదు.</div>';return;}
+  el.innerHTML=data.map(o=>{
+   const items=Array.isArray(o.items)?o.items:[];
+   const lines=items.map((i,n)=>`<div class="listrow" style="align-items:center;gap:8px"><div class="grow">${i.image_url?`<img src="${safe(i.image_url)}" style="width:48px;height:48px;object-fit:cover;border-radius:8px">`:''}<b>${safe(i.item_name)}</b><small>Qty ${safe(i.quantity)}</small>${i.customer_offer_paise!=null?`<small>Customer Counter: ₹${frPaiseToRupees(i.customer_offer_paise)}</small>`:''}</div><div><label>మీ ధర ₹</label><input id="frQuote_${i.id}" type="number" min="0.01" step="0.01" value="${i.partner_quote_paise==null?'':frPaiseToRupees(i.partner_quote_paise)}" placeholder="Enter price" style="width:105px"></div></div>`).join('');
+   let action='';
+   if(['quote_requested','counter_offered'].includes(o.status))action=`<button class="btn purple" onclick="frPartnerSendQuote('${o.order_id}')">ధర పంపండి / Counter Price</button><button class="btn light" onclick="frPartnerUpdateMarketOrder('${o.order_id}','rejected')">Reject Order</button>`;
+   else if(o.status==='accepted')action=`<button class="btn purple" onclick="frPartnerUpdateMarketOrder('${o.order_id}','preparing')">Start Preparing</button>`;
+   else if(o.status==='preparing')action=`<button class="btn purple" onclick="frPartnerUpdateMarketOrder('${o.order_id}','ready')">Mark Ready</button>`;
+   else if(o.status==='ready')action=`<div class="notice">Ready for Driver Pickup. Completion is locked until verified payment + driver delivery OTP backend is connected.</div>`;
+   const phone=(o.customer_phone||'').replace(/[^0-9+]/g,'');
+   return `<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>${safe(o.order_number)}</b><span class="pill">${safe(o.status)}</span></div><p><b>Customer:</b> ${safe(o.customer_name||'Customer')}</p><p><b>Mobile:</b> ${phone?`<a href="tel:${safe(phone)}">${safe(phone)} • Call</a> <a href="https://wa.me/${safe(phone.replace(/^\+/,'').replace(/^0/,''))}" target="_blank" rel="noopener">WhatsApp</a>`:'Number unavailable'}</p><p><b>Delivery Address:</b> ${safe(o.delivery_address)}</p>${lines}<small>${safe(o.created_at)}</small><div class="row">${action}</div></div>`;
+  }).join('');
+ }catch(e){el.innerHTML='<div class="notice">Orders load కాలేదు: '+safe(e.message||e)+'</div>';}
+}
+async function frPartnerSendQuote(orderId){
+ const card=[...document.querySelectorAll('#partnerOrderList .card')].find(c=>c.innerHTML.includes(orderId));
+ if(!card){alert('Order card కనిపించలేదు. Refresh చేయండి.');return;}
+ const inputs=[...card.querySelectorAll('input[id^="frQuote_"]')];const quotes=[];
+ for(const input of inputs){const v=Number(input.value);if(!Number.isFinite(v)||v<=0){alert('ప్రతి Itemకు సరైన ధర ఇవ్వండి.');return;}quotes.push({item_id:input.id.replace('frQuote_',''),price_paise:frRupeesToPaise(v)});}
+ try{const {error}=await sb.rpc('fr_partner_quote_market_order',{p_order_id:orderId,p_quotes:quotes});if(error)throw error;alert('మీ ధర Customerకు పంపబడింది. Customer అంగీకరించవచ్చు లేదా Counter Price ఇవ్వవచ్చు.');await loadPartnerOrders();}
+ catch(e){alert('ధర పంపబడలేదు: '+(e.message||e));}
+}
+
+// Customer order history with partner quote acceptance / counter-price actions.
+async function frLoadCustomerMarketOrders(){
+ const el=$('frCustomerMarketOrders');if(!el||!currentUser)return;
+ el.innerHTML='<div class="notice">Shop Orders loading…</div>';
+ try{const {data,error}=await sb.rpc('fr_customer_list_market_orders');if(error)throw error;
+  if(!data?.length){el.innerHTML='<div class="empty-state">Shop Orders ఇంకా లేవు.</div>';return;}
+  el.innerHTML=data.map(o=>{const items=Array.isArray(o.items)?o.items:[];const lines=items.map(i=>`<div class="listrow"><span>${safe(i.item_name)} × ${safe(i.quantity)}</span><b>${i.partner_quote_paise==null?'Price pending':'₹'+frPaiseToRupees(i.partner_quote_paise)}</b>${o.status==='quoted'?`<input id="frCounter_${i.id}" type="number" min="0.01" step="0.01" placeholder="మీ counter price ₹" style="max-width:140px">`:''}</div>`).join('');
+   const phone=(o.partner_phone||'').replace(/[^0-9+]/g,'');let actions='';if(o.status==='quoted')actions=`<button class="btn purple" onclick="frCustomerAcceptQuote('${o.order_id}')">ధర అంగీకరించండి</button><button class="btn light" onclick="frCustomerSendCounter('${o.order_id}')">Counter Price పంపండి</button>`;
+   return `<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>${safe(o.order_number)}</b><span class="pill">${safe(o.status)}</span></div><p>Partner: ${safe(o.partner_name)}</p><p>Partner Phone: ${phone?`<a href="tel:${safe(phone)}">${safe(phone)} • Call</a>`:'Unavailable'}</p><p>Delivery: ${safe(o.delivery_address)}</p>${lines}<div class="row">${actions}</div></div>`;
+  }).join('');
+ }catch(e){el.innerHTML='<div class="notice">Shop Orders load కాలేదు: '+safe(e.message||e)+'</div>';}
+}
+async function frCustomerAcceptQuote(id){try{const {error}=await sb.rpc('fr_customer_accept_market_quote',{p_order_id:id});if(error)throw error;alert('Partner ధర అంగీకరించారు.');await frLoadCustomerMarketOrders();}catch(e){alert(e.message||e);}}
+async function frCustomerSendCounter(id){const card=[...document.querySelectorAll('#frCustomerMarketOrders .card')].find(c=>c.innerHTML.includes(id));if(!card)return;const offers=[];for(const input of card.querySelectorAll('input[id^="frCounter_"]')){const v=Number(input.value);if(!Number.isFinite(v)||v<=0){alert('Counter Price నమోదు చేయండి.');return;}offers.push({item_id:input.id.replace('frCounter_',''),price_paise:frRupeesToPaise(v)});}try{const {error}=await sb.rpc('fr_customer_counter_market_order',{p_order_id:id,p_offers:offers});if(error)throw error;alert('మీ Counter Price Partnerకు పంపబడింది.');await frLoadCustomerMarketOrders();}catch(e){alert(e.message||e);}}
+const frOriginalShowPage=showPage;
+showPage=function(id){frOriginalShowPage(id);if(id==='orders'&&currentUser?.id)setTimeout(frLoadCustomerMarketOrders,150);if(id==='catalogue'&&currentProfile?.role==='partner')setTimeout(()=>frLoadPartnerCatalogue().catch(e=>console.warn(e)),150);if(id==='partnerOrders')setTimeout(()=>loadPartnerOrders(),150);};
+// Persist catalogue entries when partner selects a master category and opens the editor.
+const frOldLoadMasterItems=loadMasterItems;
+loadMasterItems=function(){frOldLoadMasterItems();if(currentProfile?.role==='partner')frLoadPartnerCatalogue().catch(e=>console.warn(e));};
+</script>
+
+
+<style id="fr-master-scope-style">
+#frMasterScopeFab{position:fixed;left:14px;bottom:82px;z-index:9997;border:0;border-radius:24px;padding:12px 15px;background:#24143b;color:#fff;font-weight:800;box-shadow:0 8px 24px #0003}
+#frMasterScopePanel{position:fixed;inset:0;z-index:100000;background:#100b18eF;display:none;overflow:auto;padding:18px}
+#frMasterScopePanel.open{display:block}
+.fr-master-scope-inner{max-width:760px;margin:24px auto;background:#fff;color:#251a35;border-radius:20px;padding:20px;max-height:calc(100vh - 48px);overflow:auto}
+.fr-master-scope-inner h2{margin:0 0 8px}.fr-master-scope-inner h3{margin:18px 0 8px;font-size:15px;color:#51258b}
+.fr-scope-item{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #eeeaf3;font-size:13px}
+.fr-scope-item input{width:18px;height:18px;accent-color:#5b2aa0;flex:none;margin:0}.fr-scope-note{font-size:12px;color:#685d75;line-height:1.5}
+</style>
+<button id="frMasterScopeFab" type="button" onclick="frToggleMasterScope(true)">✓ Master Scope</button>
+<div id="frMasterScopePanel" role="dialog" aria-modal="true" aria-label="Approved FRIEND RIDE feature scope">
+ <div class="fr-master-scope-inner">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><small style="color:#69449a;font-weight:800">FRIEND RIDE V8 • APPROVED SCOPE</small><h2>Master Feature Checklist</h2></div><button type="button" class="btn light" onclick="frToggleMasterScope(false)">Close ✕</button></div>
+  <p class="fr-scope-note"><b>All items below are marked as approved requirements</b> based on your instruction and screenshot. This is not a test report: no feature is marked technically PASS until it is actually tested.</p>
+  <div id="frMasterScopeChecks">
+   <h3>Customer & Rides</h3>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Mobile OTP login, customer profile and full address</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Bike, Auto, Car booking, fare, pickup and drop</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Ride history, live driver tracking, SOS and support</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Shop, food, parcel and home-service discovery</label>
+   <h3>FRIEND MART Catalogue & Stores</h3>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Amazon / Flipkart style visual product grid, search and filters</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Real product photos, product name, unit, stock and details</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner-set selling / offer price or Ask Price when blank</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Master catalogue plus partner-specific products and photos</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Grocery, Kirana, supermarket, rice, pulses, dairy and water</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Chicken, mutton, fish, seafood and egg shops</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Medical, pharmacy, surgical and healthcare products</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Electronics, electrical, mobile and accessories</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Hardware, cement, steel, paints, plumbing and tiles</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Fruits, vegetables, bakery, sweets, food and restaurants</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Fashion, clothing, footwear, cosmetics, furniture and agriculture</label>
+   <h3>Partner & Orders</h3>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner registration, passport photo, approval and dashboard</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Product photo upload/capture, edit price, offer, stock and availability</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Real-time new-order alert, customer name, phone, Call, WhatsApp and address</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner quote, customer accept/counter-offer and quote notifications</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner earnings only from verified ledger/payment records</label>
+   <h3>Payment, Delivery & Rating</h3>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Secure gateway payment, webhook verification and payment status</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Payment verification required before preparation / completion gates</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Approved online nearby driver request and single-driver assignment</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner sees assigned driver details and live location</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Customer sees picked-up / on-the-way status, driver details and live GPS</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Animated bike-on-route indicator on customer tracking map</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Customer delivery OTP; verify before marking delivery complete</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Partner receives completed status and customer can rate/review partner</label>
+   <h3>Driver, Home Services, Food & Parcel</h3>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Driver registration, photo, Aadhaar/licence/vehicle documents and approval</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Driver online/offline, ride/delivery requests, GPS, OTP and history</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Electrician, plumber, mason, carpenter, AC, appliance, septic and cleaning services</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Home-service provider photo, registration, approval, quote and booking</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Restaurant menu/photos, food orders, delivery and parcel pickup/drop tracking</label>
+   <h3>Admin, Security & Master Testing</h3>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Admin login, customer/driver/partner/service approvals and store/category management</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Order/payment monitoring, complaints, SOS, referrals, subscriptions and reports</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Role-based access, RLS, secure storage, OTP and webhook security</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> Database, RPC, RLS, photo, order, realtime, payment, GPS and delivery OTP test suite</label>
+   <label class="fr-scope-item"><input type="checkbox" checked disabled> PASS / FAIL / NEEDS REAL DEVICE TEST report</label>
+  </div>
+  <div class="notice" style="margin-top:16px">Scope approval saved in this HTML as a checklist display. Technical PASS results will be produced separately in the Master Test HTML after backend configuration and real tests.</div>
+  <button class="btn purple" style="width:100%;margin-top:10px" onclick="frToggleMasterScope(false)">Close – Scope Approved</button>
+ </div>
+</div>
+<script id="fr-master-scope-script">
+function frToggleMasterScope(open){const p=document.getElementById('frMasterScopePanel');if(p)p.classList.toggle('open',!!open)}
+// Refresh Partner Orders when Supabase Realtime reports a new/changed market order.
+let frMarketOrderRealtimeChannel=null;
+function frStartMarketOrderRealtime(){
+ if(!window.sb||!currentUser||currentProfile?.role!=='partner'||frMarketOrderRealtimeChannel)return;
+ try{frMarketOrderRealtimeChannel=sb.channel('fr-market-orders-'+currentUser.id)
+  .on('postgres_changes',{event:'*',schema:'public',table:'fr_market_orders',filter:'partner_id=eq.'+currentUser.id},()=>{loadPartnerOrders();})
+  .subscribe();
+ }catch(e){console.warn('Market order realtime subscription:',e)}
+}
+const frOldAcceptSessionForMarket=acceptSession;
+acceptSession=async function(user){const result=await frOldAcceptSessionForMarket(user);setTimeout(frStartMarketOrderRealtime,350);return result;};
+// Do not present a false completion action: secure payment and delivery-OTP enforcement is a required backend migration.
 </script>
 
 </body>
