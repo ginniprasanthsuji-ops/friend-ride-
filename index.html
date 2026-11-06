@@ -8,7 +8,7 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px Arial,sans-serif}header{background:linear-gradient(120deg,#310078,#6800c9);color:#fff;padding:16px 15px;position:sticky;top:0;z-index:5;box-shadow:0 3px 14px #21004b35}header .brand{font-size:23px;font-weight:900}header small{display:block;color:#ffe34d;font-weight:bold}main{max-width:900px;margin:auto;padding:12px 12px 85px}.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;margin:12px 0;box-shadow:0 4px 16px #33105b0c}.hero{background:linear-gradient(120deg,#300078,#7600ce);color:#fff;border-radius:18px;padding:18px}.hero h1{font-size:25px;margin:0 0 8px}.muted{color:var(--muted);font-size:13px}.hero .muted{color:#eee}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.tile{background:#faf8fd;border:1px solid var(--line);border-radius:14px;padding:12px 5px;text-align:center;font-weight:700;font-size:13px;cursor:pointer}.tile b{display:block;font-size:27px;margin-bottom:5px}.tile:active,button:active{transform:scale(.98)}h2{font-size:19px;margin:0 0 12px}.row{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}input,select,textarea{width:100%;padding:12px;border:1px solid #d9cfe6;border-radius:11px;font-size:15px;margin:5px 0 10px;background:white}button{border:0;border-radius:11px;padding:12px 15px;background:var(--p);color:white;font-weight:bold;font-size:14px;cursor:pointer}button.alt{background:#f0e9fa;color:var(--p)}button.green{background:var(--green)}button.orange{background:var(--orange)}.full{width:100%}.pill{display:inline-block;border-radius:20px;background:#eee5fa;color:var(--p);padding:5px 10px;font-size:12px;font-weight:bold}.product{border:1px solid var(--line);border-radius:14px;padding:10px}.photo{height:92px;background:linear-gradient(135deg,#f7efff,#fff);border-radius:11px;display:grid;place-items:center;font-size:48px}.price{color:#d51c36;font-weight:900;font-size:18px}.hide{display:none!important}.status{padding:11px;background:#f4effb;border-radius:10px;color:#4d3270;margin-top:9px;white-space:pre-wrap}.steps{border-left:3px solid #1aa65c;margin-left:9px;padding-left:15px}.step{margin:12px 0}.ok{color:#078c4d;font-weight:bold}.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:9px 3px;z-index:6}.nav button{background:transparent;color:#5b4a70;padding:6px;font-size:12px}.nav button.active{color:var(--p)}.screen{display:none}.screen.active{display:block}.notice{background:#fff7e7;border:1px solid #f5d79b;padding:11px;border-radius:11px;color:#684600;font-size:13px}.role{display:grid;grid-template-columns:1fr 1fr;gap:9px}.role button{background:#fff;color:var(--p);border:1px solid var(--line);padding:15px}.role button b{display:block;font-size:22px}@media(max-width:520px){.tiles{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}
 </style></head>
 <body>
-<header><div class="row"><div class="brand">🚘 FRIEND RIDE <small>V8 PRO · SUPER APP</small></div><span>🔔 <b>0</b></span></div></header>
+<header><div class="row"><button class="menu-trigger" onclick="toggleFRMenu()" aria-label="Open menu">☰</button><div class="brand">🚘 FRIEND RIDE <small>V8 PRO · SUPER APP</small></div><button class="notify-trigger" onclick="openMenuSection('notifications')">🔔</button></div></header>
 <main>
 <section class="panel" id="rolePanel"><h2>మీరు ఏ సేవను ఉపయోగించాలనుకుంటున్నారు?</h2><div class="role">
 <button onclick="enter('Customer')"><b>🧑</b>Customer</button><button onclick="enter('Driver')"><b>🏍️</b>Driver</button>
@@ -42,4 +42,81 @@ function enter(role){document.getElementById('rolePanel').classList.add('hide');
 function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));let idx={home:0,shops:1,orders:2,account:3}[id];if(idx!==undefined)document.querySelectorAll('.nav button')[idx].classList.add('active');}
 function backendNotice(feature){alert(feature+' ఇంకా మీ Supabase production backendతో అనుసంధానం చేయబడలేదు. నిజమైన చర్యగా చూపించడం లేదు.');}
 </script>
+
+<style>
+.menu-trigger,.notify-trigger{background:#ffffff20;color:#fff;border:0;border-radius:12px;min-width:42px;height:42px;font-size:22px}
+.fr-drawer-backdrop{position:fixed;inset:0;background:#13062499;z-index:100;display:none}
+.fr-drawer-backdrop.open{display:block}
+.fr-drawer{width:min(88vw,360px);height:100%;overflow:auto;background:#fff;padding:15px 14px 90px;box-shadow:12px 0 35px #12051f55}
+.fr-drawer-head{background:linear-gradient(120deg,#310078,#7200ce);color:#fff;padding:17px;border-radius:17px;margin-bottom:10px}
+.fr-drawer-head b{font-size:19px}.fr-drawer-head small{display:block;color:#eadcff;margin-top:3px}
+.fr-menu-label{padding:14px 9px 5px;color:#897d98;font-size:11px;font-weight:900;letter-spacing:.8px;text-transform:uppercase}
+.fr-menu-item{display:flex;align-items:center;gap:10px;width:100%;border:0;border-bottom:1px solid #f0ebf6;background:#fff;color:#302143;text-align:left;padding:12px 9px;font-weight:750;border-radius:8px}
+.fr-menu-item span{width:28px;font-size:19px;text-align:center}
+.fr-menu-item:active{background:#f2eaff}
+.fr-floating-launcher{position:fixed;right:16px;bottom:88px;z-index:80;border:3px solid #fff;border-radius:50%;width:62px;height:62px;background:linear-gradient(145deg,#7d20df,#350080);color:#fff;font-size:25px;font-weight:900;box-shadow:0 7px 22px #26004c55;display:grid;place-items:center}
+.fr-floating-launcher small{font-size:8px;display:block;line-height:1;margin-top:-4px}
+</style>
+<div id="frDrawerBackdrop" class="fr-drawer-backdrop" onclick="if(event.target===this)toggleFRMenu(false)">
+ <aside class="fr-drawer">
+  <div class="fr-drawer-head"><div class="row"><b>FRIEND RIDE V8 PRO</b><button onclick="toggleFRMenu(false)" style="background:#ffffff22;color:white;border:0;border-radius:9px;padding:7px 11px">✕</button></div><small>One app. Every local need.</small></div>
+  <button class="fr-menu-item" onclick="openMenuSection('home')"><span>🏠</span>Home</button>
+  <div class="fr-menu-label">Dashboards</div>
+  <button class="fr-menu-item" onclick="openMenuSection('customerDashboard')"><span>👤</span>Customer Dashboard</button>
+  <button class="fr-menu-item" onclick="openMenuSection('driverDashboard')"><span>🚗</span>Driver Dashboard</button>
+  <button class="fr-menu-item" onclick="openMenuSection('partnerDashboard')"><span>🏪</span>Partner Dashboard</button>
+  <button class="fr-menu-item" onclick="openMenuSection('adminDashboard')"><span>🛡️</span>Admin Dashboard</button>
+  <div class="fr-menu-label">Services</div>
+  <button class="fr-menu-item" onclick="openMenuSection('ride')"><span>🛵</span>Ride Booking</button>
+  <button class="fr-menu-item" onclick="openMenuSection('goods')"><span>🚚</span>Goods Delivery</button>
+  <button class="fr-menu-item" onclick="openMenuSection('parcel')"><span>📦</span>Parcel Delivery</button>
+  <button class="fr-menu-item" onclick="openMenuSection('food')"><span>🍱</span>Food Delivery</button>
+  <button class="fr-menu-item" onclick="openMenuSection('services')"><span>🧰</span>Home Services</button>
+  <button class="fr-menu-item" onclick="openMenuSection('shops')"><span>🏪</span>Local Stores</button>
+  <button class="fr-menu-item" onclick="openMenuSection('shopping')"><span>🛍️</span>Shopping</button>
+  <button class="fr-menu-item" onclick="openMenuSection('scheduled')"><span>🗓️</span>Scheduled Booking</button>
+  <div class="fr-menu-label">My Account</div>
+  <button class="fr-menu-item" onclick="openMenuSection('orders')"><span>🧾</span>My Orders & Bookings</button>
+  <button class="fr-menu-item" onclick="openMenuSection('tracking')"><span>📍</span>Live Tracking</button>
+  <button class="fr-menu-item" onclick="openMenuSection('wallet')"><span>💳</span>Wallet & Payments</button>
+  <button class="fr-menu-item" onclick="openMenuSection('offers')"><span>🎁</span>Offers & Rewards</button>
+  <button class="fr-menu-item" onclick="openMenuSection('notifications')"><span>🔔</span>Notifications</button>
+  <div class="fr-menu-label">Business & Admin</div>
+  <button class="fr-menu-item" onclick="openMenuSection('partnerOrders')"><span>🛒</span>Partner Orders</button>
+  <button class="fr-menu-item" onclick="openMenuSection('catalogue')"><span>🍽️</span>Restaurant Menu / Catalogue</button>
+  <button class="fr-menu-item" onclick="openMenuSection('subscription')"><span>💎</span>Partner Subscription</button>
+  <button class="fr-menu-item" onclick="openMenuSection('referrals')"><span>🎁</span>Partner Referrals</button>
+  <button class="fr-menu-item" onclick="openMenuSection('partnerReports')"><span>📊</span>Partner Reports</button>
+  <button class="fr-menu-item" onclick="openMenuSection('products')"><span>📦</span>Products & Stock</button>
+  <button class="fr-menu-item" onclick="openMenuSection('inventory')"><span>⚠️</span>Inventory / Low Stock</button>
+  <button class="fr-menu-item" onclick="openMenuSection('gst')"><span>🧾</span>GST Bills & Invoices</button>
+  <button class="fr-menu-item" onclick="openMenuSection('users')"><span>👥</span>User Management</button>
+  <button class="fr-menu-item" onclick="openMenuSection('driverApprovals')"><span>🪪</span>Driver Approvals</button>
+  <button class="fr-menu-item" onclick="openMenuSection('partnerApprovals')"><span>🏬</span>Partner Management</button>
+  <button class="fr-menu-item" onclick="openMenuSection('referralApprovals')"><span>🎁</span>Referral Approvals</button>
+  <button class="fr-menu-item" onclick="openMenuSection('cashRewardApprovals')"><span>💰</span>Customer Cash Reward Approvals</button>
+  <button class="fr-menu-item" onclick="openMenuSection('adminOrders')"><span>📋</span>All Orders</button>
+  <button class="fr-menu-item" onclick="openMenuSection('reports')"><span>📊</span>Reports & Analytics</button>
+  <button class="fr-menu-item" onclick="openMenuSection('paymentApprovals')"><span>💰</span>Payment & Approval Queue</button>
+  <button class="fr-menu-item" onclick="openMenuSection('platformBusinessSettings')"><span>☎️</span>Toll-Free / GST Details</button>
+  <button class="fr-menu-item" onclick="openMenuSection('settings')"><span>⚙️</span>System Settings</button>
+  <div class="fr-menu-label">More</div>
+  <button class="fr-menu-item" onclick="openMenuSection('support')"><span>❓</span>Help & Support</button>
+  <button class="fr-menu-item" onclick="openMenuSection('about')"><span>ℹ️</span>About Us</button>
+  <button class="fr-menu-item" onclick="toggleFRMenu(false);document.getElementById('rolePanel').classList.remove('hide');document.getElementById('app').classList.add('hide');document.getElementById('nav').classList.add('hide')"><span>🚪</span>Logout / Change Role</button>
+ </aside>
+</div>
+<button class="fr-floating-launcher" onclick="toggleFRMenu()" aria-label="FR Super App menu">FR<small>MENU</small></button>
+<script>
+function toggleFRMenu(force){const d=document.getElementById('frDrawerBackdrop');if(!d)return;const open=typeof force==='boolean'?force:!d.classList.contains('open');d.classList.toggle('open',open);}
+function openMenuSection(id){
+ toggleFRMenu(false);
+ const routes={home:'home',ride:'ride',goods:'parcel',parcel:'parcel',food:'food',services:'services',shops:'shops',shopping:'shops',orders:'orders',tracking:'orders',customerDashboard:'account',driverDashboard:'account',partnerDashboard:'account',adminDashboard:'account'};
+ if(routes[id]&&typeof go==='function'){go(routes[id]);return;}
+ const labels={scheduled:'Scheduled Booking',wallet:'Wallet & Payments',offers:'Offers & Rewards',notifications:'Notifications',partnerOrders:'Partner Orders',catalogue:'Restaurant Menu / Catalogue',subscription:'Partner Subscription',referrals:'Partner Referrals',partnerReports:'Partner Reports',products:'Products & Stock',inventory:'Inventory / Low Stock',gst:'GST Bills & Invoices',users:'User Management',driverApprovals:'Driver Approvals',partnerApprovals:'Partner Management',referralApprovals:'Referral Approvals',cashRewardApprovals:'Customer Cash Reward Approvals',adminOrders:'All Orders',reports:'Reports & Analytics',paymentApprovals:'Payment & Approval Queue',platformBusinessSettings:'Toll-Free / GST Details',settings:'System Settings',support:'Help & Support',about:'About Us'};
+ document.getElementById('dashTitle').textContent=labels[id]||id;
+ if(typeof go==='function')go('account');
+}
+</script>
+
 </body></html>
