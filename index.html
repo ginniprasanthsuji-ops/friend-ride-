@@ -668,7 +668,33 @@ function updatePartnerCataloguePrice(i){
 function togglePartnerItemAvailability(i){if(!localCatalogue[i])return;localCatalogue[i].available=!localCatalogue[i].available;renderCatalogue();}
 function removeCatalogueItem(i){if(!confirm('ఈ itemను మీ catalogue preview నుంచి తొలగించాలా?'))return;localCatalogue.splice(i,1);renderCatalogue();}
 function removeCatalogueItem(i){localCatalogue.splice(i,1);renderCatalogue();}
-function submitPartnerPriceRequest(label,addressId,itemsId,partnerId,askId){const address=$(addressId).value.trim(),items=$(itemsId).value.trim(),partner=$(partnerId).value;if(!address||!items||!partner){alert('Address, items మరియు Store/Restaurant ఎంచుకోండి.');return;}if($(askId).checked){alert(label+' – Price on Requestగా వివరాలు సిద్ధంగా ఉన్నాయి. సంబంధిత Partnerకు request పంపడం, partner reply/customer approval మరియు order creation SQL + notification backendలో connect చేయాలి.');}else{alert(label+' వివరాలు validate అయ్యాయి. Cart, payment routing, tracking కోసం SQL integration అవసరం.');}}
+function submitPartnerPriceRequest(label,addressId,itemsId,partnerId,askId){
+ const address=$(addressId)?.value.trim()||'';
+ const items=$(itemsId)?.value.trim()||'';
+ const partnerSelect=$(partnerId);
+ const partnerIdValue=partnerSelect?.value||'';
+ const partnerName=partnerSelect?.selectedOptions?.[0]?.textContent?.trim()||'';
+ const isStore=String(label||'').toLowerCase().includes('store');
+ if(!currentUser){alert('ముందుగా Customer OTP Login చేయండి.');openAuth('login');return;}
+ if(!address||!items||!partnerIdValue){alert('Delivery Address, Items మరియు Store/Restaurant ఎంచుకోండి.');return;}
+ if(isStore){
+  const found=(frApprovedStores||[]).find(x=>String(x.id)===String(partnerIdValue));
+  frActiveStore=found||{id:partnerIdValue,name:partnerName.replace(/\s*[—–-].*$/,'').trim()||'Selected Store',type:'local_store',category:'Store',area:'',art:'🏪'};
+  const storeName=frActiveStore.name||partnerName;
+  const prescriptionRequired=/prescription medicine/i.test(items);
+  if(prescriptionRequired&&!$('customerPrescriptionFile')?.files?.[0]){alert('Prescription medicines కోసం Doctor Prescription అప్‌లోడ్ చేయాలి.');return;}
+  const existing=frMarketCart.find(x=>x.name===items&&String(x.storeId)===String(partnerIdValue));
+  if(existing)existing.qty+=1;
+  else frMarketCart.push({name:items,partner:storeName,storeId:partnerIdValue,qty:1,price:null,pricing:'request',prescriptionRequired});
+  if($('marketCartAddress'))$('marketCartAddress').value=address;
+  renderMarketCart();
+  showPage('marketCart');
+  showMessage($(askId)?.checked?'మీ Store price request Cartలో చేరింది. Partner ధర నిర్ధారించిన తర్వాత Checkout చేయవచ్చు.':'మీ Store items Cartలో చేరాయి. Partner ధర నిర్ధారించిన తర్వాత Checkout చేయవచ్చు.','good');
+  return;
+ }
+ if($(askId)?.checked){alert(label+' – Price on Requestగా వివరాలు సిద్ధంగా ఉన్నాయి. Restaurant quote మరియు order creation backend ఇంకా connect చేయాలి.');}
+ else{alert(label+' వివరాలు validate అయ్యాయి. Restaurant Cart/Order backend ఇంకా connect చేయాలి.');}
+}
 function choosePlan(name,price){$('subscriptionStatus').textContent=name+' selected — ₹'+price+'/month. Payment not started; connect secure Cashfree backend before charging.';}
 function sharePartnerReferral(){const t='Join FRIEND RIDE as a local business partner. Code: '+$('referralCode').textContent;if(navigator.share)navigator.share({title:'FRIEND RIDE Partner',text:t});else if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>alert('Referral copied.'));else alert(t);}
 function filterPartnerOrders(s){$('partnerOrderList').textContent='Showing '+s+' orders. Connect live orders table to load records.';}
