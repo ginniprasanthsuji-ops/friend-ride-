@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#24105f">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>FRIEND RIDE V8 PRO – Full V8 Features</title>
+<title>FRIEND RIDE V8 PRO • Product Catalogue Test</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--purple:#5420b8;--purple2:#7b35df;--navy:#211044;--orange:#ff8a24;--bg:#f6f4fb;--ink:#201936;--muted:#77718a;--line:#e9e3f2;--green:#13875b;--red:#c83c4c;--white:#fff;--gold:#ffc65a}
@@ -202,102 +202,61 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 @media(min-width:700px){#customerCatalogueGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.fr-catalogue-photo-wrap{height:190px}}
 </style>
 
-<style id="fr-v8pro-reference-interface">
+
+<style id="friend-ride-v8pro-green-orange-purple-yellow">
 :root{
- --frp:#5100b8;--frp2:#7400d4;--frpdeep:#26005f;
- --fro:#f28a18;--fry:#ffd83d;--frbg:#f5f2fa;--frink:#25133e;
- --frline:#e8e1f0;--frgreen:#079b55;
+ --fr-green:#078a55;--fr-green-dark:#075b3d;--fr-orange:#f28a18;
+ --fr-purple:#6422b8;--fr-yellow:#ffd83d;--fr-bg:#f5f7f5;
+ --fr-ink:#24352e;--fr-line:#e3e9e4;
 }
-html,body{background:var(--frbg)!important;color:var(--frink)!important}
-.topbar,.home-topbar{
- background:linear-gradient(110deg,#300078 0%,#5100b8 58%,#7100d0 100%)!important;
- color:#fff!important;border:0!important;box-shadow:0 5px 18px #28004d30!important;
+html,body{background:var(--fr-bg)!important;color:var(--fr-ink)!important}
+.topbar,.home-topbar,.drawer-head{
+ background:linear-gradient(110deg,var(--fr-green-dark),var(--fr-green) 38%,var(--fr-purple) 76%,var(--fr-orange))!important;
+ color:#fff!important;box-shadow:0 4px 18px #153d2b24!important;
 }
-.home-topbar .menu-open{background:#ffffff20!important;color:#fff!important;border:1px solid #ffffff25!important}
-.home-topbar .location-head b,.home-topbar .location-head span{color:#fff!important}
-.home-topbar .notify-btn{background:#ffffff20!important;color:#fff!important;border-radius:13px!important}
-#frCartTop{border:1px solid #e6dcf2!important;border-radius:16px!important;box-shadow:0 4px 14px #28004d0d!important}
-.fr-role-launcher{
- background:radial-gradient(circle at 50% 0%,#7900d8 0%,#4b009d 43%,#23005b 100%)!important;
- color:#fff!important;
-}
-.fr-launcher-logo{background:linear-gradient(135deg,#ffe34d,#f28a18)!important;color:#35006d!important}
-.fr-launcher-kicker{color:#ffe66c!important}
-.fr-launcher-brand h1{color:#fff!important}
-.fr-launcher-brand p,.fr-launcher-title p{color:#eee2ff!important}
-.fr-launcher-title h2{color:#fff!important}
-.fr-role-card{
- background:#fff!important;border:1px solid #eee6f6!important;border-radius:18px!important;
- box-shadow:0 7px 20px #15002d30!important;min-height:150px!important;
-}
-.fr-role-card b{color:#4e0aa2!important}
-.fr-role-card small{color:#6f6480!important}
-.fr-role-card.customer{border-bottom:5px solid #5b0bb7!important}
-.fr-role-card.driver{border-bottom:5px solid #f28a18!important}
-.fr-role-card.partner{border-bottom:5px solid #ffd83d!important}
-.fr-role-card.admin{border-bottom:5px solid #7a20d1!important}
-.fr-role-card.home-service{border-bottom:5px solid #f28a18!important}
-.drawer-head{
- background:linear-gradient(125deg,#26005f 0%,#5900b8 65%,#f28a18 160%)!important;
- color:#fff!important;border-radius:20px!important;
-}
-.drawer .menu-label{color:#5a16ad!important;font-weight:950!important}
-.drawer .menu-item{
- background:#fff!important;border:1px solid #eee5f8!important;border-radius:12px!important;
- margin:5px 0!important;color:#2b2040!important;
-}
-.drawer .menu-item:nth-of-type(3n){border-left:5px solid var(--fro)!important}
-.drawer .menu-item:nth-of-type(3n+1){border-left:5px solid var(--fry)!important}
-.drawer .menu-item:nth-of-type(3n+2){border-left:5px solid var(--frp)!important}
-.drawer .menu-item:active,.drawer .menu-item:hover{background:#f5edff!important;color:#4e0aa2!important}
-.home-banner{
- background:linear-gradient(115deg,#26005f 0%,#5100b8 60%,#f28a18 160%)!important;
- border-radius:20px!important;box-shadow:0 7px 20px #29004d20!important;
-}
-.home-banner h1,.home-banner p,.home-banner small{color:#fff!important}
-.banner-cta{background:linear-gradient(90deg,#ffd83d,#f28a18)!important;color:#2d0757!important}
-.home-category,.category-card,.category-tile,.home-pro-service{
- border-radius:16px!important;border:1px solid #e9e0f2!important;box-shadow:0 3px 12px #29004d0b!important;
-}
+.fr-role-launcher{background:linear-gradient(145deg,var(--fr-green-dark),var(--fr-purple) 62%,var(--fr-orange))!important}
+.fr-launcher-logo{background:linear-gradient(135deg,var(--fr-yellow),var(--fr-orange))!important;color:#342000!important}
+.fr-launcher-kicker{color:var(--fr-yellow)!important}
+.fr-role-card{background:#fff!important;border:1px solid var(--fr-line)!important;border-radius:18px!important}
+.fr-role-card.customer{border-bottom:5px solid var(--fr-green)!important}
+.fr-role-card.driver{border-bottom:5px solid var(--fr-orange)!important}
+.fr-role-card.partner{border-bottom:5px solid var(--fr-purple)!important}
+.fr-role-card.admin{border-bottom:5px solid var(--fr-yellow)!important}
+.fr-role-card.home-service{border-bottom:5px solid var(--fr-green)!important}
+.drawer .menu-item{background:#fff!important;border-radius:12px!important;margin:5px 0!important}
+.drawer .menu-item:nth-of-type(4n+1){border-left:5px solid var(--fr-green)!important}
+.drawer .menu-item:nth-of-type(4n+2){border-left:5px solid var(--fr-orange)!important}
+.drawer .menu-item:nth-of-type(4n+3){border-left:5px solid var(--fr-purple)!important}
+.drawer .menu-item:nth-of-type(4n){border-left:5px solid var(--fr-yellow)!important}
+.home-banner{background:linear-gradient(110deg,var(--fr-green-dark),var(--fr-green) 48%,var(--fr-purple))!important}
+.banner-cta{background:linear-gradient(90deg,var(--fr-yellow),var(--fr-orange))!important;color:#302000!important}
 .card,.panel,.section-card,.modalbox,.shop-card,.store-card,.order-card{
- border:1px solid var(--frline)!important;border-radius:18px!important;
- box-shadow:0 4px 16px #33105b0c!important;
+ border:1px solid var(--fr-line)!important;border-radius:18px!important;box-shadow:0 4px 16px #173d2b0c!important;
 }
 button,.btn{border-radius:12px!important;font-weight:800!important}
-.btn.purple,.btn.primary,.btn:not(.light):not(.red):not(.close),button.primary{
- background:linear-gradient(110deg,#5100b8,#7600d6)!important;color:#fff!important;
-}
-.btn.orange,button.orange{background:linear-gradient(110deg,#e97908,#f6a21a)!important;color:#fff!important}
-.btn.yellow,button.yellow{background:linear-gradient(110deg,#f5c928,#ffe45b)!important;color:#3b2700!important}
-input,select,textarea{border-radius:11px!important;border-color:#d9cfe6!important}
-.market-product,.market-product-card,.fr-market-product,.product-card{
- background:#fff!important;border:1px solid #e8e1f0!important;border-radius:15px!important;
- box-shadow:0 3px 13px #27004d0d!important;overflow:hidden!important;
-}
-.market-product-art{border-radius:12px!important}
-.market-product-info .price,.fr-product-price{color:#d51c36!important;font-weight:950!important}
-.bottom{background:#fff!important;border-top:1px solid #e8e1f0!important}
-.bottom button.active{color:#5b0bb7!important}
-#frV8ProFloatingMenu{box-shadow:0 8px 24px #26004c55!important}
-@media(max-width:520px){
- .fr-launcher-brand{margin-bottom:22px!important}
- .fr-role-card{min-height:136px!important;padding:14px 12px!important}
- .home-banner{border-radius:17px!important}
-}
+.btn.purple,button.primary{background:linear-gradient(110deg,var(--fr-purple),#8745ce)!important;color:#fff!important}
+.btn.green,button.green{background:linear-gradient(110deg,var(--fr-green-dark),var(--fr-green))!important;color:#fff!important}
+.btn.orange,button.orange{background:linear-gradient(110deg,#e97908,var(--fr-orange))!important;color:#fff!important}
+.btn.yellow,button.yellow{background:linear-gradient(110deg,#f5c928,var(--fr-yellow))!important;color:#392800!important}
+input,select,textarea{border-radius:11px!important;border-color:#d5e0d8!important}
+.market-product{background:#fff!important;border:1px solid var(--fr-line)!important;border-radius:16px!important;overflow:hidden!important;box-shadow:0 4px 14px #173d2b0c!important}
+.market-product-art{background:#f1f5f1!important}
+.market-product-photo{width:100%;height:172px;object-fit:contain;background:#fff;display:block;padding:10px}
+.market-product-info{padding:12px!important}
+.market-product-info b{display:block;line-height:1.35}
+.market-product-details{font-size:12px;color:#627168;line-height:1.45;margin:5px 0 8px}
+.market-price{font-weight:900;color:#c52b36!important;margin:8px 0}
+.market-product-actions{display:flex;gap:7px;padding:0 10px 12px}
+.market-product-actions button{flex:1;margin:0!important;padding:10px 6px!important;font-size:13px!important}
+.market-product-actions .ask-price{background:linear-gradient(110deg,var(--fr-orange),#ffad35)!important;color:#321900!important}
+.market-product-actions .add-cart{background:linear-gradient(110deg,var(--fr-green-dark),var(--fr-green))!important;color:#fff!important}
+.market-search input{border:2px solid #d9e8de!important}
+.market-product-grid{gap:12px!important}
+@media(max-width:520px){.market-product-photo{height:145px}.market-product-info{padding:9px!important}}
 </style>
 
 </head>
 <body>
-
-<button id="frV8ProFloatingMenu" type="button" aria-label="Open FRIEND RIDE full menu"
- onclick="openDrawer()"
- style="position:fixed;right:15px;bottom:148px;z-index:9997;width:68px;height:68px;
- border:3px solid #fff;border-radius:50%;background:linear-gradient(145deg,#7600d6,#26005f);
- color:#fff;font-size:22px;font-weight:950;box-shadow:0 8px 24px #26004c55">
- FR<small style="display:block;font-size:9px;line-height:1">MENU</small></button>
-
-<button id="frSuperShortcut" onclick="frOpenSuperHub()" style="position:fixed;right:14px;bottom:82px;z-index:9998;border:0;border-radius:28px;padding:13px 17px;background:#5724a5;color:#fff;font-weight:800;box-shadow:0 5px 18px #25104455">FR Super App</button>
-
 
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
@@ -441,9 +400,9 @@ input,select,textarea{border-radius:11px!important;border-color:#d9cfe6!importan
    <small id="prescriptionFileStatus" class="muted">Prescription medicine cart కోసం ఫైల్ అవసరం.</small>
   </div>
   <div class="field"><label>Catalogue Category / క్యాటలాగ్ కేటగిరీ</label><select id="customerCatalogueCategorySelect" onchange="frMarketCategory=this.value;renderCustomerCatalogue()"><option value="All">All Items</option></select></div>
-  <div class="market-search"><input id="customerCatalogueSearch" placeholder="Search products in catalogue" oninput="renderCustomerCatalogue()"></div>
+  <div class="market-search"><input id="customerCatalogueSearch" placeholder="ఉదా: Paracetamol, Rice, Oil, Milk — Product పేరు టైప్ చేయండి" oninput="renderCustomerCatalogue()"></div>
   <div id="customerCatalogueGrid" class="market-product-grid"></div>
-  <div class="notice">Partner sets the selling price for each item. Items without a price can be requested from the partner.</div>
+  <div class="notice">ప్రతి Productకు చిత్రం, వివరాలు, Partner Price కనిపిస్తాయి. Partner ధర ఇవ్వకపోతే Ask Price ద్వారా ధర అడగండి.</div>
   <button class="btn purple" onclick="showPage('marketCart')">🛒 View Cart & Checkout</button>
  </div>
 </section>
@@ -924,16 +883,39 @@ function renderCustomerCatalogue(){
  const businessType=frStoreMasterType(frActiveStore.type);
  const master=(FRIEND_MASTER_ITEMS||[]).filter(x=>x.businessType===businessType);
  const fallback=FR_STORE_MENU[frActiveStore.type]||[];
- const q=($('customerCatalogueSearch')?.value||'').toLowerCase();
- const items=(master.length?master:fallback.map((x,i)=>({id:'fallback-'+i,category:x[0],name:x[1],unit:'',description:'Partner confirms price and availability.'})))
-  .filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.name+' '+x.category+' '+(x.id||'')).toLowerCase().includes(q)));
+ const q=($('customerCatalogueSearch')?.value||'').trim().toLowerCase();
+ const items=(master.length?master:fallback.map((x,i)=>({id:'fallback-'+i,businessType,category:x[0],name:x[1],baseName:x[1],unit:'',description:'Partner confirms product details, price and availability.',defaultPricing:'request'})))
+  .filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.name+' '+x.category+' '+(x.id||'')+' '+(x.description||'')).toLowerCase().includes(q)));
  const isMedical=frActiveStore.type==='medical';
  const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=isMedical?'block':'none';
  const grid=$('customerCatalogueGrid');
- if(grid)grid.innerHTML=items.map(x=>{
-  const art=frProductArt(x),name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||'');
-  return `<article class="market-product market-product-3d"><div class="market-product-art market-product-art-3d"><span class="product-art-glow"></span><span class="product-art-object">${art}</span><small>FR 3D CATALOGUE</small></div><div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small><div class="market-price">Partner price: confirm with store</div><span class="stock-mark no">Availability: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${name.replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','request')">＋ Add / Ask Price</button></article>`;
- }).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
+ if(!grid)return;
+ grid.innerHTML=items.map(x=>{
+  const name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||'');
+  const details=safe(x.description||x.baseName||x.name);
+  const photo=frCataloguePhotoUrl(x);
+  const partnerPrice=Number.isFinite(Number(x.partnerPrice))&&x.partnerPrice!==null?Number(x.partnerPrice):
+    (Number.isFinite(Number(x.offerPrice))&&x.offerPrice!==null?Number(x.offerPrice):null);
+  const priceText=partnerPrice!==null?'Partner Price: ₹'+partnerPrice.toFixed(2):'ధర తెలియదు — Ask Price';
+  const itemName=String(x.name).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  const storeName=String(frActiveStore.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  const priceArg=partnerPrice===null?'request':String(partnerPrice);
+  const priceButton=partnerPrice===null
+   ? `<button class="ask-price" onclick="addMarketCart('${itemName}','${storeName}','request')">Ask Price</button>`
+   : `<button class="add-cart" onclick="addMarketCart('${itemName}','${storeName}','${priceArg}')">＋ Add to Cart</button>`;
+  return `<article class="market-product">
+    <img class="market-product-photo" src="${photo}" alt="${name}" loading="lazy" referrerpolicy="no-referrer" onerror="frCatalogueImageFallback(this)">
+    <div class="market-product-art market-product-fallback" style="display:none;min-height:145px;place-items:center;font-size:48px">${frProductArt(x)}</div>
+    <div class="market-product-info">
+      <b>${name}</b>
+      <small class="muted">${cat}${unit?' • '+unit:''}</small>
+      <div class="market-product-details">${details}</div>
+      <div class="market-price">${priceText}</div>
+      ${x.prescriptionCheck?'<small class="stock-mark no">Prescription verification required</small>':'<small class="stock-mark yes">Partner availability confirmation required</small>'}
+    </div>
+    <div class="market-product-actions">${priceButton}</div>
+   </article>`;
+ }).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు. Search మార్చి చూడండి.</div>';
 }
 function renderRestaurantList(){
  const q=($('restaurantSearch')?.value||'').toLowerCase(),el=$('restaurantVisualList');if(!el)return;
@@ -1824,7 +1806,6 @@ loadMasterItems=function(){frOldLoadMasterItems();if(currentProfile?.role==='par
 .fr-scope-item{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #eeeaf3;font-size:13px}
 .fr-scope-item input{width:18px;height:18px;accent-color:#5b2aa0;flex:none;margin:0}.fr-scope-note{font-size:12px;color:#685d75;line-height:1.5}
 </style>
-<button id="frMasterScopeFab" type="button" onclick="frToggleMasterScope(true)">✓ Master Scope</button>
 <div id="frMasterScopePanel" role="dialog" aria-modal="true" aria-label="Approved FRIEND RIDE feature scope">
  <div class="fr-master-scope-inner">
   <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><small style="color:#69449a;font-weight:800">FRIEND RIDE V8 • APPROVED SCOPE</small><h2>Master Feature Checklist</h2></div><button type="button" class="btn light" onclick="frToggleMasterScope(false)">Close ✕</button></div>
@@ -1893,6 +1874,27 @@ function frStartMarketOrderRealtime(){
 const frOldAcceptSessionForMarket=acceptSession;
 acceptSession=async function(user){const result=await frOldAcceptSessionForMarket(user);setTimeout(frStartMarketOrderRealtime,350);return result;};
 // Do not present a false completion action: secure payment and delivery-OTP enforcement is a required backend migration.
+</script>
+
+
+<script id="fr-real-catalogue-photo-helper">
+function frCataloguePhotoUrl(item){
+ const name=String(item.baseName||item.name||'product').replace(/[–—]/g,' ').trim();
+ const bt=String(item.businessType||'');
+ const context=bt==='medical'?'medicine pharmacy product packaging':
+ bt==='restaurant'?'Indian food dish':
+ bt==='vegetables'?'fresh vegetable fruit produce':
+ 'grocery retail product packaging';
+ const q=(name+' '+context).slice(0,110);
+ let hash=0;for(let i=0;i<String(item.id||name).length;i++)hash=(hash*31+String(item.id||name).charCodeAt(i))>>>0;
+ return 'https://loremflickr.com/640/640/'+encodeURIComponent(q)+'?lock='+(hash%100000);
+}
+function frCatalogueImageFallback(img){
+ img.onerror=null;
+ const card=img.closest('.market-product');
+ if(card){const art=card.querySelector('.market-product-fallback');if(art)art.style.display='grid';}
+ img.style.display='none';
+}
 </script>
 
 </body>
