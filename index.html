@@ -271,9 +271,9 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <button class="home-pro-service" style="--svc-a:#ffd9e5;--svc-b:#f58aaa" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🖌️</span><b>Painting</b></button>
  </div>
  <div class="home-pro-services">
-  <button class="home-pro-service" style="--svc-a:#ffe7c2;--svc-b:#f59e0b" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🍽️</span><b>Catering Services</b></button>
-  <button class="home-pro-service" style="--svc-a:#d9eafe;--svc-b:#6288e8" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🎧</span><b>DJ – Sound &amp; Lights</b></button>
-  <button class="home-pro-service" style="--svc-a:#ffe0ec;--svc-b:#ec78a7" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">💄</span><b>Beauty Makeover</b></button>
+  <button class="home-pro-service" style="--svc-a:#ffe7c2;--svc-b:#f59e0b" onclick="requireLogin(()=>openEventService('Catering Services'))"><span class="home-pro-art">🍽️</span><b>Catering Services</b></button>
+  <button class="home-pro-service" style="--svc-a:#d9eafe;--svc-b:#6288e8" onclick="requireLogin(()=>openEventService('DJ – Sound & Lights'))"><span class="home-pro-art">🎧</span><b>DJ – Sound &amp; Lights</b></button>
+  <button class="home-pro-service" style="--svc-a:#ffe0ec;--svc-b:#ec78a7" onclick="requireLogin(()=>openEventService('Beauty Makeover'))"><span class="home-pro-art">💄</span><b>Beauty Makeover</b></button>
  </div>
  <div class="home-section-title"><h2>More Services</h2><button onclick="showPage('explore')">View All →</button></div>
  <div class="home-more-grid"><button onclick="requireLogin(()=>showPage('parcel'))">📦<b>Parcel</b></button><button onclick="requireLogin(()=>showPage('goods'))">🚚<b>Goods</b></button><button onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b></button><button onclick="requireLogin(()=>showPage('scheduled'))">🗓️<b>Schedule</b></button></div>
@@ -289,11 +289,102 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <button class="tile" onclick="showPage('shops')">🏪<b>Local Stores</b></button>
 <button class="tile" onclick="showPage('shopping')">🛍️<b>Shopping</b></button>
 <button class="tile" onclick="showPage('scheduled')">🗓️<b>Scheduled Booking</b></button>
-<button class="tile" onclick="showPage('homeServices')">🍽️<b>Catering Services</b><small>Events & functions</small></button>
-<button class="tile" onclick="showPage('homeServices')">🎧<b>DJ – Sound & Lights</b><small>Events & celebrations</small></button>
-<button class="tile" onclick="showPage('homeServices')">💄<b>Beauty Makeover</b><small>Makeup & styling</small></button>
+<button class="tile" onclick="showPage('bankingServices')">🏦<b>Banking &amp; Financial Services</b><small>Banking • Insurance • Bill payments</small></button>
+<button class="tile" onclick="openEventService('Catering Services')">🍽️<b>Catering Services</b><small>Events & functions</small></button>
+<button class="tile" onclick="openEventService('DJ – Sound & Lights')">🎧<b>DJ – Sound & Lights</b><small>Events & celebrations</small></button>
+<button class="tile" onclick="openEventService('Beauty Makeover')">💄<b>Beauty Makeover</b><small>Makeup & styling</small></button>
 </div></div>
 <div class="card"><h3>💳 Service & Delivery Charges</h3><div class="notice"><b>Platform Charge: 2.5%</b><br>Eligible order/service valueపై 2.5% platform charge వర్తిస్తుంది.</div><p class="muted">Delivery charges location, distance, service type మరియు delivery partner quote ఆధారంగా మారవచ్చు. Final delivery charge మరియు total amount booking/checkout confirm చేసే ముందు చూపించాలి.</p></div></section>
+
+<section id="eventServices" class="page">
+ <div class="card">
+  <button class="btn light" style="width:auto" onclick="showPage('home')">← Back to Home</button>
+  <h2 id="eventServiceHeading">Event & Personal Services</h2>
+  <p class="muted">Catering, DJ / Sound & Lights, Beauty Makeover — ఇవి Home Technician Services నుండి వేరుగా బుక్ చేయండి.</p>
+  <div class="field"><label>Select Service</label>
+   <select id="eventServiceType" onchange="frUpdateEventServiceHeading()">
+    <option value="Catering Services">🍽️ Catering Services</option>
+    <option value="DJ – Sound & Lights">🎧 DJ – Sound & Lights</option>
+    <option value="Beauty Makeover">💄 Beauty Makeover</option>
+   </select>
+  </div>
+  <div class="field"><label>Event / Service Date</label><input id="eventServiceDate" type="date"></div>
+  <div class="field"><label>Preferred Time</label><input id="eventServiceTime" type="time"></div>
+  <div class="field"><label>Venue / Full Address</label><textarea id="eventServiceAddress" placeholder="Enter function hall, home or service location"></textarea></div>
+  <div class="field"><label>Number of Guests (Catering only)</label><input id="eventServiceGuests" type="number" min="1" placeholder="Approximate guest count"></div>
+  <div class="field"><label>Requirements / Details</label><textarea id="eventServiceDetails" placeholder="Menu and food requirements / DJ setup and lighting / Makeup and styling requirements"></textarea></div>
+  <div class="notice">మీ వివరాలు నమోదు చేసి quote కోసం request చేయవచ్చు. Provider availability, price and booking confirmation backend connection తర్వాత enable అవుతాయి.</div>
+  <button class="btn purple" onclick="showMessage('Event service request form సిద్ధంగా ఉంది. Booking submission కోసం event-service backend table/RPC mapping అవసరం.','good')">Request a Quote</button>
+  <div class="notice"><b>మీరు Service Providerనా?</b> Catering, DJ / Sound &amp; Lights లేదా Beauty Makeover providerగా చేరడానికి registration చేయండి.</div>
+  <button class="btn light" onclick="openServiceProviderRegister(document.getElementById('eventServiceType').value)">Register as Service Provider</button>
+ </div>
+</section>
+
+<section id="serviceProviderRegister" class="page">
+ <div class="card">
+  <button class="btn light" style="width:auto" onclick="showPage('home')">← Back</button>
+  <h2>FRIEND RIDE – Service Provider Registration</h2>
+  <p class="muted">Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
+  <div class="field"><label>Service Category *</label>
+   <select id="spCategory">
+    <option value="Home Services">Home Services</option>
+    <option value="Catering Services">Catering Services</option>
+    <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
+    <option value="Beauty Makeover">Beauty Makeover</option>
+   </select>
+  </div>
+  <div class="field"><label>Owner / Provider Full Name *</label><input id="spName" placeholder="Enter full name"></div>
+  <div class="field"><label>Mobile Number *</label><input id="spPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"></div>
+  <div class="field"><label>Business / Service Name</label><input id="spBusinessName" placeholder="Business or service name"></div>
+  <div class="field"><label>Complete Address *</label><textarea id="spAddress" placeholder="House, street, village, mandal, district, PIN"></textarea></div>
+  <div class="field"><label>Profile Photo / Passport-size Photo * Required</label><input id="spPhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="user"></div>
+  <div class="field"><label>Aadhaar Card Document * Required (JPG / PNG / PDF)</label><input id="spAadhaarFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"></div>
+  <div class="field"><label>Work Experience (Years)</label><input id="spExperience" type="number" min="0" placeholder="Years of experience"></div>
+  <div class="field"><label>Service Details / Skills</label><textarea id="spDetails" placeholder="Describe your services, equipment, menu, packages or skills"></textarea></div>
+  <div class="field"><label>UPI ID / Payment Contact (Optional)</label><input id="spUPI" placeholder="name@upi"></div>
+  <label class="tiny"><input id="spTerms" type="checkbox" style="width:auto"> I agree to verification, Terms &amp; Privacy Policy *</label>
+  <div class="notice">Photo and Aadhaar document are for verification only. Keep documents in a private Supabase Storage bucket with restricted Admin access; do not make Aadhaar files public. Registration will remain Pending until Admin verification and approval.</div>
+  <button class="btn purple" onclick="validateServiceProviderRegistration()">Submit Provider Application</button>
+  <div id="spRegStatus" class="notice">Application details will be checked before submission.</div>
+ </div>
+</section>
+
+<section id="bankingServices" class="page">
+ <div class="fr-bank-shell">
+  <div class="fr-bank-hero">
+   <div class="fr-bank-hero-top"><button class="fr-bank-back" onclick="showPage('explore')">← Back</button><span class="fr-bank-pill">FRIEND RIDE • FINANCE HUB</span></div>
+   <div class="fr-bank-hero-copy"><span class="fr-bank-kicker">SMART MONEY. BETTER TOMORROW.</span><h1>Banking &amp; Financial Services</h1><p>Banking guidance, financial learning and service connections — all in one place.</p></div>
+   <div class="fr-bank-hero-art">🏦<span>₹</span></div>
+   <div class="fr-bank-quick"><div><b>01</b><small>Learn</small></div><div><b>02</b><small>Explore</small></div><div><b>03</b><small>Connect</small></div></div>
+  </div>
+  <div class="fr-bank-section-head"><div><span>OUR DIGITAL PLATFORMS</span><h2>Explore Our Finance Platforms</h2><p>Open either platform directly from FRIEND RIDE.</p></div></div>
+  <div class="fr-bank-platforms">
+   <a class="fr-bank-platform institute" href="https://fineducationinstitute.online" target="_blank" rel="noopener noreferrer"><span class="fr-bank-platform-icon">🎓</span><span class="fr-bank-platform-tag">FINANCIAL EDUCATION</span><b>Finance Education Institute</b><small>Financial knowledge, learning resources and educational guidance.</small><span class="fr-bank-platform-cta">Visit Website ↗</span></a>
+   <a class="fr-bank-platform space" href="https://finedcation.space" target="_blank" rel="noopener noreferrer"><span class="fr-bank-platform-icon">🌐</span><span class="fr-bank-platform-tag">FINANCE DIGITAL SPACE</span><b>Fine Education Space</b><small>Explore the Fine Education Space platform and its available resources.</small><span class="fr-bank-platform-cta">Visit Website ↗</span></a>
+  </div>
+  <div class="fr-bank-section-head"><div><span>FRIEND RIDE SERVICES</span><h2>Banking &amp; Financial Assistance</h2><p>Select a service to request information.</p></div></div>
+  <div class="fr-bank-service-grid">
+   <button class="fr-bank-service" onclick="frSelectBankService('Bank Account Services')"><i>🏦</i><b>Bank Account Services</b><small>Account opening guidance / branch assistance</small></button>
+   <button class="fr-bank-service" onclick="frSelectBankService('Insurance Services')"><i>🛡️</i><b>Insurance Services</b><small>Life, health and motor insurance enquiries</small></button>
+   <button class="fr-bank-service" onclick="frSelectBankService('Loan Enquiry')"><i>💳</i><b>Loan Enquiry</b><small>Home, vehicle and business loan enquiries</small></button>
+   <button class="fr-bank-service" onclick="frSelectBankService('Bill Payments')"><i>🧾</i><b>Bill Payments</b><small>Utility and recharge payment assistance</small></button>
+   <button class="fr-bank-service" onclick="frSelectBankService('Financial Service Assistance')"><i>📊</i><b>Financial Assistance</b><small>Connect with verified service providers</small></button>
+   <button class="fr-bank-service" onclick="frSelectBankService('Digital Banking Help')"><i>📱</i><b>Digital Banking Help</b><small>Digital banking usage assistance</small></button>
+  </div>
+  <div class="fr-bank-enquiry">
+   <div><span class="fr-bank-kicker">NEED PERSONAL ASSISTANCE?</span><h2>Request a Service Enquiry</h2><p>Choose a category and share your contact details. A secure enquiry workflow must be connected before submissions are stored.</p></div>
+   <div class="field"><label>Selected Service</label><input id="bankServiceSelected" readonly placeholder="Select a service above"></div>
+   <div class="field"><label>Your Name</label><input id="bankCustomerName" placeholder="Full name"></div>
+   <div class="field"><label>Mobile Number</label><input id="bankCustomerPhone" maxlength="10" inputmode="numeric" placeholder="10 digit mobile"></div>
+   <div class="field"><label>Area / City</label><input id="bankCustomerArea" placeholder="Your location"></div>
+   <button class="btn purple" onclick="frSubmitBankEnquiry()">Request Service Information</button>
+  </div>
+  <div class="fr-bank-safety"><b>🔐 Financial Safety Notice</b><p>Use only RBI-regulated banks, IRDAI-authorised insurers/intermediaries and appropriately authorised providers. Never share bank passwords, UPI PINs, card PINs, CVVs or OTPs. FRIEND RIDE does not approve loans, sell investments or guarantee financial returns.</p></div>
+ </div>
+</section>
+<style id="fr-bank-dashboard-style">
+.fr-bank-shell{max-width:1050px;margin:0 auto;padding:4px 0 24px}.fr-bank-hero{position:relative;overflow:hidden;border-radius:26px;padding:22px;color:#fff;background:radial-gradient(circle at 90% 12%,#5ca9d8 0,transparent 30%),linear-gradient(125deg,#102a43,#155e75 58%,#1c7c78);box-shadow:0 16px 35px #10384a25}.fr-bank-hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.fr-bank-back{border:1px solid #ffffff55;background:#ffffff18;color:#fff;border-radius:12px;padding:9px 13px}.fr-bank-pill,.fr-bank-kicker,.fr-bank-platform-tag{font-size:10px;letter-spacing:1.4px;font-weight:800}.fr-bank-hero-copy{position:relative;z-index:1;max-width:620px;padding:28px 0 20px}.fr-bank-hero h1{font-size:clamp(27px,6vw,42px);line-height:1.08;margin:9px 0;color:#fff}.fr-bank-hero p{color:#e0f2f1;max-width:480px}.fr-bank-hero-art{position:absolute;right:7%;top:28%;font-size:100px;opacity:.22}.fr-bank-hero-art span{font-size:40px;position:absolute;top:10px;left:35px}.fr-bank-quick{display:flex;gap:10px}.fr-bank-quick div{background:#ffffff18;border:1px solid #ffffff30;border-radius:13px;padding:9px 14px;min-width:75px}.fr-bank-quick b,.fr-bank-quick small{display:block}.fr-bank-quick small{color:#d5eeee}.fr-bank-section-head{margin:24px 2px 12px}.fr-bank-section-head span{font-size:10px;letter-spacing:1.5px;color:#178078;font-weight:800}.fr-bank-section-head h2{margin:5px 0;font-size:21px}.fr-bank-section-head p{margin:0;color:#75818c;font-size:13px}.fr-bank-platforms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.fr-bank-platform{display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;color:#1c2933;border-radius:20px;padding:18px;min-height:210px;box-shadow:0 9px 24px #132b3a12;border:1px solid #e3ebef}.fr-bank-platform.institute{background:linear-gradient(145deg,#fff8e9,#fff 70%);border-top:4px solid #d49b34}.fr-bank-platform.space{background:linear-gradient(145deg,#eaf4ff,#fff 70%);border-top:4px solid #438acb}.fr-bank-platform-icon{font-size:30px;margin-bottom:10px}.fr-bank-platform-tag{font-size:9px;color:#62717c}.fr-bank-platform b{font-size:17px;margin:7px 0}.fr-bank-platform small{color:#65727d;line-height:1.5}.fr-bank-platform-cta{margin-top:auto;padding-top:14px;font-weight:800;color:#176c75}.fr-bank-service-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.fr-bank-service{display:flex;flex-direction:column;text-align:left;gap:6px;padding:15px;border:1px solid #e3eaf0;border-radius:16px;background:#fff;color:#20303c;min-height:130px}.fr-bank-service i{font-style:normal;font-size:25px}.fr-bank-service b{font-size:13px}.fr-bank-service small{font-size:11px;color:#73808b;line-height:1.4}.fr-bank-enquiry{margin-top:22px;padding:19px;border-radius:20px;background:#f2f7f8;border:1px solid #e0ebed}.fr-bank-enquiry h2{margin:6px 0}.fr-bank-enquiry p{font-size:13px;color:#687780}.fr-bank-safety{margin-top:14px;padding:14px;border-radius:14px;background:#fff8e9;border:1px solid #f1dfb8;font-size:12px;color:#66532b}.fr-bank-safety p{margin:6px 0 0;line-height:1.5}@media(max-width:560px){.fr-bank-platforms{grid-template-columns:1fr}.fr-bank-service-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fr-bank-hero-art{right:2%;font-size:76px;top:35%}.fr-bank-pill{font-size:8px}}
+</style>
 
 <section id="ride" class="page"><div class="card"><h2>Book a Ride</h2><div class="row"><button class="btn purple" onclick="setRideType('Bike')">🏍️ Bike</button><button class="btn light" onclick="setRideType('Auto')">🛺 Auto</button><button class="btn light" onclick="setRideType('Car')">🚘 Car</button></div><div class="field"><label>Pickup Location</label><textarea id="pickup" placeholder="Pickup address / current location"></textarea></div><div class="field"><label>Drop Location</label><textarea id="drop" placeholder="Enter drop location"></textarea></div><div class="field"><label>Your Fare Offer (Negotiable) ₹</label><div class="row"><button class="btn light" onclick="adjustFare(-10)">−</button><input id="fare" type="number" min="1" value="100"><button class="btn light" onclick="adjustFare(10)">+</button></div><small class="muted">మీరు మీకు అనుకూలమైన ధరను ఆఫర్ చేయవచ్చు.</small></div><div class="field"><label>Ride Time</label><select id="rideWhen"><option value="now">Now – Ride immediately</option><option value="later">Schedule for later</option></select></div><div class="field"><label>Notes (Optional)</label><textarea id="rideNotes" placeholder="Passengers, luggage, pickup details..."></textarea></div><div class="field"><label>Fare Negotiation</label><div class="inline-actions"><button class="btn light" onclick="setFarePreset(80)">₹80</button><button class="btn light" onclick="setFarePreset(100)">₹100</button><button class="btn light" onclick="setFarePreset(150)">₹150</button></div><div class="notice">మీ Ride Requestకు దగ్గరలోని డ్రైవర్ల నుంచి స్పందనలు వస్తాయి.</div></div><div id="rideOfferPanel" class="empty-state">Booking చేసిన తర్వాత driver offers ఇక్కడ కనిపిస్తాయి.</div><button class="btn purple" onclick="saveRideRequest()">Find Drivers</button><div class="notice">మీ ప్రయాణానికి సరైన డ్రైవర్‌ను కనుగొనడానికి Find Drivers నొక్కండి.</div></div></section>
 
@@ -328,7 +419,8 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="shopping" class="page"><div class="card"><h2>Shopping</h2><div class="field"><label>What do you need?</label><textarea id="shoppingItems" placeholder="List your items"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="shoppingAddress"></textarea></div><button class="btn purple" onclick="simpleRequest('Shopping request','shoppingAddress','shoppingItems')">Submit Shopping Request</button></div></section>
 
-<section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painting</option><option>Carpenter</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Choose technician (approved technicians load from database)</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">Minimum advance payment: ₹50. Booking request is confirmed only after server verifies the advance payment.</div><button class="btn purple" onclick="submitServiceRequest()">Pay ₹50 Advance & Book</button></div><div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button></div></section>
+<section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painting</option><option>Carpenter</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Choose technician (approved technicians load from database)</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">Minimum advance payment: ₹50. Booking request is confirmed only after server verifies the advance payment.</div><button class="btn purple" onclick="submitServiceRequest()">Pay ₹50 Advance & Book</button></div><div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
+  <button class="btn purple" onclick="openServiceProviderRegister('Home Services')">Register as Home Service Provider</button></div></section>
 
 <section id="storeBrowse" class="page">
  <div class="card">
@@ -1729,6 +1821,56 @@ acceptSession=async function(user){const result=await frOldAcceptSessionForMarke
 // Do not present a false completion action: secure payment and delivery-OTP enforcement is a required backend migration.
 </script>
 
+<script id="fr-event-service-navigation">
+function openEventService(serviceName){
+ const sel=document.getElementById('eventServiceType');
+ if(sel && serviceName) sel.value=serviceName;
+ frUpdateEventServiceHeading();
+ showPage('eventServices');
+}
+function frUpdateEventServiceHeading(){
+ const sel=document.getElementById('eventServiceType');
+ const title=document.getElementById('eventServiceHeading');
+ if(sel && title) title.textContent=sel.value+' Booking';
+}
+</script>
+<script id="fr-provider-banking-navigation">
+function openServiceProviderRegister(category){
+ const el=document.getElementById('spCategory');
+ if(el && category) el.value=category;
+ showPage('serviceProviderRegister');
+}
+function validateServiceProviderRegistration(){
+ const required=['spName','spPhone','spAddress'];
+ if(required.some(id=>!document.getElementById(id)?.value.trim())){
+  alert('పేరు, మొబైల్ నంబర్ మరియు పూర్తి చిరునామా నమోదు చేయండి.');return;
+ }
+ const phone=document.getElementById('spPhone').value.replace(/\\D/g,'');
+ if(phone.length!==10){alert('సరైన 10 digit mobile number ఇవ్వండి.');return;}
+ const photo=document.getElementById('spPhoto').files[0];
+ const aadhaar=document.getElementById('spAadhaarFile').files[0];
+ if(!photo || !['image/jpeg','image/png','image/webp'].includes(photo.type) || photo.size>3*1024*1024){
+  alert('Passport-size photo JPG/PNG/WEBP formatలో 3 MB లోపు తప్పనిసరి.');return;
+ }
+ if(!aadhaar || !(['image/jpeg','image/png','image/webp','application/pdf'].includes(aadhaar.type)) || aadhaar.size>5*1024*1024){
+  alert('Aadhaar document JPG/PNG/WEBP/PDF formatలో 5 MB లోపు తప్పనిసరి.');return;
+ }
+ if(!document.getElementById('spTerms').checked){alert('Terms & Privacy Policy అంగీకరించండి.');return;}
+ const status=document.getElementById('spRegStatus');
+ status.textContent='Form validation complete. Secure document upload, database application save and Admin approval require the service-provider backend migration.';
+ alert('Registration details validate అయ్యాయి. Backend integration తర్వాత application submit మరియు document upload పూర్తవుతాయి.');
+}
+function frSelectBankService(name){
+ const el=document.getElementById('bankServiceSelected');if(el)el.value=name;
+}
+function frSubmitBankEnquiry(){
+ const service=document.getElementById('bankServiceSelected')?.value;
+ const name=document.getElementById('bankCustomerName')?.value.trim();
+ const phone=document.getElementById('bankCustomerPhone')?.value.replace(/\\D/g,'');
+ if(!service || !name || phone.length!==10){alert('Service, పేరు మరియు సరైన 10 digit mobile number ఇవ్వండి.');return;}
+ alert('Banking service enquiry form validate అయ్యింది. Secure enquiry backend integration ఇంకా అవసరం.');
+}
+</script>
 </body>
 </html>
 <style>
