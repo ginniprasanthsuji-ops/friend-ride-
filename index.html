@@ -190,6 +190,17 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 @media(min-width:700px){#customerCatalogueGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.market-product-art{height:150px}}
 </style>
 
+
+<style id="fr-v8-real-master-catalogue-photos">
+#customerCatalogueGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fr-catalogue-photo-wrap{height:155px;position:relative;background:#f5f2f8;overflow:hidden;border-radius:15px;margin:8px 8px 0}
+.fr-catalogue-photo{display:block;width:100%;height:100%;object-fit:cover;background:#f5f2f8}
+.fr-photo-label{position:absolute;left:7px;bottom:7px;background:#24153bd9;color:#fff;padding:3px 7px;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.04em}
+.fr-product-price{font-size:17px;color:#24153b}.fr-ask-price{font-size:15px;color:#6b35b1}
+.market-product-info{min-width:0}.market-product-info b{display:block;line-height:1.35;min-height:36px}
+.market-product .btn:disabled{opacity:.45;cursor:not-allowed}
+@media(min-width:700px){#customerCatalogueGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.fr-catalogue-photo-wrap{height:190px}}
+</style>
 </head>
 <body>
 <button id="frSuperShortcut" onclick="frOpenSuperHub()" style="position:fixed;right:14px;bottom:82px;z-index:9998;border:0;border-radius:28px;padding:13px 17px;background:#5724a5;color:#fff;font-weight:800;box-shadow:0 5px 18px #25104455">FR Super App</button>
@@ -1575,23 +1586,79 @@ async function updatePartnerCataloguePrice(i){
 async function togglePartnerItemAvailability(i){const x=localCatalogue[i];if(!x)return;x.available=!x.available;try{await frSavePartnerCatalogueRecord(x);renderCatalogue();}catch(e){x.available=!x.available;alert('Availability Save కాలేదు: '+(e.message||e));}}
 
 // Customer sees only this approved shop's published catalogue, with actual uploaded product photos and partner prices.
+// Master catalogue photos are fetched as real product/category photographs; partner-uploaded photos override them.
+const frCustomerCatalogueItems = new Map();
+function frMasterPhotoQuery(item){
+ const text=((item?.baseName||item?.name||'')+' '+(item?.category||'')).toLowerCase();
+ if(/chicken|poultry/.test(text))return 'fresh raw chicken pieces food';
+ if(/mutton|lamb|goat meat/.test(text))return 'fresh mutton meat cuts';
+ if(/fish|seafood|prawn|shrimp/.test(text))return 'fresh fish seafood market';
+ if(/egg/.test(text))return 'fresh eggs tray';
+ if(/rice|grain|flour|atta|dal|pulse|wheat|rava|poha/.test(text))return 'rice grains pulses grocery';
+ if(/fruit|apple|banana|orange|mango|grape|papaya/.test(text))return 'fresh fruits market';
+ if(/vegetable|tomato|potato|onion|carrot|chilli|spinach/.test(text))return 'fresh vegetables market';
+ if(/milk|dairy|curd|paneer|cheese|butter/.test(text))return 'milk dairy products';
+ if(/medicine|tablet|capsule|syrup|medical|pharma|ors|bandage|thermometer/.test(text))return 'pharmacy medicine products';
+ if(/soap|shampoo|toothpaste|sanitizer|cosmetic/.test(text))return 'personal care products';
+ if(/wire|switch|socket|bulb|led|fan|electrical|cable|charger/.test(text))return 'electrical supplies product';
+ if(/hardware|tool|paint|cement|pipe|drill|hammer/.test(text))return 'hardware tools products';
+ if(/phone|mobile|headphone|speaker|electronic|battery/.test(text))return 'electronics accessories products';
+ if(/bread|cake|biscuit|cookie|bakery|sweet|chocolate/.test(text))return 'bakery sweets products';
+ if(/biryani|meal|snack|food|curry|restaurant|tiffin/.test(text))return 'Indian food dish';
+ if(/shirt|dress|clothing|saree|shoe|footwear/.test(text))return 'clothing apparel product';
+ if(/furniture|chair|table|mattress/.test(text))return 'home furniture product';
+ return (item?.category||'Indian retail product')+' product';
+}
+function frMasterPhotoUrl(item){
+ const query=frMasterPhotoQuery(item);
+ const seed=String(item?.id||item?.name||'FR').split('').reduce((a,c)=>((a*31)+c.charCodeAt(0))>>>0,7)%10000;
+ return 'https://loremflickr.com/640/480/'+encodeURIComponent(query)+'?lock='+seed;
+}
+function frAddMasterCatalogueItem(sku){
+ const x=frCustomerCatalogueItems.get(String(sku));if(!x||!frActiveStore)return;
+ if(x.saved?.id){frAddPartnerCatalogueItem(x.saved.id);return;}
+ addMarketCart(x.name,frActiveStore.name,'request');
+ const last=frMarketCart[frMarketCart.length-1];
+ if(last&&last.name===x.name&&String(last.storeId)===String(frActiveStore.id)){last.masterSku=x.id;last.imageUrl=x.image_url||frMasterPhotoUrl(x);}
+ renderMarketCart();
+}
 async function renderCustomerCatalogue(){
  if(!frActiveStore)return;
  const grid=$('customerCatalogueGrid');if(!grid)return;
- grid.innerHTML='<div class="notice">Partner Catalogue loading…</div>';
+ grid.innerHTML='<div class="notice">Digital Catalogue loading…</div>';
+ const businessType=frStoreMasterType(frActiveStore.type);
+ const master=(FRIEND_MASTER_ITEMS||[]).filter(x=>x.businessType===businessType);
+ let partnerRows=[],catalogueWarning='';
  try{
-  const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:frActiveStore.id});if(error)throw error;
-  const q=($('customerCatalogueSearch')?.value||'').toLowerCase();
-  const all=data||[];const cats=['All',...new Set(all.map(x=>x.category).filter(Boolean))];
-  const sel=$('customerCatalogueCategorySelect');if(sel){sel.innerHTML=cats.map(c=>`<option value="${safe(c)}">${c==='All'?'All Items / అన్ని వస్తువులు':safe(c)}</option>`).join('');if(!cats.includes(frMarketCategory))frMarketCategory='All';sel.value=frMarketCategory;}
-  const items=all.filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.item_name+' '+x.category+' '+x.master_sku).toLowerCase().includes(q)));
-  grid.innerHTML=items.map(x=>{
-   const price=x.offer_price_paise??x.price_paise;const priceText=price==null?'ధర అడగండి':('₹'+frPaiseToRupees(price));
-   const img=x.image_url?`<img src="${safe(x.image_url)}" alt="${safe(x.item_name)}" style="width:100%;height:145px;object-fit:cover;border-radius:14px">`:`<div class="market-product-art market-product-art-3d"><span class="product-art-object">${frProductArt({name:x.item_name,category:x.category})}</span><small>PRODUCT PHOTO NOT UPLOADED</small></div>`;
-   return `<article class="market-product market-product-3d"><div class="market-product-art">${img}</div><div class="market-product-info"><b>${safe(x.item_name)}</b><small class="muted">${safe(x.category)}${x.unit?' • '+safe(x.unit):''}</small><div class="market-price">${priceText}${x.offer_price_paise!=null&&x.price_paise!=null?` <s>₹${frPaiseToRupees(x.price_paise)}</s>`:''}</div><span class="stock-mark yes">Available</span></div><button class="btn purple" onclick="frAddPartnerCatalogueItem('${x.id}')">＋ Add to Cart</button></article>`;
-  }).join('')||'<div class="market-empty">ఈ Shop ఇంకా తన Catalogueలో Items, ధరలు జోడించలేదు. Partnerను ధర అడగండి.</div>';
- }catch(e){grid.innerHTML='<div class="notice">Catalogue Load కాలేదు: '+safe(e.message||e)+'</div>';}
+  const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:frActiveStore.id});
+  if(error)throw error;partnerRows=data||[];
+ }catch(e){catalogueWarning='Partner prices/photos ఇంకా load కాలేదు; Master Catalogue చూపిస్తున్నాం. '+(e.message||e);}
+ const bySku=new Map(partnerRows.map(x=>[String(x.master_sku),x]));
+ const combined=master.map(x=>{
+  const saved=bySku.get(String(x.id));
+  return {...x,saved,price_paise:saved?.price_paise??null,offer_price_paise:saved?.offer_price_paise??null,image_url:saved?.image_url||frMasterPhotoUrl(x),available:saved?saved.available:true,prescription_required:!!(saved?.prescription_required||x.prescriptionCheck)};
+ });
+ const known=new Set(master.map(x=>String(x.id)));
+ const extras=partnerRows.filter(x=>!known.has(String(x.master_sku))).map(x=>({id:'partner-'+x.id,name:x.item_name,category:x.category,unit:x.unit,description:x.description,saved:x,price_paise:x.price_paise,offer_price_paise:x.offer_price_paise,image_url:x.image_url||frMasterPhotoUrl({name:x.item_name,category:x.category}),available:x.available,prescription_required:x.prescription_required}));
+ const all=[...combined,...extras];
+ frCustomerCatalogueItems.clear();all.forEach(x=>frCustomerCatalogueItems.set(String(x.id),x));
+ const q=($('customerCatalogueSearch')?.value||'').toLowerCase();
+ const cats=['All',...new Set(all.map(x=>x.category).filter(Boolean))];
+ const sel=$('customerCatalogueCategorySelect');if(sel){sel.innerHTML=cats.map(c=>`<option value="${safe(c)}">${c==='All'?'All Items / అన్ని వస్తువులు':safe(c)}</option>`).join('');if(!cats.includes(frMarketCategory))frMarketCategory='All';sel.value=frMarketCategory;}
+ const items=all.filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.name+' '+x.category+' '+(x.id||'')).toLowerCase().includes(q)));
+ const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=frActiveStore.type==='medical'?'block':'none';
+ grid.innerHTML=items.map(x=>{
+  const price=x.offer_price_paise??x.price_paise;
+  const priceText=price==null?'<b class="fr-ask-price">Ask Price</b>':'<b class="fr-product-price">₹'+frPaiseToRupees(price)+'</b>';
+  const old=x.offer_price_paise!=null&&x.price_paise!=null?'<s>₹'+frPaiseToRupees(x.price_paise)+'</s>':'';
+  const img=safe(x.image_url||frMasterPhotoUrl(x));
+  const sku=String(x.id).replace(/[^a-zA-Z0-9_-]/g,'');
+  const availability=x.saved&&!x.available?'<span class="stock-mark no">Currently unavailable</span>':'<span class="stock-mark yes">Partner availability to confirm</span>';
+  return `<article class="market-product market-product-3d"><div class="fr-catalogue-photo-wrap"><img class="fr-catalogue-photo" loading="lazy" src="${img}" alt="${safe(x.name)}" onerror="this.onerror=null;this.src='https://loremflickr.com/640/480/Indian retail product?lock=88';"><span class="fr-photo-label">PRODUCT PHOTO</span></div><div class="market-product-info"><b>${safe(x.name)}</b><small class="muted">${safe(x.category)}${x.unit?' • '+safe(x.unit):''}</small><div class="market-price">${priceText} ${old}</div>${availability}</div><button class="btn purple" ${x.saved&&!x.available?'disabled':''} onclick="frAddMasterCatalogueItem('${sku}')">${price==null?'Ask Price':'＋ Add to Cart'}</button></article>`;
+ }).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
+ if(catalogueWarning){const n=document.createElement('div');n.className='notice';n.textContent=catalogueWarning;grid.prepend(n);}
 }
+
 async function frAddPartnerCatalogueItem(id){
  const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:frActiveStore.id});if(error){alert(error.message);return;}
  const x=(data||[]).find(z=>z.id===id);if(!x)return;
