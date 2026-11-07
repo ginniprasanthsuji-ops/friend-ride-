@@ -1356,12 +1356,22 @@ async function acceptSession(authUser){
   $('drawerUser').textContent=(profile.full_name||'FRIEND RIDE user')+' • '+role.toUpperCase();
   if($('headerAuth'))$('headerAuth').textContent='Account';
   if(role==='driver'){
-    const approved=['approved','verified','active'].includes(String(profile.driver_approval_status||'pending').toLowerCase());
-    $('driverApproval').textContent=approved?'Approved':'Approval Pending';
+    const approval=String(profile.driver_approval_status||'pending').toLowerCase();
+    const approved=['approved','verified','active'].includes(approval);
+    const labels={pending:'Approval Pending / పరిశీలనలో ఉంది',approved:'Approved / ఆమోదించబడింది',verified:'Verified / ధృవీకరించబడింది',active:'Active / యాక్టివ్',rejected:'Rejected / తిరస్కరించబడింది',revoked:'Approval Revoked / అనుమతి రద్దు'};
+    $('driverApproval').textContent=labels[approval]||'Approval Pending / పరిశీలనలో ఉంది';
     $('driverApproval').className=approved?'status ok':'status';
     $('onlineBtn').disabled=!approved;
+    $('onlineBtn').title=approved?'':'Admin approval లేకుండా Online అవ్వలేరు.';
+    const notice=document.querySelector('#driverDashboard .card .notice');
+    if(notice)notice.textContent=approved?'మీ Driver account ఆమోదించబడింది. Online కావచ్చు.':approval==='rejected'?'మీ application Reject అయింది. Admin Re-approve చేసిన తర్వాతే Online అవ్వగలరు.':approval==='revoked'?'మీ Driver approval Revoked అయింది. Admin మళ్లీ Approve చేసే వరకు Online అవ్వలేరు.':'Admin approval వచ్చే వరకు Online అవ్వలేరు.';
   }
-  if(role==='partner'&&$('partnerApproval'))$('partnerApproval').textContent=profile.partner_approval_status||'Approval Pending';
+  if(role==='partner'&&$('partnerApproval')){
+    const approval=String(profile.partner_approval_status||'pending').toLowerCase();
+    const labels={pending:'Approval Pending / పరిశీలనలో ఉంది',approved:'Approved / ఆమోదించబడింది',rejected:'Rejected / తిరస్కరించబడింది',revoked:'Approval Revoked / అనుమతి రద్దు'};
+    $('partnerApproval').textContent=labels[approval]||'Approval Pending / పరిశీలనలో ఉంది';
+    $('partnerApproval').className=approval==='approved'?'status ok':'status';
+  }
   if(role==='partner'&&profile.partner_category&&typeof syncPartnerCatalogue==='function'){
     if($('catalogueBusinessType'))$('catalogueBusinessType').value=profile.partner_category;
     syncPartnerCatalogue(profile.partner_category);
