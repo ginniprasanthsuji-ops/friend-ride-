@@ -932,19 +932,8 @@ async function frPartnerUpdateMarketOrder(orderId,nextStatus){
 function filterPartnerOrders(s){loadPartnerOrders(s);}
 
 function savePlatformDetails(){alert('Toll-Free number మరియు GSTIN secure Admin settings tableలో save చేయడానికి backend mapping అవసరం.');}
-(async function frRestoreSavedSession(){
-  let lastError=null;
-  for(let attempt=0;attempt<3;attempt++){
-    const {data,error}=await sb.auth.getSession();
-    if(error){lastError=error;await new Promise(r=>setTimeout(r,500*(attempt+1)));continue;}
-    if(!data.session)return;
-    currentUser=data.session.user; // Keep the authenticated user even if profile/network loading is temporarily unavailable.
-    try{await acceptSession(data.session.user);return;}
-    catch(e){lastError=e;await new Promise(r=>setTimeout(r,500*(attempt+1)));}
-  }
-  if(lastError)showMessage('Login session محفوظంగా ఉంది. Profile restore తాత్కాలికంగా విఫలమైంది; మళ్లీ Refresh చేయండి: '+(lastError.message||lastError));
-})();
-sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;}});
+// Session restore is centralized in the FRIEND RIDE stability layer at the end of this file.
+
 
 // FRIEND RIDE marketplace: show only Admin-approved Partner records from Supabase.
 let frApprovedStores=[];
@@ -2226,6 +2215,198 @@ function frSubmitBankEnquiry(){
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{addParcelActions();bindServices();},{once:true});else{addParcelActions();bindServices();}
 })();
 </script>
+
+<script>
+/* FRIEND RIDE stability patch: single session restore + explicit approval state UI.
+   Existing tables, dashboards, auth provider and app features are preserved. */
+(function(){
+  const FR_APPROVAL_LABELS = {
+    pending: 'Approval Pending / Admin పరిశీలనలో ఉంది',
+    approved: 'Approved / ఆమోదించబడింది',
+    rejected: 'Rejected / తిరస్కరించబడింది',
+    revoked: 'Approval Revoked / అనుమతి రద్దు చేయబడింది',
+    verified: 'Verified (legacy) / ధృవీకరించబడింది',
+    active: 'Active (legacy) / యాక్టివ్'
+  };
+  const FR_APPROVED = s => String(s||'pending').toLowerCase()==='approved';
+  const FR_STATUS = (role,p) => String(role==='driver' ? p?.driver_approval_status : p?.partner_approval_status || 'pending').toLowerCase();
+
+  function frStopDriverPolling(){
+    ['frDriverTrackTimer','frOnlineGpsTimer','frDriverRequestTimer'].forEach(k=>{
+      if(window[k]){clearInterval(window[k]);window[k]=null;}
+    });
+    if(window.driverWatchId!==null && window.driverWatchId!==undefined){
+      try{navigator.geolocation?.clearWatch(window.driverWatchId);}catch(_){}
+      window.driverWatchId=null;
+    }
+  }
+  function frApprovalBanner(role,status){
+    const root=document.getElementById(role+'Dashboard'); if(!root)return;
+    const id=role==='driver'?'frDriverApprovalBanner':'frPartnerApprovalBanner';
+    let el=document.getElementById(id);
+    if(!el){
+      el=document.createElement('div');el.id=id;el.className='card';
+      const hero=root.querySelector('.hero');
+      if(hero)hero.insertAdjacentElement('afterend',el);else root.prepend(el);
+    }
+    const approved=FR_APPROVED(status);
+    const label=FR_APPROVAL_LABELS[status]||FR_APPROVAL_LABELS.pending;
+    const note=approved
+      ? (role==='driver'?'మీ Driver account Admin ద్వారా Approved. ఇప్పుడు Online కావచ్చు.':'మీ Partner account Approved. Business operations అందుబాటులో ఉన్నాయి.')
+      : status==='rejected'
+        ? 'మీ application Reject అయింది. మీరు Login‌లోనే ఉండవచ్చు. Admin Re-approve చేసిన తర్వాత సేవలు తిరిగి ప్రారంభమవుతాయి.'
+        : status==='revoked'
+          ? 'మీ approval రద్దు చేయబడింది. మీ account Logout కాదు; Admin మళ్లీ Approve చేసే వరకు Online / business operations నిలిపివేయబడ్డాయి.'
+          : 'మీ application Admin పరిశీలనలో ఉంది. Approval వచ్చే వరకు Online / business operations నిలిపివేయబడ్డాయి.';
+    el.innerHTML='<div class="row" style="align-items:center;gap:8px"><b style="flex:1">'+(role==='driver'?'Driver Approval Status':'Partner Approval Status')+'</b><span class="status '+(approved?'ok':'')+'">'+label+'</span></div><p class="muted" style="margin:9px 0">'+note+'</p><button type="button" class="btn light" onclick="frRefreshMyApprovalStatus()">↻ Refresh Approval Status</button>';
+  }
+  function frApplyApprovalUI(role,profile){
+    const status=FR_STATUS(role,profile);
+    frApprovalBanner(role,status);
+    if(role==='driver'){
+      const approved=FR_APPROVED(status);
+      const badge=document.getElementById('driverApproval');
+      if(badge){badge.textContent=FR_APPROVAL_LABELS[status]||FR_APPROVAL_LABELS.pending;badge.className='status '+(approved?'ok':'');}
+      const onlineBtn=document.getElementById('onlineBtn');
+      if(onlineBtn){onlineBtn.disabled=!approved;onlineBtn.title=approved?'':'Admin approval అవసరం.';}
+      const list=document.getElementById('driverRequestsList');
+      if(!approved&&list)list.textContent=status==='rejected'?'మీ application Reject అయింది. Admin Re-approve చేసిన తర్వాత Ride Requests వస్తాయి.':status==='revoked'?'Approval Revoked. Admin మళ్లీ Approve చేసే వరకు Ride Requests నిలిపివేయబడ్డాయి.':'Approval Pending. Admin approve చేసిన తర్వాత Ride Requests వస్తాయి.';
+      if(!approved)frStopDriverPolling();
+    } else {
+      const badge=document.getElementById('partnerApproval');
+      if(badge){badge.textContent=FR_APPROVAL_LABELS[status]||FR_APPROVAL_LABELS.pending;badge.className='status '+(FR_APPROVED(status)?'ok':'');}
+      const actions=document.querySelectorAll('#partnerDashboard .feature-grid button');
+      actions.forEach(btn=>{btn.disabled=!FR_APPROVED(status);btn.title=FR_APPROVED(status)?'':'Admin approval వచ్చే వరకు అందుబాటులో లేదు.';btn.style.opacity=FR_APPROVED(status)?'1':'.48';});
+      const msg=document.getElementById('frPartnerApprovalBanner');
+      if(msg)msg.style.borderLeft=FR_APPROVED(status)?'4px solid #13875b':'4px solid #d18a27';
+    }
+  }
+
+  window.frRefreshMyApprovalStatus=async function(){
+    try{
+      if(!window.currentUser?.id)throw Error('ముందుగా Login చేయండి.');
+      const {data,error}=await sb.from('profiles').select('role,driver_approval_status,partner_approval_status,partner_category,full_name').eq('id',currentUser.id).single();
+      if(error)throw error;
+      currentProfile={...currentProfile,...data};
+      const role=String(currentProfile.role||selectedRole||'customer').toLowerCase();
+      if(role==='driver'||role==='partner')frApplyApprovalUI(role,currentProfile);
+      if(role==='driver'&&FR_APPROVED(FR_STATUS(role,currentProfile))){
+        if(typeof loadDriverRideRequests==='function')await loadDriverRideRequests();
+      }
+      if(role==='partner'&&FR_APPROVED(FR_STATUS(role,currentProfile))&&typeof loadPartnerOrders==='function')await loadPartnerOrders();
+      return currentProfile;
+    }catch(e){
+      const id=selectedRole==='driver'?'frDriverApprovalBanner':'frPartnerApprovalBanner';
+      const el=document.getElementById(id);if(el){const p=document.createElement('p');p.className='notice';p.textContent='Status refresh తాత్కాలికంగా విఫలమైంది. Login Session అలాగే ఉంచాం: '+(e.message||e);el.appendChild(p);}
+      throw e;
+    }
+  };
+
+  // Override duplicate historical acceptSession declarations with one role-authoritative handler.
+  window.acceptSession=async function(authUser){
+    if(!authUser?.id)throw Error('Authenticated session లేదు.');
+    currentUser=authUser;
+    let profile=null,lastError=null;
+    for(let attempt=0;attempt<3;attempt++){
+      const q=await sb.from('profiles').select('*').eq('id',authUser.id).maybeSingle();
+      if(!q.error){profile=q.data;break;}
+      lastError=q.error;await new Promise(r=>setTimeout(r,450*(attempt+1)));
+    }
+    if(!profile)throw Error(lastError?'Profile load failed (session retained): '+lastError.message:'ఈ మొబైల్‌కు FRIEND RIDE Profile లేదు. Registration చేయండి.');
+    const adminQ=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
+    if(adminQ.error)throw Error('Admin permission check temporarily failed (session retained): '+adminQ.error.message);
+    const isAdmin=adminQ.data?.user_id===authUser.id;
+    const phone=String(authUser.phone||'').replace(/\D/g,'');
+    if((phone==='917794097864'||phone==='7794097864')&&!isAdmin)throw Error('ఈ Admin మొబైల్‌కు Admin membership లేదు.');
+    if(frAdminLoginMode&&!isAdmin)throw Error('ఈ accountకు Admin access లేదు.');
+    const role=isAdmin?'admin':String(profile.role||authUser.user_metadata?.role||'customer').toLowerCase();
+    if(!['customer','driver','partner','admin'].includes(role))throw Error('Invalid account role.');
+    currentProfile={...profile,role};selectedRole=role;
+    try{localStorage.setItem('friendride_selected_role',role);}catch(_){}
+    const addr=profile.address||'';
+    ['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{const el=document.getElementById(id);if(el&&!el.value&&addr)el.value=addr;});
+    const info=document.getElementById('profileInfo');
+    if(info)info.innerHTML='<b>'+safe(profile.full_name||'User')+'</b><p>Mobile: '+safe(authUser.phone||profile.phone||'')+'</p><p>Account: '+safe(role.toUpperCase())+'</p><p>'+safe(addr)+'</p>';
+    const cw=document.getElementById('customerWelcome'),dw=document.getElementById('driverWelcome');
+    if(cw)cw.textContent='Welcome, '+(profile.full_name||'Customer');
+    if(dw)dw.textContent='Welcome, '+(profile.full_name||'Driver');
+    const du=document.getElementById('drawerUser');if(du)du.textContent=(profile.full_name||'FRIEND RIDE user')+' • '+role.toUpperCase();
+    const ha=document.getElementById('headerAuth');if(ha)ha.textContent='Account';
+    if(role==='driver'||role==='partner')frApplyApprovalUI(role,currentProfile);
+    if(role==='driver'){
+      const approved=FR_APPROVED(FR_STATUS(role,currentProfile));
+      if(approved&&typeof loadDriverRideRequests==='function')await loadDriverRideRequests();
+      else frStopDriverPolling();
+    }
+    if(role==='partner'){
+      if(profile.partner_category&&typeof syncPartnerCatalogue==='function'){
+        const cat=document.getElementById('catalogueBusinessType');if(cat)cat.value=profile.partner_category;
+        syncPartnerCatalogue(profile.partner_category);
+      }
+      if(FR_APPROVED(FR_STATUS(role,currentProfile))&&typeof loadPartnerOrders==='function')await loadPartnerOrders();
+    }
+    closeAuth();const gate=document.getElementById('roleLauncher');if(gate)gate.classList.add('hide');
+    showPage(dashboardFor(role));
+    if(role==='driver'||role==='partner')frApplyApprovalUI(role,currentProfile);
+    if(role==='customer'&&typeof loadMyRideTracking==='function')loadMyRideTracking();
+    if(typeof frRideStartAfterLogin==='function')frRideStartAfterLogin();
+    if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
+    frAdminLoginMode=false;
+    return currentProfile;
+  };
+
+  // Explicit logout only. Transient profile/network failures never call signOut.
+  window.logout=async function(){
+    try{
+      if(typeof frRideStopRealtime==='function')frRideStopRealtime();
+      frStopDriverPolling();
+      if(window.frCustomerTrackTimer){clearInterval(window.frCustomerTrackTimer);window.frCustomerTrackTimer=null;}
+      const {error}=await sb.auth.signOut();if(error)throw error;
+      currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';
+      try{localStorage.removeItem('friendride_selected_role');}catch(_){}
+      const ha=document.getElementById('headerAuth');if(ha)ha.textContent='Login';
+      const du=document.getElementById('drawerUser');if(du)du.textContent='One app. Every local need.';
+      closeDrawer();showPage('home');
+    }catch(e){showMessage('Logout పూర్తికాలేదు; మీ Session తొలగించలేదు: '+(e.message||e));}
+  };
+
+  // Block partner operational pages until approval; admin workflows remain unaffected.
+  const originalShowPage=window.showPage;
+  if(typeof originalShowPage==='function')window.showPage=function(id){
+    const protectedPartnerPages=['partnerOrders','catalogue','products','inventory','subscription','referrals','partnerReports','partnerPaymentSettings','gst'];
+    if(selectedRole==='partner'&&protectedPartnerPages.includes(id)&&!FR_APPROVED(FR_STATUS('partner',currentProfile))){
+      frApplyApprovalUI('partner',currentProfile||{partner_approval_status:'pending'});
+      showMessage('Partner Approval వచ్చిన తర్వాత మాత్రమే ఈ Business feature ఉపయోగించవచ్చు.');
+      return;
+    }
+    return originalShowPage.apply(this,arguments);
+  };
+
+  // Restore once from persisted Supabase storage; retries never clear or replace the session.
+  (async function frStableSessionRestore(){
+    let lastError=null;
+    for(let i=0;i<4;i++){
+      try{
+        const {data,error}=await sb.auth.getSession();
+        if(error)throw error;
+        if(!data.session)return;
+        await window.acceptSession(data.session.user);
+        return;
+      }catch(e){lastError=e;await new Promise(r=>setTimeout(r,500*(i+1)));}
+    }
+    if(lastError&&currentUser)showMessage('Login Session محفوظంగా ఉంది. Profile తాత్కాలికంగా load కాలేదు; Refresh Approval / page refresh ప్రయత్నించండి. '+(lastError.message||lastError));
+  })();
+
+  sb.auth.onAuthStateChange((event,session)=>{
+    if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;frStopDriverPolling();}
+    if(event==='TOKEN_REFRESHED'&&session?.user){currentUser=session.user;}
+  });
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden&&currentUser?.id&&(selectedRole==='driver'||selectedRole==='partner'))window.frRefreshMyApprovalStatus().catch(()=>{});
+  });
+})();
+</script>
+
 </body>
 </html>
 <style>
