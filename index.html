@@ -722,7 +722,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <script>
 const SUPABASE_URL='https://fglyplxcczdjtfwobtzh.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz';
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:'friend-ride-auth-v1'}});
 let selectedRole='customer',currentUser=null,currentProfile=null,afterLoginAction=null,rideVehicle='Bike',online=false,rideMap=null,trackingMap=null,pickupMarker=null,dropMarker=null,driverMarker=null,pickupCoords=null,dropCoords=null,driverWatchId=null,frTrackingRideData=null,frRouteLayer=null;
 const $=id=>document.getElementById(id);
 function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -1118,7 +1118,15 @@ async function frPartnerUpdateMarketOrder(orderId,nextStatus){
 function filterPartnerOrders(s){loadPartnerOrders(s);}
 
 function savePlatformDetails(){alert('Toll-Free number మరియు GSTIN secure Admin settings tableలో save చేయడానికి backend mapping అవసరం.');}
-sb.auth.getSession().then(async({data})=>{if(data.session){try{await acceptSession(data.session.user);}catch(e){await sb.auth.signOut();}}});
+window.frRestoringSession=true;
+sb.auth.getSession().then(async({data,error})=>{
+ if(error){console.warn('FRIEND RIDE session restore delayed:',error.message);return;}
+ if(data?.session?.user){
+  try{await acceptSession(data.session.user);}
+  catch(e){console.error('FRIEND RIDE session restore error:',e);showMessage('Login Session కొనసాగుతోంది. Profile load సమస్య: '+(e.message||e)+' — Logout చేయకుండా మళ్లీ ప్రయత్నించండి.','error');}
+ }
+}).catch(e=>console.warn('FRIEND RIDE session restore retry on next load:',e));
+
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;}});
 
 // FRIEND RIDE marketplace: show only Admin-approved Partner records from Supabase.
@@ -1595,8 +1603,13 @@ async function acceptSession(authUser){
   currentProfile=q.data;
   let role=String(currentProfile.role||authUser.user_metadata?.role||'customer').toLowerCase();
   if(!['customer','driver','partner','admin'].includes(role))throw Error('Invalid account role.');
-  // Admin membership table is authoritative; profiles.role need not be changed to admin.
-  if(selectedRole==='admin'){
+  // During Chrome session restore, infer role from the saved profile and authoritative admin membership.
+  if(window.frRestoringSession){
+    const a=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
+    if(a.error)throw Error('Session role check failed: '+a.error.message);
+    if(a.data)role='admin';
+    selectedRole=role;
+  } else if(selectedRole==='admin'){
     const a=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
     if(a.error)throw Error('Admin permission check failed: '+a.error.message);
     if(!a.data)throw Error('ఈ మొబైల్‌కు Admin అనుమతి లేదు.');
