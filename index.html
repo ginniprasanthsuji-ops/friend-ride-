@@ -2232,9 +2232,10 @@ function frSubmitBankEnquiry(){
   const FR_STATUS = (role,p) => String((role==='driver' ? p?.driver_approval_status : p?.partner_approval_status) || 'pending').toLowerCase();
 
   function frStopDriverPolling(){
-    ['frDriverTrackTimer','frOnlineGpsTimer','frDriverRequestTimer'].forEach(k=>{
-      if(typeof globalThis[k]!=='undefined' && globalThis[k]){clearInterval(globalThis[k]);globalThis[k]=null;}
-    });
+    if(typeof frDriverTrackTimer!=='undefined'&&frDriverTrackTimer){clearInterval(frDriverTrackTimer);frDriverTrackTimer=null;}
+    if(typeof frOnlineGpsTimer!=='undefined'&&frOnlineGpsTimer){clearInterval(frOnlineGpsTimer);frOnlineGpsTimer=null;}
+    if(typeof frDriverRequestTimer!=='undefined'&&frDriverRequestTimer){clearInterval(frDriverRequestTimer);frDriverRequestTimer=null;}
+    if(typeof frNearbyTimer!=='undefined'&&frNearbyTimer){clearInterval(frNearbyTimer);frNearbyTimer=null;}
     if(typeof driverWatchId!=='undefined' && driverWatchId!==null){
       try{navigator.geolocation?.clearWatch(driverWatchId);}catch(_){}
       driverWatchId=null;
