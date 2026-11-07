@@ -2313,16 +2313,24 @@ function frSubmitBankEnquiry(){
       if(!q.error){profile=q.data;break;}
       lastError=q.error;await new Promise(r=>setTimeout(r,450*(attempt+1)));
     }
-    if(!profile)throw Error(lastError?'Profile load failed (session retained): '+lastError.message:'ఈ మొబైల్‌కు FRIEND RIDE Profile లేదు. Registration చేయండి.');
+    if(!profile){
+      try{
+        const cached=JSON.parse(localStorage.getItem('friendride_profile_cache_'+authUser.id)||'null');
+        if(cached&&cached.id===authUser.id)profile=cached;
+      }catch(_){}
+    }
+    if(!profile)throw Error(lastError?'Profile load failed (session retained; auth token preserved): '+lastError.message:'ఈ మొబైల్‌కు FRIEND RIDE Profile లేదు. Registration చేయండి.');
+    // A temporary admin_users read failure must never make a valid signed-in user look logged out.
     const adminQ=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
-    if(adminQ.error)throw Error('Admin permission check temporarily failed (session retained): '+adminQ.error.message);
-    const isAdmin=adminQ.data?.user_id===authUser.id;
+    const isAdmin=adminQ.data?.user_id===authUser.id || (!!adminQ.error && String(profile.role||'').toLowerCase()==='admin');
     const phone=String(authUser.phone||'').replace(/\D/g,'');
     if((phone==='917794097864'||phone==='7794097864')&&!isAdmin)throw Error('ఈ Admin మొబైల్‌కు Admin membership లేదు.');
     if(frAdminLoginMode&&!isAdmin)throw Error('ఈ accountకు Admin access లేదు.');
     const role=isAdmin?'admin':String(profile.role||authUser.user_metadata?.role||'customer').toLowerCase();
     if(!['customer','driver','partner','admin'].includes(role))throw Error('Invalid account role.');
     currentProfile={...profile,role};selectedRole=role;
+    try{localStorage.setItem('friendride_profile_cache_'+authUser.id,JSON.stringify(currentProfile));}catch(_){}
+    if(adminQ.error)showMessage('మీ Login Session محفوظంగా ఉంది. Admin permission సమాచారం తాత్కాలికంగా refresh కాలేదు; మళ్లీ ప్రయత్నించండి.');
     try{localStorage.setItem('friendride_selected_role',role);}catch(_){}
     const addr=profile.address||'';
     ['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{const el=document.getElementById(id);if(el&&!el.value&&addr)el.value=addr;});
