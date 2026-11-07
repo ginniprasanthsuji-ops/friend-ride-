@@ -1420,7 +1420,12 @@ async function acceptSession(authUser){
   }
   const addr=currentProfile.address||'';
   ['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{if($(id)&&!$(id).value)$(id).value=addr;});
-  $('profileInfo').innerHTML='<b>'+safe(currentProfile.full_name||'User')+'</b><p>Mobile: '+safe(authUser.phone||currentProfile.phone||'')+'</p><p>Account: '+safe(role.toUpperCase())+'</p><p>'+safe(addr)+'</p>';
+  let profilePhotoUrl='';
+  const profilePhotoPath=role==='driver'?currentProfile.driver_profile_photo_path:(role==='partner'?currentProfile.partner_profile_photo_path:null);
+  const profilePhotoBucket=role==='driver'?'driver-profile-photos':'partner-profile-photos';
+  if(profilePhotoPath){try{const signed=await sb.storage.from(profilePhotoBucket).createSignedUrl(profilePhotoPath,3600);if(!signed.error)profilePhotoUrl=signed.data?.signedUrl||'';}catch(_photoError){}}
+  const profilePhotoHtml=profilePhotoUrl?'<img src="'+safe(profilePhotoUrl)+'" alt="Profile photo" style="width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid #e8e1ef;margin-bottom:8px">':'';
+  $('profileInfo').innerHTML=profilePhotoHtml+'<b>'+safe(currentProfile.full_name||'User')+'</b><p>Mobile: '+safe(authUser.phone||currentProfile.phone||'')+'</p><p>Account: '+safe(role.toUpperCase())+'</p><p>'+safe(addr)+'</p>';
   $('customerWelcome').textContent='Welcome, '+(currentProfile.full_name||'Customer');$('driverWelcome').textContent='Welcome, '+(currentProfile.full_name||'Driver');
   $('drawerUser').textContent=(currentProfile.full_name||'FRIEND RIDE user')+' • '+role.toUpperCase();if($('headerAuth'))$('headerAuth').textContent='Account';
   if(role==='driver'){
