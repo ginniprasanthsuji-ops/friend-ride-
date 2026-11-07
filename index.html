@@ -2385,7 +2385,7 @@ async function frLoadAdminServiceRequests(){
   el.innerHTML=data.map(r=>{
    const options=(providerMap[r.category_slug]||[]).map(p=>'<option value="'+p.provider_id+'">'+safe(p.display_name)+' • '+safe(p.service_area||'Online')+'</option>').join('');
    const select='<select id="frAdminProvider_'+r.request_id+'"><option value="">Select approved technician</option>'+options+'</select>';
-   const assign=(r.status==='requested'||r.status==='assigned')?select+'<button class="btn purple" onclick="frAdminAssignServiceProvider(\\''+r.request_id+'\\')">Assign Technician</button>':'';
+   const assign=(r.status==='requested'||r.status==='assigned')?select+'<button class="btn purple" onclick="frAdminAssignServiceProvider(\''+r.request_id+'\')">Assign Technician</button>':'';
    return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+safe(r.request_number)+'</b><span class="pill">'+safe(r.status)+'</span></div><p><b>'+safe(r.service_name)+'</b> • '+safe(r.preferred_date)+' '+safe(r.preferred_time)+'</p><p>Customer: '+safe(r.customer_name)+' • '+safe(r.customer_phone)+'</p><p>Address: '+safe(r.service_address)+'</p><p>Work: '+safe(r.work_details)+'</p><p>Technician: '+safe(r.provider_name||'Not assigned')+'</p>'+assign+(options?'':'<small class="muted">No approved online technician in this category yet.</small>')+'</div>';
   }).join('');
  }catch(e){el.textContent='Admin queue load కాలేదు: '+(e.message||e);}
