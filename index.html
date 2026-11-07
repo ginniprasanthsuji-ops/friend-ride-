@@ -920,7 +920,18 @@ async function frPartnerUpdateMarketOrder(orderId,nextStatus){
 function filterPartnerOrders(s){loadPartnerOrders(s);}
 
 function savePlatformDetails(){alert('Toll-Free number మరియు GSTIN secure Admin settings tableలో save చేయడానికి backend mapping అవసరం.');}
-sb.auth.getSession().then(async({data,error})=>{if(error){showMessage('Saved session restore కాలేదు: '+error.message);return;}if(data.session){try{await acceptSession(data.session.user);}catch(e){currentUser=null;currentProfile=null;showMessage('Session ఉంది కానీ account load కాలేదు: '+(e.message||e));}}});
+(async function frRestoreSavedSession(){
+  let lastError=null;
+  for(let attempt=0;attempt<3;attempt++){
+    const {data,error}=await sb.auth.getSession();
+    if(error){lastError=error;await new Promise(r=>setTimeout(r,500*(attempt+1)));continue;}
+    if(!data.session)return;
+    currentUser=data.session.user; // Keep the authenticated user even if profile/network loading is temporarily unavailable.
+    try{await acceptSession(data.session.user);return;}
+    catch(e){lastError=e;await new Promise(r=>setTimeout(r,500*(attempt+1)));}
+  }
+  if(lastError)showMessage('Login session محفوظంగా ఉంది. Profile restore తాత్కాలికంగా విఫలమైంది; మళ్లీ Refresh చేయండి: '+(lastError.message||lastError));
+})();
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;}});
 
 // FRIEND RIDE marketplace: show only Admin-approved Partner records from Supabase.
@@ -1302,38 +1313,52 @@ async function forgotPassword(){showMessage('FRIEND RIDEలో Password Login �
 
 // Role-aware session routing. Pending drivers/partners can enter their dashboard but remain restricted.
 async function acceptSession(authUser){
+  if(!authUser?.id) throw Error('Saved login session is unavailable.');
   currentUser=authUser;
-  let q=await sb.from('profiles').select('*').eq('id',authUser.id).maybeSingle();
-  if(q.error)throw q.error;
-  if(!q.data)throw Error('ఈ మొబైల్‌కు FRIEND RIDE Profile లేదు. ముందుగా Registration చేయండి.');
-  currentProfile=q.data;
-  let role=String(currentProfile.role||authUser.user_metadata?.role||'customer').toLowerCase();
-  if(!['customer','driver','partner','admin'].includes(role))throw Error('Invalid account role.');
-  // Restore admin by authoritative membership even when the profile role is customer.
-  const adminCheck=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
-  if(adminCheck.error)throw Error('Admin permission check failed: '+adminCheck.error.message);
-  if(adminCheck.data) role='admin';
-  else if(selectedRole!==role) throw Error('మీరు ఎంచుకున్న '+selectedRole+' account ఈ మొబైల్‌లో లేదు. సరైన Role ఎంచుకోండి.');
+  const {data:profile,error:profileError}=await sb.from('profiles').select('*').eq('id',authUser.id).maybeSingle();
+  if(profileError) throw Error('Profile load failed: '+profileError.message);
+  if(!profile) throw Error('ఈ మొబైల్‌కు FRIEND RIDE Profile లేదు. ముందుగా Registration చేయండి.');
+
+  // The database membership is the single source of truth for Admin access.
+  // Never let a stale local role selection turn an authenticated Admin into Customer/Home.
+  const {data:adminRow,error:adminError}=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
+  if(adminError) throw Error('Admin permission check temporarily failed: '+adminError.message);
+  const isVerifiedAdmin=adminRow?.user_id===authUser.id;
+  let role=isVerifiedAdmin?'admin':String(profile.role||authUser.user_metadata?.role||'customer').toLowerCase();
+  if(!['customer','driver','partner','admin'].includes(role)) throw Error('Invalid account role.');
+  if(role==='admin'&&!isVerifiedAdmin) throw Error('ఈ ఖాతాకు Admin permission లేదు.');
+
+  // Keep the database profile unchanged; use the authoritative role in this session.
+  currentProfile={...profile,role};
   selectedRole=role;
-  try{localStorage.setItem('friendride_selected_role',role);}catch(_){} 
-  const addr=currentProfile.address||'';
+  try{localStorage.setItem('friendride_selected_role',role);}catch(_){}
+  const addr=profile.address||'';
   ['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{if($(id)&&!$(id).value)$(id).value=addr;});
-  $('profileInfo').innerHTML='<b>'+safe(currentProfile.full_name||'User')+'</b><p>Mobile: '+safe(authUser.phone||currentProfile.phone||'')+'</p><p>Account: '+safe(role.toUpperCase())+'</p><p>'+safe(addr)+'</p>';
-  $('customerWelcome').textContent='Welcome, '+(currentProfile.full_name||'Customer');$('driverWelcome').textContent='Welcome, '+(currentProfile.full_name||'Driver');
-  $('drawerUser').textContent=(currentProfile.full_name||'FRIEND RIDE user')+' • '+role.toUpperCase();if($('headerAuth'))$('headerAuth').textContent='Account';
+  $('profileInfo').innerHTML='<b>'+safe(profile.full_name||'User')+'</b><p>Mobile: '+safe(authUser.phone||profile.phone||'')+'</p><p>Account: '+safe(role.toUpperCase())+'</p><p>'+safe(addr)+'</p>';
+  $('customerWelcome').textContent='Welcome, '+(profile.full_name||'Customer');
+  $('driverWelcome').textContent='Welcome, '+(profile.full_name||'Driver');
+  $('drawerUser').textContent=(profile.full_name||'FRIEND RIDE user')+' • '+role.toUpperCase();
+  if($('headerAuth'))$('headerAuth').textContent='Account';
   if(role==='driver'){
-    const approved=['approved','verified','active'].includes(String(currentProfile.driver_approval_status||'pending').toLowerCase());
-    $('driverApproval').textContent=approved?'Approved':'Approval Pending';$('driverApproval').className=approved?'status ok':'status';$('onlineBtn').disabled=!approved;
+    const approved=['approved','verified','active'].includes(String(profile.driver_approval_status||'pending').toLowerCase());
+    $('driverApproval').textContent=approved?'Approved':'Approval Pending';
+    $('driverApproval').className=approved?'status ok':'status';
+    $('onlineBtn').disabled=!approved;
   }
-  if(role==='partner'&&$('partnerApproval'))$('partnerApproval').textContent=currentProfile.partner_approval_status||'Approval Pending';
-  if(role==='partner'&&currentProfile.partner_category&&typeof syncPartnerCatalogue==='function'){
-    const businessType=currentProfile.partner_category;
-    if($('catalogueBusinessType'))$('catalogueBusinessType').value=businessType;
-    syncPartnerCatalogue(businessType);
+  if(role==='partner'&&$('partnerApproval'))$('partnerApproval').textContent=profile.partner_approval_status||'Approval Pending';
+  if(role==='partner'&&profile.partner_category&&typeof syncPartnerCatalogue==='function'){
+    if($('catalogueBusinessType'))$('catalogueBusinessType').value=profile.partner_category;
+    syncPartnerCatalogue(profile.partner_category);
   }
   if(role==='partner')loadPartnerOrders();
-  closeAuth();showPage(dashboardFor(role));
-  if(role==='driver'){loadDriverRideRequests();if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);frDriverRequestTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='driver')loadDriverRideRequests();},10000);}
+  closeAuth();
+  const gate=$('roleLauncher');if(gate)gate.classList.add('hide');
+  showPage(dashboardFor(role));
+  if(role==='driver'){
+    loadDriverRideRequests();
+    if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);
+    frDriverRequestTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='driver')loadDriverRideRequests();},10000);
+  }
   if(role==='customer')loadMyRideTracking();
   if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
 }
