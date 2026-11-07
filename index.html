@@ -648,7 +648,7 @@ async function loadDriverApprovals(){
   box.innerHTML=data.map(d=>{
    const id=d.id;
    const status=String(d.driver_approval_status||'pending').toLowerCase();
-   const actions=status==='approved'?'<b>APPROVED</b>':status==='rejected'?'<b>REJECTED</b>':'<div class="row"><button class="btn purple" onclick="reviewDriverApplication(\\''+safe(String(id))+'\\','approved')">Approve</button><button class="btn red" onclick="reviewDriverApplication(\\''+safe(String(id))+'\\','rejected')">Reject</button></div>';
+   const actions=status==='approved'?'<b>APPROVED</b>':status==='rejected'?'<b>REJECTED</b>':'<div class="row"><button class="btn purple" onclick="reviewDriverApplication(\''+safe(String(id))+'\',\'approved\')">Approve</button><button class="btn red" onclick="reviewDriverApplication(\''+safe(String(id))+'\',\'rejected\')">Reject</button></div>';
    const licence=d.driving_license_document_path?'<br><b>Licence Document:</b> '+safe(d.driving_license_document_path):'';
    return '<div class="card" style="margin:10px 0"><p><b>Name:</b> '+safe(d.full_name||'—')+'<br><b>Phone:</b> '+safe(d.phone||'—')+'<br><b>Vehicle:</b> '+safe([d.vehicle_type,d.vehicle_company,d.vehicle_model,d.vehicle_registration].filter(Boolean).join(' '))+'<br><b>Licence:</b> '+safe(d.driving_license_number||'—')+licence+'<br><b>Status:</b> '+safe(status)+'</p>'+actions+'</div>';
   }).join('');
