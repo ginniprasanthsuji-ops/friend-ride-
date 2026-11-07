@@ -28,7 +28,7 @@ test('automated QA page runs its checks and reports live-only constraints separa
   await expect(page.locator('#coverage')).toContainText('LIVE ONLY');
   await expect(page.locator('#log')).toContainText('started');
   const audit = JSON.parse(await page.locator('#log').innerText());
-  expect(audit.source.filter(x => /^\\d{2} /.test(x.name))).toHaveLength(15);
+  expect(audit.source.filter(x => /^\d{2} /.test(x.name))).toHaveLength(15);
   expect(audit.simulation.length).toBeGreaterThanOrEqual(10);
   expect(audit.simulation.every(x => x.ok === true), 'All deterministic mock workflow checks must pass').toBeTruthy();
   expect(audit.source.find(x => x.name.startsWith('13 Cashfree Payments'))?.ok).toBe(true);
