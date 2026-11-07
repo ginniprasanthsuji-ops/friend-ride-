@@ -1933,6 +1933,31 @@ function frSubmitBankEnquiry(){
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync,{once:true});else sync();
 })();
 </script>
+
+<script id="FR_RUNTIME_DIAGNOSTICS_V1">
+(()=>{'use strict';
+ const KEY='fr_runtime_diagnostics_v1',MAX=25;
+ const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(_){return []}};
+ const write=items=>{try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)))}catch(_){}};
+ const record=(kind,message,source='')=>{const items=read();items.push({at:new Date().toISOString(),kind,message:String(message||'Unknown error').slice(0,500),source:String(source||'').slice(0,240),online:navigator.onLine});write(items);render()};
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.addEventListener('error',e=>record('JavaScript',e.message||'Script error',((e.filename||'')+':'+(e.lineno||''))));
+ window.addEventListener('unhandledrejection',e=>record('Promise',e.reason?.message||e.reason||'Unhandled promise rejection'));
+ window.addEventListener('offline',()=>record('Network','Device went offline'));
+ window.addEventListener('online',()=>record('Network','Device is online again'));
+ function render(){const count=read().length;const b=document.getElementById('frDiagBadge');if(b){b.textContent=count?'⚠ App issues ('+count+')':'✓ App status';b.style.background=count?'#9f283b':'#176b4c';}}
+ function panel(){if(document.getElementById('frDiagPanel'))return;
+ const b=document.createElement('button');b.id='frDiagBadge';b.type='button';b.textContent='✓ App status';b.style.cssText='position:fixed;right:12px;bottom:12px;z-index:99998;border:0;border-radius:24px;padding:10px 14px;color:#fff;font:700 12px system-ui;box-shadow:0 3px 14px #0003;background:#176b4c';
+ const p=document.createElement('section');p.id='frDiagPanel';p.hidden=true;p.style.cssText='position:fixed;inset:auto 10px 58px 10px;z-index:99999;max-width:560px;margin-left:auto;max-height:65vh;overflow:auto;background:#fff;color:#211936;border:1px solid #ddd;border-radius:14px;padding:14px;box-shadow:0 8px 32px #0004;font:13px/1.5 system-ui';
+ p.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>FRIEND RIDE · App Diagnostics</b><button id="frDiagClose" type="button">Close</button></div><p id="frDiagHealth"></p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="frDiagCheck" type="button">Run safe checks</button><button id="frDiagCopy" type="button">Copy report</button><button id="frDiagClear" type="button">Clear local log</button></div><pre id="frDiagLog" style="white-space:pre-wrap;background:#f5f2f8;padding:9px;border-radius:8px;max-height:220px;overflow:auto"></pre><small>Errors are stored only on this device. No passwords, OTPs, payment data or location are collected. Safe checks are read-only.</small>';
+ document.body.append(b,p);b.onclick=()=>{p.hidden=!p.hidden;refresh()};p.querySelector('#frDiagClose').onclick=()=>p.hidden=true;p.querySelector('#frDiagClear').onclick=()=>{write([]);refresh();render()};p.querySelector('#frDiagCopy').onclick=()=>{const report={app:'FRIEND RIDE',at:new Date().toISOString(),online:navigator.onLine,errors:read()};navigator.clipboard?.writeText(JSON.stringify(report,null,2)).then(()=>alert('Diagnostics report copied')).catch(()=>alert('Copy unavailable; select and copy the report text.'))};p.querySelector('#frDiagCheck').onclick=check;refresh();render();
+ }
+ function refresh(){const h=document.getElementById('frDiagHealth'),l=document.getElementById('frDiagLog');if(!h||!l)return;h.textContent='Network: '+(navigator.onLine?'Online':'Offline')+' · Supabase client: '+(window.sb?'available':'not exposed')+' · Service Worker: '+('serviceWorker' in navigator?'supported':'not supported')+' · Notification: '+('Notification' in window?Notification.permission:'unsupported');const items=read();l.textContent=items.length?items.map(x=>x.at+' ['+x.kind+'] '+x.message+(x.source?' · '+x.source:'')).join('\n'):'No recorded runtime errors.'}
+ async function check(){const h=document.getElementById('frDiagHealth');if(!h)return;const lines=['Network: '+(navigator.onLine?'PASS':'FAIL'),'Supabase client: '+(window.sb?'PASS':'NOT EXPOSED'),'Service Worker API: '+('serviceWorker' in navigator?'PASS':'UNAVAILABLE'),'Geolocation API: '+('geolocation' in navigator?'PASS':'UNAVAILABLE'),'Notifications API: '+('Notification' in window?'PASS':'UNAVAILABLE')];if(window.sb){try{const r=await window.sb.from('profiles').select('id').limit(1);lines.push('Supabase read-only profiles query: '+(r.error?'FAIL — '+r.error.message:'PASS'));}catch(e){lines.push('Supabase read-only query: FAIL — '+e.message)}}h.textContent=lines.join(' · ');refreshLog(lines)}
+ function refreshLog(lines){const l=document.getElementById('frDiagLog');if(l)l.textContent=lines.join('\n')+'\n\n'+(read().map(x=>x.kind+': '+x.message).join('\n')||'No recorded runtime errors.')}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',panel,{once:true});else panel();
+})();
+</script>
 </body>
 </html>
 <style>
