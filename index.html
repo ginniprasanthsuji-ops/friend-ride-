@@ -1388,7 +1388,7 @@ async function verifyRegistrationOtpAndRegister(){
       const {data:registrationResult,error:registrationError}=await sb.rpc('fr_register_driver_partner',{p_role:selectedRole,p_profile:row});
       if(registrationError)throw registrationError;
       if(!registrationResult?.ok)throw Error('Driver/Partner registration database confirmation రాలేదు.');
-      if(selectedRole==='driver'){
+      if(selectedRole==='driver'){const {error:waSaveError}=await sb.from('profiles').update({whatsapp_phone:row.whatsapp_phone||row.phone}).eq('id',uid);if(waSaveError)throw waSaveError;}
         const docs=[
           {driver_id:uid,owner_id:uid,document_type:'driving_license',storage_path:row.driving_license_document_path,verification_status:'pending'},
           {driver_id:uid,owner_id:uid,document_type:'aadhaar',storage_path:row.driver_aadhaar_document_path,verification_status:'pending'},
@@ -1458,11 +1458,11 @@ async function acceptSession(authUser){
   if(role==='partner')loadPartnerOrders();
   closeAuth();showPage(dashboardFor(role));
   if(role==='driver'){loadDriverRideRequests();if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);frDriverRequestTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='driver')loadDriverRideRequests();},10000);}
-  if(role==='customer')loadMyRideTracking();
+  if(role==='customer'){loadMyRideTracking();if(window.frCustomerRideRefreshTimer)clearInterval(window.frCustomerRideRefreshTimer);window.frCustomerRideRefreshTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='customer')loadMyRideTracking();},10000);}
   if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
 }
 async function logout(){
-  if(frDriverTrackTimer)clearInterval(frDriverTrackTimer);if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);if(frNearbyTimer)clearInterval(frNearbyTimer);if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);
+  if(window.frCustomerRideRefreshTimer)clearInterval(window.frCustomerRideRefreshTimer);if(frDriverTrackTimer)clearInterval(frDriverTrackTimer);if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);if(frNearbyTimer)clearInterval(frNearbyTimer);if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);
   if(driverWatchId!==null){navigator.geolocation?.clearWatch(driverWatchId);driverWatchId=null;}
   await sb.auth.signOut();currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');
 }
