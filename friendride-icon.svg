@@ -1,10 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#211044"/><stop offset=".58" stop-color="#54219a"/><stop offset="1" stop-color="#f28a2d"/></linearGradient></defs>
-<rect width="512" height="512" rx="112" fill="url(#g)"/>
-<circle cx="256" cy="256" r="166" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="14"/>
-<path d="M124 320c0-21 17-38 38-38h18l30-85c7-20 26-33 47-33h50c23 0 42 14 49 36l24 82h14c20 0 36 16 36 36v13H124z" fill="#fff" opacity=".96"/>
-<circle cx="190" cy="335" r="35" fill="#ff922f" stroke="#fff" stroke-width="12"/>
-<circle cx="347" cy="335" r="35" fill="#ff922f" stroke="#fff" stroke-width="12"/>
-<path d="M210 244h103l-15-45h-72z" fill="#54219a"/>
-<text x="256" y="430" font-family="Arial,sans-serif" font-size="46" font-weight="900" text-anchor="middle" fill="#fff">FRIEND RIDE</text>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#f5fff8"/></linearGradient>
+ <linearGradient id="green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#18b94c"/><stop offset="1" stop-color="#087b35"/></linearGradient>
+ <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffb21b"/><stop offset="1" stop-color="#f26b12"/></linearGradient>
+</defs>
+<rect width="512" height="512" rx="112" fill="url(#bg)"/>
+<path d="M256 405C210 367 94 285 94 181c0-65 48-111 109-111 27 0 49 10 66 30 17-20 39-30 66-30 61 0 109 46 109 111 0 104-116 186-162 224l-26 21z" fill="none"/>
+<circle cx="169" cy="111" r="37" fill="url(#green)"/>
+<circle cx="343" cy="111" r="37" fill="url(#orange)"/>
+<path d="M72 236c0-62 42-103 99-103 38 0 66 17 85 45 19-28 47-45 85-45 57 0 99 41 99 103 0 57-40 103-99 142l-85 59-85-59c-59-39-99-85-99-142z" fill="none" stroke="url(#green)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M256 181c-15-21-35-32-61-32-39 0-67 28-67 68 0 37 31 72 75 105l53 39 53-39c44-33 75-68 75-105 0-40-28-68-67-68-26 0-46 11-61 32z" fill="#fff"/>
+<path d="M155 307v-70l47-36 32 24 23-18 46 31v69z" fill="#087b35"/>
+<path d="M191 307v-49h25v49m28 0v-69h25v69m29 0v-39h25v39" fill="#fff"/>
+<path d="M120 340c40-22 86-33 136-33s96 11 136 33l-23 35c-35-17-72-25-113-25s-78 8-113 25z" fill="#0b8b3e"/>
+<path d="M236 345l-31 72h38l18-40 18 40h38l-31-72z" fill="#ff9418"/>
+<path d="M249 352l-17 37h20l4-13 4 13h20l-17-37z" fill="#fff"/>
 </svg>
