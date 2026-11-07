@@ -694,7 +694,7 @@ async function loadDriverApprovals(){
   box.innerHTML=rows.map(r=>{
    const status=String(r.driver_approval_status||'pending').toLowerCase();
    const label=status==='approved'||status==='verified'||status==='active'?'Approved':status==='rejected'?'Rejected':'Pending';
-   const actions=status==='pending'?'<div class="row" style="gap:8px;margin-top:12px"><button class="btn green" onclick="reviewDriverApplication(\\''+safe(r.id)+'\\',\\'approved\\')">✓ Approve</button><button class="btn red" onclick="reviewDriverApplication(\\''+safe(r.id)+'\\',\\'rejected\\')">✕ Reject</button></div>':'';
+   const actions=status==='pending'?\`<div class="row" style="gap:8px;margin-top:12px"><button class="btn green" onclick="reviewDriverApplication('${safe(r.id)}','approved')">✓ Approve</button><button class="btn red" onclick="reviewDriverApplication('${safe(r.id)}','rejected')">✕ Reject</button></div>\`:'';
    return '<article class="card" style="margin:12px 0"><div class="row" style="justify-content:space-between;align-items:center"><b>'+safe(r.full_name||'Driver')+'</b><span class="status '+(label==='Approved'?'ok':'')+'">'+label+'</span></div><p>Mobile: '+safe(r.phone||'—')+'</p><p>Vehicle: '+safe([r.vehicle_type,r.vehicle_company,r.vehicle_model].filter(Boolean).join(' • ')||'—')+'</p><p>Registration: '+safe(r.vehicle_registration||'—')+'</p><p>Driving Licence: '+safe(r.driving_license_number||'—')+'</p><p>Experience: '+safe(r.driving_experience_years??'—')+' years</p>'+actions+'</article>';
   }).join('');
   if(msg)msg.textContent='Loaded '+rows.length+' driver application(s). Approve / Reject changes are saved to Supabase.';
