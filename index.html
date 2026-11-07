@@ -1903,6 +1903,36 @@ function frSubmitBankEnquiry(){
  alert('Banking service enquiry form validate అయ్యింది. Secure enquiry backend integration ఇంకా అవసరం.');
 }
 </script>
+
+<script id="fr-unified-store-category-options">
+(function(){
+ const categories=[
+  ['local_store','Grocery & General Store'],['electrical','Electrical Shop'],
+  ['electrician','Electrician Services'],['hardware','Hardware & Plumbing'],
+  ['chicken','Chicken Shop'],['mutton','Mutton & Meat'],['fish','Fish & Seafood'],
+  ['vegetables','Vegetables & Fruits'],['medical','Medical Store'],['dairy','Milk & Dairy'],
+  ['mobile','Mobile & Accessories'],['bakery','Bakery & Sweets'],
+  ['stationery','Stationery & Xerox'],['restaurant','Restaurant / Tiffin'],
+  ['other','Other Business']
+ ];
+ function sync(){
+  [
+   ['shopCategory','all','All Store Categories'],
+   ['friendMartCategory','all','All Store Categories'],
+   ['catalogueBusinessType','','Select category'],
+   ['regPartnerCategory','','Select business category']
+  ].forEach(([id,emptyValue,placeholder])=>{
+   const el=document.getElementById(id);if(!el)return;
+   const selected=el.value;
+   el.replaceChildren();
+   const first=document.createElement('option');first.value=emptyValue;first.textContent=placeholder;el.appendChild(first);
+   categories.forEach(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;el.appendChild(o);});
+   el.value=categories.some(([v])=>v===selected)||selected===emptyValue?selected:emptyValue;
+  });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync,{once:true});else sync();
+})();
+</script>
 </body>
 </html>
 <style>
