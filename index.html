@@ -2427,6 +2427,77 @@ function frStartMarketPayCountdown(id,expiresAt,extended){
  tick();frMarketPayTimer=setInterval(tick,1000);
 }
 </script>
+
+<script id="fr-partner-live-digital-catalogue">
+/* Customer catalogue is loaded from the selected Partner's own published catalogue.
+   Fixed prices are displayed; blank prices are explicitly sent as Ask Price requests. */
+let frCustomerCatalogueRows=[];
+let frCustomerCatalogueBusy=false;
+async function openFriendStore(id){
+ const store=(frApprovedStores||[]).find(x=>String(x.id)===String(id));
+ if(!store){showMessage('ఈ Approved Store వివరాలు దొరకలేదు.','bad');return;}
+ frActiveStore=store;frMarketCategory='All';
+ $('customerCatalogueTitle').textContent=store.name;
+ $('customerCatalogueType').textContent=store.category;
+ $('customerCatalogueSub').textContent='ఈ షాప్ ప్రచురించిన వస్తువులు, ధరలు మరియు అందుబాటు';
+ $('customerCatalogueSearch').value='';
+ const grid=$('customerCatalogueGrid');
+ if(grid)grid.innerHTML='<div class="market-empty">ఈ షాప్ Digital Catalogue లోడ్ అవుతోంది…</div>';
+ const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=store.type==='medical'?'block':'none';
+ showPage('customerCatalogue');
+ try{
+  const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:store.id});
+  if(error)throw error;
+  frCustomerCatalogueRows=(data||[]).map(x=>({...x,pricePaise:x.price_paise==null?null:Number(x.price_paise),offerPaise:x.offer_price_paise==null?null:Number(x.offer_price_paise)}));
+  frMarketCategory='All';renderStoreCategories();renderCustomerCatalogue();
+  $('customerCatalogueSub').textContent=frCustomerCatalogueRows.length
+   ? frCustomerCatalogueRows.length+' వస్తువులు • Shop Owner ధరలు & availability'
+   : 'ఈ షాప్ ఇంకా Catalogue items publish చేయలేదు. Shop Owner తన Catalogueలో items జోడించాలి.';
+ }catch(e){
+  frCustomerCatalogueRows=[];
+  if(grid)grid.innerHTML='<div class="market-empty">Digital Catalogue లోడ్ కాలేదు: '+safe(e.message||e)+'</div>';
+ }
+}
+function renderStoreCategories(){
+ const rows=frCustomerCatalogueRows||[];
+ const cats=['All',...new Set(rows.map(x=>x.category).filter(Boolean))];
+ const sel=$('customerCatalogueCategorySelect');
+ if(sel){sel.innerHTML=cats.map(c=>'<option value="'+safe(c)+'">'+(c==='All'?'All Items / అన్ని వస్తువులు':safe(c))+'</option>').join('');sel.value=cats.includes(frMarketCategory)?frMarketCategory:'All';}
+ const tiles=$('frCatalogueCategoryTiles');
+ if(tiles)tiles.innerHTML=cats.filter(c=>c!=='All').map((c,i)=>'<button class="fr-catalogue-category-tile" data-category="'+safe(c)+'" onclick="frSelectCatalogueCategory(this.dataset.category)"><span class="market-product-art">'+(i%2?'🛍️':'📦')+'</span><b>'+safe(c)+'</b></button>').join('');
+ const head=$('frCatalogueVisualHead');
+ if(head&&frActiveStore)head.innerHTML='<div class="notice"><b>'+safe(frActiveStore.name)+'</b><br>Shop-specific Digital Catalogue</div>';
+}
+function renderCustomerCatalogue(){
+ if(!frActiveStore)return;
+ const q=($('customerCatalogueSearch')?.value||'').trim().toLowerCase();
+ const rows=(frCustomerCatalogueRows||[]).filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.item_name+' '+x.category+' '+(x.master_sku||'')).toLowerCase().includes(q)));
+ const grid=$('customerCatalogueGrid');if(!grid)return;
+ grid.innerHTML=rows.map((x,i)=>{
+  const name=safe(x.item_name),cat=safe(x.category||'Products'),unit=safe(x.unit||'');
+  const img=String(x.image_url||'').trim();
+  const photo=img?'<img src="'+safe(img)+'" alt="'+name+'" loading="lazy">':'<span class="product-art-object">'+frProductArt({name:x.item_name,category:x.category})+'</span>';
+  const hasPrice=x.pricePaise!==null;
+  const shown=hasPrice?(x.offerPaise!==null&&x.offerPaise>0?x.offerPaise:x.pricePaise):null;
+  const price=shown===null?'<div class="market-price">Ask Price • Shop Quotation</div>':'<div class="market-price">₹'+(shown/100).toFixed(2)+(x.offerPaise!==null&&x.offerPaise>0?' <small>Offer</small>':'')+'</div>';
+  const stock=x.available?'<span class="stock-mark yes">✓ Available</span>':'<span class="stock-mark no">Out of Stock</span>';
+  return '<article class="market-product market-product-3d"><div class="market-product-art-3d">'+photo+'</div><div class="market-product-info"><b>'+name+'</b><small class="muted">'+cat+(unit?' • '+unit:'')+'</small>'+price+stock+'</div><button class="btn purple" '+(!x.available?'disabled':'')+' onclick="frAddPartnerCatalogueItem('+i+')">'+(hasPrice?'＋ Add to Cart':'＋ Ask Price')+'</button></article>';
+ }).join('')||'<div class="market-empty">ఈ కేటగిరీలో Shop Owner publish చేసిన items లేవు.</div>';
+}
+function frAddPartnerCatalogueItem(index){
+ const x=frCustomerCatalogueRows[index];if(!x||!frActiveStore)return;
+ if(!x.available){alert('ఈ వస్తువు ప్రస్తుతం అందుబాటులో లేదు.');return;}
+ const rx=!!x.prescription_required;
+ if(rx&&!$('customerPrescriptionFile')?.files?.[0]){alert('ఈ మందుకు Doctor Prescription తప్పనిసరిగా అప్‌లోడ్ చేయాలి.');return;}
+ const unitPaise=x.pricePaise===null?null:(x.offerPaise!==null&&x.offerPaise>0?x.offerPaise:x.pricePaise);
+ const existing=frMarketCart.find(c=>c.catalogueItemId===x.id&&String(c.storeId)===String(frActiveStore.id));
+ if(existing)existing.qty++;
+ else frMarketCart.push({name:x.item_name,partner:frActiveStore.name,storeId:frActiveStore.id,qty:1,price:unitPaise===null?null:unitPaise/100,pricing:unitPaise===null?'request':'fixed',catalogueItemId:x.id,imageUrl:x.image_url||null,prescriptionRequired:rx});
+ renderMarketCart();
+ showMessage(unitPaise===null?'Ask Price request Cartలో చేరింది. Shop Owner Quotation పంపుతారు.':'Shop ధరతో Item Cartలో చేరింది. Final quotation Shop నిర్ధారిస్తుంది.','good');
+}
+</script>
+
 </body>
 </html>
 <style>
