@@ -642,25 +642,28 @@ function closeDrawer(){$('drawerBackdrop').classList.remove('show');}
 async function loadDriverApprovals(){
  const box=$('driverApprovalList');if(!box)return;box.textContent='Loading…';
  try{
-  if(!currentUser||selectedRole!=='admin'||currentProfile?.role!=='admin')throw Error('Admin login అవసరం.');
+  if(!currentUser||selectedRole!=='admin')throw Error('Admin login అవసరం.');
   const {data,error}=await sb.rpc('admin_list_driver_applications');if(error)throw error;
-  if(!Array.isArray(data)||!data.length){box.textContent='Pending Driver applications లేవు లేదా RPC ఖాళీ ఫలితం ఇచ్చింది.';return;}
+  if(!Array.isArray(data)||!data.length){box.textContent='Driver applications లేవు.';return;}
   box.innerHTML=data.map(d=>{
-   const id=d.id||d.user_id||d.driver_id;
-   const status=String(d.driver_approval_status||d.status||'pending').toLowerCase();
-   const photoNotice='<div class="notice">Profile photo: ప్రస్తుతం secure Storage upload/schema mapping లేదు; photo serverలో save అయినట్టు పరిగణించవద్దు.</div>';
-   const actions=['approved','verified','active'].includes(status)?'<b>APPROVED</b>':'<button class="btn purple" onclick="reviewDriverApplication(\\''+safe(String(id))+'\\')">Approve</button>';
-   return '<div class="card" style="margin:10px 0">'+photoNotice+'<p><b>Name:</b> '+safe(d.full_name||d.name||'—')+'<br><b>Phone:</b> '+safe(d.phone||'—')+'<br><b>Vehicle:</b> '+safe(d.vehicle_type||'—')+' '+safe(d.vehicle_number||'')+'<br><b>Licence:</b> '+safe(d.driver_license_number||'—')+'<br><b>Status:</b> '+safe(status)+'</p>'+actions+'</div>';
+   const id=d.id;
+   const status=String(d.driver_approval_status||'pending').toLowerCase();
+   const actions=status==='approved'?'<b>APPROVED</b>':status==='rejected'?'<b>REJECTED</b>':'<div class="row"><button class="btn purple" onclick="reviewDriverApplication(\\''+safe(String(id))+'\\','approved')">Approve</button><button class="btn red" onclick="reviewDriverApplication(\\''+safe(String(id))+'\\','rejected')">Reject</button></div>';
+   const licence=d.driving_license_document_path?'<br><b>Licence Document:</b> '+safe(d.driving_license_document_path):'';
+   return '<div class="card" style="margin:10px 0"><p><b>Name:</b> '+safe(d.full_name||'—')+'<br><b>Phone:</b> '+safe(d.phone||'—')+'<br><b>Vehicle:</b> '+safe([d.vehicle_type,d.vehicle_company,d.vehicle_model,d.vehicle_registration].filter(Boolean).join(' '))+'<br><b>Licence:</b> '+safe(d.driving_license_number||'—')+licence+'<br><b>Status:</b> '+safe(status)+'</p>'+actions+'</div>';
   }).join('');
  }catch(e){box.textContent='Driver applications load కాలేదు: '+(e.message||e);}
 }
-async function reviewDriverApplication(id){
- if(!id)return;
- if(!confirm('ఈ Driverను Approve చేయాలా?'))return;
- try{if(!currentUser||selectedRole!=='admin'||currentProfile?.role!=='admin')throw Error('Admin login అవసరం.');
- const {error}=await sb.rpc('admin_approve_driver',{p_driver_id:id});if(error)throw error;
- alert('Approval RPC request పంపబడింది. Databaseలో approved status verify చేయడానికి refresh చేయండి.');await loadDriverApprovals();
- }catch(e){alert('Driver Approval Error: '+(e.message||e));}
+async function reviewDriverApplication(id,decision){
+ if(!id||!['approved','rejected'].includes(decision))return;
+ const label=decision==='approved'?'Approve':'Reject';
+ if(!confirm('ఈ Driver applicationను '+label+' చేయాలా?'))return;
+ try{
+  if(!currentUser||selectedRole!=='admin')throw Error('Admin login అవసరం.');
+  const {data,error}=await sb.rpc('admin_review_driver',{p_driver_id:id,p_decision:decision});if(error)throw error;
+  if(data!==true)throw Error('Driver status update కాలేదు. Admin permission / driver ID పరిశీలించండి.');
+  alert('Driver status '+decision+'గా update అయింది.');await loadDriverApprovals();
+ }catch(e){alert('Driver Review Error: '+(e.message||e));}
 }
 async function loadPartnerApprovals(){
  const box=$('partnerApprovalList'); if(!box)return; box.textContent='Loading…';
@@ -731,7 +734,9 @@ async function acceptSession(user){
  currentProfile=profile;
  const savedAddress=profile?.address||user.user_metadata?.address||'';['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{const el=$(id);if(el&&!el.value&&savedAddress)el.value=savedAddress;});
  let dbRole=profile?.role||user.user_metadata?.role||'customer';
- if(dbRole==='admin'){const a=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();if(a.error||!a.data)throw new Error('ఈ ఖాతాకు Admin permission లేదు.');}
+ const adminCheck=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();
+ if(adminCheck.error)throw adminCheck.error;
+ if(adminCheck.data){dbRole='admin';}else if(dbRole==='admin'){throw new Error('ఈ ఖాతాకు Admin permission లేదు.');}
  if(!['customer','driver','partner','admin'].includes(dbRole))dbRole='customer';
  if(selectedRole!==dbRole)throw new Error('మీరు ఎంచుకున్న account type ఈ ఖాతాతో సరిపోలడం లేదు.');
  if(dbRole==='driver'){const approval=String(profile?.driver_approval_status||user.user_metadata?.driver_approval_status||'pending').toLowerCase();if(!['approved','verified','active'].includes(approval))throw new Error('Driver account Admin approval కోసం Pendingలో ఉంది.');$('driverApproval').textContent='Approved';$('driverApproval').className='status ok';$('onlineBtn').disabled=false;}
