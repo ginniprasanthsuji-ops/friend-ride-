@@ -1343,7 +1343,7 @@ function renderMarketCart(){
  $('marketCartTotal').textContent=frMarketCart.some(x=>x.price==null)?'Quotation pending for Ask Price items':'₹'+frMarketCart.reduce((n,x)=>n+(x.price||0)*x.qty,0).toFixed(2);
  const p=$('frPaymentOptions');if(p)p.style.display='none';frCartUpdateBadges();
 }
-function frLoadStorePaymentOptions(storeId){
+async function frLoadStorePaymentOptions(storeId){
  const panel=$('frPaymentOptions'),methods=$('frPaymentMethods');if(!panel||!methods)return;
  panel.style.display='block';methods.innerHTML='<div class="notice">Store payment details loading…</div>';
  try{
