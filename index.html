@@ -187,6 +187,29 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 .fr-home-safety-row button{padding:12px 7px}
 .fr-home-safety-row span{font-size:23px}
 @media(max-width:360px){.fr-home-service-grid{gap:6px}.fr-home-service{min-height:103px}.fr-home-service b{font-size:11px}.fr-home-quick-actions b{font-size:9px}.fr-home-brand-row h1{font-size:22px}}
+
+/* FRIEND RIDE image-first store catalogue */
+.fr-catalogue-visual-head{border-radius:19px;overflow:hidden;margin:10px 0 13px;min-height:142px;position:relative;background:linear-gradient(110deg,#087b54,#19a66c);color:#fff;display:flex;align-items:flex-end;padding:15px;box-shadow:0 9px 20px #087b5426}
+.fr-catalogue-visual-head img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.62}
+.fr-catalogue-visual-head:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#063d2fdd 0%,#07583b88 58%,transparent 100%)}
+.fr-catalogue-visual-copy{position:relative;z-index:1;max-width:80%}
+.fr-catalogue-visual-copy small{font-size:9px;font-weight:950;letter-spacing:1.2px;color:#fff0c9}
+.fr-catalogue-visual-copy b{display:block;font-size:21px;line-height:1.1;margin:4px 0}
+.fr-catalogue-visual-copy span{font-size:11px;color:#f2fff6}
+.fr-catalogue-category-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 14px}
+.fr-catalogue-category-tile{height:106px;position:relative;overflow:hidden;border:0;border-radius:15px;padding:0;text-align:left;background:#e8f4e9;box-shadow:0 6px 15px #173e2615}
+.fr-catalogue-category-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.fr-catalogue-category-tile:after{content:"";position:absolute;inset:30% 0 0;background:linear-gradient(0deg,#10251de8,transparent)}
+.fr-catalogue-category-tile b{position:absolute;z-index:1;left:10px;bottom:9px;color:#fff;font-size:12px;text-shadow:0 1px 4px #000}
+.market-product-photo{height:145px;background:linear-gradient(145deg,#fff2d9,#e3f7eb);display:grid;place-items:center;overflow:hidden;position:relative}
+.market-product-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.market-product-photo .market-product-photo-fallback{font-size:55px;filter:drop-shadow(0 7px 5px #173e2633)}
+.market-product-photo small{position:absolute;left:7px;top:7px;background:#fffdf0e8;color:#426348;border-radius:20px;padding:3px 7px;font-size:8px;font-weight:900}
+.fr-food-visual-banner{display:flex;align-items:center;gap:12px;background:linear-gradient(105deg,#fff0d8,#ffe0ad);border-radius:16px;padding:10px;margin:8px 0 12px;color:#623b13}
+.fr-food-visual-banner img{width:92px;height:74px;object-fit:cover;border-radius:12px}
+.fr-food-visual-banner b{display:block;font-size:14px}.fr-food-visual-banner small{font-size:10px}
+.partner-catalog-thumb{width:58px;height:58px;border-radius:12px;object-fit:cover;background:#f0f5eb;flex:0 0 auto}
+@media(min-width:600px){.fr-catalogue-category-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style><style>
 /* FRIEND RIDE visual refresh: colourful marketplace-style home */
 body{background:#fffaf7;color:#171717;padding-bottom:100px}
@@ -515,7 +538,9 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
    <label>Upload Prescription (JPG / PNG / PDF)</label><input id="customerPrescriptionFile" type="file" accept="image/*,.pdf" onchange="frCheckPrescriptionFile(this)">
    <small id="prescriptionFileStatus" class="muted">Prescription medicine cart కోసం ఫైల్ అవసరం.</small>
   </div>
+  <div class="fr-catalogue-visual-head" id="frCatalogueVisualHead"></div>
   <div class="field"><label>Catalogue Category / క్యాటలాగ్ కేటగిరీ</label><select id="customerCatalogueCategorySelect" onchange="frMarketCategory=this.value;renderCustomerCatalogue()"><option value="All">All Items</option></select></div>
+  <div id="frCatalogueCategoryTiles" class="fr-catalogue-category-tiles"></div>
   <div class="market-search"><input id="customerCatalogueSearch" placeholder="Search products in catalogue" oninput="renderCustomerCatalogue()"></div>
   <div id="customerCatalogueGrid" class="market-product-grid"></div>
   <div class="notice">Partner sets the selling price for each item. Items without a price can be requested from the partner.</div>
@@ -986,6 +1011,7 @@ function renderCatalogue(){
  el.className='';
  el.innerHTML=localCatalogue.map((x,i)=>`<div class="partner-catalog-row ${x.available?'':'unavailable'}">
   <div class="row" style="justify-content:space-between;align-items:flex-start">
+   ${x.imageUrl?'<img class="partner-catalog-thumb" src="'+safe(x.imageUrl)+'" alt="'+safe(x.name)+'">':'<div class="partner-catalog-thumb" style="display:grid;place-items:center;font-size:25px">📷</div>'}
    <div class="grow"><b>${safe(x.name)}</b><br><small class="muted">${safe(x.sku||'CUSTOM')} • ${safe(x.cat)} • ${safe(x.unit||'Unit not set')}</small><br><small>${safe(x.description||'')}</small></div>
    <span class="stock-mark ${x.available?'yes':'no'}">${x.available?'✓ Available':'✕ Not Available'}</span>
   </div>
@@ -1253,7 +1279,13 @@ function renderStoreCategories(){
  if(!rows.length){const fallback=FR_STORE_MENU[frActiveStore?.type]||[];cats=['All',...new Set(fallback.map(x=>x[0]))];}
  const sel=$('customerCatalogueCategorySelect');
  if(sel){sel.innerHTML=cats.map(c=>`<option value="${safe(c)}">${c==='All'?'All Items / అన్ని వస్తువులు':safe(c)}</option>`).join('');sel.value=cats.includes(frMarketCategory)?frMarketCategory:'All';}
+ renderFrCatalogueVisuals(cats);
 }
+
+const FR_CATALOGUE_PHOTOS={grocery:'https://www.miniindiagrocery.nl/cdn/shop/articles/Your_Complete_Indian_Grocery_Guide_2_c533731a-8d85-4fcc-8a8b-e7370aef361b.webp?v=1775969230',fresh:'https://wspproductionwcmassets.s3.eu-north-1.amazonaws.com/frukt_och_groent_artikel_1200x800_c954583810.jpg',food:'https://rs-menus-api.roocdn.com/images/357d3c9e-9b53-4b0f-b9c1-5f69320ec78f/image.jpeg?fit=crop&height=630&width=1200',fashion:'https://www.kartupai.com/space/categories/fashion.png'};
+function frCataloguePhotoFor(type,category=''){const t=String(type||'').toLowerCase(),c=String(category||'').toLowerCase();if(t==='vegetables'||/fruit|vegetable|fresh/.test(c))return FR_CATALOGUE_PHOTOS.fresh;if(t==='restaurant'||/food|meal|biryani|breakfast|curry|snack/.test(c))return FR_CATALOGUE_PHOTOS.food;if(/fashion|clothing|apparel|footwear/.test(c))return FR_CATALOGUE_PHOTOS.fashion;return FR_CATALOGUE_PHOTOS.grocery;}
+function renderFrCatalogueVisuals(categories){const head=$('frCatalogueVisualHead'),tiles=$('frCatalogueCategoryTiles');if(!head||!tiles||!frActiveStore)return;const type=frActiveStore.type||'local_store',img=frCataloguePhotoFor(type);head.innerHTML='<img src="'+img+'" alt="'+safe(frActiveStore.category)+' catalogue" loading="lazy"><div class="fr-catalogue-visual-copy"><small>FRIEND RIDE • SHOP VISUALLY</small><b>'+safe(frActiveStore.name)+'</b><span>Browse colourful categories and choose products</span></div>';const names=(categories||[]).filter(x=>x!=='All');tiles.innerHTML=names.slice(0,8).map((c,i)=>{const pic=frCataloguePhotoFor(type,c);return '<button class="fr-catalogue-category-tile" onclick="frSelectCatalogueCategory('+JSON.stringify(c).replace(/</g,'\\u003c')+')"><img src="'+pic+'" alt="'+safe(c)+'" loading="lazy"><b>'+safe(c)+'</b></button>';}).join('');}
+function frSelectCatalogueCategory(category){frMarketCategory=category;const sel=$('customerCatalogueCategorySelect');if(sel)sel.value=category;renderCustomerCatalogue();}
 function renderCustomerCatalogue(){
  if(!frActiveStore)return;
  const businessType=frStoreMasterType(frActiveStore.type);
@@ -1266,8 +1298,9 @@ function renderCustomerCatalogue(){
  const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=isMedical?'block':'none';
  const grid=$('customerCatalogueGrid');
  if(grid)grid.innerHTML=items.map(x=>{
-  const art=frProductArt(x),name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||'');
-  return `<article class="market-product market-product-3d"><div class="market-product-art market-product-art-3d"><span class="product-art-glow"></span><span class="product-art-object">${art}</span><small>FR 3D CATALOGUE</small></div><div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small><div class="market-price">Partner price: confirm with store</div><span class="stock-mark no">Availability: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${name.replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','request')">＋ Add / Ask Price</button></article>`;
+  const art=frProductArt(x),name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||''),photo=String(x.imageUrl||x.image_url||'').trim();
+  const visual=photo?'<div class="market-product-photo"><img src="'+safe(photo)+'" alt="'+name+'" loading="lazy" onerror="this.parentElement.innerHTML=\'<span class=&quot;market-product-photo-fallback&quot;>'+art+'</span>\'"><small>STORE PRODUCT PHOTO</small></div>':'<div class="market-product-photo"><span class="market-product-photo-fallback">'+art+'</span><small>PRODUCT PHOTO NOT UPLOADED</small></div>';
+  return `<article class="market-product market-product-3d">${visual}<div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small><div class="market-price">Partner price: confirm with store</div><span class="stock-mark no">Availability: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${name.replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','request')">＋ Add / Ask Price</button></article>`;
  }).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
 }
 function renderRestaurantList(){
@@ -1289,7 +1322,7 @@ function renderRestaurantCategories(){
 function renderRestaurantMenu(){
  const q=($('restaurantMenuSearch')?.value||'').toLowerCase();
  const items=FR_FOOD_MENU.filter(x=>(frRestaurantCategory==='All'||x[0]===frRestaurantCategory)&&x[1].toLowerCase().includes(q));
- $('restaurantMenuGrid').innerHTML=items.map(x=>`<div class="market-product"><div class="market-product-art">${x[2]}</div><div class="market-product-info"><b>${safe(x[1])}</b><small class="muted">${safe(x[0])}</small><div class="market-price">Price set by restaurant</div></div><button class="btn purple" onclick="addMarketCart('${safe(x[1])}','${safe(frActiveRestaurant.name)}','request')">＋ Add / Ask Price</button></div>`).join('')||'<div class="market-empty">Menu item not found.</div>';
+ $('restaurantMenuGrid').innerHTML='<div class="fr-food-visual-banner"><img src="'+FR_CATALOGUE_PHOTOS.food+'" alt="Indian food catalogue" loading="lazy"><span><b>Fresh Food Catalogue</b><small>Browse menu categories and add your favourites</small></span></div>'+items.map(x=>`<div class="market-product"><div class="market-product-art">${x[2]}</div><div class="market-product-info"><b>${safe(x[1])}</b><small class="muted">${safe(x[0])}</small><div class="market-price">Price set by restaurant</div></div><button class="btn purple" onclick="addMarketCart('${safe(x[1])}','${safe(frActiveRestaurant.name)}','request')">＋ Add / Ask Price</button></div>`).join('')||'<div class="market-empty">Menu item not found.</div>';
 }
 function frCartUpdateBadges(){
  const count=frMarketCart.reduce((n,x)=>n+(x.qty||0),0),stores=new Set(frMarketCart.map(x=>x.storeId||x.partner)).size;
