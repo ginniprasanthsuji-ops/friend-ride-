@@ -1958,6 +1958,137 @@ function frSubmitBankEnquiry(){
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',panel,{once:true});else panel();
 })();
 </script>
+
+<script id="FR_REGRESSION_FLOW_FIXES_V1">
+(()=>{
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const notify=(msg)=>{if(typeof showMessage==='function')showMessage(msg,'good');else alert(msg)};
+ const fail=(label,e)=>{const m=label+': '+(e?.message||e||'Unknown error');if(typeof showMessage==='function')showMessage(m,'error');else alert(m);};
+ const serviceSlug=()=>({'Electrician':'electrician','Plumber':'plumber','AC Technician':'ac-mechanic','Appliance Repair':'other','House Cleaning':'other','Painting':'other','Carpenter':'carpenter'}[$('homeServiceType')?.value]||'other');
+ window.loadApprovedServiceProviders=async function(){
+  const select=$('homeServiceTechnician');if(!select)return;
+  select.innerHTML='<option value="">Any approved technician (Admin will assign)</option>';
+  try{
+   const {data,error}=await sb.rpc('fr_customer_list_approved_service_providers',{p_category_slug:serviceSlug()});
+   if(error)throw error;
+   (data||[]).forEach(p=>{const o=document.createElement('option');o.value=p.provider_id;o.textContent=(p.display_name||'Technician')+(p.service_area?' — '+p.service_area:'');select.appendChild(o);});
+   if(!data?.length){const o=document.createElement('option');o.value='';o.textContent='No approved technician yet — request can still be submitted';select.appendChild(o);}
+  }catch(e){select.innerHTML='<option value="">Technician list unavailable</option>';fail('Technician list',e);}
+ };
+ window.submitParcelRequest=async function(){
+  try{
+   if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer login అవసరం.');
+   const v=id=>($(id)?.value||'').trim(),digits=x=>x.replace(/\D/g,'');
+   const weight=Number($('parcelWeight')?.value);
+   if(!v('parcelSender')||!v('parcelReceiver')||v('parcelSender').length<2||v('parcelReceiver').length<2)throw Error('Sender మరియు Receiver పేర్లు నమోదు చేయండి.');
+   if(digits(v('parcelSenderPhone')).length!==10||digits(v('parcelReceiverPhone')).length!==10)throw Error('సరైన 10 digit mobile numbers ఇవ్వండి.');
+   if(v('parcelPickup').length<8||v('parcelDrop').length<8||v('parcelDescription').length<2)throw Error('Pickup, Delivery address మరియు parcel వివరాలు పూర్తి చేయండి.');
+   if(!Number.isFinite(weight)||weight<=0||weight>500)throw Error('Parcel weight 0 కంటే ఎక్కువ, 500 kg లోపు ఉండాలి.');
+   const {data,error}=await sb.rpc('fr_customer_create_parcel_request',{
+    p_sender_name:v('parcelSender'),p_sender_phone:digits(v('parcelSenderPhone')),
+    p_pickup_address:v('parcelPickup'),p_receiver_name:v('parcelReceiver'),
+    p_receiver_phone:digits(v('parcelReceiverPhone')),p_delivery_address:v('parcelDrop'),
+    p_description:v('parcelDescription'),p_weight_kg:weight
+   });
+   if(error)throw error;
+   const r=Array.isArray(data)?data[0]:data;
+   if(!r?.parcel_id||!r?.tracking_id)throw Error('Backend parcel confirmation incomplete.');
+   window.frLastParcelId=r.parcel_id;window.frLastParcelTracking=r.tracking_id;
+   if($('parcelTrackingId'))$('parcelTrackingId').value=r.tracking_id;
+   alert('Parcel request saved. Tracking ID: '+r.tracking_id+'\nPayment: Cash on Delivery. Driver acceptance తర్వాత status update అవుతుంది.');
+   ['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription','parcelWeight'].forEach(id=>{if($(id))$(id).value='';});
+  }catch(e){fail('Parcel request save కాలేదు',e);}
+ };
+ window.frDriverConfirmParcelCash=async function(){
+  try{
+   if(!currentUser||currentProfile?.role!=='driver')throw Error('Driver login అవసరం.');
+   const tracking=($('parcelTrackingId')?.value||'').trim();if(!tracking)throw Error('Tracking ID నమోదు చేయండి.');
+   const {data,error}=await sb.rpc('fr_driver_list_parcel_requests');if(error)throw error;
+   const row=(data||[]).find(x=>x.tracking_id===tracking);
+   if(!row)throw Error('ఈ Tracking ID మీ Driver accountకు assign కాలేదు.');
+   if(row.status!=='accepted')throw Error('Parcel accepted statusలో ఉన్నప్పుడే cash collection confirm చేయవచ్చు. Current: '+row.status);
+   const {data:ok,error:pe}=await sb.rpc('fr_driver_confirm_parcel_payment',{p_parcel_id:row.parcel_id});if(pe)throw pe;
+   if(!ok)throw Error('Cash collection confirmation rejected by server.');
+   alert('Cash collection recorded. Customer accountలో OTP request చేయమని చెప్పండి. OTP 10 minutes మాత్రమే valid.');
+  }catch(e){fail('Cash collection update కాలేదు',e);}
+ };
+ window.frCustomerRequestParcelOtp=async function(){
+  try{
+   if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer login అవసరం.');
+   const tracking=($('parcelTrackingId')?.value||'').trim();if(!tracking)throw Error('Tracking ID నమోదు చేయండి.');
+   const {data,error}=await sb.rpc('fr_customer_list_parcel_requests');if(error)throw error;
+   const row=(data||[]).find(x=>x.tracking_id===tracking);if(!row)throw Error('మీ accountలో ఈ Parcel కనిపించలేదు.');
+   const {data:otp,error:oe}=await sb.rpc('fr_customer_get_parcel_delivery_otp',{p_parcel_id:row.parcel_id});if(oe)throw oe;
+   if(!/^\d{6}$/.test(String(otp||'')))throw Error('Server returned invalid OTP.');
+   alert('మీ Parcel Delivery OTP: '+otp+'\nఈ OTPను Driverకు delivery సమయంలో మాత్రమే చెప్పండి. 10 నిమిషాల్లో expire అవుతుంది.');
+  }catch(e){fail('OTP generate కాలేదు',e);}
+ };
+ window.confirmParcelRelease=async function(){
+  try{
+   if(!currentUser||currentProfile?.role!=='driver')throw Error('Approved Driver login అవసరం.');
+   const tracking=($('parcelTrackingId')?.value||'').trim(),otp=($('parcelDeliveryOtp')?.value||'').trim();
+   if(!tracking||!/^\d{6}$/.test(otp))throw Error('Tracking ID మరియు 6 digit OTP నమోదు చేయండి.');
+   const {data,error}=await sb.rpc('fr_driver_list_parcel_requests');if(error)throw error;
+   const row=(data||[]).find(x=>x.tracking_id===tracking);if(!row)throw Error('ఈ Parcel మీ Driver accountకు assign కాలేదు.');
+   const {data:ok,error:ve}=await sb.rpc('fr_driver_verify_parcel_delivery_otp',{p_parcel_id:row.parcel_id,p_otp:otp});if(ve)throw ve;
+   if(!ok)throw Error('OTP తప్పు, expire అయింది లేదా 5 attempts దాటాయి.');
+   if($('parcelReleaseStatus'))$('parcelReleaseStatus').textContent='Delivered successfully · '+tracking;
+   $('parcelDeliveryOtp').value='';alert('Parcel delivered successfully.'); 
+  }catch(e){fail('Parcel release rejected',e);}
+ };
+ window.submitServiceRequest=async function(){
+  try{
+   if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer login అవసరం.');
+   const val=id=>($(id)?.value||'').trim(),date=val('homeServiceDate'),time=val('homeServiceTime');
+   if(val('homeServiceAddress').length<8||val('homeServiceNotes').length<3||!date||!time)throw Error('Address, work details, preferred date మరియు time పూర్తి చేయండి.');
+   const today=new Date();today.setHours(0,0,0,0);if(new Date(date+'T00:00:00')<today)throw Error('గత తేదీ ఎంచుకోకండి.');
+   const provider=val('homeServiceTechnician')||null;
+   const {data,error}=await sb.rpc('fr_customer_create_service_request',{
+    p_category_slug:serviceSlug(),p_provider_id:provider,p_service_address:val('homeServiceAddress'),
+    p_work_details:val('homeServiceNotes'),p_preferred_date:date,p_preferred_time:time
+   });
+   if(error)throw error;
+   const r=Array.isArray(data)?data[0]:data;if(!r?.request_number)throw Error('Service request number missing.');
+   alert('Home Service request saved: '+r.request_number+'\nStatus: Requested. ఇది advance payment confirmation కాదు; final booking/payment తర్వాత వేరుగా confirm చేయాలి.');
+   $('homeServiceNotes').value=''; 
+  }catch(e){fail('Home Service request save కాలేదు',e);}
+ };
+ window.marketCheckout=async function(){
+  const btn=$('frContinuePaymentBtn');
+  try{
+   if(!currentUser||currentProfile?.role!=='customer')throw Error('ముందుగా Customer Login చేయండి.');
+   if(!frMarketCart.length)throw Error('Cart ఖాళీగా ఉంది.');
+   if(frMarketCart.some(x=>x.prescriptionRequired)&&!$('customerPrescriptionFile')?.files?.[0])throw Error('Prescription medicines కోసం Doctor Prescription upload చేయాలి.');
+   const address=($('marketCartAddress')?.value||'').trim();if(address.length<8)throw Error('Valid delivery address నమోదు చేయండి.');
+   const grouped=new Map();
+   frMarketCart.forEach(x=>{
+    if(!x.storeId)throw Error('Cartలో Store ID లేని item ఉంది. ఆ item తీసేసి approved store నుంచి మళ్లీ add చేయండి.');
+    if(!grouped.has(String(x.storeId)))grouped.set(String(x.storeId),[]);
+    grouped.get(String(x.storeId)).push({name:String(x.name||'').trim(),quantity:Math.max(1,Math.min(99,Number(x.qty)||1)),prescription_required:!!x.prescriptionRequired,catalogue_item_id:x.catalogueItemId||null,image_url:x.imageUrl||null});
+   });
+   if(btn){btn.disabled=true;btn.textContent='Multi-store orders saving…';}
+   const stores=[...grouped.entries()].map(([store_id,items])=>({store_id,items}));
+   const {data,error}=await sb.rpc('fr_customer_place_multi_market_order',{p_delivery_address:address,p_stores:stores});
+   if(error)throw error;
+   const r=Array.isArray(data)?data[0]:data;if(!r?.ok||Number(r.order_count)!==stores.length)throw Error('Multi-store order response incomplete.');
+   const summary=(r.orders||[]).map(x=>x.order_number).join(', ');
+   frMarketCart=[];renderMarketCart();
+   alert('Multi-store checkout successful. '+r.order_count+' separate store orders created.\nOrder IDs: '+summary+'\nPartners quote కోసం వేచి ఉండండి.');
+   showPage('orders');
+  }catch(e){fail('Checkout failed',e);}
+  finally{if(btn){btn.disabled=false;btn.textContent='Continue to Payment';}}
+ };
+ function addParcelActions(){
+  const box=$('parcelRelease')?.querySelector('.card');if(!box||$('frParcelCashBtn'))return;
+  const actions=document.createElement('div');actions.className='actions';actions.innerHTML='<button class="btn light" id="frParcelCashBtn" type="button">Driver: Confirm Cash Collected</button><button class="btn light" id="frParcelOtpBtn" type="button">Customer: Get Delivery OTP</button>';
+  const verify=box.querySelector('button[onclick*="confirmParcelRelease"]');verify?.before(actions);
+  $('frParcelCashBtn').onclick=frDriverConfirmParcelCash;$('frParcelOtpBtn').onclick=frCustomerRequestParcelOtp;
+ }
+ function bindServices(){const el=$('homeServiceType');if(el&&!el.dataset.frBound){el.dataset.frBound='1';el.addEventListener('change',()=>loadApprovedServiceProviders());loadApprovedServiceProviders();}}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{addParcelActions();bindServices();},{once:true});else{addParcelActions();bindServices();}
+})();
+</script>
 </body>
 </html>
 <style>
