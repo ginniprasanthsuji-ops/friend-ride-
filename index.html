@@ -844,9 +844,9 @@ function loadMasterItems(){
  const filtered=all.filter(x=>!q||[x.id,x.name,x.baseName,x.category,x.description,x.unit].join(' ').toLowerCase().includes(q));
  $('masterCatalogueItem').innerHTML='<option value="">Select catalogue item ('+filtered.length+')</option>'+filtered.map(x=>'<option value="'+x.id+'">'+safe(x.id+' · '+x.name)+'</option>').join('');
  const count=$('masterCatalogueCount');if(count)count.textContent=filtered.length+' matching entries • '+all.length+' in selected category • '+FRIEND_MASTER_ITEMS.length+' master entries';
- const existing=new Map(localCatalogue.map(x=>[x.sku,x]));
- localCatalogue=all.map(x=>existing.get(x.id)||({sku:x.id,name:x.name,cat:x.category,businessType:type,unit:x.unit,description:x.description,price:null,offer:0,pricing:'request',available:false,prescriptionCheck:!!x.prescriptionCheck}));
- renderCatalogue();
+ // Master catalogue selection is separate from the partner's saved/live catalogue.
+ // Do not replace live products with unsaved master-catalogue preview rows.
+
 }
 function useMasterItem(){
  const id=$('masterCatalogueItem').value,item=FRIEND_MASTER_ITEMS.find(x=>x.id===id);if(!item)return;
