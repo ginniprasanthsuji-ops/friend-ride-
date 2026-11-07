@@ -2194,7 +2194,7 @@ async function frLoadCustomerParcels(){
     if(!data?.length){el.textContent='ఇంకా Parcel Requests లేవు.';return;}
     el.innerHTML=data.map(p=>{
       const canOtp=p.status==='out_for_delivery' && p.payment_collected;
-      return '<div class="card" style="margin:8px 0;padding:12px"><div class="row"><b>'+safe(p.tracking_id)+'</b><span class="pill">'+safe(p.status)+'</span></div><p>'+safe(p.sender_name)+' → '+safe(p.receiver_name)+'</p><p>Pickup: '+safe(p.pickup_address)+'</p><p>Delivery: '+safe(p.delivery_address)+'</p><p>'+safe(p.parcel_description)+' • '+safe(p.weight_kg)+' kg</p><p>COD collected: '+(p.payment_collected?'Yes':'No')+'</p>'+(canOtp?'<button class="btn purple" onclick="frCustomerGetParcelOtp(\\''+p.parcel_id+'\\')">Get Recipient Delivery OTP</button>':'')+'</div>';
+      return '<div class="card" style="margin:8px 0;padding:12px"><div class="row"><b>'+safe(p.tracking_id)+'</b><span class="pill">'+safe(p.status)+'</span></div><p>'+safe(p.sender_name)+' → '+safe(p.receiver_name)+'</p><p>Pickup: '+safe(p.pickup_address)+'</p><p>Delivery: '+safe(p.delivery_address)+'</p><p>'+safe(p.parcel_description)+' • '+safe(p.weight_kg)+' kg</p><p>COD collected: '+(p.payment_collected?'Yes':'No')+'</p>'+(canOtp?'<button class="btn purple" onclick="frCustomerGetParcelOtp(\''+p.parcel_id+'\')">Get Recipient Delivery OTP</button>':'')+'</div>';
     }).join('');
   }catch(e){el.textContent='Parcel requests load కాలేదు: '+(e.message||e);}
 }
@@ -2241,9 +2241,9 @@ async function frLoadDriverParcelQueue(){
     if(!data?.length){el.textContent='మీకు Parcel Requests లేవు.';return;}
     el.innerHTML=data.map(p=>{
       let action='';
-      if(p.status==='requested' && !p.payment_collected) action='<button class="btn purple" onclick="frDriverAcceptParcel(\\''+p.parcel_id+'\\')">Accept Parcel</button>';
-      else if(p.status==='accepted') action='<button class="btn purple" onclick="frDriverConfirmParcelPayment(\\''+p.parcel_id+'\\')">Confirm COD Cash Collected</button>';
-      else if(p.status==='out_for_delivery') action='<button class="btn light" onclick="frSelectParcelForOtp(\\''+p.parcel_id+'\\',\\''+p.tracking_id+'\\')">Select for OTP Verification</button>';
+      if(p.status==='requested' && !p.payment_collected) action='<button class="btn purple" onclick="frDriverAcceptParcel(\''+p.parcel_id+'\')">Accept Parcel</button>';
+      else if(p.status==='accepted') action='<button class="btn purple" onclick="frDriverConfirmParcelPayment(\''+p.parcel_id+'\')">Confirm COD Cash Collected</button>';
+      else if(p.status==='out_for_delivery') action='<button class="btn light" onclick="frSelectParcelForOtp(\''+p.parcel_id+'\',\''+p.tracking_id+'\')">Select for OTP Verification</button>';
       return '<div class="card" style="margin:8px 0;padding:12px"><div class="row"><b>'+safe(p.tracking_id)+'</b><span class="pill">'+safe(p.status)+'</span></div><p>Sender: '+safe(p.sender_name)+' • '+safe(p.sender_phone)+'</p><p>Receiver: '+safe(p.receiver_name)+' • '+safe(p.receiver_phone)+'</p><p>Pickup: '+safe(p.pickup_address)+'</p><p>Drop: '+safe(p.delivery_address)+'</p><p>'+safe(p.parcel_description)+' • '+safe(p.weight_kg)+' kg</p>'+action+'</div>';
     }).join('');
   }catch(e){el.textContent='Parcel queue load కాలేదు: '+(e.message||e);}
