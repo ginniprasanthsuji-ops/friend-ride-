@@ -1486,7 +1486,7 @@ async function loadMyRideTracking(){
       const a=document.createElement('button');a.className='btn';a.textContent='Accept Driver Counter Offer';a.onclick=async()=>{const x=await sb.rpc('accept_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(a);
       const d=document.createElement('button');d.className='btn light';d.textContent='Reject Counter Offer';d.onclick=async()=>{const x=await sb.rpc('decline_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(d);
     }
-    if(active.driver_id&&['accepted','in_progress','started'].includes(String(active.status).toLowerCase())){const b=document.createElement('button');b.className='btn purple';b.textContent='🛰️ Start Two-Way Live Tracking';b.onclick=()=>startCustomerLiveTracking(active.id);box.append(b);}
+    if(active.driver_id&&['accepted','ongoing'].includes(String(active.status).toLowerCase())){const b=document.createElement('button');b.className='btn purple';b.textContent='🛰️ Start Two-Way Live Tracking';b.onclick=()=>startCustomerLiveTracking(active.id);box.append(b);}
   }catch(e){frShow('liveRideStatus','My Rides Error: '+e.message);}
 }
 async function startCustomerTrackingFromPanel(){if(frActiveRideId)await startCustomerLiveTracking(frActiveRideId);else await loadMyRideTracking();}
@@ -1502,7 +1502,7 @@ async function refreshDriverCustomerLocation(rideId){
 async function startCustomerLiveTracking(rideId){
   try{
     const {data:ride,error}=await sb.from('rides').select('id,status,driver_id').eq('id',rideId).eq('customer_id',currentUser.id).maybeSingle();if(error)throw error;
-    if(!ride?.driver_id||!['accepted','in_progress','started'].includes(String(ride.status||'').toLowerCase()))throw Error('Driver Accept చేసిన తర్వాత మాత్రమే Live Tracking ప్రారంభమవుతుంది.');
+    if(!ride?.driver_id||!['accepted','ongoing'].includes(String(ride.status||'').toLowerCase()))throw Error('Driver Accept చేసిన తర్వాత మాత్రమే Live Tracking ప్రారంభమవుతుంది.');
     if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);
     const send=async()=>{try{const p=await frPosition();const x=await sb.from('ride_live_locations').upsert({ride_id:rideId,user_id:currentUser.id,latitude:p.coords.latitude,longitude:p.coords.longitude,updated_at:new Date().toISOString()},{onConflict:'ride_id,user_id'});if(x.error)throw x.error;await refreshCustomerDriverLocation(rideId);frShow('liveRideStatus','మీ Location Driverకు Liveగా Share అవుతోంది ✓');}catch(e){frShow('liveRideStatus','Customer GPS update కాలేదు: '+e.message);}};
     await send();frCustomerTrackTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='customer')send();},10000);
@@ -2084,7 +2084,7 @@ function frSubmitBankEnquiry(){
 async function frLoadDriverActiveRide(){
   try{
     if(!currentUser||currentProfile?.role!=='driver')throw Error('Driver login అవసరం.');
-    const {data,error}=await sb.from('rides').select('*').eq('driver_id',currentUser.id).in('status',['accepted','in_progress','started']).order('created_at',{ascending:false}).limit(1).maybeSingle();
+    const {data,error}=await sb.from('rides').select('*').eq('driver_id',currentUser.id).in('status',['accepted','ongoing']).order('created_at',{ascending:false}).limit(1).maybeSingle();
     if(error)throw error;
     if(!data){frActiveRideId=null;frTrackingRideData=null;frShow('driverRideStatus','Active Ride లేదు.');return null;}
     frActiveRideId=data.id;frTrackingRideData=data;
@@ -2095,9 +2095,9 @@ async function frLoadDriverActiveRide(){
 async function frStartMyRide(){
   try{
     const ride=await frLoadDriverActiveRide();if(!ride)throw Error('ముందుగా Ride Accept చేయాలి.');
-    if(ride.status==='in_progress'||ride.status==='started')throw Error('ఈ Ride ఇప్పటికే ప్రారంభమైంది.');
+    if(ride.status==='ongoing'||ride.status==='started')throw Error('ఈ Ride ఇప్పటికే ప్రారంభమైంది.');
     const {error}=await sb.rpc('fr_driver_start_ride',{p_ride_id:ride.id});if(error)throw error;
-    frTrackingRideData={...ride,status:'in_progress'};
+    frTrackingRideData={...ride,status:'ongoing'};
     await startDriverLiveTracking(ride.id);
     frShow('driverRideStatus','Ride ప్రారంభమైంది ✓ • Customerకు Notification పంపబడింది.');
   }catch(e){frShow('driverRideStatus','Start Ride Error: '+e.message);}
@@ -2105,7 +2105,7 @@ async function frStartMyRide(){
 async function frCompleteMyRide(){
   try{
     const ride=await frLoadDriverActiveRide();if(!ride)throw Error('Active Ride లేదు.');
-    if(!['in_progress','started'].includes(String(ride.status).toLowerCase()))throw Error('Ride Start చేసిన తర్వాత మాత్రమే Complete చేయవచ్చు.');
+    if(!['ongoing'].includes(String(ride.status).toLowerCase()))throw Error('Ride Start చేసిన తర్వాత మాత్రమే Complete చేయవచ్చు.');
     const {error}=await sb.rpc('fr_driver_complete_ride',{p_ride_id:ride.id});if(error)throw error;
     if(frDriverTrackTimer){clearInterval(frDriverTrackTimer);frDriverTrackTimer=null;}
     frActiveRideId=null;frTrackingRideData=null;
