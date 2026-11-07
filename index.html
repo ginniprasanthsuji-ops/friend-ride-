@@ -1290,24 +1290,46 @@ async function verifyLoginOtp(){
     frAdminLoginMode=false;
   } catch(e){showMessage('OTP Verify / Login కాలేదు: '+e.message);}
 }
+function frRegistrationFile(id,allowed,maxBytes,label){
+  const file=$(id)?.files?.[0];
+  if(!file)throw Error(label+' file తప్పనిసరి.');
+  if(!allowed.includes(file.type))throw Error(label+' సరైన JPG/PNG/WEBP/PDF formatలో ఉండాలి.');
+  if(file.size<=0||file.size>maxBytes)throw Error(label+' file size limit మించకూడదు.');
+  return file;
+}
 function frValidateRegistration(){
   const name=$('regName')?.value.trim(),phone=normalizePhone($('regPhone')?.value),address=$('regAddress')?.value.trim();
   if(!name||!phone)throw Error('పూర్తి పేరు, సరైన 10 అంకెల మొబైల్ నమోదు చేయండి.');
   if(selectedRole==='admin')throw Error('Admin self-registration అనుమతించబడదు.');
   if(selectedRole==='customer'&&!address)throw Error('Customer పూర్తి చిరునామా నమోదు చేయండి.');
   if(selectedRole==='driver'){
-    const ids=['regDriverPhoto','regDriverLicense','regDriverAadhaar','regDriverRC'];
-    if(ids.some(id=>!$(id)?.files?.length))throw Error('Driver Photo, Licence, Aadhaar, Vehicle RC తప్పనిసరిగా upload చేయండి.');
+    frRegistrationFile('regDriverPhoto',['image/jpeg','image/png','image/webp'],3*1024*1024,'Driver Passport Photo');
+    frRegistrationFile('regDriverLicense',['image/jpeg','image/png','image/webp','application/pdf'],5*1024*1024,'Driving Licence');
+    frRegistrationFile('regDriverAadhaar',['image/jpeg','image/png','image/webp','application/pdf'],5*1024*1024,'Aadhaar');
+    frRegistrationFile('regDriverRC',['image/jpeg','image/png','image/webp','application/pdf'],5*1024*1024,'Vehicle RC');
     if(['regAadhaarNumber','regLicenseNumber','regExperience','regVehicleNumber','regVehicleCompany','regVehicleModel'].some(id=>!$(id)?.value.trim()))throw Error('Driver verification / vehicle వివరాలు పూర్తి చేయండి.');
-    if(ids.some(id=>$(id).files[0].size>2*1024*1024))throw Error('ప్రతి Driver document 2 MB లోపు ఉండాలి.');
+    if(!/^\\d{12}$/.test(frDigits('regAadhaarNumber')))throw Error('12 అంకెల Aadhaar number ఇవ్వండి.');
+    if(Number($('regExperience').value)<0)throw Error('Driving experience సరైన సంఖ్య ఇవ్వండి.');
   }
-  if(selectedRole==='partner'&&['regPartnerCategory','regBusinessName','regBusinessAddress','regUPI','regPhonePe'].some(id=>!$(id)?.value.trim()))throw Error('Partner Business, Address, UPI, PhonePe వివరాలు పూర్తి చేయండి.');
+  if(selectedRole==='partner'){
+    frRegistrationFile('regPartnerPhoto',['image/jpeg','image/png','image/webp'],3*1024*1024,'Partner Passport Photo');
+    if(['regPartnerCategory','regBusinessName','regBusinessAddress','regUPI','regPhonePe'].some(id=>!$(id)?.value.trim()))throw Error('Partner Business, Address, UPI, PhonePe వివరాలు పూర్తి చేయండి.');
+    if(!/^[6-9]\\d{9}$/.test(frDigits('regPhonePe')))throw Error('Partner PhonePe కోసం సరైన 10 digit mobile number ఇవ్వండి.');
+  }
   if(!$('terms')?.checked)throw Error('Terms & Privacy Policy అంగీకరించండి.');
   return {name,phone,address};
 }
+async function frUploadRegistrationFile(bucket,userId,kind,file){
+  const ext=({ 'image/jpeg':'jpg','image/png':'png','image/webp':'webp','application/pdf':'pdf' })[file.type];
+  if(!ext)throw Error(kind+' file type అనుమతించబడలేదు.');
+  const path=userId+'/'+kind+'_'+crypto.randomUUID()+'.'+ext;
+  const {error}=await sb.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type});
+  if(error)throw error;
+  return path;
+}
 async function sendRegistrationOtp(){
   try {
-    const v=frValidateRegistration(),digits=v.phone.replace(/\D/g,'');
+    const v=frValidateRegistration(),digits=v.phone.replace(/\\D/g,'');
     const result=await callApitxtOtp({action:'send',mobile:digits});
     if(result.ok!==true)throw Error(result.error||'Registration OTP పంపబడలేదు.');
     frRequestedRegPhone=digits;
@@ -1315,43 +1337,63 @@ async function sendRegistrationOtp(){
   } catch(e){showMessage('Registration OTP: '+e.message);}
 }
 async function verifyRegistrationOtpAndRegister(){
+  const uploaded=[];
   try {
-    const v=frValidateRegistration(),digits=v.phone.replace(/\D/g,''),token=frDigits('regOtp');
-    if(!/^\d{6}$/.test(token))throw Error('6 అంకెల Registration OTP నమోదు చేయండి.');
+    const v=frValidateRegistration(),digits=v.phone.replace(/\\D/g,''),token=frDigits('regOtp');
+    if(!/^\\d{6}$/.test(token))throw Error('6 అంకెల Registration OTP నమోదు చేయండి.');
     if(frRequestedRegPhone&&digits!==frRequestedRegPhone)throw Error('OTP కోరిన అదే మొబైల్ నంబర్ ఉపయోగించండి.');
     const result=await callApitxtOtp({action:'verify',mobile:digits,otp:token});
     const session=result.session||(result.access_token&&result.refresh_token?{access_token:result.access_token,refresh_token:result.refresh_token}:null);
     if(result.verified!==true||!session?.access_token||!session?.refresh_token)throw Error(result.error||'Registration verify responseలో Supabase Auth session లేదు.');
-    const {data,error}=await sb.auth.setSession(session);if(error)throw error;if(!data.user)throw Error('OTP verify అయింది కానీ Auth user session రాలేదు. Sms-otp Function కొత్త Registration account create చేయాలి.');
-    const row={id:data.user.id,full_name:v.name,phone:normalizePhone(v.phone),role:selectedRole,address:selectedRole==='customer'?v.address:(selectedRole==='partner'?$('regBusinessAddress').value.trim():null)};
-    if(selectedRole==='driver')Object.assign(row,{driver_approval_status:'pending',vehicle_type:'Bike',vehicle_company:$('regVehicleCompany').value.trim(),vehicle_model:$('regVehicleModel').value.trim(),vehicle_number:$('regVehicleNumber').value.trim(),driver_license_number:$('regLicenseNumber').value.trim(),driver_aadhaar_number:$('regAadhaarNumber').value.trim(),driving_experience_years:Number($('regExperience').value||0)});
-    if(selectedRole==='partner')Object.assign(row,{partner_approval_status:'pending',business_name:$('regBusinessName').value.trim(),partner_category:$('regPartnerCategory').value,gstin:$('regGSTIN').value.trim(),upi_id:$('regUPI').value.trim(),phonepe_number:$('regPhonePe').value.trim()});
+    const {data,error}=await sb.auth.setSession(session);if(error)throw error;if(!data.user)throw Error('OTP verify అయింది కానీ Auth user session రాలేదు.');
+    const uid=data.user.id;
+    const row={id:uid,full_name:v.name,phone:'+91'+digits,address:selectedRole==='customer'?v.address:(selectedRole==='partner'?$('regBusinessAddress').value.trim():null)};
+    if(selectedRole==='driver')Object.assign(row,{vehicle_type:'Bike',vehicle_company:$('regVehicleCompany').value.trim(),vehicle_model:$('regVehicleModel').value.trim(),vehicle_number:$('regVehicleNumber').value.trim(),driver_license_number:$('regLicenseNumber').value.trim(),driver_aadhaar_number:frDigits('regAadhaarNumber'),driving_experience_years:Number($('regExperience').value||0)});
+    if(selectedRole==='partner')Object.assign(row,{business_name:$('regBusinessName').value.trim(),partner_category:$('regPartnerCategory').value,gstin:$('regGSTIN').value.trim(),upi_id:$('regUPI').value.trim(),phonepe_number:frDigits('regPhonePe')});
+
+    if(selectedRole==='driver'){
+      const photoPath=await frUploadRegistrationFile('driver-profile-photos',uid,'profile',$('regDriverPhoto').files[0]);uploaded.push({bucket:'driver-profile-photos',path:photoPath});
+      const licencePath=await frUploadRegistrationFile('driver-kyc-documents',uid,'driving_license',$('regDriverLicense').files[0]);uploaded.push({bucket:'driver-kyc-documents',path:licencePath});
+      const aadhaarPath=await frUploadRegistrationFile('driver-kyc-documents',uid,'aadhaar',$('regDriverAadhaar').files[0]);uploaded.push({bucket:'driver-kyc-documents',path:aadhaarPath});
+      const rcPath=await frUploadRegistrationFile('driver-kyc-documents',uid,'vehicle_rc',$('regDriverRC').files[0]);uploaded.push({bucket:'driver-kyc-documents',path:rcPath});
+      Object.assign(row,{driver_profile_photo_path:photoPath,driving_license_document_path:licencePath,driver_aadhaar_document_path:aadhaarPath,vehicle_rc_document_path:rcPath});
+    }
+    if(selectedRole==='partner'){
+      const photoPath=await frUploadRegistrationFile('partner-profile-photos',uid,'profile',$('regPartnerPhoto').files[0]);uploaded.push({bucket:'partner-profile-photos',path:photoPath});
+      row.partner_profile_photo_path=photoPath;
+    }
     if(selectedRole==='driver'||selectedRole==='partner'){
-      // Dedicated SECURITY DEFINER RPC performs the one-time role assignment
-      // after OTP verification; the client never updates profiles.role directly.
-      const {data:registrationResult,error:registrationError}=await sb.rpc('fr_register_driver_partner',{
-        p_role:selectedRole,
-        p_profile:row
-      });
+      const {data:registrationResult,error:registrationError}=await sb.rpc('fr_register_driver_partner',{p_role:selectedRole,p_profile:row});
       if(registrationError)throw registrationError;
       if(!registrationResult?.ok)throw Error('Driver/Partner registration database confirmation రాలేదు.');
+      if(selectedRole==='driver'){
+        const docs=[
+          {driver_id:uid,owner_id:uid,document_type:'driving_license',storage_path:row.driving_license_document_path,verification_status:'pending'},
+          {driver_id:uid,owner_id:uid,document_type:'aadhaar',storage_path:row.driver_aadhaar_document_path,verification_status:'pending'},
+          {driver_id:uid,owner_id:uid,document_type:'vehicle_rc',storage_path:row.vehicle_rc_document_path,verification_status:'pending'}
+        ];
+        const {error:docError}=await sb.from('fr_driver_documents').insert(docs);
+        if(docError)throw docError;
+      }
+      const profilePaths={};
+      ['driver_profile_photo_path','driving_license_document_path','driver_aadhaar_document_path','vehicle_rc_document_path','partner_profile_photo_path'].forEach(k=>{if(row[k])profilePaths[k]=row[k];});
+      if(Object.keys(profilePaths).length){const {error:pathError}=await sb.from('profiles').update(profilePaths).eq('id',uid);if(pathError)throw pathError;}
     } else {
-      // Keep the existing Customer registration path unchanged.
-      const existing=await sb.from('profiles').select('id,role').eq('id',data.user.id).maybeSingle();
+      const existing=await sb.from('profiles').select('id,role').eq('id',uid).maybeSingle();
       if(existing.error)throw existing.error;
       if(existing.data){
-        const existingRole=String(existing.data.role||'customer').toLowerCase();
-        if(existingRole!=='customer')throw Error('ఈ మొబైల్ ఇప్పటికే '+existingRole.toUpperCase()+' accountగా ఉంది. అదే accountతో Login చేయండి.');
-        const updateRow={...row};delete updateRow.id;delete updateRow.role;
-        const saved=await sb.from('profiles').update(updateRow).eq('id',data.user.id);
-        if(saved.error)throw saved.error;
-      } else {
-        const saved=await sb.from('profiles').insert(row);
-        if(saved.error)throw saved.error;
-      }
+        if(String(existing.data.role||'customer').toLowerCase()!=='customer')throw Error('ఈ మొబైల్ ఇప్పటికే వేరే accountగా ఉంది. అదే accountతో Login చేయండి.');
+        const updateRow={...row};delete updateRow.id;
+        const saved=await sb.from('profiles').update(updateRow).eq('id',uid);if(saved.error)throw saved.error;
+      } else {const saved=await sb.from('profiles').insert({...row,role:'customer'});if(saved.error)throw saved.error;}
     }
-    await acceptSession(data.user);showMessage('Registration విజయవంతమైంది.','good');
-  } catch(e){showMessage('Registration పూర్తి కాలేదు: '+e.message);}
+    uploaded.length=0;
+    await acceptSession(data.user);
+    showMessage('Registration విజయవంతమైంది. Driver/Partner approval pendingలో ఉంటుంది.','good');
+  } catch(e){
+    if(uploaded.length){try{await Promise.all(uploaded.map(x=>sb.storage.from(x.bucket).remove([x.path])));}catch(_cleanup){}}
+    showMessage('Registration పూర్తి కాలేదు: '+e.message);
+  }
 }
 // No password login or password registration is used by this build.
 async function login(){return verifyLoginOtp();}
