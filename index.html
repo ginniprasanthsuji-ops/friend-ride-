@@ -394,7 +394,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="goods" class="page"><div class="card"><h2>Goods Delivery</h2><div class="field"><label>Pickup Address</label><textarea id="goodsPickup"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="goodsDrop"></textarea></div><div class="field"><label>Goods Description</label><input id="goodsDescription" placeholder="What do you want to transport?"></div><div class="field"><label>Approx. Weight (kg)</label><input id="goodsWeight" type="number" min=".1" step=".1"></div><button class="btn purple" onclick="validateGoods()">Request Goods Delivery</button></div></section>
 
-<section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><div class="field"><label>Sender Name</label><input id="parcelSender"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription"></div><div class="field"><label>Weight (kg)</label><input id="parcelWeight" type="number" min=".1" step=".1"></div><div class="notice">Payment is collected at delivery. Recipient OTP is issued only after verified payment. Driver confirms payment in app before parcel release.</div><button class="btn purple" onclick="submitParcelRequest()">Request Parcel Delivery</button><button class="btn light" onclick="showPage('parcelRelease')">Driver Parcel Release Screen</button></div></section>
+<section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><div class="field"><label>Sender Name</label><input id="parcelSender"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription"></div><div class="field"><label>Weight (kg)</label><input id="parcelWeight" type="number" min=".1" step=".1"></div><div class="notice">Cash on Delivery: Driver confirms cash collection in the app. After that, the customer receives a one-time delivery code to share with the recipient. No online payment is collected here.</div><button class="btn purple" onclick="submitParcelRequest()">Request Parcel Delivery</button><button class="btn light" onclick="frLoadCustomerParcels()">↻ Refresh My Parcels</button><div id="frCustomerParcelList" class="notice">Your parcel requests will appear here.</div><button class="btn light" onclick="showPage('parcelRelease')">Driver Parcel Queue / Release</button></div></section>
 
 <section id="food" class="page">
  <div class="card">
@@ -421,7 +421,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="shopping" class="page"><div class="card"><h2>Shopping</h2><div class="field"><label>What do you need?</label><textarea id="shoppingItems" placeholder="List your items"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="shoppingAddress"></textarea></div><button class="btn purple" onclick="simpleRequest('Shopping request','shoppingAddress','shoppingItems')">Submit Shopping Request</button></div></section>
 
-<section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painting</option><option>Carpenter</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Choose technician (approved technicians load from database)</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">Minimum advance payment: ₹50. Booking request is confirmed only after server verifies the advance payment.</div><button class="btn purple" onclick="submitServiceRequest()">Pay ₹50 Advance & Book</button></div><div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
+<section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType" onchange="frLoadApprovedServiceProviders()"><option value="electrician">Electrician</option><option value="plumber">Plumber</option><option value="ac-mechanic">AC Mechanic</option><option value="carpenter">Carpenter</option><option value="mason">Mestri</option><option value="septic-tank">Septic Tank Service</option><option value="other">Other Services</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Any approved technician / Admin assignment</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">No advance payment is collected in this booking flow. Your request is saved and sent to the selected approved technician, or kept in the Admin assignment queue if no technician is available.</div><button class="btn purple" onclick="submitServiceRequest()">Submit Service Booking</button><h3>My Service Requests</h3><div id="frCustomerServiceRequests" class="notice">Your service bookings will appear here.</div></div><div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
   <button class="btn purple" onclick="openServiceProviderRegister('Home Services')">Register as Home Service Provider</button></div></section>
 
 <section id="storeBrowse" class="page">
@@ -472,7 +472,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  </div>
 </section>
 <section id="technicianRegister" class="page"><div class="card"><h2>Home Service Technician Registration</h2><div class="field"><label>Technician Passport-size Photo * Required</label><input id="techProfilePhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label>Profession *</label><select id="techProfession"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painter</option><option>Carpenter</option><option>Other</option></select></div><div class="field"><label>Full Name *</label><input id="techName"></div><div class="field"><label>Mobile Number *</label><input id="techPhone" maxlength="10" inputmode="numeric"></div><div class="field"><label>Work Experience (Years) *</label><input id="techExperience" type="number" min="0"></div><div class="field"><label>Complete Address *</label><textarea id="techAddress"></textarea></div><div class="field"><label>Aadhaar Card Number *</label><input id="techAadhaar" maxlength="12" inputmode="numeric"></div><div class="field"><label>Aadhaar File *</label><input id="techAadhaarFile" type="file" accept="image/*,.pdf"></div><div class="field"><label>UPI ID / QR Code</label><input id="techUPI" placeholder="UPI ID"></div><div class="field"><label>QR Code Image</label><input id="techQR" type="file" accept="image/*"></div><div class="field"><label>PhonePe Number * (Mandatory)</label><input id="techPhonePe" maxlength="10" inputmode="numeric"></div><button class="btn purple" onclick="validateTechnicianRegistration()">Submit Technician Application</button><div class="notice">Technician account will remain pending until document review and Admin approval.</div></div></section>
-<section id="parcelRelease" class="page"><div class="card"><h2>Parcel Delivery – Secure Handover</h2><p>Delivery OTP will be generated only after verified payment. Driver enters OTP and confirms payment before parcel release.</p><div class="field"><label>Tracking ID</label><input id="parcelTrackingId" placeholder="FR-PARCEL-000001"></div><div class="field"><label>Delivery OTP</label><input id="parcelDeliveryOtp" maxlength="6" inputmode="numeric"></div><button class="btn purple" onclick="confirmParcelRelease()">Driver: Confirm Payment & Release Parcel</button><div id="parcelReleaseStatus" class="notice">Awaiting verified payment and recipient OTP.</div><div class="notice">Payment status, OTP issue/verify and release must be enforced server-side; this screen is not a secure payment verification by itself.</div></div></section>
+<section id="parcelRelease" class="page"><div class="card"><h2>Driver – Parcel Queue & Secure Handover</h2><button class="btn light" onclick="frLoadDriverParcelQueue()">↻ Refresh Parcel Queue</button><div id="frDriverParcelQueue" class="notice">Approved drivers can view available parcel requests here.</div><input id="frDriverParcelId" type="hidden"><div class="field"><label>Selected Tracking ID</label><input id="parcelTrackingId" placeholder="Select a parcel from the queue" readonly></div><div class="field"><label>Recipient Delivery OTP</label><input id="parcelDeliveryOtp" maxlength="6" inputmode="numeric" placeholder="6-digit code from recipient"></div><button class="btn purple" onclick="confirmParcelRelease()">Driver: Verify OTP & Complete Delivery</button><div id="parcelReleaseStatus" class="notice">First accept a parcel, then confirm cash collection. Customer can request the delivery code after cash collection.</div></div></section>
 <section id="orders" class="page"><div class="card"><h2>My Bookings & Orders</h2><p class="muted">Ride, parcel, food, shop and service bookings.</p><div id="ordersInfo" class="notice">మీ bookings ఇక్కడ కనిపిస్తాయి.</div><h3>Shop Orders / ధరల వివరాలు</h3><div id="frCustomerMarketOrders" class="empty-state">Shop orders loading…</div><button class="btn light" onclick="showPage('tracking')">Open Live Tracking</button></div></section>
 <section id="tracking" class="page"><div class="card"><h2>Live Tracking</h2><div class="row"><button class="btn purple">Ride</button><button class="btn light">Parcel</button><button class="btn light">Food / Shop</button></div><div class="track-actions"><button onclick="showTrackingMode('driver')">🚗 Track Driver</button><button onclick="showTrackingMode('route')">🧭 View Route</button><button onclick="showTrackingMode('pickup')">📍 Pickup Point</button><button onclick="showTrackingMode('support')">🆘 SOS / Help</button></div><div id="trackingMap" style="margin-top:12px"></div><div class="listrow"><div class="grow"><b id="trackingTitle">Live Driver Tracking</b><br><small id="trackingStatus" class="muted">Booking confirm అయిన తర్వాత driver location కనిపిస్తుంది.</small></div><span id="trackingPill" class="pill">Waiting</span></div><div class="row"><button class="btn light" onclick="refreshTracking()">↻ Refresh Location</button><button class="btn light" onclick="callDriver()">📞 Call Driver</button></div><div id="liveRideStatus" class="notice">మీ Active Ride వివరాలు ఇక్కడ కనిపిస్తాయి.</div><div class="row"><button class="btn light" onclick="loadMyRideTracking()">My Active Ride</button><button class="btn light" onclick="startCustomerTrackingFromPanel()">Share My Live Location</button></div><div class="row"><button class="btn red" onclick="frCancelActiveRide()">Cancel Active Ride</button></div><div class="card" style="margin-top:12px"><h3>🆘 Emergency & Personal Contact</h3><div class="row"><a class="btn red" href="tel:112">112 Emergency</a><a class="btn light" href="tel:100">100 Police</a><a class="btn light" href="tel:108">108 Ambulance</a></div><div class="field"><label>Personal Emergency Contact Name</label><input id="emergencyContactName" placeholder="Relative / Friend"></div><div class="field"><label>Personal Emergency Mobile</label><input id="emergencyContactPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><div class="row"><button class="btn light" onclick="savePersonalEmergencyContact()">Save Contact</button><button class="btn light" onclick="callPersonalEmergencyContact()">Call Personal Contact</button></div><button class="btn red" style="width:100%;margin-top:8px" onclick="sendRideSOS()">🆘 SEND SOS LOCATION</button><div id="sosStatus" class="notice">Emergency call links are available. SOS records the current GPS location when signed in.</div></div></div></section>
 <section id="wallet" class="page"><div class="card"><h2>Wallet & Payments</h2><div class="stats"><div class="stat"><small>Wallet Balance</small><b>₹0.00</b></div><div class="stat"><small>Reward Points</small><b>0</b></div></div><div class="notice">Cashfree payment gateway / wallet ledger / refunds require verified merchant configuration and server-side payment verification. Do not collect live money using frontend-only code.</div><button class="btn purple" onclick="showMessage('Payment gateway configuration అవసరం.','error')">Add Money</button></div></section>
@@ -2142,6 +2142,219 @@ async function sendRideSOS(){
   }catch(e){frShow(statusId,'SOS Error: '+e.message);}
 }
 </script>
+
+<script id="fr-phase34-live-workflows">
+/* Phase 3/4 live backend wiring: no online payment or banking integration. */
+async function marketCheckout(){
+  const btn=document.getElementById('frContinuePaymentBtn');
+  try{
+    if(!currentUser || currentProfile?.role!=='customer') throw new Error('ముందుగా Customer Login చేయండి.');
+    if(!Array.isArray(frMarketCart) || !frMarketCart.length) throw new Error('Cart ఖాళీగా ఉంది.');
+    if(frMarketCart.some(x=>x.prescriptionRequired) && !document.getElementById('customerPrescriptionFile')?.files?.[0]) throw new Error('Prescription medicine కోసం Doctor Prescription upload చేయండి.');
+    const address=(document.getElementById('marketCartAddress')?.value || document.getElementById('customerMarketAddress')?.value || document.getElementById('foodAddress')?.value || '').trim();
+    if(address.length<8) throw new Error('పూర్తి Delivery Address నమోదు చేయండి.');
+    const grouped=new Map();
+    frMarketCart.forEach(x=>{
+      const storeId=String(x.storeId||'');
+      if(!storeId) throw new Error('ప్రతి itemకు Approved Store ID ఉండాలి. Store Catalogue నుంచి item add చేయండి.');
+      if(!grouped.has(storeId)) grouped.set(storeId,[]);
+      grouped.get(storeId).push({
+        name:String(x.name||'').trim(),
+        quantity:Math.max(1,Math.min(99,Number(x.qty)||1)),
+        prescription_required:!!x.prescriptionRequired,
+        catalogue_item_id:x.catalogueItemId||null,
+        image_url:x.imageUrl||null
+      });
+    });
+    const stores=Array.from(grouped.entries()).map(([store_id,items])=>({store_id,items}));
+    if(stores.length>20) throw new Error('ఒక Checkoutలో గరిష్ఠంగా 20 Stores మాత్రమే.');
+    if(stores.some(g=>!g.items.length || g.items.some(x=>!x.name))) throw new Error('Cart item వివరాలు సరిగా లేవు.');
+    if(btn){btn.disabled=true;btn.textContent='All Store Orders Creating…';}
+    const {data,error}=await sb.rpc('fr_customer_place_multi_market_order',{p_delivery_address:address,p_stores:stores});
+    if(error) throw error;
+    if(!data?.ok || !Array.isArray(data.orders) || data.orders.length!==stores.length) throw new Error('Multi-store checkout confirmation incomplete.');
+    const count=data.orders.length;
+    const orderNumbers=data.orders.map(x=>x.order_number).filter(Boolean).join(', ');
+    frMarketCart=[];renderMarketCart();
+    alert(count+' వేర్వేరు Store Orders విజయవంతంగా సృష్టించబడ్డాయి.\n'+orderNumbers+'\nప్రతి Store తన Orderను విడిగా నిర్వహిస్తుంది. Partner ధర నిర్ధారణ కోసం My Orders చూడండి.');
+    showPage('orders');
+    if(typeof frLoadCustomerMarketOrders==='function') await frLoadCustomerMarketOrders();
+  }catch(e){alert('Checkout విఫలమైంది: '+(e.message||e));}
+  finally{if(btn){btn.disabled=false;btn.textContent='Continue to Payment';}}
+}
+
+async function frLoadCustomerParcels(){
+  const el=document.getElementById('frCustomerParcelList');
+  if(!el) return;
+  if(!currentUser || currentProfile?.role!=='customer'){el.textContent='Customer Login చేసిన తర్వాత మీ Parcel Requests కనిపిస్తాయి.';return;}
+  el.textContent='Parcel requests loading…';
+  try{
+    const {data,error}=await sb.rpc('fr_customer_list_parcel_requests');
+    if(error) throw error;
+    if(!data?.length){el.textContent='ఇంకా Parcel Requests లేవు.';return;}
+    el.innerHTML=data.map(p=>{
+      const canOtp=p.status==='out_for_delivery' && p.payment_collected;
+      return '<div class="card" style="margin:8px 0;padding:12px"><div class="row"><b>'+safe(p.tracking_id)+'</b><span class="pill">'+safe(p.status)+'</span></div><p>'+safe(p.sender_name)+' → '+safe(p.receiver_name)+'</p><p>Pickup: '+safe(p.pickup_address)+'</p><p>Delivery: '+safe(p.delivery_address)+'</p><p>'+safe(p.parcel_description)+' • '+safe(p.weight_kg)+' kg</p><p>COD collected: '+(p.payment_collected?'Yes':'No')+'</p>'+(canOtp?'<button class="btn purple" onclick="frCustomerGetParcelOtp(\\''+p.parcel_id+'\\')">Get Recipient Delivery OTP</button>':'')+'</div>';
+    }).join('');
+  }catch(e){el.textContent='Parcel requests load కాలేదు: '+(e.message||e);}
+}
+async function frCustomerGetParcelOtp(parcelId){
+  try{
+    const {data,error}=await sb.rpc('fr_customer_get_parcel_delivery_otp',{p_parcel_id:parcelId});
+    if(error) throw error;
+    alert('Recipient Delivery OTP: '+data+'\nఈ codeను recipientతో మాత్రమే share చేయండి. Driverకు code చెప్పవద్దు; recipient స్వయంగా చెప్పాలి.');
+    await frLoadCustomerParcels();
+  }catch(e){alert('OTP పొందలేకపోయాం: '+(e.message||e));}
+}
+async function submitParcelRequest(){
+  const val=id=>(document.getElementById(id)?.value||'').trim();
+  const senderPhone=val('parcelSenderPhone').replace(/\D/g,'');
+  const receiverPhone=val('parcelReceiverPhone').replace(/\D/g,'');
+  const weight=Number(val('parcelWeight'));
+  if(!currentUser || currentProfile?.role!=='customer'){alert('Customer Login అవసరం.');return;}
+  if(senderPhone.length!==10 || receiverPhone.length!==10 || !Number.isFinite(weight) || weight<=0){alert('Sender/Receiver 10-digit mobile numbers మరియు valid parcel weight ఇవ్వండి.');return;}
+  const args={
+    p_sender_name:val('parcelSender'),p_sender_phone:senderPhone,p_pickup_address:val('parcelPickup'),
+    p_receiver_name:val('parcelReceiver'),p_receiver_phone:receiverPhone,p_delivery_address:val('parcelDrop'),
+    p_description:val('parcelDescription'),p_weight_kg:weight
+  };
+  const button=document.querySelector('#parcel button[onclick="submitParcelRequest()"]');
+  if(button){button.disabled=true;button.textContent='Saving Parcel Request…';}
+  try{
+    const {data,error}=await sb.rpc('fr_customer_create_parcel_request',args);
+    if(error) throw error;
+    if(!data?.ok || !data.tracking_id) throw new Error('Tracking ID not returned by server.');
+    alert('Parcel Request Saved ✓\nTracking ID: '+data.tracking_id+'\nPayment: Cash on Delivery\nDriver assignment కోసం వేచి ఉండండి.');
+    ['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription','parcelWeight'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+    await frLoadCustomerParcels();
+  }catch(e){alert('Parcel Request save కాలేదు: '+(e.message||e));}
+  finally{if(button){button.disabled=false;button.textContent='Request Parcel Delivery';}}
+}
+async function frLoadDriverParcelQueue(){
+  const el=document.getElementById('frDriverParcelQueue');
+  if(!el)return;
+  if(!currentUser || currentProfile?.role!=='driver'){el.textContent='Approved Driver Login అవసరం.';return;}
+  el.textContent='Parcel queue loading…';
+  try{
+    const {data,error}=await sb.rpc('fr_driver_list_parcel_requests');
+    if(error)throw error;
+    if(!data?.length){el.textContent='మీకు Parcel Requests లేవు.';return;}
+    el.innerHTML=data.map(p=>{
+      let action='';
+      if(p.status==='requested' && !p.payment_collected) action='<button class="btn purple" onclick="frDriverAcceptParcel(\\''+p.parcel_id+'\\')">Accept Parcel</button>';
+      else if(p.status==='accepted') action='<button class="btn purple" onclick="frDriverConfirmParcelPayment(\\''+p.parcel_id+'\\')">Confirm COD Cash Collected</button>';
+      else if(p.status==='out_for_delivery') action='<button class="btn light" onclick="frSelectParcelForOtp(\\''+p.parcel_id+'\\',\\''+p.tracking_id+'\\')">Select for OTP Verification</button>';
+      return '<div class="card" style="margin:8px 0;padding:12px"><div class="row"><b>'+safe(p.tracking_id)+'</b><span class="pill">'+safe(p.status)+'</span></div><p>Sender: '+safe(p.sender_name)+' • '+safe(p.sender_phone)+'</p><p>Receiver: '+safe(p.receiver_name)+' • '+safe(p.receiver_phone)+'</p><p>Pickup: '+safe(p.pickup_address)+'</p><p>Drop: '+safe(p.delivery_address)+'</p><p>'+safe(p.parcel_description)+' • '+safe(p.weight_kg)+' kg</p>'+action+'</div>';
+    }).join('');
+  }catch(e){el.textContent='Parcel queue load కాలేదు: '+(e.message||e);}
+}
+function frSelectParcelForOtp(id,tracking){
+  const a=document.getElementById('frDriverParcelId'),b=document.getElementById('parcelTrackingId'),c=document.getElementById('parcelDeliveryOtp');
+  if(a)a.value=id;if(b)b.value=tracking;if(c)c.value='';
+  const out=document.getElementById('parcelReleaseStatus');if(out)out.textContent='Selected '+tracking+'. Recipient OTP enter చేసి Verify చేయండి.';
+}
+async function frDriverAcceptParcel(id){
+  try{const {data,error}=await sb.rpc('fr_driver_accept_parcel',{p_parcel_id:id});if(error)throw error;if(data!==true)throw new Error('Another driver may have accepted this parcel. Refresh queue.');await frLoadDriverParcelQueue();}
+  catch(e){alert('Parcel accept కాలేదు: '+(e.message||e));}
+}
+async function frDriverConfirmParcelPayment(id){
+  try{const {data,error}=await sb.rpc('fr_driver_confirm_parcel_payment',{p_parcel_id:id});if(error)throw error;if(data!==true)throw new Error('Parcel not assigned to you or already updated.');alert('COD collection confirmed. Customer can now request recipient OTP.');await frLoadDriverParcelQueue();}
+  catch(e){alert('Cash collection update కాలేదు: '+(e.message||e));}
+}
+async function confirmParcelRelease(){
+  const id=document.getElementById('frDriverParcelId')?.value;
+  const otp=(document.getElementById('parcelDeliveryOtp')?.value||'').trim();
+  const out=document.getElementById('parcelReleaseStatus');
+  if(!id || !/^[0-9]{6}$/.test(otp)){alert('Queue నుంచి Parcel select చేసి recipient 6-digit OTP నమోదు చేయండి.');return;}
+  try{
+    const {data,error}=await sb.rpc('fr_driver_verify_parcel_delivery_otp',{p_parcel_id:id,p_otp:otp});
+    if(error)throw error;
+    if(data!==true){if(out)out.textContent='OTP తప్పు / expiry / attempt limit. Recipientతో మళ్లీ verify చేయండి.';return;}
+    if(out)out.textContent='Delivery completed successfully ✓';
+    document.getElementById('parcelDeliveryOtp').value='';
+    await frLoadDriverParcelQueue();
+  }catch(e){if(out)out.textContent='Delivery verify కాలేదు: '+(e.message||e);}
+}
+async function frLoadApprovedServiceProviders(){
+  const cat=document.getElementById('homeServiceType')?.value||'';
+  const sel=document.getElementById('homeServiceTechnician');
+  if(!sel)return;
+  sel.innerHTML='<option value="">Any approved technician / Admin assignment</option>';
+  try{
+    const {data,error}=await sb.rpc('fr_customer_list_approved_service_providers',{p_category_slug:cat});
+    if(error)throw error;
+    (data||[]).forEach(p=>{
+      const opt=document.createElement('option');opt.value=p.provider_id;
+      opt.textContent=p.display_name+(p.service_area?' • '+p.service_area:'');
+      sel.appendChild(opt);
+    });
+    if(!data?.length)sel.options[0].textContent='No approved technician online — Admin assignment';
+  }catch(e){console.warn('Technician list:',e.message||e);}
+}
+async function frLoadCustomerServiceRequests(){
+  const el=document.getElementById('frCustomerServiceRequests');
+  if(!el)return;
+  if(!currentUser || currentProfile?.role!=='customer'){el.textContent='Customer Login చేసిన తర్వాత Service Requests కనిపిస్తాయి.';return;}
+  el.textContent='Service requests loading…';
+  try{
+    const {data,error}=await sb.rpc('fr_customer_list_service_requests');
+    if(error)throw error;
+    if(!data?.length){el.textContent='ఇంకా Service Bookings లేవు.';return;}
+    el.innerHTML=data.map(r=>'<div class="card" style="margin:8px 0;padding:12px"><div class="row"><b>'+safe(r.request_number)+'</b><span class="pill">'+safe(r.status)+'</span></div><p>'+safe(r.service_name)+' • '+safe(r.preferred_date)+' '+safe(r.preferred_time)+'</p><p>'+safe(r.service_address)+'</p><p>'+safe(r.work_details)+'</p><p>Technician: '+safe(r.provider_name||'Admin assignment pending')+'</p></div>').join('');
+  }catch(e){el.textContent='Service requests load కాలేదు: '+(e.message||e);}
+}
+async function submitServiceRequest(){
+  const val=id=>(document.getElementById(id)?.value||'').trim();
+  const category=val('homeServiceType'),provider=val('homeServiceTechnician')||null;
+  const address=val('homeServiceAddress'),details=val('homeServiceNotes');
+  const date=val('homeServiceDate'),time=val('homeServiceTime');
+  if(!currentUser || currentProfile?.role!=='customer'){alert('Customer Login అవసరం.');return;}
+  if(!category || address.length<8 || details.length<3 || !date || !time){alert('Technician Profession, Address, Work Details, Date మరియు Time నమోదు చేయండి.');return;}
+  const button=document.querySelector('#homeServices button[onclick="submitServiceRequest()"]');
+  if(button){button.disabled=true;button.textContent='Saving Booking…';}
+  try{
+    const {data,error}=await sb.rpc('fr_customer_create_service_request',{
+      p_category_slug:category,p_provider_id:provider,p_service_address:address,
+      p_work_details:details,p_preferred_date:date,p_preferred_time:time
+    });
+    if(error)throw error;
+    if(!data?.ok || !data.request_number)throw new Error('Service request confirmation missing.');
+    alert('Service Booking Saved ✓\nRequest No: '+data.request_number+'\nStatus: Request Received');
+    document.getElementById('homeServiceNotes').value='';
+    await frLoadCustomerServiceRequests();
+  }catch(e){alert('Service booking save కాలేదు: '+(e.message||e));}
+  finally{if(button){button.disabled=false;button.textContent='Submit Service Booking';}}
+}
+function frMultiCheckout(){
+  if(!Array.isArray(frMultiCart)||!frMultiCart.length){alert('ముందుగా products Cartలో add చేయండి.');return;}
+  const stores=(frApprovedStores||[]);
+  for(const x of frMultiCart){
+    const found=stores.find(s=>String(s.id)===String(x.shop)||String(s.name||'').toLowerCase()===String(x.shop||'').toLowerCase());
+    if(!found){alert('“'+x.shop+'” అనే పేరు Approved Store listలో లేదు. Approved Store Catalogue నుంచి products add చేయండి.');return;}
+    frMarketCart.push({name:x.name,partner:found.name,storeId:found.id,qty:1,price:null,pricing:'request',prescriptionRequired:false});
+  }
+  frMultiCart=[];frRenderMultiCart();renderMarketCart();showPage('marketCart');
+  showMessage('Multi-store cart ఇప్పుడు secure shop-wise checkoutకు సిద్ధంగా ఉంది.','good');
+}
+const __frPhase34ShowPage=showPage;
+showPage=function(id){
+  __frPhase34ShowPage(id);
+  if(id==='parcel')frLoadCustomerParcels();
+  if(id==='parcelRelease')frLoadDriverParcelQueue();
+  if(id==='homeServices'){frLoadApprovedServiceProviders();frLoadCustomerServiceRequests();}
+  if(id==='orders')frLoadCustomerParcels();
+};
+const __frPhase34AcceptSession=acceptSession;
+acceptSession=async function(user){
+  await __frPhase34AcceptSession(user);
+  await Promise.allSettled([frLoadCustomerParcels(),frLoadCustomerServiceRequests(),frLoadApprovedServiceProviders()]);
+};
+window.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('homeServiceDate'))document.getElementById('homeServiceDate').min=new Date().toISOString().slice(0,10);
+  if(currentUser){frLoadCustomerParcels();frLoadCustomerServiceRequests();frLoadApprovedServiceProviders();}
+});
+</script>
+
 </body>
 </html>
 <style>
