@@ -1169,7 +1169,7 @@ function frValidateRegistration(){
     if(['regAadhaarNumber','regLicenseNumber','regExperience','regVehicleNumber','regVehicleCompany','regVehicleModel'].some(id=>!$(id)?.value.trim()))throw Error('Driver verification / vehicle వివరాలు పూర్తి చేయండి.');
     if(ids.some(id=>$(id).files[0].size>2*1024*1024))throw Error('ప్రతి Driver document 2 MB లోపు ఉండాలి.');
   }
-  if(selectedRole==='partner'&&['regPartnerCategory','regBusinessName','regBusinessAddress','regUPI','regPhonePe'].some(id=>!$(id)?.value.trim()))throw Error('Partner Business, Address, UPI, PhonePe వివరాలు పూర్తి చేయండి.');
+  if(selectedRole==='partner'){const photo=$('regPartnerPhoto')?.files?.[0];if(!photo||!['image/jpeg','image/png','image/webp'].includes(photo.type)||photo.size>3*1024*1024)throw Error('Partner passport-size photo JPG/PNG/WEBP 3 MB లోపు తప్పనిసరి.');if(['regPartnerCategory','regBusinessName','regBusinessAddress','regUPI','regPhonePe'].some(id=>!$(id)?.value.trim()))throw Error('Partner Business, Address, UPI, PhonePe వివరాలు పూర్తి చేయండి.');}
   if(!$('terms')?.checked)throw Error('Terms & Privacy Policy అంగీకరించండి.');
   return {name,phone,address};
 }
