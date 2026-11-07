@@ -421,7 +421,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="shopping" class="page"><div class="card"><h2>Shopping</h2><div class="field"><label>What do you need?</label><textarea id="shoppingItems" placeholder="List your items"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="shoppingAddress"></textarea></div><button class="btn purple" onclick="simpleRequest('Shopping request','shoppingAddress','shoppingItems')">Submit Shopping Request</button></div></section>
 
-<section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painting</option><option>Carpenter</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Choose technician (approved technicians load from database)</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">Minimum advance payment: ₹50. Booking request is confirmed only after server verifies the advance payment.</div><button class="btn purple" onclick="submitServiceRequest()">Pay ₹50 Advance & Book</button></div><div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
+<section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painting</option><option>Carpenter</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Choose technician (approved technicians load from database)</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">Minimum advance payment: ₹50. Booking request is confirmed only after server verifies the advance payment.</div><button class="btn purple" onclick="submitServiceRequest()">Submit Service Request</button></div><div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
   <button class="btn purple" onclick="openServiceProviderRegister('Home Services')">Register as Home Service Provider</button></div></section>
 
 <section id="storeBrowse" class="page">
@@ -2000,6 +2000,18 @@ function frSubmitBankEnquiry(){
    ['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription','parcelWeight'].forEach(id=>{if($(id))$(id).value='';});
   }catch(e){fail('Parcel request save కాలేదు',e);}
  };
+ window.frDriverAcceptParcel=async function(){
+  try{
+   if(!currentUser||currentProfile?.role!=='driver')throw Error('Driver login అవసరం.');
+   const tracking=($('parcelTrackingId')?.value||'').trim();if(!tracking)throw Error('Tracking ID నమోదు చేయండి.');
+   const {data,error}=await sb.rpc('fr_driver_list_parcel_requests');if(error)throw error;
+   const row=(data||[]).find(x=>x.tracking_id===tracking);if(!row)throw Error('ఈ Parcel request అందుబాటులో లేదు.');
+   if(row.status!=='requested')throw Error('ఈ Parcel ఇప్పటికే '+row.status+' statusలో ఉంది.');
+   const {data:ok,error:ae}=await sb.rpc('fr_driver_accept_parcel',{p_parcel_id:row.parcel_id});if(ae)throw ae;
+   if(!ok)throw Error('Server rejected parcel acceptance.');
+   alert('Parcel accepted. Pickup, delivery details ఇప్పుడు మీ Driver accountకు assign అయ్యాయి.');
+  }catch(e){fail('Parcel accept కాలేదు',e);}
+ };
  window.frDriverConfirmParcelCash=async function(){
   try{
    if(!currentUser||currentProfile?.role!=='driver')throw Error('Driver login అవసరం.');
@@ -2081,9 +2093,9 @@ function frSubmitBankEnquiry(){
  };
  function addParcelActions(){
   const box=$('parcelRelease')?.querySelector('.card');if(!box||$('frParcelCashBtn'))return;
-  const actions=document.createElement('div');actions.className='actions';actions.innerHTML='<button class="btn light" id="frParcelCashBtn" type="button">Driver: Confirm Cash Collected</button><button class="btn light" id="frParcelOtpBtn" type="button">Customer: Get Delivery OTP</button>';
+  const actions=document.createElement('div');actions.className='actions';actions.innerHTML='<button class="btn light" id="frParcelAcceptBtn" type="button">Driver: Accept Parcel</button><button class="btn light" id="frParcelCashBtn" type="button">Driver: Confirm Cash Collected</button><button class="btn light" id="frParcelOtpBtn" type="button">Customer: Get Delivery OTP</button>';
   const verify=box.querySelector('button[onclick*="confirmParcelRelease"]');verify?.before(actions);
-  $('frParcelCashBtn').onclick=frDriverConfirmParcelCash;$('frParcelOtpBtn').onclick=frCustomerRequestParcelOtp;
+  $('frParcelAcceptBtn').onclick=frDriverAcceptParcel;$('frParcelCashBtn').onclick=frDriverConfirmParcelCash;$('frParcelOtpBtn').onclick=frCustomerRequestParcelOtp;
  }
  function bindServices(){const el=$('homeServiceType');if(el&&!el.dataset.frBound){el.dataset.frBound='1';el.addEventListener('change',()=>loadApprovedServiceProviders());loadApprovedServiceProviders();}}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{addParcelActions();bindServices();},{once:true});else{addParcelActions();bindServices();}
