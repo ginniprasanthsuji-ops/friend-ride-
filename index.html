@@ -744,9 +744,13 @@ async function acceptSession(user){
  currentProfile=profile;
  const savedAddress=profile?.address||user.user_metadata?.address||'';['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{const el=$(id);if(el&&!el.value&&savedAddress)el.value=savedAddress;});
  let dbRole=profile?.role||user.user_metadata?.role||'customer';
- if(dbRole==='admin'){const a=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();if(a.error||!a.data)throw new Error('ఈ ఖాతాకు Admin permission లేదు.');}
+ // Admin membership is authoritative even when profiles.role is still 'customer'.
+ const adminCheck=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();
+ if(adminCheck.data?.user_id===user.id)dbRole='admin';
+ else if(dbRole==='admin')throw new Error('ఈ ఖాతాకు Admin permission లేదు.');
  if(!['customer','driver','partner','admin'].includes(dbRole))dbRole='customer';
  if(selectedRole!==dbRole)throw new Error('మీరు ఎంచుకున్న account type ఈ ఖాతాతో సరిపోలడం లేదు.');
+ try{localStorage.setItem('friendride_selected_role',dbRole);}catch(_){}
  if(dbRole==='driver'){const approval=String(profile?.driver_approval_status||user.user_metadata?.driver_approval_status||'pending').toLowerCase();if(!['approved','verified','active'].includes(approval))throw new Error('Driver account Admin approval కోసం Pendingలో ఉంది.');$('driverApproval').textContent='Approved';$('driverApproval').className='status ok';$('onlineBtn').disabled=false;}
  selectedRole=dbRole;$('profileInfo').innerHTML='<b>'+safe(profile?.full_name||profile?.name||user.user_metadata?.full_name||'User')+'</b><p>Mobile: '+safe(user.phone||'')+'</p><p>Account: '+safe(dbRole.toUpperCase())+'</p><p>'+safe(profile?.address||user.user_metadata?.address||'')+'</p>';
  $('customerWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Customer');$('driverWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Driver');
