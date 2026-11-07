@@ -659,8 +659,8 @@ async function reviewDriverApplication(id,decision){
  if(!id||!['approved','rejected'].includes(decision))return;
  if(!confirm(decision==='approved'?'ఈ Driverను Approve చేయాలా?':'ఈ Driver applicationను Reject చేయాలా?'))return;
  try{if(!currentUser||selectedRole!=='admin'||currentProfile?.role!=='admin')throw Error('Admin login అవసరం.');
- const {error}=await sb.rpc('admin_approve_driver',{p_driver_id:id,p_status:decision});if(error)throw error;
- alert('Driver approval status update request పంపబడింది.');await loadDriverApprovals();
+ const {error}=await sb.rpc('admin_approve_driver',{p_driver_id:id});if(error)throw error;
+ alert('Driver approval RPC request పంపబడింది. Databaseలో approved status verify చేయడానికి refresh చేయండి.');await loadDriverApprovals();
  }catch(e){alert('Driver Approval Error: '+(e.message||e));}
 }
 async function loadPartnerApprovals(){
