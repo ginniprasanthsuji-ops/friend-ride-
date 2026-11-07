@@ -1324,6 +1324,10 @@ async function acceptSession(authUser){
   const {data:adminRow,error:adminError}=await sb.from('admin_users').select('user_id').eq('user_id',authUser.id).maybeSingle();
   if(adminError) throw Error('Admin permission check temporarily failed: '+adminError.message);
   const isVerifiedAdmin=adminRow?.user_id===authUser.id;
+  const normalizedAuthPhone=String(authUser.phone||'').replace(/\D/g,'');
+  const isReservedAdminPhone=normalizedAuthPhone==='917794097864'||normalizedAuthPhone==='7794097864';
+  if(isReservedAdminPhone&&!isVerifiedAdmin) throw Error('ఈ Admin మొబైల్‌కు సరైన Admin membership లేదు. ఇతర Roleతో login అనుమతి లేదు.');
+  if(selectedRole==='admin'&&!isVerifiedAdmin) throw Error('ఈ మొబైల్‌కు Admin access లేదు.');
   let role=isVerifiedAdmin?'admin':String(profile.role||authUser.user_metadata?.role||'customer').toLowerCase();
   if(!['customer','driver','partner','admin'].includes(role)) throw Error('Invalid account role.');
   if(role==='admin'&&!isVerifiedAdmin) throw Error('ఈ ఖాతాకు Admin permission లేదు.');
