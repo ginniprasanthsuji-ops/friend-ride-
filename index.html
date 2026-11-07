@@ -1467,7 +1467,7 @@ async function saveRideRequest(){
 async function refreshNearbyDrivers(){
   try{
     const coords=frParsePickupCoords();if(!coords){frShow('trackingStatus','GPS Pickup Location ఎంచుకుంటే 15 KMలోని Online Drivers కనిపిస్తారు.');return;}
-    const {data,error}=await sb.from('driver_locations').select('driver_id,latitude,longitude,is_online,updated_at').eq('is_online',true);if(error)throw error;
+    const {data,error}=await sb.rpc('fr_customer_list_nearby_drivers',{p_lat:coords[0],p_lng:coords[1],p_radius_km:15});if(error)throw error;
     const now=Date.now(),rows=(data||[]).filter(d=>d.latitude!=null&&d.longitude!=null&&d.is_online===true&&(!d.updated_at||now-new Date(d.updated_at).getTime()<300000)).map(d=>({...d,distance:frDistanceKm(coords,[Number(d.latitude),Number(d.longitude)])})).filter(d=>d.distance<=15);
     frNearbyMarkers.forEach(m=>trackingMap?.removeLayer(m));frNearbyMarkers=[];
     if(trackingMap){rows.forEach(d=>{const m=L.marker([Number(d.latitude),Number(d.longitude)]).addTo(trackingMap).bindPopup('Online Driver • '+d.distance.toFixed(1)+' km');frNearbyMarkers.push(m);});}
