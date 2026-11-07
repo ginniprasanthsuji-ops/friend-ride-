@@ -1965,9 +1965,10 @@ function frSubmitBankEnquiry(){
  const $=id=>document.getElementById(id);
  const notify=(msg)=>{if(typeof showMessage==='function')showMessage(msg,'good');else alert(msg)};
  const fail=(label,e)=>{const m=label+': '+(e?.message||e||'Unknown error');if(typeof showMessage==='function')showMessage(m,'error');else alert(m);};
- const serviceSlug=()=>({'Electrician':'electrician','Plumber':'plumber','AC Technician':'ac-mechanic','Appliance Repair':'other','House Cleaning':'other','Painting':'other','Carpenter':'carpenter'}[$('homeServiceType')?.value]||'other');
+ const serviceSlug=()=>({'Electrician':'electrician','Plumber':'plumber','AC Technician':'ac-mechanic','Appliance Repair':'appliance-repair','House Cleaning':'house-cleaning','Painting':'painting','Carpenter':'carpenter'}[$('homeServiceType')?.value]||'other');
  window.loadApprovedServiceProviders=async function(){
   const select=$('homeServiceTechnician');if(!select)return;
+  if(!currentUser||currentProfile?.role!=='customer'){select.innerHTML='<option value="">Customer login required to load technicians</option>';return;}
   select.innerHTML='<option value="">Any approved technician (Admin will assign)</option>';
   try{
    const {data,error}=await sb.rpc('fr_customer_list_approved_service_providers',{p_category_slug:serviceSlug()});
@@ -2098,6 +2099,7 @@ function frSubmitBankEnquiry(){
   $('frParcelAcceptBtn').onclick=frDriverAcceptParcel;$('frParcelCashBtn').onclick=frDriverConfirmParcelCash;$('frParcelOtpBtn').onclick=frCustomerRequestParcelOtp;
  }
  function bindServices(){const el=$('homeServiceType');if(el&&!el.dataset.frBound){el.dataset.frBound='1';el.addEventListener('change',()=>loadApprovedServiceProviders());loadApprovedServiceProviders();}}
+ if(typeof sb!=='undefined')sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session?.user){setTimeout(()=>{if(typeof loadApprovedServiceProviders==='function'&&selectedRole==='customer')loadApprovedServiceProviders();},0);}});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{addParcelActions();bindServices();},{once:true});else{addParcelActions();bindServices();}
 })();
 </script>
