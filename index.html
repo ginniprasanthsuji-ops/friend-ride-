@@ -2229,15 +2229,15 @@ function frSubmitBankEnquiry(){
     active: 'Active (legacy) / యాక్టివ్'
   };
   const FR_APPROVED = s => String(s||'pending').toLowerCase()==='approved';
-  const FR_STATUS = (role,p) => String(role==='driver' ? p?.driver_approval_status : p?.partner_approval_status || 'pending').toLowerCase();
+  const FR_STATUS = (role,p) => String((role==='driver' ? p?.driver_approval_status : p?.partner_approval_status) || 'pending').toLowerCase();
 
   function frStopDriverPolling(){
     ['frDriverTrackTimer','frOnlineGpsTimer','frDriverRequestTimer'].forEach(k=>{
-      if(window[k]){clearInterval(window[k]);window[k]=null;}
+      if(typeof globalThis[k]!=='undefined' && globalThis[k]){clearInterval(globalThis[k]);globalThis[k]=null;}
     });
-    if(window.driverWatchId!==null && window.driverWatchId!==undefined){
-      try{navigator.geolocation?.clearWatch(window.driverWatchId);}catch(_){}
-      window.driverWatchId=null;
+    if(typeof driverWatchId!=='undefined' && driverWatchId!==null){
+      try{navigator.geolocation?.clearWatch(driverWatchId);}catch(_){}
+      driverWatchId=null;
     }
   }
   function frApprovalBanner(role,status){
@@ -2284,7 +2284,7 @@ function frSubmitBankEnquiry(){
 
   window.frRefreshMyApprovalStatus=async function(){
     try{
-      if(!window.currentUser?.id)throw Error('ముందుగా Login చేయండి.');
+      if(typeof currentUser==='undefined'||!currentUser?.id)throw Error('ముందుగా Login చేయండి.');
       const {data,error}=await sb.from('profiles').select('role,driver_approval_status,partner_approval_status,partner_category,full_name').eq('id',currentUser.id).single();
       if(error)throw error;
       currentProfile={...currentProfile,...data};
@@ -2360,7 +2360,7 @@ function frSubmitBankEnquiry(){
     try{
       if(typeof frRideStopRealtime==='function')frRideStopRealtime();
       frStopDriverPolling();
-      if(window.frCustomerTrackTimer){clearInterval(window.frCustomerTrackTimer);window.frCustomerTrackTimer=null;}
+      if(typeof frCustomerTrackTimer!=='undefined'&&frCustomerTrackTimer){clearInterval(frCustomerTrackTimer);frCustomerTrackTimer=null;}
       const {error}=await sb.auth.signOut();if(error)throw error;
       currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';
       try{localStorage.removeItem('friendride_selected_role');}catch(_){}
