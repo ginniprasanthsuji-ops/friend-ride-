@@ -1979,15 +1979,28 @@ function frClassifyAlert(row){
 }
 function frPreviewAlertTone(kind){
  frUnlockAlertAudio();
- if(frAlertAudioCtx?.state==='suspended'){
-  frAlertAudioCtx.resume().then(()=>frPlayAlertTone(kind));
- }else frPlayAlertTone(kind);
+ const play=()=>{frPlayAlertTone(kind);frSpeakAlert(kind);};
+ if(frAlertAudioCtx?.state==='suspended')frAlertAudioCtx.resume().then(play);else play();
  const out=document.getElementById('frNotifyPermissionStatus');
- if(out)out.textContent=kind==='order'?'కొత్త ఆర్డర్ టోన్ — Preview':kind==='ride'?'కొత్త రైడ్ టోన్ — Preview':'కస్టమర్ అప్‌డేట్ టోన్ — Preview';
+ if(out)out.textContent=kind==='order'?'“Order arrived” — మూడు సార్లు వినిపిస్తుంది.':kind==='ride'?'“New ride” — మూడు సార్లు వినిపిస్తుంది.':'Customer update — పూర్తి వాయిస్ అలర్ట్.';
+}
+function frSpeakAlert(kind){
+ if(!('speechSynthesis' in window))return;
+ try{
+  window.speechSynthesis.cancel();
+  const phrases={
+   order:'Order arrived. Order arrived. Order arrived.',
+   ride:'New ride. New ride. New ride.',
+   customer:'Your FRIEND RIDE update is here. Your order or ride status has changed. Please open FRIEND RIDE and check the latest details.'
+  };
+  const utterance=new SpeechSynthesisUtterance(phrases[kind]||phrases.customer);
+  utterance.lang='en-IN';utterance.rate=0.88;utterance.pitch=1.02;utterance.volume=1;
+  window.speechSynthesis.speak(utterance);
+ }catch(e){console.warn('Voice alert unavailable:',e);}
 }
 function frPlayRoleAlert(row){
  const kind=frClassifyAlert(row);
- if(kind)frPlayAlertTone(kind);
+ if(kind){frPlayAlertTone(kind);frSpeakAlert(kind);}
 }
 document.addEventListener('pointerdown',frUnlockAlertAudio,{passive:true});
 document.addEventListener('keydown',frUnlockAlertAudio);
