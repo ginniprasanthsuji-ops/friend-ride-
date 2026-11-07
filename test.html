@@ -13,11 +13,11 @@
 <footer>YF Test 1 to 15 • Branch: yf-full-fix-nov07 • QA only</footer></main>
 <script>
 const tests=[
-[1,1,'Login & OTP','SMS OTP send/verify and Auth session',['sendLoginOtp','verifyLoginOtp','Sms-otp'], 'PARTIAL','APITXT Edge Function exists; app calls it. Live SMS/auth session still needs real test.'],
+[1,1,'Login & OTP','SMS OTP send/verify and Auth session',['sendLoginOtp','verifyLoginOtp','callApitxtOtp','FR_OTP_FUNCTION_URL','Sms-otp'], 'PARTIAL','APITXT Edge Function exists; app calls it. Live SMS/auth session still needs real test.'],
 [2,1,'Profile & Role','Role selection, profile lookup, admin membership',['chooseRole','acceptSession','dashboardFor','admin_users'],'PARTIAL','Role routing source exists; four-role login must be tested with staging accounts.'],
-[3,1,'Driver Registration & KYC','Photo, Aadhaar, licence, RC upload',['frUploadRegistrationFile','driver-kyc-documents','fr_driver_documents'],'PARTIAL','Registration uploads and private KYC storage are wired; actual upload and Admin review pending.'],
+[3,1,'Driver Registration & KYC','Photo, Aadhaar, licence, RC upload',['frUploadRegistrationFile','fr_register_driver_partner','driver-kyc-documents','fr_driver_documents'],'PARTIAL','Registration uploads and private KYC storage are wired; actual upload and Admin review pending.'],
 [4,1,'Admin Approval','Driver/Partner list and approve/reject',['admin_list_driver_applications','admin_review_driver','fr_admin_list_partner_applications','fr_admin_review_partner'],'PARTIAL','RPCs exist; admin permission and end-to-end review pending.'],
-[5,1,'Driver Online & GPS','Approval guard, location upsert',['toggleOnline','driver_locations','frPosition'],'PARTIAL','GPS/database logic exists; device permission and RLS runtime test pending.'],
+[5,1,'Driver Online & GPS','Approval guard, location upsert',['toggleOnline','driver_locations','fr_customer_list_nearby_drivers','frPosition'],'PARTIAL','GPS/database logic exists; device permission and RLS runtime test pending.'],
 [6,2,'Ride Booking','Customer ride insert',['saveRideRequest','from(\'rides\').insert'],'PARTIAL','Ride insert code exists; database mapping uses pickup/drop fields and must be runtime checked.'],
 [7,2,'Driver Accept & Fare','Request listing, accept/counter RPC',['loadDriverRideRequests','accept_ride','counter_offer_ride'],'PARTIAL','RPCs and request flow exist; competing driver and status tests pending.'],
 [8,2,'Tracking & SOS','Customer/driver live location and emergency',['ride_live_locations','refreshCustomerDriverLocation','sendRideSOS'],'PARTIAL','Realtime location paths exist; two-account/device test pending.'],
