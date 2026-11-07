@@ -11,7 +11,7 @@
 :root{--purple:#5420b8;--purple2:#7b35df;--navy:#211044;--orange:#ff8a24;--bg:#f6f4fb;--ink:#201936;--muted:#77718a;--line:#e9e3f2;--green:#13875b;--red:#c83c4c;--white:#fff;--gold:#ffc65a}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 12% 0%,#eee5ff 0,transparent 32%),linear-gradient(180deg,#f8f6fc 0%,#f2eff8 100%);color:var(--ink);font:15px/1.52 system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:82px}button,input,textarea,select{font:inherit}button{cursor:pointer}
 .topbar{position:sticky;top:0;z-index:20;background:linear-gradient(110deg,#241044 0%,#4c1b9c 52%,#7736cb 100%);color:white;padding:11px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 7px 24px #24104435;border-bottom:1px solid #ffffff20}
-.iconbtn{border:0;border-radius:13px;background:#ffffff20;color:#fff;width:45px;height:45px;font-size:24px;display:grid;place-items:center}.logo{width:42px;height:42px;border-radius:14px;background:#fff;color:var(--purple);display:grid;place-items:center;font-weight:1000;font-size:19px;flex-shrink:0}.brand{flex:1;min-width:0}.brand b{display:block;font-size:16px;letter-spacing:.4px}.brand small{display:block;color:#e7d9ff;font-size:11px}.top-action{border:0;border-radius:12px;background:#fff;color:var(--purple);font-weight:800;padding:10px 13px}
+.iconbtn{border:0;border-radius:13px;background:#ffffff20;color:#fff;width:45px;height:45px;font-size:24px;display:grid;place-items:center}.logo{width:42px;height:42px;border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden;flex-shrink:0}.logo img{width:100%;height:100%;object-fit:cover}.brand{flex:1;min-width:0}.brand b{display:block;font-size:16px;letter-spacing:.4px}.brand small{display:block;color:#e7d9ff;font-size:11px}.top-action{border:0;border-radius:12px;background:#fff;color:var(--purple);font-weight:800;padding:10px 13px}
 main{max-width:920px;margin:auto;padding:14px}.page{display:none}.page.active{display:block}.card{background:linear-gradient(145deg,#fff 0%,#fdfbff 100%);border:1px solid #e8e0f3;border-radius:22px;padding:18px;margin-bottom:15px;box-shadow:0 9px 28px #32105e0c,0 2px 6px #32105e06}.hero{background:radial-gradient(circle at 88% 12%,#a66af0 0,transparent 27%),linear-gradient(118deg,#211044 0%,#48208e 52%,#7430c5 100%);color:white;border:0;padding:24px;overflow:hidden;position:relative;box-shadow:0 13px 30px #4b168a2c}.hero h1{font-size:26px;line-height:1.2;margin:6px 0}.hero p{color:#e8dcff;margin:5px 0}.hero .eyebrow{font-size:11px;letter-spacing:1px;color:#e4d2ff;font-weight:800}
 h2{font-size:20px;margin:0 0 13px}h3{font-size:16px;margin:0 0 8px}.muted{color:var(--muted)}.tiny{font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{border:1px solid #e8e0f2;border-radius:19px;padding:15px;background:linear-gradient(145deg,#fff 0%,#faf7ff 100%);text-align:left;color:var(--ink);min-height:116px;box-shadow:0 6px 16px #32105e0b;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.tile .emoji{display:grid;place-items:center;width:49px;height:49px;border-radius:16px;background:linear-gradient(145deg,#f0e5ff,#fff0e3);font-size:26px;margin-bottom:9px;box-shadow:inset 0 1px 0 #fff,0 3px 8px #4b168a10}.tile b{display:block;font-size:15px}.tile small{display:block;color:var(--muted);margin-top:3px}
 .btn{border:0;border-radius:14px;background:linear-gradient(105deg,#ff8125,#ffad43);color:#321747;font-weight:900;padding:13px 16px;width:100%;margin-top:8px;box-shadow:0 6px 15px #ff8a2430;letter-spacing:.1px}.btn.purple{background:linear-gradient(105deg,#5120b4,#8140df);color:#fff;box-shadow:0 7px 17px #5420b832}.btn.dark{background:var(--navy)}.btn.light{background:#f1e9ff;color:var(--purple);box-shadow:none}.btn.red{background:#fae8eb;color:var(--red);box-shadow:none}.btn.green{background:var(--green)}.btn:disabled{opacity:.45;cursor:not-allowed}
@@ -228,7 +228,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 #authModal.fr-role-locked .rolegrid{display:none!important}
 .fr-launcher-inner{width:min(100%,560px);margin:auto}
 .fr-launcher-brand{display:flex;align-items:center;gap:14px;margin:0 auto 30px;justify-content:center}
-.fr-launcher-logo{width:66px;height:66px;border-radius:21px;display:grid;place-items:center;background:linear-gradient(135deg,#ff8a24,#ffbd49);color:#35125e;font-weight:1000;font-size:25px;box-shadow:0 12px 28px #0004}
+.fr-launcher-logo{width:66px;height:66px;border-radius:21px;display:grid;place-items:center;background:#fff;overflow:hidden;box-shadow:0 12px 28px #0004}.fr-launcher-logo img{width:100%;height:100%;object-fit:cover}
 .fr-launcher-kicker{font-size:11px;letter-spacing:2.5px;font-weight:800;color:#d8c9ff}
 .fr-launcher-brand h1{font-size:clamp(25px,7vw,38px);line-height:1.1;margin:3px 0;color:#fff;font-weight:950;letter-spacing:.3px}
 .fr-launcher-brand p{margin:5px 0 0;color:#e2d9f5;font-size:13px}
@@ -272,7 +272,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
-  <div class="fr-launcher-brand"><div class="fr-launcher-logo">FR</div><div><div class="fr-launcher-kicker">WELCOME TO</div><h1>FRIEND RIDE</h1><p>మీ ప్రయాణం • మీ సేవలు • మీ వ్యాపారం</p></div></div>
+  <div class="fr-launcher-brand"><div class="fr-launcher-logo"><img src="./friendride-icon.svg" alt="FRIEND RIDE logo"></div><div><div class="fr-launcher-kicker">WELCOME TO</div><h1>FRIEND RIDE</h1><p>మీ ప్రయాణం • మీ సేవలు • మీ వ్యాపారం</p></div></div>
   <div class="fr-launcher-title"><h2>మీరు ఎవరు?</h2><p>మీకు సంబంధించిన విభాగాన్ని ఎంచుకోండి</p></div>
   <div class="fr-launcher-grid">
    <button class="fr-role-card customer" onclick="enterRole('customer')"><span class="fr-role-icon">👤</span><b>Customer</b><small>Ride • Food • Shop • Services</small><span class="fr-role-arrow">తదుపరి →</span></button>
@@ -640,7 +640,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 </nav>
 
 <div id="drawerBackdrop" class="drawer-backdrop" onclick="if(event.target===this)closeDrawer()"><aside class="drawer">
- <div class="drawer-head"><button class="close" style="float:right" onclick="closeDrawer()">✕</button><div class="logo">FR</div><b>FRIEND RIDE ULTIMATE</b><br><small id="drawerUser">One app. Every local need.</small></div>
+ <div class="drawer-head"><button class="close" style="float:right" onclick="closeDrawer()">✕</button><div class="logo"><img src="./friendride-icon.svg" alt="FRIEND RIDE logo"></div><b>FRIEND RIDE ULTIMATE</b><br><small id="drawerUser">One app. Every local need.</small></div>
  <button class="menu-item" onclick="menuGo('home')"><span class="mi">🏠</span>Home</button>
  <div class="menu-label">Dashboards</div>
  <button class="menu-item" onclick="menuGo('customerDashboard')"><span class="mi">👤</span>Customer Dashboard</button>
