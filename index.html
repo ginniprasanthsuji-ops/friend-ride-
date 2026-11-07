@@ -1230,7 +1230,7 @@ function frRenderStoreMap(stores){
  else if(bounds.length===1)map.setView(bounds[0],14);
 }
 
-let frActiveStore=null,frActiveRestaurant=null,frMarketCategory='All',frRestaurantCategory='All',frMarketCart=[];
+let frActiveStore=null,frActiveRestaurant=null,frMarketCategory='All',frRestaurantCategory='All',frMarketCart=[],frCustomerStoreCatalogue=[];
 function renderFriendStores(){
  const cat=$('friendMartCategory')?.value||'all',q=($('friendMartSearch')?.value||'').toLowerCase();
  const el=$('friendMartStoreGrid');if(!el)return;
@@ -1239,11 +1239,17 @@ function renderFriendStores(){
  el.innerHTML=sorted.map(x=>`<button class="market-store" onclick="openFriendStore('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small>${x.distance==null?'<small>GPS location not available</small>':`<small class="market-store-distance">${x.distance.toFixed(1)} km away (straight-line)</small>`}<small>View store & visual catalogue →</small></div></button>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో షాపులు లేవు.</div>';
  frRenderStoreMap(sorted);
 }
-function openFriendStore(id){
- frActiveStore=frApprovedStores.find(x=>x.id===id);if(!frActiveStore)return;
- frMarketCategory='All';$('customerCatalogueTitle').textContent=frActiveStore.name;$('customerCatalogueType').textContent=frActiveStore.category;
- $('customerCatalogueSub').textContent='Shop catalogue • Partner prices • Add to cart';
- $('customerCatalogueSearch').value='';renderStoreCategories();renderCustomerCatalogue();if(frActiveStore.type==='vegetables')$('customerCatalogueSub').textContent='🥬 Fresh arrivals • Daily partner stock and prices can change';showPage('customerCatalogue');
+async function openFriendStore(id){
+ frActiveStore=frApprovedStores.find(x=>String(x.id)===String(id));if(!frActiveStore)return;
+ frMarketCategory='All';frCustomerStoreCatalogue=[];$('customerCatalogueTitle').textContent=frActiveStore.name;$('customerCatalogueType').textContent=frActiveStore.category;
+ $('customerCatalogueSub').textContent='Shop-specific digital catalogue • Live partner prices';$('customerCatalogueSearch').value='';
+ showPage('customerCatalogue');renderStoreCategories();
+ const grid=$('customerCatalogueGrid');if(grid)grid.innerHTML='<div class="notice">ఈ షాప్ యొక్క అసలు Catalogue మరియు ధరలు loading…</div>';
+ try{const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:frActiveStore.id});if(error)throw error;
+  frCustomerStoreCatalogue=(data||[]).map(x=>({id:x.id,sku:x.master_sku,name:x.item_name,category:x.category,unit:x.unit||'',description:x.description||'',price:x.price_paise==null?null:Number(x.price_paise)/100,offer:x.offer_price_paise==null?null:Number(x.offer_price_paise)/100,imageUrl:x.image_url||'',available:!!x.available,prescriptionCheck:!!x.prescription_required}));
+  renderStoreCategories();renderCustomerCatalogue();
+  if(!frCustomerStoreCatalogue.length&&grid)grid.innerHTML='<div class="market-empty">ఈ షాప్ ఇంకా తన Catalogueలో products publish చేయలేదు. Shop Owner products జోడించిన తర్వాత ఇక్కడ కనిపిస్తాయి.</div>';
+ }catch(e){if(grid)grid.innerHTML='<div class="notice">Shop Catalogue load కాలేదు: '+safe(e.message||e)+'</div>';}
 }
 function frStoreMasterType(type){
  const map={local_store:'local_store',medical:'medical',vegetables:'vegetables',bakery:'bakery',stationery:'local_store',restaurant:'restaurant'};
@@ -1283,20 +1289,17 @@ function renderFrCatalogueVisuals(categories){const head=$('frCatalogueVisualHea
 function frSelectCatalogueCategory(category){frMarketCategory=category;const sel=$('customerCatalogueCategorySelect');if(sel)sel.value=category;renderCustomerCatalogue();}
 function renderCustomerCatalogue(){
  if(!frActiveStore)return;
- const businessType=frStoreMasterType(frActiveStore.type);
- const master=(FRIEND_MASTER_ITEMS||[]).filter(x=>x.businessType===businessType);
- const fallback=FR_STORE_MENU[frActiveStore.type]||[];
  const q=($('customerCatalogueSearch')?.value||'').toLowerCase();
- const items=(master.length?master:fallback.map((x,i)=>({id:'fallback-'+i,category:x[0],name:x[1],unit:'',description:'Partner confirms price and availability.'})))
-  .filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.name+' '+x.category+' '+(x.id||'')).toLowerCase().includes(q)));
- const isMedical=frActiveStore.type==='medical';
- const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=isMedical?'block':'none';
- const grid=$('customerCatalogueGrid');
- if(grid)grid.innerHTML=items.map(x=>{
-  const art=frProductArt(x),name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||''),uploadedPhoto=String(x.imageUrl||x.image_url||'').trim(),photo=uploadedPhoto||frCataloguePhotoFor(frActiveStore.type,x.category);
-  const visual='<div class="market-product-photo"><img src="'+safe(photo)+'" alt="'+name+'" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="market-product-photo-fallback" style="display:none">'+art+'</span><small>'+(uploadedPhoto?'STORE PRODUCT PHOTO':'CATEGORY PHOTO • SAMPLE')+'</small></div>';
-  return `<article class="market-product market-product-3d">${visual}<div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small><div class="market-price">Partner price: confirm with store</div><span class="stock-mark no">Availability: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${name.replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','request')">＋ Add / Ask Price</button></article>`;
- }).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
+ const items=(frCustomerStoreCatalogue||[]).filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.name+' '+x.category+' '+(x.sku||'')).toLowerCase().includes(q)));
+ const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=frActiveStore.type==='medical'?'block':'none';
+ const grid=$('customerCatalogueGrid');if(!grid)return;
+ grid.innerHTML=items.map(x=>{
+  const art=frProductArt(x),name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||''),photo=String(x.imageUrl||'').trim();
+  const visual=photo?'<div class="market-product-photo"><img src="'+safe(photo)+'" alt="'+name+'" loading="lazy"><small>SHOP PRODUCT PHOTO</small></div>':'<div class="market-product-photo"><span class="market-product-photo-fallback" style="display:grid">'+art+'</span><small>PRODUCT IMAGE NOT ADDED</small></div>';
+  const price=x.price===null?'<div class="market-price">Ask Price • Shop quotation needed</div>':'<div class="market-price">'+(x.offer!==null&&x.offer<x.price?'Offer ₹'+x.offer.toFixed(2)+' • MRP ₹'+x.price.toFixed(2):'₹'+x.price.toFixed(2))+' / '+safe(x.unit||'item')+'</div>';
+  const action=x.price===null?'request':'fixed',shownPrice=x.price===null?'':String(x.offer!==null&&x.offer<x.price?x.offer:x.price);
+  return `<article class="market-product market-product-3d">${visual}<div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small>${price}<span class="stock-mark yes">✓ Available</span></div><button class="btn purple" onclick="addMarketCart('${safe(x.name).replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','${action}','${x.id}','${shownPrice}','${safe(x.imageUrl||'').replace(/'/g,"&#39;")}','${x.prescriptionCheck?'true':'false'}')">${x.price===null?'＋ Ask Price':'＋ Add to Cart'}</button></article>`;
+ }).join('')||'<div class="market-empty">ఈ షాప్ ఈ కేటగిరీలో products publish చేయలేదు.</div>';
 }
 function renderRestaurantList(){
  const q=($('restaurantSearch')?.value||'').toLowerCase(),el=$('restaurantVisualList');if(!el)return;
@@ -1324,23 +1327,23 @@ function frCartUpdateBadges(){
  const a=$('frCartTopCount'),b=$('frCartTopMeta'),c=$('frCartHeadingCount');
  if(a)a.textContent=count;if(c)c.textContent=count;if(b)b.textContent=count+' items • '+stores+' stores';
 }
-function addMarketCart(name,partner,pricing){
- const isPrescription=/prescription medicine/i.test(name);
+function addMarketCart(name,partner,pricing,catalogueItemId,price,imageUrl,prescriptionFlag){
+ const isPrescription=prescriptionFlag==='true'||/prescription medicine/i.test(name);
  if(isPrescription){const file=$('customerPrescriptionFile')?.files?.[0];if(!file){alert('ఈ మందుకు డాక్టర్ Prescription తప్పనిసరిగా అప్‌లోడ్ చేయాలి.');return;}if(file.size>5*1024*1024){alert('Prescription file 5 MBలోపు ఉండాలి.');return;}}
- const storeId=frActiveStore?.id||null,storeName=frActiveStore?.name||partner;
- const found=frMarketCart.find(x=>x.name===name&&x.storeId===storeId&&x.partner===storeName);
- if(found)found.qty++;else frMarketCart.push({name,partner:storeName,storeId,qty:1,price:null,pricing:'request',prescriptionRequired:isPrescription});
- renderMarketCart();showMessage('Item కార్ట్‌లో చేరింది. '+storeName+' ధర నిర్ధారణ కోసం వేచి ఉంది.','good');
+ const storeId=frActiveStore?.id||null,storeName=frActiveStore?.name||partner,unitPrice=price===''?null:Number(price);
+ const found=frMarketCart.find(x=>x.catalogueItemId===catalogueItemId&&x.storeId===storeId);
+ if(found)found.qty++;else frMarketCart.push({name,partner:storeName,storeId,qty:1,price:unitPrice,pricing:pricing==='fixed'?'fixed':'request',catalogueItemId:catalogueItemId||null,imageUrl:imageUrl||null,prescriptionRequired:isPrescription});
+ renderMarketCart();showMessage(pricing==='fixed'?'ధరతో ఉన్న item Cartలో చేరింది.':'Ask Price item Cartలో చేరింది; Shop quotation పంపుతుంది.','good');
 }
 function frChangeCartQty(i,delta){if(!frMarketCart[i])return;frMarketCart[i].qty+=delta;if(frMarketCart[i].qty<=0)frMarketCart.splice(i,1);renderMarketCart();}
 function renderMarketCart(){
  const el=$('marketCartItems');if(!el)return;
  if(!frMarketCart.length){el.innerHTML='<div class="market-empty">మీ Cart ఖాళీగా ఉంది. Store Catalogue నుంచి వస్తువులు జోడించండి.</div>';$('marketCartTotal').textContent='₹0.00';const p=$('frPaymentOptions');if(p)p.style.display='none';frCartUpdateBadges();return;}
- el.innerHTML=frMarketCart.map((x,i)=>`<div class="fr-cart-line"><div><b>${safe(x.name)}</b><small>${safe(x.partner)} • Partner price confirmation pending</small><div class="fr-qty-control"><button onclick="frChangeCartQty(${i},-1)">−</button><b>${x.qty}</b><button onclick="frChangeCartQty(${i},1)">＋</button></div></div><div style="text-align:right"><b>${x.price==null?'Ask Store':'₹'+(Number(x.price)*x.qty).toFixed(2)}</b><button class="btn light" style="width:auto;padding:5px 9px;margin-top:8px" onclick="frChangeCartQty(${i},-${x.qty})">Remove</button></div></div>`).join('');
- $('marketCartTotal').textContent=frMarketCart.some(x=>x.price==null)?'Partner quote pending':'₹'+frMarketCart.reduce((n,x)=>n+x.price*x.qty,0).toFixed(2);
+ el.innerHTML=frMarketCart.map((x,i)=>`<div class="fr-cart-line"><div><b>${safe(x.name)}</b><small>${safe(x.partner)} • ${x.pricing==='fixed'?'Shop listed price':'Ask Price • Quotation pending'}</small><div class="fr-qty-control"><button onclick="frChangeCartQty(${i},-1)">−</button><b>${x.qty}</b><button onclick="frChangeCartQty(${i},1)">＋</button></div></div><div style="text-align:right"><b>${x.price==null?'Ask Store':'₹'+(Number(x.price)*x.qty).toFixed(2)}</b><button class="btn light" style="width:auto;padding:5px 9px;margin-top:8px" onclick="frChangeCartQty(${i},-${x.qty})">Remove</button></div></div>`).join('');
+ $('marketCartTotal').textContent=frMarketCart.some(x=>x.price==null)?'Quotation pending for Ask Price items':'₹'+frMarketCart.reduce((n,x)=>n+(x.price||0)*x.qty,0).toFixed(2);
  const p=$('frPaymentOptions');if(p)p.style.display='none';frCartUpdateBadges();
 }
-async function frLoadStorePaymentOptions(storeId){
+function frLoadStorePaymentOptions(storeId){
  const panel=$('frPaymentOptions'),methods=$('frPaymentMethods');if(!panel||!methods)return;
  panel.style.display='block';methods.innerHTML='<div class="notice">Store payment details loading…</div>';
  try{
