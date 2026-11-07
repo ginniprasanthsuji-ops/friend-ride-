@@ -769,7 +769,7 @@ async function acceptSession(user){
  $('drawerUser').textContent=(profile?.full_name||user.user_metadata?.full_name||'FRIEND RIDE user')+' • '+dbRole.toUpperCase();if($('headerAuth'))$('headerAuth').textContent='Account';
  closeAuth();showPage(dashboardFor(dbRole));if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
 }
-async function logout(){await sb.auth.signOut();currentUser=null;currentProfile=null;selectedRole='customer';try{localStorage.removeItem('friendride_selected_role');}catch(_){}online=false;if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');const gate=$('roleLauncher');if(gate)gate.classList.add('hide');}
+async function logout(){await sb.auth.signOut({scope:'local'});currentUser=null;currentProfile=null;selectedRole='customer';try{localStorage.removeItem('friendride_selected_role');}catch(_){}online=false;if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');const gate=$('roleLauncher');if(gate)gate.classList.add('hide');}
 async function forgotPassword(){showMessage('FRIEND RIDEలో Password Login లేదు. Mobile SMS OTP ఉపయోగించండి.');}
 function setRideType(v){rideVehicle=v;document.querySelectorAll('#ride .row button').forEach((b,i)=>b.className='btn '+(['Bike','Auto','Car'][i]===v?'purple':'light'));}
 function adjustFare(n){$('fare').value=Math.max(1,Number($('fare').value||0)+n);}
@@ -1380,7 +1380,7 @@ async function acceptSession(authUser){
 async function logout(){
   if(frDriverTrackTimer)clearInterval(frDriverTrackTimer);if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);if(frNearbyTimer)clearInterval(frNearbyTimer);if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);
   if(driverWatchId!==null){navigator.geolocation?.clearWatch(driverWatchId);driverWatchId=null;}
-  await sb.auth.signOut();currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');
+  await sb.auth.signOut({scope:'local'});currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');
 }
 
 function frPosition(){return new Promise((resolve,reject)=>{if(!navigator.geolocation)return reject(Error('ఈ Browserలో GPS లేదు'));navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:5000});});}
@@ -2370,7 +2370,7 @@ function frSubmitBankEnquiry(){
       if(typeof frRideStopRealtime==='function')frRideStopRealtime();
       frStopDriverPolling();
       if(typeof frCustomerTrackTimer!=='undefined'&&frCustomerTrackTimer){clearInterval(frCustomerTrackTimer);frCustomerTrackTimer=null;}
-      const {error}=await sb.auth.signOut();if(error)throw error;
+      const {error}=await sb.auth.signOut({scope:'local'});if(error)throw error;
       currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';
       try{localStorage.removeItem('friendride_selected_role');}catch(_){}
       const ha=document.getElementById('headerAuth');if(ha)ha.textContent='Login';
