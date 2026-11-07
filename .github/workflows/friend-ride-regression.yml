@@ -18,9 +18,18 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npx playwright install --with-deps chromium
-      - name: Wait for GitHub Pages deployment
-        run: sleep 45
+      - name: Start local static app server
+        run: |
+          npx --yes http-server@14.1.1 . -p 4173 -s > /tmp/friend-ride-server.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/friend-ride-server.log
+          exit 1
       - name: Run browser regression tests
+        env:
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
         run: npm test
       - name: Upload Playwright report
         if: always()
