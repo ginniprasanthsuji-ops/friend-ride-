@@ -694,7 +694,7 @@ async function loadDriverApprovals(){
   box.innerHTML=rows.map(r=>{
    const status=String(r.driver_approval_status||'pending').toLowerCase();
    const label=status==='approved'||status==='verified'||status==='active'?'Approved':status==='rejected'?'Rejected':'Pending';
-   const actions=status==='pending'?'<div class="row" style="gap:8px;margin-top:12px"><button class="btn green" onclick="reviewDriverApplication(\''+safe(r.id)+'\',\'approved\')">✓ Approve</button><button class="btn red" onclick="reviewDriverApplication(\''+safe(r.id)+'\',\'rejected\')">✕ Reject</button></div>':(status==='rejected'?'<div class="row" style="margin-top:12px"><button class="btn light" onclick="reviewDriverApplication(\''+safe(r.id)+'\',\'pending\')">↻ Re-open</button></div>':'<div class="row" style="margin-top:12px"><button class="btn light" onclick="reviewDriverApplication(\''+safe(r.id)+'\',\'pending\')">↻ Set Pending</button></div>');
+   const actions=status==='pending'?'<div class="row" style="gap:8px;margin-top:12px"><button class="btn green" onclick="reviewDriverApplication(\\''+safe(r.id)+'\\',\\'approved\\')">✓ Approve</button><button class="btn red" onclick="reviewDriverApplication(\\''+safe(r.id)+'\\',\\'rejected\\')">✕ Reject</button></div>':'';
    return '<article class="card" style="margin:12px 0"><div class="row" style="justify-content:space-between;align-items:center"><b>'+safe(r.full_name||'Driver')+'</b><span class="status '+(label==='Approved'?'ok':'')+'">'+label+'</span></div><p>Mobile: '+safe(r.phone||'—')+'</p><p>Vehicle: '+safe([r.vehicle_type,r.vehicle_company,r.vehicle_model].filter(Boolean).join(' • ')||'—')+'</p><p>Registration: '+safe(r.vehicle_registration||'—')+'</p><p>Driving Licence: '+safe(r.driving_license_number||'—')+'</p><p>Experience: '+safe(r.driving_experience_years??'—')+' years</p>'+actions+'</article>';
   }).join('');
   if(msg)msg.textContent='Loaded '+rows.length+' driver application(s). Approve / Reject changes are saved to Supabase.';
@@ -703,13 +703,13 @@ async function loadDriverApprovals(){
 async function reviewDriverApplication(driverId,decision){
  try{
   if(!currentUser||selectedRole!=='admin')throw Error('Admin login అవసరం.');
-  if(!['approved','rejected','pending'].includes(decision))throw Error('Invalid decision.');
+  if(!['approved','rejected'].includes(decision))throw Error('Invalid decision.');
   const verb=decision==='approved'?'Approve':decision==='rejected'?'Reject':'Re-open as Pending';
   if(!confirm(verb+' this Driver application?'))return;
   const {data,error}=await sb.rpc('admin_review_driver',{p_driver_id:driverId,p_decision:decision});
   if(error)throw error;
   if(data!==true)throw Error('Databaseలో Driver record update కాలేదు. Driver ID/role తనిఖీ చేయండి.');
-  if(msg=$('driverApprovalMessage'))msg.textContent='Driver status updated: '+decision+'. Refreshing…';
+  const statusEl=$('driverApprovalMessage');if(statusEl)statusEl.textContent='Driver status updated: '+decision+'. Refreshing…';
   await loadDriverApprovals();
  }catch(e){const el=$('driverApprovalMessage');if(el)el.textContent='Approval update failed: '+e.message;alert('Driver approval update failed: '+e.message);}
 }
