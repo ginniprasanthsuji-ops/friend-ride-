@@ -60,7 +60,7 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 .market-heading h2{margin:0;font-size:20px}
 .market-search{display:flex;gap:8px;margin:12px 0}
 .market-search input{flex:1;min-width:0}
-.market-store-grid,.market-product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.market-store-grid,.market-product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.market-map{height:245px;border-radius:16px;border:1px solid #ddd5eb;overflow:hidden;margin:10px 0 14px;z-index:1}.market-store-distance{font-size:11px;font-weight:800;color:#13875b;margin-top:4px}
 .market-store,.market-product{border:1px solid #e9e3f2;border-radius:17px;background:#fff;overflow:hidden;box-shadow:0 6px 18px #21104410}
 .market-store{padding:0;text-align:left;color:var(--ink)}
 .market-store-art{height:104px;display:grid;place-items:center;font-size:53px;background:radial-gradient(circle at 25% 20%,#fff9,transparent 30%),linear-gradient(135deg,var(--a),var(--b));text-shadow:0 5px 5px #28104455}
@@ -430,6 +430,8 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <p class="muted">ముందుగా మీకు కావాల్సిన షాపును ఎంచుకోండి. షాప్ ఓపెన్ చేసిన తర్వాత దాని విజువల్ క్యాటలాగ్ కనిపిస్తుంది.</p>
   <div class="field"><label>Store Category</label><select id="friendMartCategory" onchange="renderFriendStores()"><option value="all">All Local Stores</option><option value="local_store">Grocery & Kirana</option><option value="medical">Medical Stores</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery</option></select></div>
   <div class="market-search"><input id="friendMartSearch" placeholder="Search store name / area" oninput="renderFriendStores()"></div>
+  <div class="field"><label>Find stores near your location</label><button class="btn light" type="button" onclick="frCaptureCustomerMarketLocation()">📍 Use My Current Location</button><small id="friendMartLocationStatus" class="muted">Enable GPS to sort approved stores by distance.</small></div>
+  <div id="friendMartMap" class="market-map"></div>
   <div id="friendMartStoreGrid" class="market-store-grid"></div>
   <div class="notice">ఇక్కడ Admin Approved చేసిన నిజమైన Partner Stores మాత్రమే కనిపిస్తాయి. Store ఎంచుకున్న వెంటనే దాని కేటగిరీ వారీ పూర్తి visual catalogue తెరుచుకుంటుంది.</div>
  </div>
@@ -620,7 +622,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  </div>
   <div class="field"><label>Mobile Number *</label><input id="regPhone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile"></div>
   <div class="field"><label>Email (Optional)</label><input id="regEmail" type="email" placeholder="Email address (optional)"></div>
-  <div id="addressField" class="field"><label>Complete Address *</label><textarea id="regAddress" placeholder="House, Street, Village, Mandal, District, PIN"></textarea></div><div id="driverRegDocs" class="hide"><div class="notice"><b>Driver Verification – Mandatory</b><br>Driver Photo, Driving Licence, Aadhaar Card మరియు Vehicle RC తప్పనిసరిగా upload చేయాలి. Admin approval వచ్చే వరకు account active కాదు.</div><div class="field"><label>Driver Profile Photo * Required</label><input id="regDriverPhoto" type="file" accept="image/*"></div><div class="field"><label>Driving Licence * Required</label><input id="regDriverLicense" type="file" accept="image/*,.pdf"></div><div class="field"><label>Aadhaar Card * Required</label><input id="regDriverAadhaar" type="file" accept="image/*,.pdf"></div><div class="field"><label>Vehicle RC * Required</label><input id="regDriverRC" type="file" accept="image/*,.pdf"></div></div><div id="partnerRegFields" class="hide"><div class="notice"><b>Partner Verification</b><br>Partner application, payment verification, తర్వాత Admin approval అవసరం.</div><div class="field"><label>Partner / Shop Owner Passport-size Photo * Required</label><input id="regPartnerPhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label>Partner Business Category *</label><select id="regPartnerCategory" onchange="syncPartnerCatalogue(this.value)"><option value="">Select business category</option><option value="local_store">Local Store</option><option value="restaurant">Restaurant</option><option value="medical">Medical Store</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="other">Other Business</option></select></div><div class="field"><label>Business / Store / Restaurant Name *</label><input id="regBusinessName"></div><div class="field"><label>Business Address *</label><textarea id="regBusinessAddress"></textarea></div><div class="field"><label>Business Proof</label><input id="regBusinessProof" type="file" accept="image/*,.pdf"></div><div class="notice"><b>Your FRIEND RIDE Master Catalogue</b><br>మీ Business Categoryకి సంబంధించిన మన common catalogue Partner Dashboardలో కనిపిస్తుంది. అందులో items ఎంచుకుని మీ ధరలు నమోదు చేయవచ్చు.</div></div>
+  <div id="addressField" class="field"><label>Complete Address *</label><textarea id="regAddress" placeholder="House, Street, Village, Mandal, District, PIN"></textarea></div><div id="driverRegDocs" class="hide"><div class="notice"><b>Driver Verification – Mandatory</b><br>Driver Photo, Driving Licence, Aadhaar Card మరియు Vehicle RC తప్పనిసరిగా upload చేయాలి. Admin approval వచ్చే వరకు account active కాదు.</div><div class="field"><label>Driver Profile Photo * Required</label><input id="regDriverPhoto" type="file" accept="image/*"></div><div class="field"><label>Driving Licence * Required</label><input id="regDriverLicense" type="file" accept="image/*,.pdf"></div><div class="field"><label>Aadhaar Card * Required</label><input id="regDriverAadhaar" type="file" accept="image/*,.pdf"></div><div class="field"><label>Vehicle RC * Required</label><input id="regDriverRC" type="file" accept="image/*,.pdf"></div></div><div id="partnerRegFields" class="hide"><div class="notice"><b>Partner Verification</b><br>Partner application, payment verification, తర్వాత Admin approval అవసరం.</div><div class="field"><label>Partner / Shop Owner Passport-size Photo * Required</label><input id="regPartnerPhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label>Partner Business Category *</label><select id="regPartnerCategory" onchange="syncPartnerCatalogue(this.value)"><option value="">Select business category</option><option value="local_store">Local Store</option><option value="restaurant">Restaurant</option><option value="medical">Medical Store</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="other">Other Business</option></select></div><div class="field"><label>Business / Store / Restaurant Name *</label><input id="regBusinessName"></div><div class="field"><label>Business Address *</label><textarea id="regBusinessAddress"></textarea></div><div class="field"><label>Store GPS Coordinates *</label><div class="row"><input id="regBusinessLatitude" type="number" step="any" placeholder="Latitude" readonly><input id="regBusinessLongitude" type="number" step="any" placeholder="Longitude" readonly></div><button type="button" class="btn light" onclick="frCapturePartnerLocation()">📍 Capture Store GPS Location</button><small id="regBusinessLocationStatus" class="muted">Shop GPS location is required for nearby-store discovery.</small></div><div class="field"><label>Business Proof</label><input id="regBusinessProof" type="file" accept="image/*,.pdf"></div><div class="notice"><b>Your FRIEND RIDE Master Catalogue</b><br>మీ Business Categoryకి సంబంధించిన మన common catalogue Partner Dashboardలో కనిపిస్తుంది. అందులో items ఎంచుకుని మీ ధరలు నమోదు చేయవచ్చు.</div></div>
   <div id="driverExtraFields" class="hide"><div class="field"><label>Aadhaar Number *</label><input id="regAadhaarNumber" inputmode="numeric" maxlength="12" placeholder="12 digit Aadhaar number"></div><div class="field"><label>Driving Licence Number *</label><input id="regLicenseNumber" placeholder="Licence number"></div><div class="field"><label>Driving Experience (Years) *</label><input id="regExperience" type="number" min="0" placeholder="Years"></div><div class="field"><label>Vehicle Number *</label><input id="regVehicleNumber" placeholder="AP00AB1234"></div><div class="field"><label>Vehicle Company *</label><input id="regVehicleCompany" placeholder="Company"></div><div class="field"><label>Vehicle Model *</label><input id="regVehicleModel" placeholder="Model"></div></div><div id="partnerExtraFields" class="hide"><div class="field"><label>GSTIN (Optional)</label><input id="regGSTIN" maxlength="15" placeholder="GSTIN – optional"></div><div class="field"><label>Partner UPI ID *</label><input id="regUPI" placeholder="business@upi"></div><div class="field"><label>Partner QR Code (Optional)</label><input id="regPartnerQR" type="file" accept="image/*"></div><div class="field"><label>PhonePe Mobile Number *</label><input id="regPhonePe" inputmode="numeric" maxlength="10"></div><div class="notice">Partner payment is verified first. Then application goes to Admin approval. No store listing until approved.</div></div>
   <label class="tiny"><input id="terms" type="checkbox" style="width:auto"> I agree to Terms & Privacy Policy *</label>
   <div class="notice">Registration SMS OTP ద్వారా మాత్రమే. Driver / Partner approval Admin ద్వారా జరుగుతుంది.</div>
@@ -703,7 +705,7 @@ async function savePartnerPaymentSettings(){
 }
 function menuGo(id){closeDrawer();if(['customerDashboard','driverDashboard','partnerDashboard','adminDashboard','wallet','orders','tracking','profile','notifications','gst','products','inventory','partnerOrders','users','paymentApprovals','platformBusinessSettings','partnerPaymentSettings','driverApprovals','driverDocumentReviews','partnerApprovals','adminOrders','reports','settings','paymentApprovals','referralApprovals','cashRewardApprovals','crmDashboard'].includes(id)&&!currentUser){afterLoginAction=()=>showPage(id);openAuth('login');return;}if(id==='adminDashboard'||['users','paymentApprovals','platformBusinessSettings','partnerPaymentSettings','driverApprovals','partnerApprovals','adminOrders','reports','settings','paymentApprovals','referralApprovals','cashRewardApprovals','crmDashboard'].includes(id)){if(selectedRole!=='admin'){alert('Admin account మాత్రమే ఈ విభాగాన్ని ఉపయోగించగలదు.');return;}}if(id==='customerDashboard'&&selectedRole!=='customer'){alert('Customer account మాత్రమే ఈ విభాగాన్ని ఉపయోగించగలదు.');return;}if(id==='driverDashboard'&&selectedRole!=='driver'){alert('Driver login అవసరం.');return;}if((id==='partnerDashboard'||['partnerOrders','partnerPaymentSettings','catalogue','subscription','referrals','partnerReports','products','inventory'].includes(id))&&selectedRole!=='partner'&&selectedRole!=='admin'){alert('Partner login అవసరం.');return;}showPage(id);}
 function useHomeLocation(){const el=document.getElementById('homeLocationText');if(!navigator.geolocation){el.textContent='GPS not supported';return;}el.textContent='Detecting your location…';navigator.geolocation.getCurrentPosition(async pos=>{const {latitude:lat,longitude:lon}=pos.coords;el.textContent=lat.toFixed(4)+', '+lon.toFixed(4);try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon);const d=await r.json();if(d.display_name)el.textContent=d.display_name;}catch(e){}},e=>{el.textContent='Location permission ఇవ్వండి';alert('Location permission allow చేయండి.');},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});}
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(initRideMap,100);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerApprovals')loadPartnerApprovals();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='catalogue')loadPartnerCatalogue();if(id==='products')loadPartnerCatalogue();}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(initRideMap,100);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='storeBrowse')setTimeout(()=>{frInitMarketMap();renderFriendStores();},100);if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerApprovals')loadPartnerApprovals();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='catalogue')loadPartnerCatalogue();if(id==='products')loadPartnerCatalogue();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){selectedRole=role;const gate=$('roleLauncher');if(gate)gate.classList.add('hide');openAuth('login',role);$('authModal').classList.add('fr-role-locked');}
 function openAuth(mode='login',role='customer'){selectedRole=role;document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));switchAuth(mode);$('authModal').classList.add('show');}
@@ -1035,9 +1037,9 @@ async function loadApprovedStores(){
  if(select)select.innerHTML='<option value="">Loading approved stores…</option>';
  try{
   const category=$('shopCategory')?.value||'all';
-  const {data,error}=await sb.rpc('fr_customer_list_approved_stores',{p_category:null});
+  const {data,error}=await sb.rpc('fr_customer_list_approved_stores_geo',{p_category:null});
   if(error)throw error;
-  frApprovedStores=(data||[]).map(p=>({id:p.id,name:p.business_name||'Partner Store',type:p.partner_category||'other',category:({local_store:'Grocery & Kirana',medical:'Medical Store',vegetables:'Vegetables & Fruits',bakery:'Bakery & Sweets',stationery:'Stationery'}[p.partner_category]||'Other Store'),area:p.address||'',art:({medical:'💊',vegetables:'🥬',bakery:'🥐',stationery:'📚'}[p.partner_category]||'🏪'),a:'#e6e8ff',b:'#aab5ff'}));
+  frApprovedStores=(data||[]).map(p=>({id:p.id,name:p.business_name||'Partner Store',type:p.partner_category||'other',category:({local_store:'Grocery & Kirana',medical:'Medical Store',vegetables:'Vegetables & Fruits',bakery:'Bakery & Sweets',stationery:'Stationery'}[p.partner_category]||'Other Store'),area:p.address||'',latitude:p.latitude==null?null:Number(p.latitude),longitude:p.longitude==null?null:Number(p.longitude),distance:null,art:({medical:'💊',vegetables:'🥬',bakery:'🥐',stationery:'📚'}[p.partner_category]||'🏪'),a:'#e6e8ff',b:'#aab5ff''}));
   if(select){const visibleStores=frApprovedStores.filter(x=>category==='all'||x.type===category);select.innerHTML='<option value="">Choose approved store</option>'+visibleStores.map(x=>`<option value="${safe(x.id)}">${safe(x.name)} — ${safe(x.category)}</option>`).join('');}
   if(status){const n=frApprovedStores.filter(x=>category==='all'||x.type===category).length;status.textContent=n?`${n} approved store(s) available.`:'ఈ categoryలో Approved Stores లేవు.';}
   renderFriendStores();
@@ -1075,12 +1077,60 @@ const FR_STORE_MENU={
  bakery:[['Bread & Cakes','Milk Bread','🍞'],['Bread & Cakes','Chocolate Cake Slice','🍰'],['Biscuits & Snacks','Cookies','🍪'],['Sweets','Gulab Jamun','🍮'],['Sweets','Laddu','🟠']],
  stationery:[['Books & Paper','A4 Paper – 1 pack','📄'],['Writing','Ball Pen','🖊️'],['Writing','Pencil','✏️'],['School Supplies','Notebook','📓'],['School Supplies','Geometry Box','📐']]
 };
+
+let frCustomerMarketCoords=null,frMarketMap=null,frMarketMapMarkers=[];
+function frCapturePartnerLocation(){
+ const status=$('regBusinessLocationStatus');
+ if(!navigator.geolocation){if(status)status.textContent='ఈ browserలో GPS support లేదు.';return;}
+ if(status)status.textContent='Store GPS location గుర్తిస్తున్నాం…';
+ navigator.geolocation.getCurrentPosition(pos=>{
+  const lat=Number(pos.coords.latitude),lon=Number(pos.coords.longitude);
+  $('regBusinessLatitude').value=lat.toFixed(7);$('regBusinessLongitude').value=lon.toFixed(7);
+  if(status)status.textContent='Store GPS captured ✓ Accuracy: '+Math.round(pos.coords.accuracy||0)+' m';
+ },err=>{if(status)status.textContent='GPS error: '+err.message;},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+}
+function frCaptureCustomerMarketLocation(){
+ const status=$('friendMartLocationStatus');
+ if(!navigator.geolocation){if(status)status.textContent='ఈ browserలో GPS support లేదు.';return;}
+ if(status)status.textContent='మీ location గుర్తిస్తున్నాం…';
+ navigator.geolocation.getCurrentPosition(pos=>{
+  frCustomerMarketCoords={lat:Number(pos.coords.latitude),lon:Number(pos.coords.longitude)};
+  if(status)status.textContent='Your location captured ✓ Nearby approved stores are sorted by straight-line distance.';
+  renderFriendStores();
+ },err=>{if(status)status.textContent='GPS error: '+err.message;},{enableHighAccuracy:true,timeout:20000,maximumAge:30000});
+}
+function frInitMarketMap(){
+ if(!window.L||!$('friendMartMap'))return null;
+ if(!frMarketMap){
+  frMarketMap=L.map('friendMartMap').setView([17.6868,83.2185],11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(frMarketMap);
+ }
+ setTimeout(()=>frMarketMap.invalidateSize(),120);return frMarketMap;
+}
+function frRenderStoreMap(stores){
+ const map=frInitMarketMap();if(!map)return;
+ frMarketMapMarkers.forEach(m=>map.removeLayer(m));frMarketMapMarkers=[];
+ const bounds=[];
+ if(frCustomerMarketCoords){
+  const here=[frCustomerMarketCoords.lat,frCustomerMarketCoords.lon];
+  L.marker(here).addTo(map).bindPopup('Your current location');bounds.push(here);
+ }
+ (stores||[]).filter(s=>Number.isFinite(s.latitude)&&Number.isFinite(s.longitude)&&s.latitude>=-90&&s.latitude<=90&&s.longitude>=-180&&s.longitude<=180).forEach(s=>{
+  const pt=[s.latitude,s.longitude],m=L.marker(pt).addTo(map).bindPopup('<b>'+safe(s.name)+'</b><br>'+safe(s.area||'')+(frCustomerMarketCoords?'<br>'+frDistanceKm([frCustomerMarketCoords.lat,frCustomerMarketCoords.lon],pt).toFixed(1)+' km away':''));
+  frMarketMapMarkers.push(m);bounds.push(pt);
+ });
+ if(bounds.length>1)map.fitBounds(bounds,{padding:[24,24],maxZoom:14});
+ else if(bounds.length===1)map.setView(bounds[0],14);
+}
+
 let frActiveStore=null,frActiveRestaurant=null,frMarketCategory='All',frRestaurantCategory='All',frMarketCart=[];
 function renderFriendStores(){
  const cat=$('friendMartCategory')?.value||'all',q=($('friendMartSearch')?.value||'').toLowerCase();
  const el=$('friendMartStoreGrid');if(!el)return;
  const items=frApprovedStores.filter(x=>(cat==='all'||x.type===cat)&&(!q||(x.name+' '+x.area+' '+x.category).toLowerCase().includes(q)));
- el.innerHTML=items.map(x=>`<button class="market-store" onclick="openFriendStore('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small><small>View store & visual catalogue →</small></div></button>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో షాపులు లేవు.</div>';
+ const sorted=items.map(x=>({...x,distance:frCustomerMarketCoords&&Number.isFinite(x.latitude)&&Number.isFinite(x.longitude)?frDistanceKm([frCustomerMarketCoords.lat,frCustomerMarketCoords.lon],[x.latitude,x.longitude]):null})).sort((a,b)=>a.distance==null?1:b.distance==null?-1:a.distance-b.distance);
+ el.innerHTML=sorted.map(x=>`<button class="market-store" onclick="openFriendStore('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small>${x.distance==null?'<small>GPS location not available</small>':`<small class="market-store-distance">${x.distance.toFixed(1)} km away (straight-line)</small>`}<small>View store & visual catalogue →</small></div></button>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో షాపులు లేవు.</div>';
+ frRenderStoreMap(sorted);
 }
 function openFriendStore(id){
  frActiveStore=frApprovedStores.find(x=>x.id===id);if(!frActiveStore)return;
@@ -1315,7 +1365,7 @@ function frValidateRegistration(){
   }
   if(selectedRole==='partner'){
     frRegistrationFile('regPartnerPhoto',['image/jpeg','image/png','image/webp'],3*1024*1024,'Partner Passport Photo');
-    if(['regPartnerCategory','regBusinessName','regBusinessAddress','regUPI','regPhonePe'].some(id=>!$(id)?.value.trim()))throw Error('Partner Business, Address, UPI, PhonePe వివరాలు పూర్తి చేయండి.');
+    if(['regPartnerCategory','regBusinessName','regBusinessAddress','regBusinessLatitude','regBusinessLongitude','regUPI','regPhonePe'].some(id=>!$(id)?.value.trim()))throw Error('Partner Business, Address, GPS Location, UPI, PhonePe వివరాలు పూర్తి చేయండి.');
     if(!/^[6-9]\\d{9}$/.test(frDigits('regPhonePe')))throw Error('Partner PhonePe కోసం సరైన 10 digit mobile number ఇవ్వండి.');
   }
   if(!$('terms')?.checked)throw Error('Terms & Privacy Policy అంగీకరించండి.');
@@ -1368,6 +1418,11 @@ async function verifyRegistrationOtpAndRegister(){
       const {data:registrationResult,error:registrationError}=await sb.rpc('fr_register_driver_partner',{p_role:selectedRole,p_profile:row});
       if(registrationError)throw registrationError;
       if(!registrationResult?.ok)throw Error('Driver/Partner registration database confirmation రాలేదు.');
+      if(selectedRole==='partner'){
+        const loc=await sb.rpc('fr_partner_save_location',{p_latitude:Number($('regBusinessLatitude').value),p_longitude:Number($('regBusinessLongitude').value)});
+        if(loc.error)throw loc.error;
+        if(!loc.data?.ok)throw Error('Store GPS location save కాలేదు. Partner dashboard నుంచి మళ్లీ save చేయండి.');
+      }
       if(selectedRole==='driver'){
         const docs=[
           {driver_id:uid,owner_id:uid,document_type:'driving_license',storage_path:row.driving_license_document_path,verification_status:'pending'},
