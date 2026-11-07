@@ -56,7 +56,28 @@ medical_test as (
   from public.profiles
   where lower(coalesce(business_name,''))='medi medical store'
 )
+, expected_private_buckets(bucket_id) as (
+  values ('driver-kyc-documents'),('driver-profile-photos'),('partner-profile-photos')
+), bucket_checks as (
+  select 'PRIVATE STORAGE '||e.bucket_id as check_name,
+    case when b.id is null then 'FAIL' when b.public=false then 'PASS' else 'FAIL' end as status,
+    case when b.id is null then 'Bucket missing' when b.public=false then 'Private bucket exists' else 'Bucket is public; KYC data exposure risk' end as details
+  from expected_private_buckets e left join storage.buckets b on b.id=e.bucket_id
+), expected_policies(policyname) as (
+  values ('Drivers upload own KYC documents'),('Drivers read own KYC documents'),
+    ('Drivers upload own profile photo'),('Admins read driver profile photos'),
+    ('Partner upload own profile photo'),('Partner read own profile photo')
+), policy_checks as (
+  select 'STORAGE POLICY '||e.policyname as check_name,
+    case when p.policyname is null then 'FAIL' else 'PASS' end as status,
+    case when p.policyname is null then 'Required storage policy missing' else 'Policy exists; runtime auth not exercised' end as details
+  from expected_policies e left join pg_policies p
+    on p.schemaname='storage' and p.tablename='objects' and p.policyname=e.policyname
+)
+
 select * from table_checks
 union all select * from function_checks
 union all select * from medical_test
+union all select * from bucket_checks
+union all select * from policy_checks
 order by check_name;
