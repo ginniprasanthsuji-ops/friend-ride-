@@ -756,7 +756,34 @@ function submitParcelRequest(){const ids=['parcelSender','parcelSenderPhone','pa
 function submitServiceRequest(){if(!$('homeServiceTechnician').value||!$('homeServiceAddress').value.trim()||!$('homeServiceNotes').value.trim()||!$('homeServiceDate').value||!$('homeServiceTime').value){alert('Technician, Address, Work Details, Date మరియు Time ఎంచుకోండి.');return;}alert('₹50 minimum advance booking fields validate అయ్యాయి. Secure Cashfree order + webhook verification connect అయిన తర్వాత మాత్రమే booking confirm అవుతుంది.');}
 function simpleRequest(label,addressId,itemsId){if(!$(addressId).value.trim()||!$(itemsId).value.trim()){alert('Address మరియు items వివరాలు నమోదు చేయండి.');return;}alert(label+' వివరాలు validate అయ్యాయి. Live save కోసం database mapping అవసరం.');}
 function validateProduct(){if(!$('productName').value.trim()||Number($('productPrice').value)<0||Number($('productStock').value)<0){alert('Product వివరాలు సరిగా నమోదు చేయండి.');return;}alert('Product details validate అయ్యాయి. Live product save కోసం table mapping అవసరం.');}
-function saveDriverDetails(){if(!validateProfilePhotoFile('driverProfilePhoto')){alert('Passport-size profile photo JPG/PNG/WEBP 3 MB లోపు తప్పనిసరి.');return;}if(!$('driverReg').value.trim()||!$('driverLicense').value.trim()){alert('Vehicle registration మరియు Driving Licence number నమోదు చేయండి.');return;}alert('Driver వివరాలు మరియు profile photo validate అయ్యాయి. Secure Storage upload మరియు profiles schema mapping ఇంకా అవసరం; data serverలో save కాలేదు.');}
+async function saveDriverDetails(){
+ const photo=$('driverProfilePhoto')?.files?.[0];
+ if(!photo||!validateProfilePhotoFile('driverProfilePhoto')){alert('Passport-size profile photo JPG/PNG/WEBP 3 MB లోపు తప్పనిసరి.');return;}
+ if(!$('driverReg').value.trim()||!$('driverLicense').value.trim()){alert('Vehicle registration మరియు Driving Licence number నమోదు చేయండి.');return;}
+ if(!currentUser||currentProfile?.role!=='driver'){alert('ముందుగా Driver accountతో login/register చేయండి.');return;}
+ const btn=document.querySelector('[onclick="saveDriverDetails()"]');if(btn){btn.disabled=true;btn.textContent='Saving…';}
+ try{
+  const ext=photo.type==='image/png'?'png':photo.type==='image/webp'?'webp':'jpg';
+  const path=currentUser.id+'/profile.'+ext;
+  const {error:uploadError}=await sb.storage.from('driver-profile-photos').upload(path,photo,{upsert:true,contentType:photo.type});
+  if(uploadError)throw uploadError;
+  const payload={
+   vehicle_type:$('driverVehicle').value,
+   vehicle_model:$('driverModel').value.trim()||null,
+   vehicle_registration:$('driverReg').value.trim(),
+   driving_license_number:$('driverLicense').value.trim(),
+   driving_experience_years:$('driverExperience').value===''?null:Number($('driverExperience').value),
+   driver_profile_photo_path:path
+  };
+  const {data,error}=await sb.from('profiles').update(payload).eq('id',currentUser.id).select('id,driver_profile_photo_path').single();
+  if(error)throw error;
+  currentProfile={...currentProfile,...payload};
+  const {data:signed,error:signedError}=await sb.storage.from('driver-profile-photos').createSignedUrl(path,3600);
+  if(!signedError&&signed?.signedUrl){$('driverProfilePhotoImg').src=signed.signedUrl;$('driverProfilePhotoPreview').classList.remove('hide');}
+  alert('Driver details మరియు profile photo securely save అయ్యాయి.');
+ }catch(e){alert('Driver details save కాలేదు: '+(e.message||e));}
+ finally{if(btn){btn.disabled=false;btn.textContent='Save Driver Details';}}
+}
 function previewGST(){const amt=Number($('gstAmount').value),rate=Number($('gstRate').value);if(amt<=0){$('gstResult').textContent='సరైన invoice amount నమోదు చేయండి.';return;}const tax=amt*rate/100;$('gstResult').textContent='Taxable value: ₹'+amt.toFixed(2)+' | GST: ₹'+tax.toFixed(2)+' | Total: ₹'+(amt+tax).toFixed(2)+(rate>0?' | Intra-state అయితే CGST/SGST split అవసరం.':'');}
 function toggleOnline(){if(!currentUser||selectedRole!=='driver')return;online=!online;$('onlineBtn').textContent=online?'Go Offline':'Go Online';$('onlineBtn').className='btn '+(online?'red':'green');}
 function shareInvite(){const text='Join FRIEND RIDE – Local Ride, Delivery & Services. Customer referral reward: ₹50 after 2 completed orders. Driver referral: 1 month free subscription after 2 completed rides and approval. Partner referral: 1 month free subscription after 2 eligible completed orders and approval. Cancelled orders/rides do not count. Terms apply.';if(navigator.share)navigator.share({title:'FRIEND RIDE',text});else if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>alert('Invite text copied.'));else alert(text);}
