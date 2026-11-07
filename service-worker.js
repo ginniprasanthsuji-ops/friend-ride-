@@ -27,8 +27,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body || data.message || 'మీకు కొత్త update ఉంది.',
-    icon: data.icon || './icons/icon-192.png',
-    badge: data.badge || './icons/icon-192.png',
+    icon: data.icon || './friendride-icon.svg',
+    badge: data.badge || './friendride-icon.svg',
     tag: data.tag || ('fr-push-' + (data.ride_id || Date.now())),
     data: {
       url: data.url || './',
@@ -49,7 +49,7 @@ self.addEventListener('notificationclick', (event) => {
 
   const target = new URL(
     event.notification.data?.url || './',
-    self.location.origin
+    self.registration.scope
   ).href;
 
   event.waitUntil(
