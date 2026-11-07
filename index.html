@@ -647,7 +647,11 @@ async function loadPartnerApprovals(){
  box.innerHTML=data.map(p=>{
   const status=String(p.partner_approval_status||'pending').toLowerCase();
   const statusLabel=status==='approved'?'APPROVED / అప్రూవ్డ్':status==='rejected'?'REJECTED / తిరస్కరించబడింది':'PENDING / పెండింగ్';
-  const actions=`<div class="row" style="gap:8px;margin-top:10px"><button class="btn purple" onclick="reviewPartner('${safe(p.id)}','approved')">Approve / Re-approve</button><button class="btn red" onclick="reviewPartner('${safe(p.id)}','rejected')">Reject / Revoke</button></div>`;
+  const actions=status==='approved'
+   ? `<div class="row" style="gap:8px;margin-top:10px"><button class="btn red" onclick="reviewPartner('${safe(p.id)}','rejected')">⛔ Revoke Approval</button></div>`
+   : status==='rejected'
+    ? `<div class="row" style="gap:8px;margin-top:10px"><button class="btn green" onclick="reviewPartner('${safe(p.id)}','approved')">✓ Re-approve</button></div>`
+    : `<div class="row" style="gap:8px;margin-top:10px"><button class="btn green" onclick="reviewPartner('${safe(p.id)}','approved')">✓ Approve</button><button class="btn red" onclick="reviewPartner('${safe(p.id)}','rejected')">✕ Reject</button></div>`;
   return `<div class="card" style="margin:12px 0"><h3>${safe(p.business_name||'Business name లేదు')}</h3><p><b>Owner:</b> ${safe(p.full_name)}<br><b>Phone:</b> ${safe(p.phone)}<br><b>Category:</b> ${safe(p.partner_category)}<br><b>Address:</b> ${safe(p.address)}<br><b>Status:</b> ${safe(statusLabel)}</p>${actions}</div>`;
  }).join('');
  }catch(e){box.textContent='Partner applications load కాలేదు: '+e.message;}
@@ -694,7 +698,11 @@ async function loadDriverApprovals(){
   box.innerHTML=rows.map(r=>{
    const status=String(r.driver_approval_status||'pending').toLowerCase();
    const label=status==='approved'||status==='verified'||status==='active'?'Approved':status==='rejected'?'Rejected':'Pending';
-   const actions=`<div class="row" style="gap:8px;margin-top:12px"><button class="btn green" onclick="reviewDriverApplication('${safe(r.id)}','approved')">✓ Approve / Re-approve</button><button class="btn red" onclick="reviewDriverApplication('${safe(r.id)}','rejected')">✕ Reject / Revoke</button></div>`;
+   const actions=status==='approved'||status==='verified'||status==='active'
+   ? `<div class="row" style="gap:8px;margin-top:12px"><button class="btn red" onclick="reviewDriverApplication('${safe(r.id)}','rejected')">⛔ Revoke Approval</button></div>`
+   : status==='rejected'
+    ? `<div class="row" style="gap:8px;margin-top:12px"><button class="btn green" onclick="reviewDriverApplication('${safe(r.id)}','approved')">✓ Re-approve</button></div>`
+    : `<div class="row" style="gap:8px;margin-top:12px"><button class="btn green" onclick="reviewDriverApplication('${safe(r.id)}','approved')">✓ Approve</button><button class="btn red" onclick="reviewDriverApplication('${safe(r.id)}','rejected')">✕ Reject</button></div>`;
    return '<article class="card" style="margin:12px 0"><div class="row" style="justify-content:space-between;align-items:center"><b>'+safe(r.full_name||'Driver')+'</b><span class="status '+(label==='Approved'?'ok':'')+'">'+label+'</span></div><p>Mobile: '+safe(r.phone||'—')+'</p><p>Vehicle: '+safe([r.vehicle_type,r.vehicle_company,r.vehicle_model].filter(Boolean).join(' • ')||'—')+'</p><p>Registration: '+safe(r.vehicle_registration||'—')+'</p><p>Driving Licence: '+safe(r.driving_license_number||'—')+'</p><p>Experience: '+safe(r.driving_experience_years??'—')+' years</p>'+actions+'</article>';
   }).join('');
   if(msg)msg.textContent='Loaded '+rows.length+' driver application(s). Approve / Reject changes are saved to Supabase.';
