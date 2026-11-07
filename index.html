@@ -892,7 +892,7 @@ async function loadApprovedStores(){
   const category=$('shopCategory')?.value||'all';
   const {data,error}=await sb.rpc('fr_customer_list_approved_stores',{p_category:null});
   if(error)throw error;
-  frApprovedStores=(data||[]).map(p=>({id:p.id,name:p.business_name||'Partner Store',type:p.partner_category||'other',category:({local_store:'Grocery & General Store',electrical:'Electrical Shop',electrician:'Electrician Services',hardware:'Hardware & Plumbing',chicken:'Chicken Shop',mutton:'Mutton & Meat',fish:'Fish & Seafood',vegetables:'Vegetables & Fruits',medical:'Medical Store',dairy:'Milk & Dairy',mobile:'Mobile & Accessories',bakery:'Bakery & Sweets',stationery:'Stationery & Xerox',restaurant:'Restaurant / Tiffin'}[p.partner_category]||'Other Business'),area:p.address||'',art:({electrical:'💡',electrician:'🧑‍🔧',hardware:'🛠️',chicken:'🍗',mutton:'🥩',fish:'🐟',medical:'💊',vegetables:'🥬',dairy:'🥛',mobile:'📱',bakery:'🥐',stationery:'📚',restaurant:'🍛'}[p.partner_category]||'🏪'),a:'#e6e8ff',b:'#aab5ff'}));
+  frApprovedStores=(data||[]).map(p=>({id:p.id,name:p.business_name||'Partner Store',type:frStoreMasterType(p.partner_category||'other'),category:({local_store:'Grocery & General Store',electrical:'Electrical Store',electrician:'Electrician Services',hardware:'Hardware Shop',chicken:'Chicken Shop',mutton:'Mutton & Meat',fish:'Fish & Seafood',vegetables:'Vegetables & Fruits',medical:'Medical Store',dairy:'Milk & Dairy',mobile:'Mobile & Accessories',bakery:'Bakery & Sweets',stationery:'Stationery & Xerox',restaurant:'Restaurant / Tiffin'}[frStoreMasterType(p.partner_category)]||'Other Business'),area:p.address||'',art:({electrical:'💡',electrician:'🧑‍🔧',hardware:'🛠️',chicken:'🍗',mutton:'🥩',fish:'🐟',medical:'💊',vegetables:'🥬',dairy:'🥛',mobile:'📱',bakery:'🥐',stationery:'📚',restaurant:'🍛'}[p.partner_category]||'🏪'),a:'#e6e8ff',b:'#aab5ff'}));
   if(select){const visibleStores=frApprovedStores.filter(x=>category==='all'||x.type===category);select.innerHTML='<option value="">Choose approved store</option>'+visibleStores.map(x=>`<option value="${safe(x.id)}">${safe(x.name)} — ${safe(x.category)}</option>`).join('');}
   if(status){const n=frApprovedStores.filter(x=>category==='all'||x.type===category).length;status.textContent=n?`${n} approved store(s) available.`:'ఈ categoryలో Approved Stores లేవు.';}
   renderFriendStores();
@@ -955,8 +955,8 @@ function openFriendStore(id){
  $('customerCatalogueSearch').value='';renderStoreCategories();renderCustomerCatalogue();if(frActiveStore.type==='vegetables')$('customerCatalogueSub').textContent='🥬 Fresh arrivals • Daily partner stock and prices can change';showPage('customerCatalogue');
 }
 function frStoreMasterType(type){
- const map={local_store:'local_store',medical:'medical',vegetables:'vegetables',bakery:'bakery',stationery:'local_store',restaurant:'restaurant',chicken:'chicken',mutton:'mutton',fish:'fish',electrical:'electrical',hardware:'hardware',dairy:'dairy',mobile:'mobile'};
- return map[type]||type||'local_store';
+ const map={local_store:'local_store',medical:'medical',vegetables:'vegetables',bakery:'bakery',stationery:'local_store',restaurant:'restaurant',chicken:'chicken',chicken_shop:'chicken',mutton:'mutton',fish:'fish',electrical:'electrical',electrical_store:'electrical',hardware:'hardware',hardware_store:'hardware',dairy:'dairy',mobile:'mobile',electrician:'electrician'};
+ return map[String(type||'').toLowerCase()]||type||'local_store';
 }
 function frProductArt(item){
  const s=((item?.name||'')+' '+(item?.category||'')).toLowerCase();
@@ -1907,8 +1907,8 @@ function frSubmitBankEnquiry(){
 <script id="fr-unified-store-category-options">
 (function(){
  const categories=[
-  ['local_store','Grocery & General Store'],['electrical','Electrical Shop'],
-  ['electrician','Electrician Services'],['hardware','Hardware & Plumbing'],
+  ['local_store','Grocery & General Store'],['electrical','Electrical Store'],
+  ['electrician','Electrician Services'],['hardware','Hardware Shop'],
   ['chicken','Chicken Shop'],['mutton','Mutton & Meat'],['fish','Fish & Seafood'],
   ['vegetables','Vegetables & Fruits'],['medical','Medical Store'],['dairy','Milk & Dairy'],
   ['mobile','Mobile & Accessories'],['bakery','Bakery & Sweets'],
