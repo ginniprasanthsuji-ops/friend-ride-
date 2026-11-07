@@ -1985,7 +1985,7 @@ function frRideStartAfterLogin(){
 
 // Set this to the VAPID public key generated for the deployed push sender.
 // Keep the matching VAPID private key ONLY in Supabase Edge Function secrets.
-const FR_VAPID_PUBLIC_KEY = '';
+const FR_VAPID_PUBLIC_KEY = 'BMl6X0lmpwyOOaLV8zDPUM3YLfW-AboXxUtBhXfTp_SBlb5rtmL_folQL7ygdGFN5V8K8slKr_8Q2EhoTq1Osbk';
 function frV8UrlBase64ToUint8Array(base64String){
   const padding='='.repeat((4-base64String.length%4)%4);
   const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
