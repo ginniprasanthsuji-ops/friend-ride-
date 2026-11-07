@@ -1,0 +1,19 @@
+{
+  "name": "FRIEND RIDE – Local Ride, Delivery & Services",
+  "short_name": "FRIEND RIDE",
+  "description": "Ride booking, local shopping, food delivery and everyday services in one app.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f3fa",
+  "theme_color": "#241044",
+  "icons": [
+    {
+      "src": "./friendride-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
