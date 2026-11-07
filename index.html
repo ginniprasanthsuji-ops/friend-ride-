@@ -1298,8 +1298,8 @@ function renderCustomerCatalogue(){
  const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=isMedical?'block':'none';
  const grid=$('customerCatalogueGrid');
  if(grid)grid.innerHTML=items.map(x=>{
-  const art=frProductArt(x),name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||''),photo=String(x.imageUrl||x.image_url||'').trim();
-  const visual=photo?'<div class="market-product-photo"><img src="'+safe(photo)+'" alt="'+name+'" loading="lazy" onerror="this.parentElement.innerHTML=\'<span class=&quot;market-product-photo-fallback&quot;>'+art+'</span>\'"><small>STORE PRODUCT PHOTO</small></div>':'<div class="market-product-photo"><span class="market-product-photo-fallback">'+art+'</span><small>PRODUCT PHOTO NOT UPLOADED</small></div>';
+  const art=frProductArt(x),name=safe(x.name),cat=safe(x.category||'Products'),unit=safe(x.unit||''),uploadedPhoto=String(x.imageUrl||x.image_url||'').trim(),photo=uploadedPhoto||frCataloguePhotoFor(frActiveStore.type,x.category);
+  const visual='<div class="market-product-photo"><img src="'+safe(photo)+'" alt="'+name+'" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'"><span class="market-product-photo-fallback" style="display:none">'+art+'</span><small>'+(uploadedPhoto?'STORE PRODUCT PHOTO':'CATEGORY PHOTO • SAMPLE')+'</small></div>';
   return `<article class="market-product market-product-3d">${visual}<div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small><div class="market-price">Partner price: confirm with store</div><span class="stock-mark no">Availability: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${name.replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','request')">＋ Add / Ask Price</button></article>`;
  }).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
 }
