@@ -1938,6 +1938,52 @@ async function frRideLoadNotifications(silent=false){
     frRideNotifStatus('Notification load error: '+e.message,true);
   }
 }
+// FRIEND RIDE role-aware alert tones (foreground only; Web Push background sound is OS-controlled).
+let frAlertAudioCtx=null,frAlertToneTimer=null,frAlertAudioUnlocked=false;
+function frUnlockAlertAudio(){
+ try{
+  const Ctx=window.AudioContext||window.webkitAudioContext;
+  if(!Ctx)return;
+  if(!frAlertAudioCtx)frAlertAudioCtx=new Ctx();
+  if(frAlertAudioCtx.state==='suspended')frAlertAudioCtx.resume();
+  frAlertAudioUnlocked=true;
+ }catch(e){console.warn('Alert audio unavailable:',e);}
+}
+function frPlayAlertTone(kind){
+ if(!frAlertAudioUnlocked||!frAlertAudioCtx)return;
+ try{
+  if(frAlertToneTimer){clearInterval(frAlertToneTimer);frAlertToneTimer=null;}
+  const ctx=frAlertAudioCtx;
+  const pattern=kind==='order'?[880,1175,880,1175,880,1175,880,1175,880,1175,880,1175]:
+    kind==='ride'?[740,988,740,988,740,988,740,988,740,988,740,988]:[660,880];
+  let step=0;
+  const play=()=>{
+   if(step>=pattern.length){clearInterval(frAlertToneTimer);frAlertToneTimer=null;return;}
+   const osc=ctx.createOscillator(),gain=ctx.createGain(),now=ctx.currentTime;
+   osc.type='sine';osc.frequency.value=pattern[step];
+   gain.gain.setValueAtTime(0.0001,now);gain.gain.exponentialRampToValueAtTime(0.13,now+0.025);gain.gain.exponentialRampToValueAtTime(0.0001,now+0.22);
+   osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+0.24);step++;
+  };
+  play();frAlertToneTimer=setInterval(play,kind==='customer'?320:520);
+ }catch(e){console.warn('Alert tone failed:',e);}
+}
+function frClassifyAlert(row){
+ const t=((row?.title||'')+' '+(row?.message||'')).toLowerCase();
+ const role=String(currentProfile?.role||'').toLowerCase();
+ const isOrder=/order|store order|market order|ఆర్డర్|ఆర్డరు|షాప్/.test(t);
+ const isRide=/ride|booking|trip|రైడ్|బుకింగ్/.test(t);
+ if(role==='partner'&&isOrder)return 'order';
+ if(role==='driver'&&isRide)return 'ride';
+ if(role==='customer'&&(isOrder||isRide||/accepted|confirmed|arrived|completed|cancelled|ఆమోద|చేరుకున్న|పూర్తి/.test(t)))return 'customer';
+ return null;
+}
+function frPlayRoleAlert(row){
+ const kind=frClassifyAlert(row);
+ if(kind)frPlayAlertTone(kind);
+}
+document.addEventListener('pointerdown',frUnlockAlertAudio,{passive:true});
+document.addEventListener('keydown',frUnlockAlertAudio);
+
 function frRideStartRealtime(){
   if(!currentUser?.id || !sb?.channel)return;
   const uid=currentUser.id;
@@ -1960,6 +2006,7 @@ function frRideStartRealtime(){
       if(!frRideNotifSeenInSession.has(String(n.id))){
         frRideNotifSeenInSession.add(String(n.id));
         frRideShowToast(row,true);
+        frPlayRoleAlert(row);
       }
     })
     .on('postgres_changes',{
@@ -1994,6 +2041,7 @@ function frV8UrlBase64ToUint8Array(base64String){
 }
 async function frEnableDeviceAlerts(){
   const out=document.getElementById('frNotifyPermissionStatus');
+  frUnlockAlertAudio();
   if(!currentUser?.id){if(out)out.textContent='ముందుగా Customer / Driver Login చేయండి.';return;}
   if(!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)){
     if(out)out.textContent='ఈ Browserలో Web Push అందుబాటులో లేదు. Chromeలో FRIEND RIDE తెరవండి.';
