@@ -2323,6 +2323,110 @@ async function sendRideSOS(){
   }catch(e){frShow(statusId,'SOS Error: '+e.message);}
 }
 </script>
+
+<style id="fr-market-quote-payment-style">
+.fr-pay-box{border:1px solid #cfe8d8;background:linear-gradient(145deg,#f5fff8,#fff);border-radius:16px;padding:14px;margin-top:12px}
+.fr-pay-qr{display:block;width:min(220px,75%);aspect-ratio:1;object-fit:contain;background:#fff;border:1px solid #ddd;border-radius:12px;padding:8px;margin:12px auto}
+.fr-pay-timer{font-size:25px;font-weight:950;color:#d94b22;text-align:center;font-variant-numeric:tabular-nums}
+.fr-pay-total{font-size:23px;font-weight:950;color:#13875b}
+.fr-quote-total{background:#fff8e8;border:1px solid #f4d58a;border-radius:12px;padding:11px;margin:10px 0}
+.fr-pay-link{display:block;text-align:center;background:#13875b;color:#fff;padding:12px;border-radius:12px;font-weight:900;text-decoration:none;margin:8px 0}
+</style>
+
+<script id="fr-market-quotation-payment-flow">
+let frMarketPayTimer=null,frMarketPayTickBusy=false;
+function frMarketMoney(paise){return '₹'+(Number(paise||0)/100).toFixed(2);}
+function frMarketEsc(v){return typeof safe==='function'?safe(v):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function loadPartnerOrders(status='all'){
+ const el=$('partnerOrderList');if(!el)return;
+ if(!currentUser||currentProfile?.role!=='partner'){el.textContent='Partner Login అవసరం.';return;}
+ el.innerHTML='<div class="notice">Orders loading…</div>';
+ try{
+  const dbStatus=status==='new'?'quote_requested':(status==='all'?null:status);
+  const {data,error}=await sb.rpc('fr_partner_list_market_orders',{p_status:dbStatus});if(error)throw error;
+  if(!data?.length){el.innerHTML='<div class="empty-state">ఇంకా Orders లేవు.</div>';return;}
+  el.innerHTML=data.map(o=>{
+   const items=Array.isArray(o.items)?o.items:[];
+   const lines=items.map(i=>'<div class="listrow" style="align-items:center;gap:8px"><div class="grow">'+(i.image_url?'<img src="'+frMarketEsc(i.image_url)+'" style="width:48px;height:48px;object-fit:cover;border-radius:8px">':'')+'<b>'+frMarketEsc(i.item_name)+'</b><small>Qty '+frMarketEsc(i.quantity)+'</small></div><div><label>Unit Price ₹</label><input id="frQuote_'+i.id+'" type="number" min="0.01" step="0.01" value="'+(i.partner_quote_paise==null?'':frPaiseToRupees(i.partner_quote_paise))+'" placeholder="Price" style="width:105px"></div></div>').join('');
+   let action='';
+   if(['quote_requested','counter_offered'].includes(o.status))action='<div class="field"><label>Delivery Charge ₹</label><input id="frDelivery_'+o.order_id+'" type="number" min="0" step="0.01" value="0"></div><button class="btn green" onclick="frPartnerSendQuote(\''+o.order_id+'\')">Send Quotation to Customer</button><button class="btn light" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'rejected\')">Reject Order</button>';
+   else if(o.status==='payment_pending')action='<div class="notice">Customer accepted quotation. Waiting for UPI payment. Verify your bank/UPI app before confirming.</div><button class="btn green" onclick="frPartnerConfirmMarketPayment(\''+o.order_id+'\')">Confirm Payment Received</button>';
+   else if(o.status==='accepted')action='<div class="status ok">Payment verified / Order confirmed</div><button class="btn green" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'preparing\')">Start Preparing</button>';
+   else if(o.status==='preparing')action='<button class="btn green" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'ready\')">Mark Ready</button>';
+   else if(o.status==='ready')action='<div class="notice">Ready for Driver Pickup.</div>';
+   const phone=(o.customer_phone||'').replace(/[^0-9+]/g,'');
+   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p><b>Customer:</b> '+frMarketEsc(o.customer_name||'Customer')+'</p><p><b>Mobile:</b> '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p><b>Delivery:</b> '+frMarketEsc(o.delivery_address)+'</p>'+lines+action+'</div>';
+  }).join('');
+ }catch(e){el.innerHTML='<div class="notice">Orders load కాలేదు: '+frMarketEsc(e.message||e)+'</div>';}
+}
+async function frPartnerSendQuote(orderId){
+ const card=[...document.querySelectorAll('#partnerOrderList .card')].find(c=>c.innerHTML.includes(orderId));if(!card)return;
+ const inputs=[...card.querySelectorAll('input[id^="frQuote_"]')],quotes=[];
+ for(const input of inputs){const v=Number(input.value);if(!Number.isFinite(v)||v<=0){alert('ప్రతి Itemకు సరైన ధర ఇవ్వండి.');return;}quotes.push({item_id:input.id.replace('frQuote_',''),price_paise:frRupeesToPaise(v)});}
+ const delivery=Number(card.querySelector('#frDelivery_'+orderId)?.value||0);
+ if(!Number.isFinite(delivery)||delivery<0){alert('Delivery Charge సరిగా నమోదు చేయండి.');return;}
+ try{const {error}=await sb.rpc('fr_partner_quote_market_order',{p_order_id:orderId,p_quotes:quotes,p_delivery_fee_paise:frRupeesToPaise(delivery)});if(error)throw error;alert('Quotation Customerకు పంపబడింది.');await loadPartnerOrders();}
+ catch(e){alert('Quotation పంపబడలేదు: '+(e.message||e));}
+}
+async function frPartnerConfirmMarketPayment(orderId){
+ if(!confirm('Customer payment మీ Shop bank/UPI accountలో నిజంగా వచ్చిందని verify చేశారా? Verify చేసిన తర్వాత మాత్రమే Confirm చేయండి.'))return;
+ try{const {error}=await sb.rpc('fr_partner_confirm_market_payment',{p_order_id:orderId,p_payment_reference:null});if(error)throw error;alert('Payment confirmed. Order is now confirmed.');await loadPartnerOrders();}
+ catch(e){alert(e.message||e);}
+}
+async function frLoadCustomerMarketOrders(){
+ const el=$('frCustomerMarketOrders');if(!el||!currentUser)return;
+ el.innerHTML='<div class="notice">Shop Orders loading…</div>';
+ try{
+  const {data,error}=await sb.rpc('fr_customer_list_market_orders');if(error)throw error;
+  if(!data?.length){el.innerHTML='<div class="empty-state">Shop Orders ఇంకా లేవు.</div>';return;}
+  el.innerHTML=data.map(o=>{
+   const items=Array.isArray(o.items)?o.items:[];
+   const lines=items.map(i=>'<div class="listrow"><span>'+frMarketEsc(i.item_name)+' × '+frMarketEsc(i.quantity)+'</span><b>'+(i.partner_quote_paise==null?'Price pending':frMarketMoney(Number(i.partner_quote_paise)*Number(i.quantity)))+'</b></div>').join('');
+   let actions='';
+   if(o.status==='quoted')actions='<div class="fr-quote-total"><div>Items Total: <b>'+frMarketMoney(o.quote_subtotal_paise)+'</b></div><div>Delivery Charge: <b>'+frMarketMoney(o.delivery_fee_paise)+'</b></div><div>Total Amount: <span class="fr-pay-total">'+frMarketMoney(o.total_amount_paise)+'</span></div></div><button class="btn green" onclick="frCustomerAcceptQuote(\''+o.order_id+'\')">Confirm Quotation & Pay</button><button class="btn light" onclick="frCustomerSendCounter(\''+o.order_id+'\')">Counter Price</button>';
+   else if(o.status==='payment_pending')actions='<div class="fr-quote-total"><b>Total to Pay: </b><span class="fr-pay-total">'+frMarketMoney(o.total_amount_paise)+'</span></div><button class="btn green" onclick="frCustomerOpenMarketPayment(\''+o.order_id+'\')">Open Shop QR / Pay Now</button><div id="frPayPanel_'+o.order_id+'"></div>';
+   else if(o.status==='accepted')actions='<div class="notice" style="background:#e8f8ef;color:#087b43">✓ Payment received and verified. Order Confirmed.</div>';
+   else if(o.status==='cancelled')actions='<div class="notice">Order cancelled. Payment was not confirmed within the payment window.</div>';
+   const phone=(o.partner_phone||'').replace(/[^0-9+]/g,'');
+   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p>Shop: '+frMarketEsc(o.partner_name)+'</p><p>Shop Phone: '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p>Delivery: '+frMarketEsc(o.delivery_address)+'</p>'+lines+actions+'</div>';
+  }).join('');
+ }catch(e){el.innerHTML='<div class="notice">Shop Orders load కాలేదు: '+frMarketEsc(e.message||e)+'</div>';}
+}
+async function frCustomerAcceptQuote(id){
+ try{const {error}=await sb.rpc('fr_customer_accept_market_quote',{p_order_id:id});if(error)throw error;await frLoadCustomerMarketOrders();frCustomerOpenMarketPayment(id);}
+ catch(e){alert(e.message||e);}
+}
+async function frCustomerOpenMarketPayment(id){
+ const panel=$('frPayPanel_'+id);if(!panel)return;
+ panel.innerHTML='<div class="notice">Shop QR loading…</div>';
+ try{
+  const {data,error}=await sb.rpc('fr_customer_market_payment_details',{p_order_id:id});if(error)throw error;
+  const d=Array.isArray(data)?data[0]:data;if(!d)throw Error('Payment details unavailable');
+  let qr='';
+  if(d.qr_path){const signed=await sb.storage.from('provider-payment-qr').createSignedUrl(d.qr_path,600);if(!signed.error&&signed.data?.signedUrl)qr='<img class="fr-pay-qr" src="'+frMarketEsc(signed.data.signedUrl)+'" alt="Shop UPI QR Code">';}
+  const upi=d.upi_id||'';
+  const payUri=upi?'upi://pay?pa='+encodeURIComponent(upi)+'&pn='+encodeURIComponent('FRIEND RIDE Shop')+'&am='+(Number(d.total_amount_paise)/100).toFixed(2)+'&cu=INR&tn='+encodeURIComponent('FRIEND RIDE '+d.order_number):'';
+  panel.innerHTML='<div class="fr-pay-box"><h3>Pay to Shop / UPI QR</h3><div class="fr-pay-total" style="text-align:center">'+frMarketMoney(d.total_amount_paise)+'</div>'+qr+(upi?'<p style="text-align:center"><b>UPI ID:</b> '+frMarketEsc(upi)+'</p>':'')+(payUri?'<a class="fr-pay-link" href="'+frMarketEsc(payUri)+'">Open UPI App & Pay</a>':'')+'<div class="fr-pay-timer" id="frPayTimer_'+id+'">05:00</div><p class="tiny muted" style="text-align:center">First 5 minutes + automatic 3-minute extension. Same Shop QR remains active.</p><div class="notice">Payment చేసిన తర్వాత Shop Owner తన bank/UPI accountలో receipt verify చేసి Confirm చేస్తారు. QR scan లేదా screenshot మాత్రమే payment success కాదు.</div><button class="btn light" onclick="frLoadCustomerMarketOrders()">Refresh Payment Status</button></div>';
+  frStartMarketPayCountdown(id,d.expires_at,d.extension_used);
+ }catch(e){panel.innerHTML='<div class="notice">'+frMarketEsc(e.message||e)+'</div>';await frLoadCustomerMarketOrders();}
+}
+function frStartMarketPayCountdown(id,expiresAt,extended){
+ if(frMarketPayTimer)clearInterval(frMarketPayTimer);
+ let ticking=false;
+ const tick=async()=>{
+  const el=$('frPayTimer_'+id);if(!el){clearInterval(frMarketPayTimer);return;}
+  const left=Math.max(0,new Date(expiresAt).getTime()-Date.now());
+  const sec=Math.ceil(left/1000);el.textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
+  if(left<=0&&!ticking){ticking=true;el.textContent='00:00';try{
+    const {data,error}=await sb.rpc('fr_customer_tick_market_payment',{p_order_id:id});if(error)throw error;
+    const r=Array.isArray(data)?data[0]:data;
+    if(r?.status==='payment_pending'&&r.expires_at){await frCustomerOpenMarketPayment(id);}
+    else{clearInterval(frMarketPayTimer);await frLoadCustomerMarketOrders();}
+   }catch(e){console.warn('Payment timer:',e);await frLoadCustomerMarketOrders();}}
+ };
+ tick();frMarketPayTimer=setInterval(tick,1000);
+}
+</script>
 </body>
 </html>
 <style>
