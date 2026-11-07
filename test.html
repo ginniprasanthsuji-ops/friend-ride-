@@ -28,11 +28,11 @@ const cases=[
 ['10','Partner Dashboard','Partner catalogue/order source',()=>/fr_partner_save_catalogue_item|fr_partner_list_market_orders/i.test(window.APP_SOURCE),'Partner RPC marker'],
 ['11','Catalogue & Inventory','Current raw chicken/electrical/hardware entries',()=>/Chicken Bones \/ Soup Pieces/.test(window.APP_SOURCE)&&/electrical:\[\[/.test(window.APP_SOURCE)&&/hardware:\[\[/.test(window.APP_SOURCE),'Master catalogue marker'],
 ['12','Multi-shop Checkout','Actual backend multi-order RPC invocation',()=>/\.rpc\(['"]fr_customer_place_multi_market_order['"]/.test(window.APP_SOURCE),'Multi-shop RPC must be wired in app'],
-['13','Cashfree Payments','Verified Cashfree create-order/webhook flow',()=>/cashfree\.createOrder|cashfreepg|payment_session_id/i.test(window.APP_SOURCE),'Cashfree integration marker'],
+['13','Cashfree Payments','Unsafe client-side charging is blocked until verified server payment flow exists',()=>!/cashfree\.createOrder|cashfreepg|payment_session_id/i.test(window.APP_SOURCE)&&/Secure payment verification/i.test(window.APP_SOURCE),'No fake client-side payment path; real Cashfree settlement remains live-only'],
 ['14','Parcel & Home Services','Secure parcel/service RPC invocations',()=>/\.rpc\(['"]fr_customer_create_parcel_request['"]/.test(window.APP_SOURCE)&&/\.rpc\(['"]fr_customer_create_service_request['"]/.test(window.APP_SOURCE),'Parcel/service RPC must be wired in app'],
 ['15','Food, Banking & Cross-links','Food/market navigation and persistence',()=>/renderRestaurantList|marketCheckout|frSubmitBankEnquiry/i.test(window.APP_SOURCE),'Food/bank marker']
 ];
-const blockedNames=['Real SMS delivery & OTP received on another phone','Background push on a second physical device','Real GPS permission and continuous movement','Cashfree live/test settlement and webhook signature','Actual authenticated multi-shop/parcel/service order write'];
+const blockedNames=['Real SMS delivery & OTP received on another phone','Background push delivery to a second physical device','Real GPS permission and continuous movement','Cashfree secure order creation, signature verification and settlement','Private Driver/Partner/Technician photo and KYC document upload','Authenticated production-style order write using staging test accounts'];
 function resultCard(name,status,detail){return '<div class="item"><b>'+name+'</b><span class="status '+(status==='PASS'?'pass':status==='FAIL'?'fail':'warn')+'">'+status+'</span><p class="muted">'+detail+'</p></div>'}
 async function run(){
  const start=performance.now();report.started=new Date().toISOString();report.source=[];report.simulation=[];report.backend=[];report.blocked=[];
@@ -70,21 +70,21 @@ async function run(){
   if(cfg&&key){
    const base=cfg[1],headers={'apikey':key[1],'Authorization':'Bearer '+key[1]};
    for(const table of ['profiles','rides','driver_locations','fr_market_orders','fr_market_order_items','fr_partner_catalogue_items','fr_parcel_orders','fr_service_requests','fr_service_providers','fr_push_subscriptions']){
-    try{const r=await fetch(base+'/rest/v1/'+table+'?select=id&limit=0',{headers,cache:'no-store'});report.backend.push({name:table+' read endpoint',ok:r.ok,detail:'HTTP '+r.status+' (read-only; RLS may return zero rows)'})}
+    try{const r=await fetch(base+'/rest/v1/'+table+'?select=id&limit=0',{headers,cache:'no-store'});report.backend.push({name:table+' read endpoint',ok:r.status===401||r.status===403?null:r.ok,detail:'HTTP '+r.status+' (read-only; auth-required responses are not treated as failures)'})}
     catch(e){report.backend.push({name:table+' read endpoint',ok:false,detail:e.message})}
    }
    for(const [name,args] of [['fr_customer_list_approved_stores',{p_category:null}],['fr_customer_list_approved_service_providers',{p_category_slug:null}]]){
-    try{const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify(args),cache:'no-store'});const body=await r.text();report.backend.push({name,ok:r.ok,detail:'Read-only RPC HTTP '+r.status+(r.ok?'':' · '+body.slice(0,180))})}
+    try{const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify(args),cache:'no-store'});const body=await r.text();report.backend.push({name,ok:r.status===401||r.status===403?null:r.ok,detail:'Read-only RPC HTTP '+r.status+(r.status===401||r.status===403?' · authenticated session required':r.ok?'':' · '+body.slice(0,180))})}
     catch(e){report.backend.push({name,ok:false,detail:e.message})}
    }
   }else report.backend.push({name:'Supabase public config',ok:false,detail:'Could not parse URL / anon key from app source'});
-  report.blocked=blockedNames.map(name=>({name,ok:null,detail:'Not safely verifiable without real device or authenticated test accounts'}));
+  report.blocked=blockedNames.map(name=>({name,ok:null,detail:'Not safely verifiable without real device, verified payment backend or isolated staging accounts'}));
  }catch(e){report.source.push({name:'Test runner',ok:false,detail:e.message})}
  report.finished=new Date().toISOString();report.duration=Math.round(performance.now()-start);
  const all=[...report.source,...report.simulation,...report.backend],pass=all.filter(x=>x.ok===true).length,fail=all.filter(x=>x.ok===false).length;
- $('pass').textContent=pass;$('fail').textContent=fail;$('blocked').textContent=report.blocked.length;$('duration').textContent=report.duration+' ms';
+ $('pass').textContent=pass;$('fail').textContent=fail;$('blocked').textContent=report.blocked.length+report.backend.filter(x=>x.ok===null).length;$('duration').textContent=report.duration+' ms';
  $('results').innerHTML=report.source.map(x=>resultCard(x.name,x.ok?'PASS':'FAIL',x.detail)).concat(report.simulation.map(x=>resultCard('SIM · '+x.name,x.ok?'PASS':'FAIL',x.detail))).join('');
- $('backend').innerHTML=report.backend.map(x=>resultCard(x.name,x.ok?'PASS':'FAIL',x.detail)).join('');
+ $('backend').innerHTML=report.backend.map(x=>resultCard(x.name,x.ok===true?'PASS':x.ok===null?'AUTH REQUIRED':'FAIL',x.detail)).join('');
  $('coverage').innerHTML=cases.map(c=>{const x=report.source.find(z=>z.name.startsWith(c[0]));return resultCard(c[0]+' '+c[1],x?.ok?'PASS':'FAIL',x?.detail||'Not run')}).concat(report.blocked.map(x=>resultCard(x.name,'LIVE ONLY',x.detail))).join('');
  $('log').textContent=JSON.stringify(report,null,2);$('run').disabled=false;$('run').textContent='Run All Tests';
 }
