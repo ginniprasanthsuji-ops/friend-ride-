@@ -2481,7 +2481,7 @@ function renderCustomerCatalogue(){
   const shown=hasPrice?(x.offerPaise!==null&&x.offerPaise>0?x.offerPaise:x.pricePaise):null;
   const price=shown===null?'<div class="market-price">Ask Price • Shop Quotation</div>':'<div class="market-price">₹'+(shown/100).toFixed(2)+(x.offerPaise!==null&&x.offerPaise>0?' <small>Offer</small>':'')+'</div>';
   const stock=x.available?'<span class="stock-mark yes">✓ Available</span>':'<span class="stock-mark no">Out of Stock</span>';
-  return '<article class="market-product market-product-3d"><div class="market-product-art-3d">'+photo+'</div><div class="market-product-info"><b>'+name+'</b><small class="muted">'+cat+(unit?' • '+unit:'')+'</small>'+price+stock+'</div><button class="btn purple" '+(!x.available?'disabled':'')+' onclick="frAddPartnerCatalogueItem('+i+')">'+(hasPrice?'＋ Add to Cart':'＋ Ask Price')+'</button></article>';
+  return '<article class="market-product market-product-3d"><div class="market-product-art-3d">'+photo+'</div><div class="market-product-info"><b>'+name+'</b><small class="muted">'+cat+(unit?' • '+unit:'')+'</small>'+price+stock+'</div><button class="btn purple" '+(!x.available?'disabled':'')+' onclick="frAddPartnerCatalogueItem('+frCustomerCatalogueRows.indexOf(x)+')">'+(hasPrice?'＋ Add to Cart':'＋ Ask Price')+'</button></article>';
  }).join('')||'<div class="market-empty">ఈ కేటగిరీలో Shop Owner publish చేసిన items లేవు.</div>';
 }
 function frAddPartnerCatalogueItem(index){
