@@ -654,16 +654,18 @@ async function loadDriverApprovals(){
   }).join('');
  }catch(e){box.textContent='Driver applications load కాలేదు: '+(e.message||e);}
 }
-async function reviewDriverApplication(id,decision){
- if(!id||!['approved','rejected'].includes(decision))return;
- if(!confirm(decision==='approved'?'ఈ Driverను Approve చేయాలా?':'ఈ Driver applicationను Rasync function reviewDriverApplication(id){
+async function reviewDriverApplication(id){
  if(!id)return;
  if(!confirm('ఈ Driverను Approve చేయాలా?'))return;
  try{if(!currentUser||selectedRole!=='admin'||currentProfile?.role!=='admin')throw Error('Admin login అవసరం.');
  const {error}=await sb.rpc('admin_approve_driver',{p_driver_id:id});if(error)throw error;
  alert('Approval RPC request పంపబడింది. Databaseలో approved status verify చేయడానికి refresh చేయండి.');await loadDriverApprovals();
  }catch(e){alert('Driver Approval Error: '+(e.message||e));}
-}onst {data,error}=await sb.rpc('fr_admin_list_partner_applications'); if(error)throw error;
+}
+async function loadPartnerApprovals(){
+ const box=$('partnerApprovalList'); if(!box)return; box.textContent='Loading…';
+ try{if(!currentUser||selectedRole!=='admin')throw Error('Admin login అవసరం.');
+ const {data,error}=await sb.rpc('fr_admin_list_partner_applications'); if(error)throw error;
  if(!data?.length){box.textContent='Partner applications లేవు.';return;}
  box.innerHTML=data.map(p=>{
   const status=String(p.partner_approval_status||'pending').toLowerCase();
