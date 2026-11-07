@@ -1125,7 +1125,8 @@ sb.auth.getSession().then(async({data,error})=>{
   try{await acceptSession(data.session.user);}
   catch(e){console.error('FRIEND RIDE session restore error:',e);showMessage('Login Session కొనసాగుతోంది. Profile load సమస్య: '+(e.message||e)+' — Logout చేయకుండా మళ్లీ ప్రయత్నించండి.','error');}
  }
-}).catch(e=>console.warn('FRIEND RIDE session restore retry on next load:',e));
+}).catch(e=>console.warn('FRIEND RIDE session restore retry on next load:',e))
+.finally(()=>{window.frRestoringSession=false;});
 
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;}});
 
