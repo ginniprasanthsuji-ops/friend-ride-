@@ -1595,20 +1595,23 @@ async function frRenderCustomerRideDriverAndPayment(ride){
  }catch(e){console.warn('Customer driver details unavailable:',e.message);}
 }
 
+function frCustomerTrackingStatusAllowed(status){
+  return ['accepted','confirmed','ongoing','in_progress','started','driver_accepted','driver_assigned','accepted_by_driver','assigned','arrived','in_transit','picked_up','ride_started'].includes(String(status||'').trim().toLowerCase());
+}
 async function loadMyRideTracking(){
-  if(!currentUser||currentProfile?.role!=='customer')return;
+   if(!currentUser||currentProfile?.role!=='customer')return;
   try{
     const {data,error}=await sb.from('rides').select('*').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(10);if(error)throw error;
     const box=$('liveRideStatus');if(!box)return;
     if(!data?.length){box.textContent='ఇంకా Rides లేవు.';return;}
-    const active=data.find(r=>!['completed','cancelled','rejected','canceled'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;
+    const active=data.find(r=>r.driver_id&&frCustomerTrackingStatusAllowed(r.status))||data.find(r=>!['completed','cancelled','rejected','canceled'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;
     box.innerHTML='<b>'+safe(active.vehicle_type)+' • '+safe(active.status)+'</b><p>'+safe(active.pickup)+' → '+safe(active.drop)+'</p><p>మీ Offer ₹'+safe(active.fare_offer)+' | Agreed ₹'+safe(active.agreed_fare??'—')+'</p><small>Ride ID: '+safe(active.id)+'</small>';
     if(active.driver_id)await frRenderCustomerRideDriverAndPayment(active);
     if(String(active.status).toLowerCase()==='counter_offered'){
       const a=document.createElement('button');a.className='btn';a.textContent='Accept Driver Counter Offer';a.onclick=async()=>{const x=await sb.rpc('accept_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(a);
       const d=document.createElement('button');d.className='btn light';d.textContent='Reject Counter Offer';d.onclick=async()=>{const x=await sb.rpc('decline_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(d);
     }
-    if(active.driver_id&&['accepted','confirmed','ongoing','in_progress','started'].includes(String(active.status).toLowerCase())){const b=document.createElement('button');b.className='btn purple';b.textContent='🛰️ Start Two-Way Live Tracking';b.onclick=()=>startCustomerLiveTracking(active.id);box.append(b);}
+    if(active.driver_id&&frCustomerTrackingStatusAllowed(active.status)){const b=document.createElement('button');b.type='button';b.className='btn purple';b.textContent='🛰️ Start Two-Way Live Tracking';b.disabled=false;b.onclick=()=>startCustomerLiveTracking(active.id);box.append(b);}
   }catch(e){frShow('liveRideStatus','My Rides Error: '+e.message);}
 }
 async function startCustomerTrackingFromPanel(){if(frActiveRideId)await startCustomerLiveTracking(frActiveRideId);else await loadMyRideTracking();}
@@ -1624,7 +1627,7 @@ async function refreshDriverCustomerLocation(rideId){
 async function startCustomerLiveTracking(rideId){
   try{
     const {data:ride,error}=await sb.from('rides').select('id,status,driver_id').eq('id',rideId).eq('customer_id',currentUser.id).maybeSingle();if(error)throw error;
-    if(!ride?.driver_id||!['accepted','confirmed','ongoing','in_progress','started'].includes(String(ride.status||'').toLowerCase()))throw Error('Driver Accept చేసిన తర్వాత మాత్రమే Live Tracking ప్రారంభమవుతుంది.');
+    if(!ride?.driver_id||!frCustomerTrackingStatusAllowed(ride.status))throw Error('Driver Rideను Accept/Assign చేసిన తర్వాత మాత్రమే Live Tracking ప్రారంభమవుతుంది. ప్రస్తుత Ride Status: '+(ride?.status||'Unavailable'));
     if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);
     const send=async()=>{try{const p=await frPosition();const x=await sb.from('ride_live_locations').upsert({ride_id:rideId,user_id:currentUser.id,latitude:p.coords.latitude,longitude:p.coords.longitude,updated_at:new Date().toISOString()},{onConflict:'ride_id,user_id'});if(x.error)throw x.error;await refreshCustomerDriverLocation(rideId);frShow('liveRideStatus','మీ Location Driverకు Liveగా Share అవుతోంది ✓');}catch(e){frShow('liveRideStatus','Customer GPS update కాలేదు: '+e.message);}};
     await send();frCustomerTrackTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='customer')send();},10000);
