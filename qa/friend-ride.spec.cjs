@@ -208,3 +208,35 @@ test('Role-specific order, ride and customer alert preview controls have audio a
   }));
   expect(functions).toEqual({ unlock: 'function', tone: 'function', classify: 'function', preview: 'function', speakPreview: 'function', voice: 'function' });
 });
+
+
+test('Profile photo loads from the role-specific private storage bucket after login', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain('frLoadProfilePhoto');
+  expect(source).toContain('createSignedUrl(path,900)');
+  expect(source).toContain('customer-profile-photos');
+  expect(source).toContain('driver-profile-photos');
+  await expect(page.locator('#profileInfo')).toBeAttached();
+});
+
+test('Customer active ride displays assigned driver vehicle, phone and WhatsApp actions', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  expect(await page.evaluate(() => typeof window.frRenderCustomerRideDriverAndPayment)).toBe('function');
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain('get_ride_driver_details');
+  expect(source).toContain('Vehicle Number');
+  expect(source).toContain('WhatsApp Driver');
+  expect(source).toContain('tel:');
+  expect(source).toContain('https://wa.me/');
+  expect(source).toContain('if(active.driver_id)await frRenderCustomerRideDriverAndPayment(active)');
+});
+
+test('Driver sees assigned customer name, phone and private profile photo path through secured RPC', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  expect(await page.evaluate(() => typeof window.frRenderRideCustomerDetails)).toBe('function');
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain('get_ride_customer_details_v2');
+  expect(source).toContain('customer-profile-photos');
+  expect(source).toContain('Assigned ride customer details unavailable');
+});
