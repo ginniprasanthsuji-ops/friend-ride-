@@ -1,10 +1,17 @@
 {
-  "name": "friend-ride-qa",
+  "name": "friend-ride",
   "private": true,
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.0"
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
   }
 }

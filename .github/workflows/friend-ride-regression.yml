@@ -2,6 +2,8 @@ name: FRIEND RIDE Regression
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: '17 2 * * *'
@@ -19,6 +21,10 @@ jobs:
       - name: Validate inline JavaScript and Version 10.1 integrations
         run: node scripts/check-inline-js.mjs
       - run: npm install
+      - name: TypeScript strict type check
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm run test:unit
       - run: npx playwright install --with-deps chromium
       - name: Start local static app server
         run: |
