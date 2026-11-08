@@ -2125,14 +2125,34 @@ function frOpenNotifications(){
   if(box)box.classList.remove('show');
   if(typeof showPage==='function')showPage('notifications');
 }
+function frRideIngestNotification(n,source='fr_ride_notifications'){
+  if(!n||String(n.user_id)!==String(currentUser?.id))return;
+  const isApp=source==='fr_app_notifications';
+  const row=isApp
+    ? {...n,id:'app:'+n.id,source_id:n.id,source_table:source,message:n.body||'',ride_id:n.related_ride_id||null,is_read:!!n.is_read}
+    : {...n,source_id:n.id,source_table:source,is_read:!!n.is_read};
+  if(frRideNotifRows.some(x=>String(x.id)===String(row.id)))return;
+  frRideNotifRows.unshift(row);
+  frRideNotifRows.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  frRideNotifRows=frRideNotifRows.slice(0,50);
+  frRideRenderNotifications();
+  const seenKey=(isApp?'app:':'ride:')+String(n.id);
+  if(!frRideNotifSeenInSession.has(seenKey)){
+    frRideNotifSeenInSession.add(seenKey);
+    frRideShowToast(row,true);
+  }
+}
 async function frRideMarkNotificationRead(id,rideId){
   if(!currentUser?.id)return;
   try{
-    const {error}=await sb.from('fr_ride_notifications')
-      .update({is_read:true,read_at:new Date().toISOString()})
-      .eq('id',id).eq('user_id',currentUser.id);
-    if(error)throw error;
     const row=frRideNotifRows.find(x=>String(x.id)===String(id));
+    const table=row?.source_table==='fr_app_notifications'?'fr_app_notifications':'fr_ride_notifications';
+    const realId=row?.source_id||id;
+    const update=table==='fr_app_notifications'
+      ? {is_read:true,read_at:new Date().toISOString()}
+      : {is_read:true,read_at:new Date().toISOString()};
+    const {error}=await sb.from(table).update(update).eq('id',realId).eq('user_id',currentUser.id);
+    if(error)throw error;
     if(row){row.is_read=true;row.read_at=new Date().toISOString();}
     frRideRenderNotifications();
   }catch(e){frRideNotifStatus('Notification update కాలేదు: '+e.message,true);}
@@ -2140,50 +2160,36 @@ async function frRideMarkNotificationRead(id,rideId){
 async function frRideLoadNotifications(silent=false){
   if(!currentUser?.id)return;
   try{
-    const {data,error}=await sb.from('fr_ride_notifications')
-      .select('id,user_id,ride_id,title,message,created_at,is_read,read_at')
-      .eq('user_id',currentUser.id)
-      .order('created_at',{ascending:false})
-      .limit(50);
-    if(error)throw error;
-    frRideNotifRows=data||[];
+    const [rides,apps]=await Promise.all([
+      sb.from('fr_ride_notifications').select('id,user_id,ride_id,title,message,created_at,is_read,read_at').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50),
+      sb.from('fr_app_notifications').select('id,user_id,notification_type,title,body,action_url,related_order_id,related_ride_id,is_read,read_at,created_at').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50)
+    ]);
+    if(rides.error)throw rides.error;
+    if(apps.error)throw apps.error;
+    const rideRows=(rides.data||[]).map(n=>({...n,source_id:n.id,source_table:'fr_ride_notifications'}));
+    const appRows=(apps.data||[]).map(n=>({...n,id:'app:'+n.id,source_id:n.id,source_table:'fr_app_notifications',message:n.body||'',ride_id:n.related_ride_id||null}));
+    frRideNotifRows=[...rideRows,...appRows].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,50);
     frRideRenderNotifications();
     frRideNotifStatus('Live notifications connected • '+frRideNotifRows.length+' recent update(s).');
-  }catch(e){
-    frRideNotifStatus('Notification load error: '+e.message,true);
-  }
+  }catch(e){frRideNotifStatus('Notification load error: '+e.message,true);}
 }
 function frRideStartRealtime(){
-  if(!currentUser?.id || !sb?.channel)return;
+  if(!currentUser?.id||!sb?.channel)return;
   const uid=currentUser.id;
-  if(frRideNotificationStartedFor===uid && frRideNotifChannel)return;
+  if(frRideNotificationStartedFor===uid&&frRideNotifChannel)return;
   if(frRideNotifChannel){try{sb.removeChannel(frRideNotifChannel);}catch(_){}frRideNotifChannel=null;}
   frRideNotificationStartedFor=uid;
   frRideLoadNotifications(true);
   frRideNotifChannel=sb.channel('fr-ride-notifications-'+uid)
-    .on('postgres_changes',{
-      event:'INSERT',schema:'public',table:'fr_ride_notifications',
-      filter:'user_id=eq.'+uid
-    },payload=>{
-      const n=payload.new;
-      if(!n || String(n.user_id)!==String(uid))return;
-      if(frRideNotifRows.some(x=>String(x.id)===String(n.id)))return;
-      const row={...n,is_read:!!n.is_read};
-      frRideNotifRows.unshift(row);
-      frRideNotifRows=frRideNotifRows.slice(0,50);
-      frRideRenderNotifications();
-      if(!frRideNotifSeenInSession.has(String(n.id))){
-        frRideNotifSeenInSession.add(String(n.id));
-        frRideShowToast(row,true);
-      }
-    })
-    .on('postgres_changes',{
-      event:'UPDATE',schema:'public',table:'fr_ride_notifications',
-      filter:'user_id=eq.'+uid
-    },payload=>{
-      const n=payload.new;
-      const i=frRideNotifRows.findIndex(x=>String(x.id)===String(n.id));
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'fr_ride_notifications',filter:'user_id=eq.'+uid},payload=>frRideIngestNotification(payload.new,'fr_ride_notifications'))
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'fr_app_notifications',filter:'user_id=eq.'+uid},payload=>frRideIngestNotification(payload.new,'fr_app_notifications'))
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'fr_ride_notifications',filter:'user_id=eq.'+uid},payload=>{
+      const n=payload.new,i=frRideNotifRows.findIndex(x=>String(x.id)===String(n.id));
       if(i>=0){frRideNotifRows[i]={...frRideNotifRows[i],...n};frRideRenderNotifications();}
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'fr_app_notifications',filter:'user_id=eq.'+uid},payload=>{
+      const n=payload.new,i=frRideNotifRows.findIndex(x=>x.source_table==='fr_app_notifications'&&String(x.source_id)===String(n.id));
+      if(i>=0){frRideNotifRows[i]={...frRideNotifRows[i],...n,message:n.body||''};frRideRenderNotifications();}
     })
     .subscribe(status=>{
       if(status==='SUBSCRIBED')frRideNotifStatus('Real-time notifications active.');
