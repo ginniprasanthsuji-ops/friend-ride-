@@ -1455,6 +1455,17 @@ async function verifyRegistrationOtpAndRegister(){
     await acceptSession(data.user);showMessage('Registration విజయవంతమైంది.','good');
   } catch(e){for(const [bucket,path] of uploadedFiles){try{await sb.storage.from(bucket).remove([path]);}catch(_){}}showMessage('Registration పూర్తి కాలేదు: '+e.message);}
 }
+
+async function frLoadProfilePhoto(profile,role){
+ const box=$('profileInfo');if(!box)return;
+ const path=role==='driver'?profile?.driver_profile_photo_path:role==='partner'?profile?.partner_profile_photo_path:profile?.customer_profile_photo_path;
+ const bucket=role==='driver'?'driver-profile-photos':role==='partner'?'partner-profile-photos':'customer-profile-photos';
+ if(!path)return;
+ try{const {data,error}=await sb.storage.from(bucket).createSignedUrl(path,900);if(error)throw error;if(!data?.signedUrl)throw Error('Signed photo URL unavailable');
+  let img=box.querySelector('[data-fr-profile-photo]');if(!img){img=document.createElement('img');img.dataset.frProfilePhoto='true';img.alt='Profile photo';img.style.cssText='width:88px;height:88px;object-fit:cover;border-radius:50%;border:3px solid #e8def7;display:block;margin:0 0 12px';box.prepend(img);}img.src=data.signedUrl;
+  img.onerror=()=>{img.remove();const note=document.createElement('small');note.dataset.frPhotoError='true';note.textContent='Profile photo preview unavailable';box.prepend(note);};
+ }catch(e){console.warn('Profile photo load failed:',e.message);const note=document.createElement('small');note.dataset.frPhotoError='true';note.textContent='Profile photo unavailable';box.prepend(note);}
+}
 // No password login or password registration is used by this build.
 async function login(){return verifyLoginOtp();}
 async function register(){return sendRegistrationOtp();}
@@ -1488,6 +1499,7 @@ async function acceptSession(authUser){
   const addr=profile.address||'';
   ['foodAddress','shopAddress','shoppingAddress','homeServiceAddress','goodsPickup'].forEach(id=>{if($(id)&&!$(id).value)$(id).value=addr;});
   $('profileInfo').innerHTML='<b>'+safe(profile.full_name||'User')+'</b><p>Mobile: '+safe(authUser.phone||profile.phone||'')+'</p><p>Account: '+safe(role.toUpperCase())+'</p><p>'+safe(addr)+'</p>';
+  await frLoadProfilePhoto(profile,role);
   $('customerWelcome').textContent='Welcome, '+(profile.full_name||'Customer');
   $('driverWelcome').textContent='Welcome, '+(profile.full_name||'Driver');
   $('drawerUser').textContent=(profile.full_name||'FRIEND RIDE user')+' • '+role.toUpperCase();
@@ -1559,20 +1571,26 @@ async function refreshNearbyDrivers(){
   }catch(e){frShow('trackingStatus','Nearby Drivers లోడ్ కాలేదు: '+e.message);}
 }
 async function frRenderCustomerRideDriverAndPayment(ride){
-  const box=$('liveRideStatus');if(!box||!ride?.driver_id)return;
-  try{
-    const {data,error}=await sb.rpc('get_ride_payment_details_v1',{p_ride_id:ride.id});if(error)throw error;
-    const d=Array.isArray(data)?data[0]:data;if(!d)return;
-    const card=document.createElement('div');card.className='notice';card.style.marginTop='10px';
-    const title=document.createElement('b');title.textContent='Driver & Payment Details';card.append(title);
-    const name=document.createElement('p');name.textContent='Driver: '+(d.driver_name||'Driver');card.append(name);
-    const phone=document.createElement('p');phone.textContent='Mobile: '+(d.driver_phone||'Not available');card.append(phone);
-    if(String(d.ride_status).toLowerCase()==='completed'&&d.provider_qr_path){
-      const {data:signed,error:signError}=await sb.storage.from('provider-payment-qr').createSignedUrl(d.provider_qr_path,300);if(signError)throw signError;
-      if(signed?.signedUrl){const label=document.createElement('p');label.textContent='Ride Completed — Driver Payment QR';card.append(label);const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Driver payment QR';img.style.cssText='width:210px;max-width:100%;height:auto;display:block;border-radius:12px;background:#fff;padding:8px';card.append(img);const fare=document.createElement('p');fare.textContent='Agreed Fare: ₹'+(d.agreed_fare??ride.agreed_fare??'—');card.append(fare);}
-    }else if(String(d.ride_status).toLowerCase()==='completed'){const note=document.createElement('p');note.textContent='Ride Completed. Driver QR ఇంకా నమోదు చేయలేదు.';card.append(note);}
-    box.append(card);
-  }catch(e){console.warn('Customer driver/payment details unavailable:',e.message);}
+ const box=$('liveRideStatus');if(!box||!ride?.driver_id)return;
+ try{
+  const [detailResult,paymentResult]=await Promise.all([
+   sb.rpc('get_ride_driver_details',{p_ride_id:ride.id}),
+   sb.rpc('get_ride_payment_details_v1',{p_ride_id:ride.id})
+  ]);
+  if(detailResult.error)throw detailResult.error;
+  const d=Array.isArray(detailResult.data)?detailResult.data[0]:detailResult.data;
+  if(!d)throw Error('Assigned Driver details are not available for this ride.');
+  const card=document.createElement('div');card.className='notice';card.style.marginTop='10px';card.dataset.frDriverContact='true';
+  const title=document.createElement('b');title.textContent='Driver & Vehicle Details';card.append(title);
+  const add=(label,value)=>{if(value){const p=document.createElement('p');p.textContent=label+': '+value;card.append(p);}};
+  add('Driver',d.full_name||'Driver');add('Vehicle Type',d.vehicle_type);add('Vehicle',[(d.vehicle_company||'').trim(),(d.vehicle_model||'').trim()].filter(Boolean).join(' '));add('Vehicle Number',d.vehicle_registration);
+  const phone=String(d.phone||'').replace(/[^+\\d]/g,'');add('Phone',phone||'Not available');
+  if(phone){const digits=phone.replace(/\\D/g,'');const actions=document.createElement('div');actions.className='row';const call=document.createElement('a');call.className='btn light';call.href='tel:'+phone;call.textContent='📞 Call Driver';const wa=document.createElement('a');wa.className='btn green';wa.href='https://wa.me/'+(digits.startsWith('91')?digits:'91'+digits);wa.target='_blank';wa.rel='noopener noreferrer';wa.textContent='WhatsApp Driver';actions.append(call,wa);card.append(actions);}
+  if(d.driver_profile_photo_path){const {data:signed,error}=await sb.storage.from('driver-profile-photos').createSignedUrl(d.driver_profile_photo_path,300);if(error)throw error;if(signed?.signedUrl){const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Driver profile';img.style.cssText='width:76px;height:76px;object-fit:cover;border-radius:50%;display:block;margin-top:8px';card.append(img);}}
+  if(paymentResult.error)throw paymentResult.error;const p=Array.isArray(paymentResult.data)?paymentResult.data[0]:paymentResult.data;
+  if(String(p?.ride_status||ride.status).toLowerCase()==='completed'&&p?.provider_qr_path){const {data:signed,error}=await sb.storage.from('provider-payment-qr').createSignedUrl(p.provider_qr_path,300);if(error)throw error;if(signed?.signedUrl){const label=document.createElement('p');label.textContent='Ride Completed — Driver Payment QR';card.append(label);const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Driver payment QR';img.style.cssText='width:210px;max-width:100%;height:auto;display:block;border-radius:12px;background:#fff;padding:8px';card.append(img);add('Agreed Fare','₹'+(p.agreed_fare??ride.agreed_fare??'—'));}}
+  box.querySelector('[data-frDriverContact]')?.remove();box.append(card);
+ }catch(e){console.warn('Customer driver details unavailable:',e.message);}
 }
 
 async function loadMyRideTracking(){
