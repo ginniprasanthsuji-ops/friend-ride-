@@ -125,6 +125,8 @@ test('Shop QR payment workflow is connected for customer and approved partner', 
     partnerConfirm: 'function'
   });
   await expect(page.locator('#regDriverQR')).toBeAttached();
+  await expect(page.locator('#regDriverUPI')).toBeAttached();
+  await expect(page.locator('#regPartnerQR')).toBeAttached();
 });
 
 test('Admin can review complaints and publish selected feedback to the homepage', async ({ page }) => {
