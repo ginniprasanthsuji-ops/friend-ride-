@@ -700,13 +700,36 @@ async function loadPartnerPaymentSettings(){
  }catch(e){if($('partnerPayStatus'))$('partnerPayStatus').textContent=e.message;}
 }
 async function savePartnerPaymentSettings(){
- try{if(!currentUser||currentProfile?.role!=='partner')throw Error('Partner login అవసరం.');
- const upi=$('partnerPayUpi').value.trim(),phone=$('partnerPayPhone').value.replace(/\D/g,'');if(!upi||!/^\d{10}$/.test(phone))throw Error('Valid UPI ID మరియు 10 digit PhonePe number ఇవ్వండి.');
- let qrPath=null;const f=$('partnerPayQrFile').files?.[0];
- if(f){if(!['image/png','image/jpeg','image/webp'].includes(f.type)||f.size>2*1024*1024)throw Error('PNG/JPG/WEBP QR image 2 MB లోపు ఉండాలి.');qrPath=currentUser.id+'/shop-qr.'+(f.type==='image/png'?'png':f.type==='image/webp'?'webp':'jpg');const {error:upErr}=await sb.storage.from('partner-qr').upload(qrPath,f,{upsert:true,contentType:f.type});if(upErr)throw upErr;}
- const {error}=await sb.rpc('fr_partner_save_payment_details',{p_upi_id:upi,p_phonepe_number:phone,p_qr_path:qrPath});if(error)throw error;
- $('partnerPayStatus').textContent='Shop payment details saved.';await loadPartnerPaymentSettings();alert('Shop UPI / QR details saved. Payment success మాత్రం server-side provider verification తర్వాతే confirm చేయాలి.');
- }catch(e){$('partnerPayStatus').textContent='Save failed: '+e.message;}
+ const uploaded=[];
+ try{
+  if(!currentUser||currentProfile?.role!=='partner')throw Error('Partner login అవసరం.');
+  const upi=$('partnerPayUpi').value.trim(),phone=$('partnerPayPhone').value.replace(/\D/g,'');
+  if(!upi||!/^\d{10}$/.test(phone))throw Error('Valid UPI ID మరియు 10 digit PhonePe number ఇవ్వండి.');
+  let qrPath=null,providerQrPath=null;
+  const f=$('partnerPayQrFile').files?.[0];
+  if(f){
+   if(!['image/png','image/jpeg','image/webp'].includes(f.type)||f.size>2*1024*1024)throw Error('PNG/JPG/WEBP QR image 2 MB లోపు ఉండాలి.');
+   const ext=f.type==='image/png'?'png':f.type==='image/webp'?'webp':'jpg';
+   const suffix=Date.now()+'_'+Math.random().toString(36).slice(2,7);
+   qrPath=currentUser.id+'/shop-qr_'+suffix+'.'+ext;
+   const shopUpload=await sb.storage.from('partner-qr').upload(qrPath,f,{upsert:false,contentType:f.type});
+   if(shopUpload.error)throw shopUpload.error;
+   uploaded.push(['partner-qr',qrPath]);
+   providerQrPath=currentUser.id+'/shop-payment-qr_'+suffix+'.'+ext;
+   const providerUpload=await sb.storage.from('provider-payment-qr').upload(providerQrPath,f,{upsert:false,contentType:f.type});
+   if(providerUpload.error)throw providerUpload.error;
+   uploaded.push(['provider-payment-qr',providerQrPath]);
+  }
+  const {data,error}=await sb.rpc('fr_partner_save_payment_details',{p_upi_id:upi,p_phonepe_number:phone,p_qr_path:qrPath,p_provider_qr_path:providerQrPath});
+  if(error)throw error;
+  if(!data?.ok)throw Error('Payment details database confirmation రాలేదు.');
+  $('partnerPayStatus').textContent='Shop UPI, QR మరియు secure Customer payment QR save అయ్యాయి ✓';
+  await loadPartnerPaymentSettings();
+  alert('Shop UPI / QR details saved. Customer payment QR ఇప్పుడు Shop Order payment flowలో ఉపయోగించబడుతుంది. Payment success మాత్రం Shop Owner bank/UPIలో verify చేసిన తర్వాతే confirm చేయాలి.');
+ }catch(e){
+  for(const [bucket,path] of uploaded){try{await sb.storage.from(bucket).remove([path]);}catch(_){}}
+  $('partnerPayStatus').textContent='Save failed: '+(e.message||e);
+ }
 }
 function menuGo(id){closeDrawer();if(['customerDashboard','driverDashboard','partnerDashboard','adminDashboard','wallet','orders','tracking','profile','notifications','gst','products','inventory','partnerOrders','users','paymentApprovals','platformBusinessSettings','partnerPaymentSettings','driverApprovals','partnerApprovals','adminOrders','reports','settings','paymentApprovals','referralApprovals','cashRewardApprovals','crmDashboard'].includes(id)&&!currentUser){afterLoginAction=()=>showPage(id);openAuth('login');return;}if(id==='adminDashboard'||['users','paymentApprovals','platformBusinessSettings','partnerPaymentSettings','driverApprovals','partnerApprovals','adminOrders','reports','settings','paymentApprovals','referralApprovals','cashRewardApprovals','crmDashboard'].includes(id)){if(selectedRole!=='admin'){alert('Admin account మాత్రమే ఈ విభాగాన్ని ఉపయోగించగలదు.');return;}}if(id==='customerDashboard'&&selectedRole!=='customer'){alert('Customer account మాత్రమే ఈ విభాగాన్ని ఉపయోగించగలదు.');return;}if(id==='driverDashboard'&&selectedRole!=='driver'){alert('Driver login అవసరం.');return;}if((id==='partnerDashboard'||['partnerOrders','partnerPaymentSettings','catalogue','subscription','referrals','partnerReports','products','inventory'].includes(id))&&selectedRole!=='partner'&&selectedRole!=='admin'){alert('Partner login అవసరం.');return;}showPage(id);}
 function useHomeLocation(){const el=document.getElementById('homeLocationText');if(!navigator.geolocation){el.textContent='GPS not supported';return;}el.textContent='Detecting your location…';navigator.geolocation.getCurrentPosition(async pos=>{const {latitude:lat,longitude:lon}=pos.coords;el.textContent=lat.toFixed(4)+', '+lon.toFixed(4);try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon);const d=await r.json();if(d.display_name)el.textContent=d.display_name;}catch(e){}},e=>{el.textContent='Location permission ఇవ్వండి';alert('Location permission allow చేయండి.');},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});}
