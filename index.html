@@ -1596,7 +1596,7 @@ async function frRenderCustomerRideDriverAndPayment(ride){
 }
 
 function frCustomerTrackingStatusAllowed(status){
-  const s=String(status||'').trim().toLowerCase().replace(/[\\s-]+/g,'_');
+  const s=String(status||'').trim().toLowerCase().replaceAll(' ','_').replaceAll('-','_');
   // Driver assigned + non-terminal ride means customer can start live tracking.
   return !!s && !['completed','cancelled','canceled','rejected','expired','failed'].includes(s);
 }
