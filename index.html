@@ -1601,6 +1601,8 @@ function frRideBtn(label,cls,fn){const b=document.createElement('button');b.type
 function frRideNotice(parent,msg){const p=document.createElement('p');p.className='notice';p.textContent=msg;parent.append(p);return p;}
 async function frRenderRidePaymentBox(ride,parent){
  if(!ride?.id||!parent)return;
+ if(frRidePaymentTimer){clearInterval(frRidePaymentTimer);frRidePaymentTimer=null;}
+ if(frRidePaymentPollTimer){clearInterval(frRidePaymentPollTimer);frRidePaymentPollTimer=null;}
  if(frRidePaymentPollTimer){clearInterval(frRidePaymentPollTimer);frRidePaymentPollTimer=null;}
  const old=parent.querySelector('[data-fr-ride-payment]');old?.remove();
  const wrap=document.createElement('div');wrap.dataset.frRidePayment='1';wrap.className='fr-pay-box';wrap.style.marginTop='14px';
@@ -1620,23 +1622,26 @@ async function frRenderRidePaymentBox(ride,parent){
     }catch(e){alert('QR Payment: '+e.message);}
    }));
  }else if(state.status==='pending'||state.status==='awaiting_driver_confirmation'){
-   if(state.qr_path){
-    const signed=await sb.storage.from('provider-payment-qr').createSignedUrl(state.qr_path,600);
-    if(signed.error)throw signed.error;
-    const img=document.createElement('img');img.className='fr-pay-qr';img.src=signed.data.signedUrl;img.alt='Driver UPI QR Code';wrap.append(img);
-   }
    const amount=document.createElement('p');amount.className='fr-pay-total';amount.textContent='Payable: ₹'+Number(state.amount).toFixed(2);wrap.append(amount);
-   const timer=document.createElement('div');timer.className='fr-pay-timer';wrap.append(timer);
-   const update=()=>{const left=Math.max(0,Math.floor((new Date(state.expires_at).getTime()-Date.now())/1000));timer.textContent='QR expires in '+String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');if(left<=0){clearInterval(frRidePaymentTimer);frRideNotice(wrap,'QR Session Expired. Refresh to generate a new QR.');frRenderRidePaymentBox(ride,parent).catch(e=>console.warn('Payment refresh:',e.message));}};
-   if(frRidePaymentTimer)clearInterval(frRidePaymentTimer);update();frRidePaymentTimer=setInterval(update,1000);
    if(state.status==='pending'){
+    if(state.qr_path){
+     const signed=await sb.storage.from('provider-payment-qr').createSignedUrl(state.qr_path,600);
+     if(signed.error)throw signed.error;
+     const img=document.createElement('img');img.className='fr-pay-qr';img.src=signed.data.signedUrl;img.alt='Driver UPI QR Code';wrap.append(img);
+    }
+    const timer=document.createElement('div');timer.className='fr-pay-timer';wrap.append(timer);
+    const update=()=>{const left=Math.max(0,Math.floor((new Date(state.expires_at).getTime()-Date.now())/1000));timer.textContent='QR expires in '+String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');if(left<=0){clearInterval(frRidePaymentTimer);frRidePaymentTimer=null;frRenderRidePaymentBox(ride,parent).catch(e=>console.warn('Payment refresh:',e.message));}};
+    update();frRidePaymentTimer=setInterval(update,1000);
     const label=document.createElement('label');label.textContent='UPI Transaction ID';label.style.display='block';label.style.fontWeight='800';wrap.append(label);
     const input=document.createElement('input');input.type='text';input.maxLength=40;input.autocomplete='off';input.placeholder='Enter UPI Transaction / UTR ID';input.style.width='100%';wrap.append(input);
     wrap.append(frRideBtn('I Have Paid – Submit Transaction ID','green',async()=>{
      try{const r=await sb.rpc('fr_customer_submit_ride_transaction',{p_ride_id:ride.id,p_transaction_id:input.value.trim()});if(r.error)throw r.error;alert('Transaction ID Driverకు పంపబడింది. Driver UPIలో verify చేసి Confirm చేసిన తర్వాతే Payment Success అవుతుంది.');await frRenderRidePaymentBox(ride,parent);}
      catch(e){alert('Transaction Submit: '+e.message);}
     }));
-   }else {setMsg('Transaction ID: '+state.transaction_id+' • Driver Payment verify చేసి Confirm చేయాల్సి ఉంది.');frRidePaymentPollTimer=setInterval(()=>{if(!document.hidden)frRenderRidePaymentBox(ride,parent).catch(e=>console.warn('Payment status refresh:',e.message));},10000);}
+   }else{
+    setMsg('Transaction ID: '+state.transaction_id+' • Driver తన UPI / Bankలో verify చేసి Confirm చేయాల్సి ఉంది.');
+    frRidePaymentPollTimer=setInterval(()=>{if(!document.hidden)frRenderRidePaymentBox(ride,parent).catch(e=>console.warn('Payment status refresh:',e.message));},10000);
+   }
    const refresh=frRideBtn('↻ Refresh Payment Status','light',()=>frRenderRidePaymentBox(ride,parent));wrap.append(refresh);
  }else if(state.status==='success'){
    if(frRidePaymentTimer)clearInterval(frRidePaymentTimer);
