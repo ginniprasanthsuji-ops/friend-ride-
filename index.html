@@ -2141,11 +2141,17 @@ function frRideIngestNotification(n,source='fr_ride_notifications'){
     frRideNotifSeenInSession.add(seenKey);
     frRideShowToast(row,true);
   }
-  // A new Partner order notification must refresh the Partner order feed.
-  // fr_market_orders is not in the Realtime publication, so use the
-  // already-published fr_app_notifications INSERT event as the refresh signal.
-  if(isApp && n.notification_type==='partner_order' && currentProfile?.role==='partner' && typeof loadPartnerOrders==='function'){
+  // Refresh the relevant order feed from notification events because
+  // fr_market_orders itself is not in the Realtime publication.
+  const title=String(n.title||'').trim();
+  const refreshPartner=isApp && n.notification_type==='partner_order'
+    || (!isApp && ['Customer sent counter price','Customer accepted quotation'].includes(title));
+  const refreshCustomer=!isApp && ['Shop quotation received','Shop payment confirmed'].includes(title);
+  if(refreshPartner && currentProfile?.role==='partner' && typeof loadPartnerOrders==='function'){
     Promise.resolve().then(()=>loadPartnerOrders()).catch(e=>console.warn('Partner order notification refresh failed:',e));
+  }
+  if(refreshCustomer && currentProfile?.role==='customer' && typeof frLoadCustomerMarketOrders==='function'){
+    Promise.resolve().then(()=>frLoadCustomerMarketOrders()).catch(e=>console.warn('Customer order notification refresh failed:',e));
   }
 }
 async function frRideMarkNotificationRead(id,rideId){
