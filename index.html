@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#24105f">
+<meta name="application-version" content="10.1">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>FRIEND RIDE – Friend Mart</title>
+<title>FRIEND RIDE – Friend Mart | Version 10.1</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--purple:#5420b8;--purple2:#7b35df;--navy:#211044;--orange:#ff8a24;--bg:#f6f4fb;--ink:#201936;--muted:#77718a;--line:#e9e3f2;--green:#13875b;--red:#c83c4c;--white:#fff;--gold:#ffc65a}
@@ -2806,7 +2807,6 @@ if(typeof oldRideContactShow==='function'){
   };
 }
 
- };
  window.frSubmitSupportFeedback=async function(){
    try{
      if(!currentUser||!currentProfile)throw Error('ముందుగా Login చేయండి.');
