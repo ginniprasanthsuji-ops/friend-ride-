@@ -160,7 +160,7 @@ test('Admin Driver KYC document review page is wired to protected review RPCs', 
 
 test('Role-specific order, ride and customer alert preview controls have audio and voice handlers', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('.fr-alert-preview-buttons button')).toHaveCount(3);
+  await expect(page.locator('button[onclick^="frPreviewAlertTone("]')).toHaveCount(3);
   const functions = await page.evaluate(() => ({
     unlock: typeof window.frUnlockAlertAudio,
     tone: typeof window.frPlayAlertTone,
