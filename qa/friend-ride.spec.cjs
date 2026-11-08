@@ -262,3 +262,19 @@ test('Driver going offline updates existing GPS row without invalid upsert', asy
   expect(source).toContain("sb.from('driver_locations').update({is_online:false");
   expect(source).not.toContain("upsert({driver_id:currentUser.id,is_online:false");
 });
+
+
+test('Floating App Status diagnostics is restricted to Admin Dashboard and positioned above bottom navigation', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain("String(currentProfile?.role||'').toLowerCase()==='admin'");
+  expect(source).toContain("document.getElementById('adminDashboard')?.classList.contains('active')");
+  expect(source).toContain("b.hidden=!isAdminDashboard()");
+  expect(source).toContain("bottom:142px");
+  expect(source).toContain("inset:auto 10px 205px 10px");
+  expect(source).toContain("if(!isAdminDashboard())return");
+  expect(source).toContain("window.frRefreshDiagnosticsVisibility=render");
+  expect(source).toContain("window.frRefreshDiagnosticsVisibility();");
+  await expect(page.locator('#frDiagBadge')).toBeHidden();
+  await expect(page.locator('#frDiagPanel')).toBeHidden();
+});
