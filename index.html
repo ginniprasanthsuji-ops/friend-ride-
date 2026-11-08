@@ -2236,7 +2236,10 @@ async function frEnableDeviceAlerts(){
       const oldKey=subscription.options?.applicationServerKey;
       const sameKey=oldKey&&oldKey.byteLength===applicationServerKey.byteLength&&
         applicationServerKey.every((v,i)=>v===new Uint8Array(oldKey)[i]);
-      if(!sameKey){
+      const {data:known,error:knownError}=await sb.from('fr_push_subscriptions').select('id')
+        .eq('endpoint',oldJson.endpoint).eq('user_id',currentUser.id).eq('is_active',true).maybeSingle();
+      if(knownError)throw knownError;
+      if(!sameKey||!known){
         await sb.from('fr_push_subscriptions').update({is_active:false,updated_at:new Date().toISOString()})
           .eq('endpoint',oldJson.endpoint).eq('user_id',currentUser.id);
         await subscription.unsubscribe();
