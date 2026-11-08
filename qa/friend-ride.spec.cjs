@@ -94,3 +94,50 @@ test('role-aware voice and background push notification handlers are present', a
   expect(source).toContain('కొత్త రైడ్ వచ్చింది');
   expect(source).toContain('requireInteraction');
 });
+
+test('registration form presents selectable glossy 3D male and female avatars', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#customerRegPhotoFields')).toBeAttached();
+  await expect(page.locator('.fr-avatar-pick')).toHaveCount(2);
+  await expect(page.locator('.fr-avatar-pick').first()).toContainText('3D Avatar');
+  await expect(page.locator('.fr-avatar-pick').nth(1)).toContainText('3D Avatar');
+  await expect(page.locator('.fr-avatar-art svg')).toHaveCount(2);
+  await expect(page.locator('#regCustomerAvatar')).toHaveValue('male');
+  await page.locator('.fr-avatar-pick[data-gender="female"]').click();
+  await expect(page.locator('#regCustomerAvatar')).toHaveValue('female');
+  await expect(page.locator('.fr-avatar-pick[data-gender="female"]')).toHaveClass(/active/);
+});
+
+test('Shop QR payment workflow is connected for customer and approved partner', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#frCustomerMarketOrders')).toBeAttached();
+  await expect(page.locator('#partnerOrderList')).toBeAttached();
+  const functions = await page.evaluate(() => ({
+    customerOrders: typeof window.frLoadCustomerMarketOrders,
+    openShopQr: typeof window.frCustomerOpenMarketPayment,
+    paymentCountdown: typeof window.frStartMarketPayCountdown,
+    partnerConfirm: typeof window.frPartnerConfirmMarketPayment
+  }));
+  expect(functions).toEqual({
+    customerOrders: 'function',
+    openShopQr: 'function',
+    paymentCountdown: 'function',
+    partnerConfirm: 'function'
+  });
+  await expect(page.locator('#regDriverQR')).toBeAttached();
+});
+
+test('Admin can review complaints and publish selected feedback to the homepage', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#frAdminSupportPanel')).toBeAttached();
+  await expect(page.locator('#frAdminSupportList')).toBeAttached();
+  await expect(page.locator('#frHomeRatings')).toBeAttached();
+  await expect(page.locator('#frHomepageRatingsList')).toBeAttached();
+  const functions = await page.evaluate(() => ({
+    loadAdmin: typeof window.frLoadAdminSupport,
+    setStatus: typeof window.frAdminSetSupportStatus,
+    publish: typeof window.frAdminPublishFeedback,
+    homepage: typeof window.frLoadHomepageRatings
+  }));
+  expect(functions).toEqual({ loadAdmin: 'function', setStatus: 'function', publish: 'function', homepage: 'function' });
+});
