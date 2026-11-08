@@ -36,6 +36,15 @@ test('automated QA page runs its checks and reports live-only constraints separa
   expect(audit.blocked.some(x => x.name.includes('KYC'))).toBe(true);
 });
 
+test('Home screen visibly exposes Complaint & Feedback and admin dashboard has an always-present review panel', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#frSupportHomeEntry')).toBeVisible();
+  await expect(page.locator('#frSupportHomeEntry button')).toContainText(/Complaint \/ Feedback/);
+  await expect(page.locator('#frHomeRatings')).toBeAttached();
+  await expect(page.locator('#adminDashboard #frAdminSupportPanel')).toBeAttached();
+  await expect(page.locator('#frAdminSupportList')).toBeAttached();
+});
+
 test('Help & Support routes to the working Complaints & Feedback form', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#frSupportMenu')).toContainText(/Complaints & Feedback/);
