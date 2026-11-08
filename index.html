@@ -735,7 +735,7 @@ let frSelectedCustomerAvatar='👦';
 function frSetAvatarGender(gender){const el=$('regCustomerGender');if(el)el.value=gender;const choices=[...document.querySelectorAll('.fr-avatar-choice')];choices.forEach(b=>{const a=b.dataset.avatar||'';b.style.outline=(gender==='female'?a.includes('👩')||a==='👧':a.includes('👨')||a==='👦'||a==='🧑')?'2px solid #168447':'none';});}
 function frSelectAvatar(avatar){frSelectedCustomerAvatar=avatar;const el=$('regCustomerAvatar');if(el)el.value=avatar;document.querySelectorAll('.fr-avatar-choice').forEach(b=>{b.style.outline=b.dataset.avatar===avatar?'3px solid #168447':'none';});}
 function frCheckPrescriptionFile(input){const f=input?.files?.[0];const status=$('prescriptionFileStatus');if(!f){if(status)status.textContent='Prescription medicine cart కోసం ఫైల్ అవసరం.';return;}const ok=f.type==='application/pdf'||f.type.startsWith('image/');if(!ok||f.size>10*1024*1024){alert('JPG, PNG లేదా PDF మాత్రమే. గరిష్ఠ ఫైల్ పరిమాణం 10 MB.');input.value='';if(status)status.textContent='Valid prescription file ఎంచుకోండి.';return;}if(status)status.textContent='Selected: '+f.name;}
-function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return; if(!f.type.startsWith('image/')){alert('Image file మాత్రమే ఎంచుకోండి.');input.value='';return;} const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
+function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>3*1024*1024){alert('Customer photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.');input.value='';$('regCustomerPhotoPreview')?.classList.add('hide');return;}const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
 function switchAuth(mode){clearMessage();const reg=mode==='register';const roleTitle=({customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'})[selectedRole]||'FRIEND RIDE';$('authTitle').textContent=roleTitle+(reg?' Registration':' Login');$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');$('customerRegPhotoFields').classList.toggle('hide',selectedRole!=='customer');$('driverRegDocs').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerRegFields').classList.toggle('hide',!reg||selectedRole!=='partner');$('driverExtraFields').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerExtraFields').classList.toggle('hide',!reg||selectedRole!=='partner');}
 function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||'customerDashboard';}
 async function register(){return sendRegistrationOtp();}
@@ -1290,17 +1290,24 @@ async function verifyRegistrationOtpAndRegister(){
         if(savedDocs.error)throw savedDocs.error;
       }
     } else {
-      // Keep the existing Customer registration path unchanged.
+      // Customer photo is private Storage content; only its path is persisted in profiles.
+      const customerPhoto=$('regCustomerPhoto')?.files?.[0];
+      if(customerPhoto){
+        if(!['image/jpeg','image/png','image/webp'].includes(customerPhoto.type)||customerPhoto.size>3*1024*1024)throw Error('Customer photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.');
+        const photoPath=await frUploadPrivateRegistrationFile(customerPhoto,'customer-profile-photos',data.user.id,'profile',3*1024*1024);
+        uploadedFiles.push(['customer-profile-photos',photoPath]);
+        registrationPaths.customer_profile_photo_path=photoPath;
+      }
       const existing=await sb.from('profiles').select('id,role').eq('id',data.user.id).maybeSingle();
       if(existing.error)throw existing.error;
       if(existing.data){
         const existingRole=String(existing.data.role||'customer').toLowerCase();
         if(existingRole!=='customer')throw Error('ఈ మొబైల్ ఇప్పటికే '+existingRole.toUpperCase()+' accountగా ఉంది. అదే accountతో Login చేయండి.');
-        const updateRow={...row};delete updateRow.id;delete updateRow.role;
+        const updateRow={...row,...registrationPaths};delete updateRow.id;delete updateRow.role;
         const saved=await sb.from('profiles').update(updateRow).eq('id',data.user.id);
         if(saved.error)throw saved.error;
       } else {
-        const saved=await sb.from('profiles').insert(row);
+        const saved=await sb.from('profiles').insert({...row,...registrationPaths});
         if(saved.error)throw saved.error;
       }
     }
@@ -1410,13 +1417,30 @@ async function refreshNearbyDrivers(){
     frShow('trackingStatus',rows.length?rows.length+' Online Drivers 15 KM పరిధిలో కనిపించారు. Driver Accept చేసిన తర్వాత Live Tracking ప్రారంభమవుతుంది.':'15 KM పరిధిలో ప్రస్తుతం Online Drivers లేరు.');
   }catch(e){frShow('trackingStatus','Nearby Drivers లోడ్ కాలేదు: '+e.message);}
 }
+async function frRenderCustomerRideDriverAndPayment(ride){
+  const box=$('liveRideStatus');if(!box||!ride?.driver_id)return;
+  try{
+    const {data,error}=await sb.rpc('get_ride_payment_details_v1',{p_ride_id:ride.id});if(error)throw error;
+    const d=Array.isArray(data)?data[0]:data;if(!d)return;
+    const card=document.createElement('div');card.className='notice';card.style.marginTop='10px';
+    const title=document.createElement('b');title.textContent='Driver & Payment Details';card.append(title);
+    const name=document.createElement('p');name.textContent='Driver: '+(d.driver_name||'Driver');card.append(name);
+    const phone=document.createElement('p');phone.textContent='Mobile: '+(d.driver_phone||'Not available');card.append(phone);
+    if(String(d.ride_status).toLowerCase()==='completed'&&d.provider_qr_path){
+      const {data:signed,error:signError}=await sb.storage.from('provider-payment-qr').createSignedUrl(d.provider_qr_path,300);if(signError)throw signError;
+      if(signed?.signedUrl){const label=document.createElement('p');label.textContent='Ride Completed — Driver Payment QR';card.append(label);const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Driver payment QR';img.style.cssText='width:210px;max-width:100%;height:auto;display:block;border-radius:12px;background:#fff;padding:8px';card.append(img);const fare=document.createElement('p');fare.textContent='Agreed Fare: ₹'+(d.agreed_fare??ride.agreed_fare??'—');card.append(fare);}
+    }else if(String(d.ride_status).toLowerCase()==='completed'){const note=document.createElement('p');note.textContent='Ride Completed. Driver QR ఇంకా నమోదు చేయలేదు.';card.append(note);}
+    box.append(card);
+  }catch(e){console.warn('Customer driver/payment details unavailable:',e.message);}
+}
+
 async function loadMyRideTracking(){
   if(!currentUser||currentProfile?.role!=='customer')return;
   try{
     const {data,error}=await sb.from('rides').select('*').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(10);if(error)throw error;
     const box=$('liveRideStatus');if(!box)return;
     if(!data?.length){box.textContent='ఇంకా Rides లేవు.';return;}
-    const active=data.find(r=>!['completed','cancelled','rejected'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;
+    const active=data.find(r=>!['completed','cancelled','rejected','canceled'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;
     box.innerHTML='<b>'+safe(active.vehicle_type)+' • '+safe(active.status)+'</b><p>'+safe(active.pickup)+' → '+safe(active.drop)+'</p><p>మీ Offer ₹'+safe(active.fare_offer)+' | Agreed ₹'+safe(active.agreed_fare??'—')+'</p><small>Ride ID: '+safe(active.id)+'</small>';
     if(String(active.status).toLowerCase()==='counter_offered'){
       const a=document.createElement('button');a.className='btn';a.textContent='Accept Driver Counter Offer';a.onclick=async()=>{const x=await sb.rpc('accept_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(a);
@@ -1460,6 +1484,24 @@ async function toggleOnline(){
   }catch(e){alert('Online Status: '+e.message);}
 }
 async function toggleDriverGps(){return toggleOnline();}
+async function frRenderRideCustomerDetails(rideId){
+  const box=$('driverRideStatus');if(!box||!rideId||!currentUser?.id)return;
+  try{
+    const {data,error}=await sb.rpc('get_ride_customer_details_v2',{p_ride_id:rideId});if(error)throw error;
+    const d=Array.isArray(data)?data[0]:data;if(!d)return;
+    const card=document.createElement('div');card.className='notice';card.dataset.frCustomerDetails='true';
+    const title=document.createElement('b');title.textContent='Assigned Ride — Customer Details';card.append(title);
+    const name=document.createElement('p');name.textContent='Customer: '+(d.full_name||'Customer');card.append(name);
+    const phone=document.createElement('p');phone.textContent='Mobile: '+(d.phone||'Not available');card.append(phone);
+    if(d.customer_profile_photo_path){
+      const {data:signed,error:signError}=await sb.storage.from('customer-profile-photos').createSignedUrl(d.customer_profile_photo_path,300);
+      if(signError)throw signError;
+      if(signed?.signedUrl){const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Customer profile';img.style.cssText='width:76px;height:76px;object-fit:cover;border-radius:50%';card.append(img);}
+    }
+    box.querySelector('[data-fr-customer-details]')?.remove();box.append(card);
+  }catch(e){console.warn('Assigned ride customer details unavailable:',e.message);}
+}
+
 async function loadDriverRideRequests(){
   if(!currentUser||currentProfile?.role!=='driver')return;
   const box=$('driverRequestsList');if(!box)return;box.textContent='Ride Requests లోడ్ అవుతున్నాయి…';
@@ -1467,7 +1509,7 @@ async function loadDriverRideRequests(){
     let data=null;const rpc=await sb.rpc('get_driver_requests');if(!rpc.error)data=rpc.data||[];
     if(data===null){const q=await sb.from('rides').select('*').is('driver_id',null).eq('status','requested').order('created_at',{ascending:false}).limit(40);if(q.error)throw q.error;data=q.data||[];}
     box.replaceChildren();if(!data.length){box.textContent='ప్రస్తుతం కొత్త Ride Requests లేవు.';return;}
-    data.forEach(r=>{const card=document.createElement('div');card.className='live-driver-card';const h=document.createElement('b');h.textContent=(r.vehicle_type||'Ride')+' • Customer Offer ₹'+(r.fare_offer??'—');const p=document.createElement('p');p.textContent=(r.pickup||'—')+' → '+(r.drop||'—');const accept=document.createElement('button');accept.className='btn';accept.textContent='✓ Accept';accept.onclick=async()=>{try{const a=await sb.rpc('accept_ride',{p_ride_id:r.id});if(a.error)throw a.error;frActiveRideId=r.id;await loadDriverRideRequests();await startDriverLiveTracking(r.id);}catch(e){alert('Ride Accept: '+e.message);}};const counter=document.createElement('button');counter.className='btn light';counter.textContent='₹ Counter Offer';counter.onclick=async()=>{const f=Number(prompt('మీ Counter Offer ధర (₹)'));if(!Number.isFinite(f)||f<=0)return;try{const a=await sb.rpc('counter_offer_ride',{p_ride_id:r.id,p_counter_fare:f});if(a.error)throw a.error;alert('Counter Offer పంపబడింది ✓');}catch(e){alert('Counter Offer: '+e.message);}};card.append(h,p,accept,counter);box.append(card);});
+    data.forEach(r=>{const card=document.createElement('div');card.className='live-driver-card';const h=document.createElement('b');h.textContent=(r.vehicle_type||'Ride')+' • Customer Offer ₹'+(r.fare_offer??'—');const p=document.createElement('p');p.textContent=(r.pickup||'—')+' → '+(r.drop||'—');const accept=document.createElement('button');accept.className='btn';accept.textContent='✓ Accept';accept.onclick=async()=>{try{const a=await sb.rpc('accept_ride',{p_ride_id:r.id});if(a.error)throw a.error;frActiveRideId=r.id;await loadDriverRideRequests();await frRenderRideCustomerDetails(r.id);await startDriverLiveTracking(r.id);}catch(e){alert('Ride Accept: '+e.message);}};const counter=document.createElement('button');counter.className='btn light';counter.textContent='₹ Counter Offer';counter.onclick=async()=>{const f=Number(prompt('మీ Counter Offer ధర (₹)'));if(!Number.isFinite(f)||f<=0)return;try{const a=await sb.rpc('counter_offer_ride',{p_ride_id:r.id,p_counter_fare:f});if(a.error)throw a.error;alert('Counter Offer పంపబడింది ✓');}catch(e){alert('Counter Offer: '+e.message);}};card.append(h,p,accept,counter);box.append(card);});
   }catch(e){box.textContent='Ride Requests Error: '+e.message;}
 }
 async function callDriver(){
@@ -2399,7 +2441,15 @@ function frSubmitBankEnquiry(){
         const {data,error}=await sb.auth.getSession();
         if(error)throw error;
         if(!data.session)return;
-        await window.acceptSession(data.session.user);
+        const user=data.session.user;
+        const profileResult=await sb.from('profiles').select('role').eq('id',user.id).maybeSingle();
+        if(profileResult.error)throw profileResult.error;
+        const adminResult=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();
+        if(adminResult.error)throw adminResult.error;
+        selectedRole=adminResult.data?.user_id===user.id?'admin':(profileResult.data?.role||user.user_metadata?.role||'customer');
+        try{localStorage.setItem('friendride_selected_role',selectedRole);}catch(_){}
+        if(typeof chooseRole==='function')chooseRole(selectedRole);
+        await window.acceptSession(user);
         return;
       }catch(e){lastError=e;await new Promise(r=>setTimeout(r,500*(i+1)));}
     }

@@ -1,0 +1,15 @@
+name: FRIEND RIDE workflow regression
+on:
+  push:
+    branches: [pr/workflow-integration-nov08]
+  pull_request:
+    branches: [main]
+jobs:
+  source-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/check-inline-js.mjs
