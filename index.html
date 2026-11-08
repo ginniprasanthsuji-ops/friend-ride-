@@ -866,10 +866,10 @@ function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return;if
 function switchAuth(mode){clearMessage();const reg=mode==='register';const roleTitle=({customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'})[selectedRole]||'FRIEND RIDE';$('authTitle').textContent=roleTitle+(reg?' Registration':' Login');$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');$('customerRegPhotoFields').classList.toggle('hide',selectedRole!=='customer');$('driverRegDocs').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerRegFields').classList.toggle('hide',!reg||selectedRole!=='partner');$('driverExtraFields').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerExtraFields').classList.toggle('hide',!reg||selectedRole!=='partner');const registerButton=$('authRegisterButton');if(registerButton){registerButton.textContent='New '+roleTitle+' Registration';registerButton.classList.toggle('hide',selectedRole==='admin');}const sendButton=$('loginForm')?.querySelector('button[onclick="sendLoginOtp()"]');if(sendButton)sendButton.textContent=selectedRole==='admin'?'Send Admin SMS OTP':'Send '+roleTitle+' SMS OTP';const verifyButton=$('loginForm')?.querySelector('button[onclick="verifyLoginOtp()"]');if(verifyButton)verifyButton.textContent='Verify '+roleTitle+' OTP & Continue';}
 function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||'customerDashboard';}
 async function register(){return sendRegistrationOtp();}
-function sendLoginOtp(){const p=normalizePhone($('loginPhone').value);if(!p){showMessage('సరైన 10 digit mobile number ఇవ్వండి.');return;}otpBackendNotice();}
-function verifyLoginOtp(){if(($('loginOtp').value||'').trim().length<4){showMessage('OTP నమోదు చేయండి.');return;}otpBackendNotice();}
-function sendRegistrationOtp(){const p=normalizePhone($('regPhone').value);if(!p){showMessage('సరైన 10 digit mobile number ఇవ్వండి.');return;}otpBackendNotice();}
-function verifyRegistrationOtpAndRegister(){if(($('regOtp').value||'').trim().length<4){showMessage('Registration OTP నమోదు చేయండి.');return;}otpBackendNotice();}
+/* Legacy OTP placeholder removed; use the APITXT integration handler. */
+/* Legacy OTP placeholder removed; use the APITXT integration handler. */
+/* Legacy OTP placeholder removed; use the APITXT integration handler. */
+/* Legacy OTP placeholder removed; use the APITXT integration handler. */
 function validateProfilePhotoFile(inputId){const el=$(inputId),f=el&&el.files&&el.files[0];if(!f)return false;return ['image/jpeg','image/png','image/webp'].includes(f.type)&&f.size<=3*1024*1024;}
 function validateTechnicianRegistration(){const ids=['techName','techPhone','techExperience','techAddress','techAadhaar','techPhonePe'];if(!validateProfilePhotoFile('techProfilePhoto')){alert('Passport-size photo JPG/PNG/WEBP 3 MB లోపు తప్పనిసరి.');return;}if(ids.some(id=>!$(id).value.trim())||!$('techAadhaarFile').files.length){alert('Technician వివరాలు, Aadhaar file మరియు PhonePe number తప్పనిసరి.');return;}if($('techAadhaarFile').files[0].size>2*1024*1024){alert('Aadhaar file 2 MB లోపు ఉండాలి.');return;}alert('Technician application fields validate అయ్యాయి. Private file storage మరియు Admin approval backend SQL దశలో connect చేయాలి.');}
 function confirmParcelRelease(){if(!$('parcelTrackingId').value.trim()||$('parcelDeliveryOtp').value.trim().length<4){alert('Tracking ID మరియు recipient OTP నమోదు చేయండి.');return;}if($('parcelReleaseStatus'))$('parcelReleaseStatus').textContent='Release request captured in UI. Server-side verified payment + OTP validation must approve parcel release.';alert('Frontend మాత్రమే ఆధారంగా parcel release చేయలేం. Backend payment verification మరియు OTP validation తర్వాతే release చేయాలి.');}
@@ -1522,6 +1522,11 @@ async function frLoadProfilePhoto(profile,role){
   img.onerror=()=>{img.remove();const note=document.createElement('small');note.dataset.frPhotoError='true';note.textContent='Profile photo preview unavailable';box.prepend(note);};
  }catch(e){console.warn('Profile photo load failed:',e.message);const note=document.createElement('small');note.dataset.frPhotoError='true';note.textContent='Profile photo unavailable';box.prepend(note);}
 }
+// Explicitly bind inline HTML buttons to the real APITXT handlers.
+window.sendLoginOtp=sendLoginOtp;
+window.verifyLoginOtp=verifyLoginOtp;
+window.sendRegistrationOtp=sendRegistrationOtp;
+window.verifyRegistrationOtpAndRegister=verifyRegistrationOtpAndRegister;
 // No password login or password registration is used by this build.
 async function login(){return verifyLoginOtp();}
 async function register(){return sendRegistrationOtp();}
