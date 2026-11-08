@@ -1764,72 +1764,7 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button><script>setTimeout(()=>window.print(),500)<\/script>
-
-
-
-<!-- FRIEND RIDE ROLE AUTH ROUTING FIX -->
-<script>
-(function(){
-  const allowedRoles=['customer','driver','partner','admin'];
-  const roleNames={customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'};
-  function normalizeRole(role){return allowedRoles.includes(String(role||'').toLowerCase())?String(role).toLowerCase():'customer';}
-  function persistRole(role){
-    selectedRole=normalizeRole(role);
-    try{localStorage.setItem('friendride_selected_role',selectedRole);}catch(_){}
-    return selectedRole;
-  }
-  window.switchAuth=function(mode){
-    const role=persistRole(selectedRole);
-    const isRegister=mode==='register';
-    clearMessage();
-    const title=document.getElementById('authTitle');
-    if(title)title.textContent=roleNames[role]+(isRegister?' Registration':' Login');
-    document.getElementById('loginForm')?.classList.toggle('hide',isRegister);
-    document.getElementById('registerForm')?.classList.toggle('hide',!isRegister);
-    document.getElementById('addressField')?.classList.toggle('hide',role!=='customer');
-    document.getElementById('customerRegPhotoFields')?.classList.toggle('hide',role!=='customer');
-    document.getElementById('driverRegDocs')?.classList.toggle('hide',!isRegister||role!=='driver');
-    document.getElementById('partnerRegFields')?.classList.toggle('hide',!isRegister||role!=='partner');
-    document.getElementById('driverExtraFields')?.classList.toggle('hide',!isRegister||role!=='driver');
-    document.getElementById('partnerExtraFields')?.classList.toggle('hide',!isRegister||role!=='partner');
-    const registerButton=document.getElementById('authRegisterButton');
-    if(registerButton){registerButton.textContent='New '+roleNames[role]+' Registration';registerButton.classList.toggle('hide',role==='admin');}
-    const send=document.querySelector('#loginForm button[onclick="sendLoginOtp()"]');
-    if(send)send.textContent='Send '+roleNames[role]+' SMS OTP';
-    const verify=document.querySelector('#loginForm button[onclick="verifyLoginOtp()"]');
-    if(verify)verify.textContent='Verify '+roleNames[role]+' OTP & Continue';
-    const roleGrid=document.querySelector('#authModal .rolegrid');
-    if(roleGrid)roleGrid.hidden=true;
-  };
-  window.openAuth=function(mode='login',role='customer'){
-    const selected=persistRole(role);
-    const modal=document.getElementById('authModal');
-    if(!modal)return;
-    window.switchAuth(mode);
-    modal.classList.add('show','fr-role-locked');
-    modal.setAttribute('data-active-role',selected);
-  };
-  window.enterRole=function(role){
-    const selected=persistRole(role);
-    const gate=document.getElementById('roleLauncher');
-    if(gate)gate.classList.add('hide');
-    window.openAuth('login',selected);
-    const modal=document.getElementById('authModal');
-    if(modal){modal.classList.add('fr-role-locked');modal.setAttribute('data-active-role',selected);}
-  };
-  window.frOpenRoleLogin=window.enterRole;
-  window.frRoleAuthSelfTest=function(){
-    const results=[];
-    for(const role of allowedRoles){
-      persistRole(role);window.switchAuth('login');
-      results.push({role,title:document.getElementById('authTitle')?.textContent,selectedRole,pass:document.getElementById('authTitle')?.textContent===roleNames[role]+' Login'&&selectedRole===role});
-    }
-    persistRole('customer');window.switchAuth('login');
-    return results;
-  };
-})();
-</script>
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button>
 
 </body></html>';
   w.document.open();w.document.write(html);w.document.close();
@@ -3914,6 +3849,72 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
   window.acceptSession=async function(user){const result=await originalAccept(user);if(currentProfile?.role==='partner')setTimeout(frPartnerLoadCatalogue,250);return result;};
  }
  document.addEventListener('DOMContentLoaded',()=>{if(currentProfile?.role==='partner')frPartnerLoadCatalogue();});
+})();
+</script>
+<script>setTimeout(()=>window.print(),500)<\/script>
+
+
+
+<!-- FRIEND RIDE ROLE AUTH ROUTING FIX -->
+<script>
+(function(){
+  const allowedRoles=['customer','driver','partner','admin'];
+  const roleNames={customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'};
+  function normalizeRole(role){return allowedRoles.includes(String(role||'').toLowerCase())?String(role).toLowerCase():'customer';}
+  function persistRole(role){
+    selectedRole=normalizeRole(role);
+    try{localStorage.setItem('friendride_selected_role',selectedRole);}catch(_){}
+    return selectedRole;
+  }
+  window.switchAuth=function(mode){
+    const role=persistRole(selectedRole);
+    const isRegister=mode==='register';
+    clearMessage();
+    const title=document.getElementById('authTitle');
+    if(title)title.textContent=roleNames[role]+(isRegister?' Registration':' Login');
+    document.getElementById('loginForm')?.classList.toggle('hide',isRegister);
+    document.getElementById('registerForm')?.classList.toggle('hide',!isRegister);
+    document.getElementById('addressField')?.classList.toggle('hide',role!=='customer');
+    document.getElementById('customerRegPhotoFields')?.classList.toggle('hide',role!=='customer');
+    document.getElementById('driverRegDocs')?.classList.toggle('hide',!isRegister||role!=='driver');
+    document.getElementById('partnerRegFields')?.classList.toggle('hide',!isRegister||role!=='partner');
+    document.getElementById('driverExtraFields')?.classList.toggle('hide',!isRegister||role!=='driver');
+    document.getElementById('partnerExtraFields')?.classList.toggle('hide',!isRegister||role!=='partner');
+    const registerButton=document.getElementById('authRegisterButton');
+    if(registerButton){registerButton.textContent='New '+roleNames[role]+' Registration';registerButton.classList.toggle('hide',role==='admin');}
+    const send=document.querySelector('#loginForm button[onclick="sendLoginOtp()"]');
+    if(send)send.textContent='Send '+roleNames[role]+' SMS OTP';
+    const verify=document.querySelector('#loginForm button[onclick="verifyLoginOtp()"]');
+    if(verify)verify.textContent='Verify '+roleNames[role]+' OTP & Continue';
+    const roleGrid=document.querySelector('#authModal .rolegrid');
+    if(roleGrid)roleGrid.hidden=true;
+  };
+  window.openAuth=function(mode='login',role='customer'){
+    const selected=persistRole(role);
+    const modal=document.getElementById('authModal');
+    if(!modal)return;
+    window.switchAuth(mode);
+    modal.classList.add('show','fr-role-locked');
+    modal.setAttribute('data-active-role',selected);
+  };
+  window.enterRole=function(role){
+    const selected=persistRole(role);
+    const gate=document.getElementById('roleLauncher');
+    if(gate)gate.classList.add('hide');
+    window.openAuth('login',selected);
+    const modal=document.getElementById('authModal');
+    if(modal){modal.classList.add('fr-role-locked');modal.setAttribute('data-active-role',selected);}
+  };
+  window.frOpenRoleLogin=window.enterRole;
+  window.frRoleAuthSelfTest=function(){
+    const results=[];
+    for(const role of allowedRoles){
+      persistRole(role);window.switchAuth('login');
+      results.push({role,title:document.getElementById('authTitle')?.textContent,selectedRole,pass:document.getElementById('authTitle')?.textContent===roleNames[role]+' Login'&&selectedRole===role});
+    }
+    persistRole('customer');window.switchAuth('login');
+    return results;
+  };
 })();
 </script>
 </body>
