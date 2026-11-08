@@ -83,3 +83,14 @@ test('Bank service enquiry is connected to customer submission and admin review'
   }));
   expect(functions).toEqual({ submit: 'function', adminLoad: 'function', adminUpdate: 'function' });
 });
+
+test('role-aware voice and background push notification handlers are present', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  expect(await page.evaluate(() => typeof window.frRideSpeakNotification)).toBe('function');
+  const response = await page.request.get('./service-worker.js');
+  expect(response.ok()).toBeTruthy();
+  const source = await response.text();
+  expect(source).toContain('కొత్త ఆర్డర్ వచ్చింది');
+  expect(source).toContain('కొత్త రైడ్ వచ్చింది');
+  expect(source).toContain('requireInteraction');
+});
