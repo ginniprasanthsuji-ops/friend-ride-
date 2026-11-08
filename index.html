@@ -2488,18 +2488,15 @@ function frSubmitBankEnquiry(){
  window.loadMyRideTracking=async function(){
    if(typeof oldCustomerLoad==='function')await oldCustomerLoad.apply(this,arguments);
    if(!currentUser||currentProfile?.role!=='customer')return;
-   const box=$('liveRideStatus');if(!box)return;
-   box.querySelector('#frCustomerDriverContact')?.remove();
+   const box=$('liveRideStatus'),dash=$('frCustomerRideContactDash');if(!box&&!dash)return;
+   box?.querySelector('#frCustomerDriverContact')?.remove();if(dash)dash.innerHTML='';
    try{
      const {data,error}=await sb.from('rides').select('id,status,driver_id').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(10);
      if(error)throw error;
      const ride=(data||[]).find(r=>r.driver_id&&['accepted','ongoing'].includes(String(r.status||'').toLowerCase()));
      if(!ride)return;
      const p=await rideContact('get_ride_driver_details',ride.id);
-     const card=document.createElement('div');card.id='frCustomerDriverContact';card.className='notice';card.innerHTML='<b>🚗 Driver Confirmed</b><br>';
-     contactActions(card,p?.full_name,p?.phone,'Driver');
-     if(p?.vehicle_company||p?.vehicle_model||p?.vehicle_registration){const v=document.createElement('p');v.textContent='Vehicle: '+[p.vehicle_company,p.vehicle_model,p.vehicle_registration].filter(Boolean).join(' • ');card.append(v);}
-     box.append(card);
+     [box,dash].filter(Boolean).forEach(target=>{const card=document.createElement('div');card.id=target===box?'frCustomerDriverContact':'frCustomerDriverContactDashCard';card.className='notice';card.innerHTML='<b>🚗 Driver Confirmed</b><br>';contactActions(card,p?.full_name,p?.phone,'Driver');if(p?.vehicle_company||p?.vehicle_model||p?.vehicle_registration){const v=document.createElement('p');v.textContent='Vehicle: '+[p.vehicle_company,p.vehicle_model,p.vehicle_registration].filter(Boolean).join(' • ');card.append(v);}target.append(card);});
    }catch(e){const n=document.createElement('p');n.className='notice';n.textContent='Driver contact load కాలేదు: '+(e.message||e);box.append(n);}
  };
  window.frOpenSupportPage=function(){
@@ -2565,6 +2562,8 @@ function frSubmitBankEnquiry(){
    if(drawer&&!$('frSupportMenu')){const b=document.createElement('button');b.id='frSupportMenu';b.className='menu-item';b.innerHTML='<span class="mi">💬</span>Complaints & Feedback';b.onclick=()=>{closeDrawer();frOpenSupportPage();};const logout=[...drawer.querySelectorAll('.menu-item')].find(x=>/logout/i.test(x.textContent));if(logout)logout.before(b);else drawer.append(b);}
    const home=$('home');
    if(home&&!$('frHomeRatings')){const section=document.createElement('div');section.id='frHomeRatings';section.className='card';section.innerHTML='<div class="home-section-title"><h2>⭐ Customer Ratings</h2><button type="button" onclick="frLoadHomepageRatings()">Refresh</button></div><p class="muted">Our customers share their FRIEND RIDE experience.</p><div id="frHomepageRatingsList"><p class="muted">Ratings loading…</p></div><button class="btn light" onclick="frOpenSupportPage()">Give Your Rating</button>';home.append(section);frLoadHomepageRatings();}
+   const customerDash=$('customerDashboard');
+   if(customerDash&&!$('frCustomerRideContactDash')){const rideCard=document.createElement('div');rideCard.id='frCustomerRideContactDash';rideCard.className='card';rideCard.innerHTML='<h3>🚗 My Confirmed Ride & Driver Contact</h3><p class="muted">Driver మీ Ride Confirm చేసిన తర్వాత పేరు, మొబైల్, Call మరియు WhatsApp ఇక్కడ కనిపిస్తాయి.</p>';customerDash.append(rideCard);}
    const admin=$('adminDashboard');
    if(admin&&!$('frAdminSupportPanel')){const card=document.createElement('div');card.id='frAdminSupportPanel';card.className='card';card.innerHTML='<h3>💬 Complaints & Customer Feedback</h3><p class="muted">Customer complaints review చేయండి. Homepageలో చూపించాల్సిన Feedbackను మీరు select చేయండి.</p><button class="btn purple" onclick="frLoadAdminSupport()">↻ Load Complaints & Feedback</button><div id="frAdminSupportList" style="margin-top:12px">Admin Dashboard తెరిచినప్పుడు Load నొక్కండి.</div>';admin.append(card);}
    const menu=$('drawer')||drawer;
