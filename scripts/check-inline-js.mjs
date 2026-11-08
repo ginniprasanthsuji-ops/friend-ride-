@@ -10,7 +10,7 @@ const checks=[
  ['Customer photo DB path','customer_profile_photo_path'],
  ['Assigned ride customer details','get_ride_customer_details_v2'],
  ['Completed ride QR details','get_ride_payment_details_v1'],
- ['Completed-only QR condition',"p?.ride_status||ride.status).toLowerCase()==='completed'"],
+ ['Completed-only QR condition',"if(status!=='completed')"],
  ['OTP backend','Sms-otp'],
  ['Role-aware session restore','adminRow?.user_id===authUser.id'],
  ['Customer photo upload','frUploadPrivateRegistrationFile(customerPhoto'],
