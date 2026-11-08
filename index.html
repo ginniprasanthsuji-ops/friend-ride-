@@ -1446,7 +1446,7 @@ async function loadMyRideTracking(){
       const a=document.createElement('button');a.className='btn';a.textContent='Accept Driver Counter Offer';a.onclick=async()=>{const x=await sb.rpc('accept_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(a);
       const d=document.createElement('button');d.className='btn light';d.textContent='Reject Counter Offer';d.onclick=async()=>{const x=await sb.rpc('decline_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(d);
     }
-    if(active.driver_id&&['accepted','in_progress','started'].includes(String(active.status).toLowerCase())){const b=document.createElement('button');b.className='btn purple';b.textContent='🛰️ Start Two-Way Live Tracking';b.onclick=()=>startCustomerLiveTracking(active.id);box.append(b);}
+    if(active.driver_id&&['accepted','confirmed','ongoing','in_progress','started'].includes(String(active.status).toLowerCase())){const b=document.createElement('button');b.className='btn purple';b.textContent='🛰️ Start Two-Way Live Tracking';b.onclick=()=>startCustomerLiveTracking(active.id);box.append(b);}
   }catch(e){frShow('liveRideStatus','My Rides Error: '+e.message);}
 }
 async function startCustomerTrackingFromPanel(){if(frActiveRideId)await startCustomerLiveTracking(frActiveRideId);else await loadMyRideTracking();}
@@ -1462,7 +1462,7 @@ async function refreshDriverCustomerLocation(rideId){
 async function startCustomerLiveTracking(rideId){
   try{
     const {data:ride,error}=await sb.from('rides').select('id,status,driver_id').eq('id',rideId).eq('customer_id',currentUser.id).maybeSingle();if(error)throw error;
-    if(!ride?.driver_id||!['accepted','in_progress','started'].includes(String(ride.status||'').toLowerCase()))throw Error('Driver Accept చేసిన తర్వాత మాత్రమే Live Tracking ప్రారంభమవుతుంది.');
+    if(!ride?.driver_id||!['accepted','confirmed','ongoing','in_progress','started'].includes(String(ride.status||'').toLowerCase()))throw Error('Driver Accept చేసిన తర్వాత మాత్రమే Live Tracking ప్రారంభమవుతుంది.');
     if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);
     const send=async()=>{try{const p=await frPosition();const x=await sb.from('ride_live_locations').upsert({ride_id:rideId,user_id:currentUser.id,latitude:p.coords.latitude,longitude:p.coords.longitude,updated_at:new Date().toISOString()},{onConflict:'ride_id,user_id'});if(x.error)throw x.error;await refreshCustomerDriverLocation(rideId);frShow('liveRideStatus','మీ Location Driverకు Liveగా Share అవుతోంది ✓');}catch(e){frShow('liveRideStatus','Customer GPS update కాలేదు: '+e.message);}};
     await send();frCustomerTrackTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='customer')send();},10000);
@@ -1513,7 +1513,17 @@ async function loadDriverRideRequests(){
   }catch(e){box.textContent='Ride Requests Error: '+e.message;}
 }
 async function callDriver(){
-  try{if(!frActiveRideId)await loadMyRideTracking();if(!frActiveRideId){alert('Active Ride లేదు.');return;}const {data,error}=await sb.from('rides').select('driver_id').eq('id',frActiveRideId).maybeSingle();if(error)throw error;if(!data?.driver_id)throw Error('Driver ఇంకా Ride Accept చేయలేదు.');const p=await sb.from('profiles').select('phone').eq('id',data.driver_id).maybeSingle();if(p.error)throw p.error;if(!p.data?.phone)throw Error('Driver phone number అందుబాటులో లేదు.');location.href='tel:'+String(p.data.phone).replace(/[^+\d]/g,'');}catch(e){alert('Call Driver: '+e.message);}
+  try{
+    if(!frActiveRideId)await loadMyRideTracking();
+    if(!frActiveRideId)throw Error('Active Ride లేదు.');
+    const {data,error}=await sb.rpc('get_ride_driver_details',{p_ride_id:frActiveRideId});
+    if(error)throw error;
+    const d=Array.isArray(data)?data[0]:data;
+    if(!d)throw Error('Driver ఇంకా Ride Accept చేయలేదు లేదా Contact అందుబాటులో లేదు.');
+    const phone=String(d.phone||'').replace(/[^+\\d]/g,'');
+    if(!phone)throw Error('Driver phone number profileలో నమోదు కాలేదు.');
+    location.href='tel:'+phone;
+  }catch(e){alert('Call Driver: '+(e.message||e));}
 }
 async function savePersonalEmergencyContact(role){
   role=role||currentProfile?.role||'customer';const prefix=role==='driver'?'driverEmergency':'emergencyContact';const name=$(prefix+'Name')?.value.trim(),phone=frDigits(prefix+'Phone');
@@ -2510,7 +2520,7 @@ function frSubmitBankEnquiry(){
    const wrap=document.createElement('div');wrap.className='fr-contact-actions';
    const title=document.createElement('p');title.innerHTML='<b>'+esc(who||'Contact')+':</b> '+esc(name||'—')+'<br><b>Mobile:</b> '+(digits?esc(raw):'Not available');parent.append(title);
    if(digits){
-     const call=document.createElement('a');call.className='fr-call';call.href='tel:'+raw;call.textContent='📞 Call';wrap.append(call);
+     const call=document.createElement('a');call.className='fr-call';call.href='tel:'+raw.replace(/[^+\\d]/g,'');call.textContent='📞 Call';wrap.append(call);
      const wa=waNumber(raw);if(wa){const chat=document.createElement('a');chat.className='fr-wa';chat.href='https://wa.me/'+wa;chat.target='_blank';chat.rel='noopener';chat.textContent='🟢 WhatsApp';wrap.append(chat);}
    }
    parent.append(wrap);
@@ -2524,7 +2534,7 @@ function frSubmitBankEnquiry(){
    const requests=$('driverRequestsList');if(!requests)return;
    let panel=$('frDriverActiveRide');if(!panel){panel=document.createElement('div');panel.id='frDriverActiveRide';panel.className='card';requests.parentNode.insertBefore(panel,requests);}
    try{
-     const {data,error}=await sb.from('rides').select('id,status,vehicle_type,pickup,drop,fare_offer,agreed_fare,created_at').eq('driver_id',currentUser.id).in('status',['accepted','ongoing']).order('created_at',{ascending:false}).limit(1);
+     const {data,error}=await sb.from('rides').select('id,status,vehicle_type,pickup,drop,fare_offer,agreed_fare,created_at').eq('driver_id',currentUser.id).in('status',['accepted','confirmed','ongoing']).order('created_at',{ascending:false}).limit(1);
      if(error)throw error;
      const ride=data?.[0];if(!ride){panel.hidden=true;panel.innerHTML='';return;}
      panel.hidden=false;panel.innerHTML='<h3>🚘 Active Ride • '+esc(ride.status)+'</h3><p><b>'+esc(ride.vehicle_type||'Ride')+'</b></p><p>'+esc(ride.pickup||'—')+' → '+esc(ride.drop||'—')+'</p><p>Fare: ₹'+esc(ride.agreed_fare??ride.fare_offer??'—')+'</p><div id="frDriverCustomerContact" class="notice">Customer contact loading…</div>';
@@ -2543,7 +2553,7 @@ function frSubmitBankEnquiry(){
    try{
      const {data,error}=await sb.from('rides').select('id,status,driver_id').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(10);
      if(error)throw error;
-     const ride=(data||[]).find(r=>r.driver_id&&['accepted','ongoing'].includes(String(r.status||'').toLowerCase()));
+     const ride=(data||[]).find(r=>r.driver_id&&['accepted','confirmed','ongoing'].includes(String(r.status||'').toLowerCase()));
      if(!ride)return;
      const p=await rideContact('get_ride_driver_details',ride.id);
      [box,dash].filter(Boolean).forEach(target=>{const card=document.createElement('div');card.id=target===box?'frCustomerDriverContact':'frCustomerDriverContactDashCard';card.className='notice';card.innerHTML='<b>🚗 Driver Confirmed</b><br>';contactActions(card,p?.full_name,p?.phone,'Driver');if(p?.vehicle_company||p?.vehicle_model||p?.vehicle_registration){const v=document.createElement('p');v.textContent='Vehicle: '+[p.vehicle_company,p.vehicle_model,p.vehicle_registration].filter(Boolean).join(' • ');card.append(v);}target.append(card);});
