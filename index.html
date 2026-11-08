@@ -1367,6 +1367,7 @@ async function verifyRegistrationOtpAndRegister(){
     if(result.verified!==true||!session?.access_token||!session?.refresh_token)throw Error(result.error||'Registration verify responseలో Supabase Auth session లేదు.');
     const {data,error}=await sb.auth.setSession(session);if(error)throw error;if(!data.user)throw Error('OTP verify అయింది కానీ Auth user session రాలేదు. Sms-otp Function కొత్త Registration account create చేయాలి.');
     const row={id:data.user.id,full_name:v.name,phone:normalizePhone(v.phone),role:selectedRole,address:selectedRole==='customer'?v.address:(selectedRole==='partner'?$('regBusinessAddress').value.trim():null)};
+    if(selectedRole==='customer')row.customer_avatar_gender=$('regCustomerAvatar')?.value==='female'?'female':'male';
     let registrationPaths={};
     if(selectedRole==='driver'){
       const photo=await frUploadPrivateRegistrationFile($('regDriverPhoto').files[0],'driver-profile-photos',data.user.id,'profile',3*1024*1024);uploadedFiles.push(['driver-profile-photos',photo]);
