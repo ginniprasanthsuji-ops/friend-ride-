@@ -3715,7 +3715,8 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
   if(offer!==null&&(!Number.isFinite(offer)||offer<0||price===null||offer>price)){alert('Offer Price ఇవ్వాలంటే సాధారణ ధర కూడా నమోదు చేయాలి; Offer Price సాధారణ ధర కంటే ఎక్కువగా ఉండకూడదు.');return;}
   if(file&&(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>5*1024*1024)){alert('JPG, PNG లేదా WEBP ఫోటో మాత్రమే. గరిష్ఠ పరిమాణం 5 MB.');return;}
   const existing=localCatalogue.find(x=>selected&&x.sku===selected.id);
-  if(!existing&&localCatalogue.length>=200){alert('ఒక్కో షాప్‌కు గరిష్ఠంగా 200 Catalogue items మాత్రమే.');return;}\n  if(!file&&!existing?.image){alert('Customer Digital Catalogueలో ఫోటో కనిపించేందుకు ప్రతి కొత్త వస్తువుకు JPG / PNG / WEBP ఫోటో upload చేయండి.');return;}
+  if(!existing&&localCatalogue.length>=200){alert('ఒక్కో షాప్‌కు గరిష్ఠంగా 200 Catalogue items మాత్రమే.');return;}
+  if(!file&&!existing?.image){alert('Customer Digital Catalogueలో ఫోటో కనిపించేందుకు ప్రతి కొత్త వస్తువుకు JPG / PNG / WEBP ఫోటో upload చేయండి.');return;}
   const btn=document.querySelector('#partnerCatalogue button[onclick="addCatalogueItem()"]');if(btn){btn.disabled=true;btn.textContent='Saving…';}
   try{
    let imageUrl=existing?.image||'';
