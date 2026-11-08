@@ -1719,50 +1719,7 @@ async function frDownloadRideInvoice(rideId,kind){
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
   const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button><script>setTimeout(()=>window.print(),500)<\/script>
-<style id="fr-home-profile-avatar-style">
-.fr-home-profile-btn{width:42px;height:42px;min-width:42px;padding:3px!important;border-radius:50%!important;display:grid;place-items:center;overflow:hidden;background:linear-gradient(145deg,#fff,#f1eaff)!important;border:2px solid #fff!important;box-shadow:0 3px 12px #160b2a30}
-.fr-home-profile-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.fr-home-profile-btn #frHomeProfileAvatar{width:100%;height:100%;display:grid;place-items:center}
-.fr-home-profile-btn #frHomeProfileAvatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-</style>
-<script id="fr-home-profile-avatar">
-async function frRefreshHomeProfileAvatar(){
- const btn=document.getElementById('frHomeProfileButton'),photo=document.getElementById('frHomeProfileImage'),fallback=document.getElementById('frHomeProfileAvatar');
- if(!btn||!photo||!fallback)return;
- photo.hidden=true;photo.removeAttribute('src');fallback.innerHTML='';
- const role=String(currentProfile?.role||'customer').toLowerCase();
- const path=role==='driver'?currentProfile?.driver_profile_photo_path:role==='partner'?currentProfile?.partner_profile_photo_path:currentProfile?.customer_profile_photo_path;
- const bucket=role==='driver'?'driver-profile-photos':role==='partner'?'partner-profile-photos':'customer-profile-photos';
- if(path){
-  try{
-   const {data,error}=await sb.storage.from(bucket).createSignedUrl(path,3600);
-   if(error)throw error;
-   if(data?.signedUrl){
-    photo.onload=()=>{photo.hidden=false;fallback.hidden=true;};
-    photo.onerror=()=>{photo.hidden=true;fallback.hidden=false;};
-    photo.src=data.signedUrl;
-    return;
-   }
-  }catch(e){console.warn('Home profile photo unavailable:',e.message);}
- }
- fallback.hidden=false;
- const gender=currentProfile?.customer_avatar_gender==='female'?'female':'male';
- const avatar=frCustomerAvatarData(gender);
- const img=document.createElement('img');img.src=avatar;img.alt='3D profile avatar';fallback.append(img);
-}
-(function(){
- const original=acceptSession;
- acceptSession=async function(user){
-  const result=await original.apply(this,arguments);
-  await frRefreshHomeProfileAvatar();
-  return result;
- };
- const oldLogout=logout;
- logout=async function(){const result=await oldLogout.apply(this,arguments);await frRefreshHomeProfileAvatar();return result;};
- document.addEventListener('DOMContentLoaded',()=>frRefreshHomeProfileAvatar());
- if(currentUser?.id)frRefreshHomeProfileAvatar();
-})();
-</script>
+
 
 </body></html>';
   w.document.open();w.document.write(html);w.document.close();
@@ -3373,6 +3330,7 @@ if(typeof oldRideContactShow==='function'){
        const saved=await sb.from('profiles').update({[column]:path}).eq('id',currentUser.id);
        if(saved.error){await sb.storage.from(bucket).remove([path]);throw saved.error;}
        currentProfile={...currentProfile,[column]:path};
+       if(typeof window.frRefreshHomeProfileAvatar==='function')await window.frRefreshHomeProfileAvatar();
        status.textContent='Profile photo Databaseలో సేవ్ అయింది ✓';
        await frInstallProfilePhotoEditor();
        if(role==='customer'&&typeof window.loadMyRideTracking==='function')await window.loadMyRideTracking();
@@ -3876,3 +3834,52 @@ input,textarea,select{box-shadow:0 1px 2px #24104405}
 
 .fr-location-field{position:relative}.fr-location-suggestions{display:none;position:relative;z-index:40;background:#fff;border:1px solid #ded4eb;border-radius:12px;margin-top:5px;max-height:210px;overflow:auto;box-shadow:0 8px 22px #24104418}.fr-location-suggestions.open{display:block}.fr-location-suggestions button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #f0ebf5;background:#fff;padding:10px 12px;color:#241936;font-size:13px}.fr-location-suggestions button:last-child{border-bottom:0}.fr-location-suggestions button:active{background:#f2eaff}.fr-location-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.fr-location-actions .btn{font-size:12px;padding:8px 11px}.fr-location-field small{display:block;margin-top:5px}
 </style>
+
+<style id="fr-home-profile-avatar-style">
+.home-topbar .fr-home-profile-btn{width:44px;height:44px;min-width:44px;padding:3px!important;border-radius:50%!important;display:grid;place-items:center;overflow:hidden;background:#fff!important;border:2px solid #fff!important;box-shadow:0 2px 8px #160b2a20}
+.home-topbar .fr-home-profile-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{width:100%;height:100%;display:grid;place-items:center}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+</style>
+<script id="fr-home-profile-avatar">
+window.frRefreshHomeProfileAvatar=async function(){
+ const photo=document.getElementById('frHomeProfileImage');
+ const fallback=document.getElementById('frHomeProfileAvatar');
+ if(!photo||!fallback)return;
+ photo.hidden=true;photo.removeAttribute('src');fallback.replaceChildren();
+ const profile=window.currentProfile||currentProfile||{};
+ const user=window.currentUser||currentUser||null;
+ if(!user?.id||!profile?.role){fallback.hidden=false;return;}
+ const role=String(profile.role).toLowerCase();
+ const column=role==='driver'?'driver_profile_photo_path':role==='partner'?'partner_profile_photo_path':'customer_profile_photo_path';
+ const bucket=role==='driver'?'driver-profile-photos':role==='partner'?'partner-profile-photos':'customer-profile-photos';
+ const path=profile[column]||profile.profile_photo_path||null;
+ if(path&&window.sb){
+  try{
+   const {data,error}=await sb.storage.from(bucket).createSignedUrl(path,3600);
+   if(error)throw error;
+   if(data?.signedUrl){
+    photo.onload=()=>{photo.hidden=false;fallback.hidden=true;};
+    photo.onerror=()=>{photo.hidden=true;fallback.hidden=false;};
+    photo.src=data.signedUrl;
+    return;
+   }
+  }catch(error){console.warn('FR home profile image:',error.message);}
+ }
+ fallback.hidden=false;
+ const gender=profile.customer_avatar_gender==='female'?'female':'male';
+ const avatar=typeof frCustomerAvatarData==='function'?frCustomerAvatarData(gender):'';
+ if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='3D profile avatar';fallback.append(img);}
+};
+(function(){
+ const refresh=()=>window.frRefreshHomeProfileAvatar().catch(e=>console.warn(e));
+ document.addEventListener('DOMContentLoaded',refresh);
+ window.addEventListener('pageshow',refresh);
+ const prior=window.acceptSession;
+ if(typeof prior==='function'&&!window.__frHomeAvatarSessionHook){
+  window.__frHomeAvatarSessionHook=true;
+  window.acceptSession=async function(){const result=await prior.apply(this,arguments);await refresh();return result;};
+ }
+ if(document.readyState!=='loading')refresh();
+})();
+</script>
