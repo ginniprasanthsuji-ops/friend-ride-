@@ -700,7 +700,7 @@ async function loadPartnerPaymentSettings(){
  }catch(e){if($('partnerPayStatus'))$('partnerPayStatus').textContent=e.message;}
 }
 async function savePartnerPaymentSettings(){
- const uploaded=[];
+ const uploaded=[];let saved=false;
  try{
   if(!currentUser||currentProfile?.role!=='partner')throw Error('Partner login అవసరం.');
   const upi=$('partnerPayUpi').value.trim(),phone=$('partnerPayPhone').value.replace(/\D/g,'');
@@ -723,11 +723,12 @@ async function savePartnerPaymentSettings(){
   const {data,error}=await sb.rpc('fr_partner_save_payment_details',{p_upi_id:upi,p_phonepe_number:phone,p_qr_path:qrPath,p_provider_qr_path:providerQrPath});
   if(error)throw error;
   if(!data?.ok)throw Error('Payment details database confirmation రాలేదు.');
+  saved=true;
   $('partnerPayStatus').textContent='Shop UPI, QR మరియు secure Customer payment QR save అయ్యాయి ✓';
   await loadPartnerPaymentSettings();
   alert('Shop UPI / QR details saved. Customer payment QR ఇప్పుడు Shop Order payment flowలో ఉపయోగించబడుతుంది. Payment success మాత్రం Shop Owner bank/UPIలో verify చేసిన తర్వాతే confirm చేయాలి.');
  }catch(e){
-  for(const [bucket,path] of uploaded){try{await sb.storage.from(bucket).remove([path]);}catch(_){}}
+  if(!saved)for(const [bucket,path] of uploaded){try{await sb.storage.from(bucket).remove([path]);}catch(_){}}
   $('partnerPayStatus').textContent='Save failed: '+(e.message||e);
  }
 }
