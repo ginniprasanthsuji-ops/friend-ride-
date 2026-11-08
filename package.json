@@ -5,7 +5,7 @@
     "test": "playwright test",
     "test:unit": "node --test tests/*.test.cjs",
     "typecheck": "tsc --noEmit --skipLibCheck --target ES2020 --module none src/ride-contact.ts",
-    "build:runtime": "tsc --target ES2020 --module none --outFile assets/ride-contact.js src/ride-contact.ts",
+    "build:runtime": "tsc --skipLibCheck --target ES2020 --module none --outFile assets/ride-contact.js src/ride-contact.ts",
     "test:core": "vitest run",
     "typecheck:core": "tsc -p tsconfig.json"
   },
