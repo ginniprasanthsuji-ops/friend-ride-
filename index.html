@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#24105f">
-<meta name="application-version" content="10.1">
+<meta name="application-version" content="10.2-feedback-hotfix">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>FRIEND RIDE – Friend Mart | Version 10.1</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -227,6 +227,12 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <main>
 <section id="home" class="page active">
  <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('explore')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Services ↗</span></div><div class="banner-art">🛵</div></div><div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
+ <section id="frHomeRatings" class="card" aria-label="Customer Ratings">
+  <div class="home-section-title"><h2>⭐ Customer Ratings</h2><button type="button" onclick="frLoadHomepageRatings()">Refresh</button></div>
+  <p class="muted">Our customers share their FRIEND RIDE experience.</p>
+  <div id="frHomepageRatingsList"><p class="muted">Ratings loading…</p></div>
+  <button class="btn light" onclick="frOpenSupportPage()">Give Your Rating</button>
+ </section>
 <div class="fr-poster-rail" aria-label="Friend Ride offers and safety posters">
  <button class="fr-poster fr-poster-ins" onclick="showPage('offers')">
   <span class="fr-poster-copy"><span class="fr-poster-kicker">DRIVER PARTNER BENEFIT</span><h3>₹2 లక్షల వరకు ప్రమాద బీమా</h3><p>డ్రైవర్ భద్రతకు ప్రాధాన్యం. బీమా అర్హత, షరతులు మరియు కవరేజ్ నిబంధనలకు లోబడి ఉంటుంది.</p><span class="fr-poster-cta">Know More</span></span><span class="fr-poster-art">🛡️</span>
@@ -541,6 +547,18 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <section id="support" class="page"><div class="card"><h2>💬 Complaints & Feedback</h2><p class="muted">ఈ పాత Support లింక్ ఇప్పుడు కొత్త Complaint & Feedback ఫారమ్‌కు తీసుకెళ్తుంది.</p><button class="btn purple" onclick="frOpenSupportPage()">Open Complaints & Feedback</button></div></section>
 <section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
 <section id="cart" class="page"><div class="card"><h2>🛒 My Cart</h2><p class="muted">మీ Friend Mart / Food Delivery items ఇక్కడ కనిపిస్తాయి.</p><div class="notice">మీరు ఎంచుకున్న వస్తువులు ఇక్కడ కనిపిస్తాయి. షాపింగ్ కొనసాగించండి.</div><button class="btn purple" onclick="showPage('shops')">Explore Stores</button><div class="notice" style="margin-top:12px"><b>Charges Transparency</b><br>Platform charge: 2.5% (eligible order valueపై). Delivery charge: location, distance మరియు delivery partner quote ఆధారంగా checkout ముందు చూపబడుతుంది. Final payable amount paymentకి ముందు చూపించాలి.</div></div></section>
+ <section id="frSupportFeedback" class="page">
+  <div class="card">
+   <h2>💬 Complaints & Feedback</h2>
+   <p class="muted">మీ సమస్య లేదా FRIEND RIDE అనుభవాన్ని మాతో పంచుకోండి.</p>
+   <div class="field"><label>Type</label><select id="frSupportKind"><option value="complaint">Complaint / ఫిర్యాదు</option><option value="feedback">Feedback & Rating / అభిప్రాయం</option></select></div>
+   <div class="field" id="frSupportRatingWrap" hidden><label>Your Rating</label><select id="frSupportRating"><option value="">Select rating</option><option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option><option value="4">⭐⭐⭐⭐ 4 - Good</option><option value="3">⭐⭐⭐ 3 - Average</option><option value="2">⭐⭐ 2 - Poor</option><option value="1">⭐ 1 - Very Poor</option></select></div>
+   <div class="field" id="frSupportRideWrap"><label>Ride ID (Optional)</label><input id="frSupportRideId" placeholder="Ride ID if related"></div>
+   <div class="field"><label>Details</label><textarea id="frSupportMessage" rows="5" maxlength="2000" placeholder="మీ Complaint / Feedback వివరాలు..."></textarea></div>
+   <button class="btn purple" onclick="frSubmitSupportFeedback()">Submit</button>
+   <div id="frSupportSubmitStatus" class="notice">మీ వివరాలు Admin Dashboardకు పంపబడతాయి.</div>
+  </div>
+ </section>
 </main>
 
 <nav class="bottom premium-bottom">
@@ -3157,8 +3175,10 @@ if(typeof oldRideContactShow==='function'){
    if(!$('frSupportFeedback')){
      const page=document.createElement('section');page.id='frSupportFeedback';page.className='page';
      page.innerHTML='<div class="card"><h2>💬 Complaints & Feedback</h2><p class="muted">మీ సమస్య లేదా FRIEND RIDE అనుభవాన్ని మాతో పంచుకోండి.</p><div class="field"><label>Type</label><select id="frSupportKind"><option value="complaint">Complaint / ఫిర్యాదు</option><option value="feedback">Feedback & Rating / అభిప్రాయం</option></select></div><div class="field" id="frSupportRatingWrap" hidden><label>Your Rating</label><select id="frSupportRating"><option value="">Select rating</option><option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option><option value="4">⭐⭐⭐⭐ 4 - Good</option><option value="3">⭐⭐⭐ 3 - Average</option><option value="2">⭐⭐ 2 - Poor</option><option value="1">⭐ 1 - Very Poor</option></select></div><div class="field" id="frSupportRideWrap"><label>Ride ID (Optional)</label><input id="frSupportRideId" placeholder="Ride ID if related"></div><div class="field"><label>Details</label><textarea id="frSupportMessage" rows="5" maxlength="2000" placeholder="మీ Complaint / Feedback వివరాలు..."></textarea></div><button class="btn purple" onclick="frSubmitSupportFeedback()">Submit</button><div id="frSupportSubmitStatus" class="notice">మీ వివరాలు Admin Dashboardకు పంపబడతాయి.</div></div>';
-     document.body.append(page);$('frSupportKind').addEventListener('change',syncSupportForm);
+     document.body.append(page);
    }
+   const kind=$('frSupportKind');
+   if(kind&&!kind.dataset.frBound){kind.addEventListener('change',syncSupportForm);kind.dataset.frBound='1';}
    const drawer=document.querySelector('.drawer');
    if(drawer&&!$('frSupportMenu')){const b=document.createElement('button');b.id='frSupportMenu';b.className='menu-item';b.innerHTML='<span class="mi">💬</span>Complaints & Feedback';b.onclick=()=>{closeDrawer();frOpenSupportPage();};const logout=[...drawer.querySelectorAll('.menu-item')].find(x=>/logout/i.test(x.textContent));if(logout)logout.before(b);else drawer.append(b);}
    const home=$('home');
@@ -3168,7 +3188,7 @@ if(typeof oldRideContactShow==='function'){
      const banner=home.querySelector('.home-banner-wrap');
      if(banner)banner.after(section);else home.append(section);
      frLoadHomepageRatings();
-   }
+   }else if(home&&$('frHomeRatings')){frLoadHomepageRatings();}
    const customerDash=$('customerDashboard');
    if(customerDash&&!$('frCustomerRideContactDash')){const rideCard=document.createElement('div');rideCard.id='frCustomerRideContactDash';rideCard.className='card';rideCard.innerHTML='<h3>🚗 My Confirmed Ride & Driver Contact</h3><p class="muted">Driver మీ Ride Confirm చేసిన తర్వాత పేరు, మొబైల్, Call మరియు WhatsApp ఇక్కడ కనిపిస్తాయి.</p>';customerDash.append(rideCard);}
    const admin=$('adminDashboard');
