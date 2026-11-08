@@ -68,7 +68,15 @@ async function run(){
   report.simulation=sims.map(x=>{let ok=false;try{ok=!!x[1]()}catch(e){}return {name:x[0],ok,detail:'Deterministic mock test; not a live transaction'}});
   const cfg=src.match(/const SUPABASE_URL=['"]([^'"]+)/),key=src.match(/const SUPABASE_ANON_KEY=['"]([^'"]+)/);
   if(cfg&&key){
-   const base=cfg[1],headers={'apikey':key[1],'Authorization':'Bearer '+key[1]};
+   const base=cfg[1];
+   let sessionToken=null;
+   try{
+    const projectRef=new URL(base).hostname.split('.')[0];
+    const candidates=[localStorage.getItem('sb-'+projectRef+'-auth-token'),...Object.keys(localStorage).filter(k=>k.startsWith('sb-')&&k.endsWith('-auth-token')).map(k=>localStorage.getItem(k))].filter(Boolean);
+    for(const raw of candidates){try{const parsed=JSON.parse(raw);const token=parsed?.access_token||parsed?.currentSession?.access_token||parsed?.session?.access_token;if(token){sessionToken=token;break;}}catch(_){}}
+   }catch(_){}
+   const headers={'apikey':key[1],'Authorization':'Bearer '+(sessionToken||key[1])};
+   report.source.push({name:'Authenticated QA session',ok:!!sessionToken,detail:sessionToken?'Using current signed-in Supabase session for read-only RLS checks':'No signed-in session found; backend checks will be marked AUTH REQUIRED'});
    for(const table of ['profiles','rides','driver_locations','fr_market_orders','fr_market_order_items','fr_partner_catalogue_items','fr_parcel_orders','fr_service_requests','fr_service_providers','fr_push_subscriptions']){
     try{const r=await fetch(base+'/rest/v1/'+table+'?select=*&limit=0',{headers,cache:'no-store'});report.backend.push({name:table+' read endpoint',ok:r.status===401||r.status===403?null:r.ok,detail:'HTTP '+r.status+' (read-only; auth-required responses are not treated as failures)'})}
     catch(e){report.backend.push({name:table+' read endpoint',ok:false,detail:e.message})}
