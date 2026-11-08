@@ -12,14 +12,18 @@ const checks=[
  ['Completed ride QR details','get_ride_payment_details_v1'],
  ['Completed-only QR condition',"d.ride_status).toLowerCase()==='completed'"],
  ['OTP backend','Sms-otp'],
- ['Role-aware session restore','adminResult.data?.user_id===user.id'],
+ ['Role-aware session restore','adminRow?.user_id===authUser.id'],
  ['Customer photo upload','frUploadPrivateRegistrationFile(customerPhoto'],
  ['Version 10.2 feedback hotfix marker','name="application-version" content="10.2-feedback-hotfix"'],
  ['Partner GPS save RPC','fr_partner_save_location'],
  ['Approved store geo RPC','fr_customer_list_approved_stores_geo'],
  ['Friend Mart map','friendMartMap'],
  ['Bank enquiry secure persistence','fr_bank_enquiries'],
- ['Admin bank enquiry review','frAdminLoadBankEnquiries']
+ ['Admin bank enquiry review','frAdminLoadBankEnquiries'],
+ ['Profile photo signed URL loader','frLoadProfilePhoto'],
+ ['Assigned driver vehicle/contact RPC','get_ride_driver_details'],
+ ['Customer WhatsApp action','https://wa.me/'],
+ ['Customer active ride contact rendering','frRenderCustomerRideDriverAndPayment(active)']
 ];
 for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
 if(failed)process.exit(1);
