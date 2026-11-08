@@ -2497,7 +2497,7 @@ function frSubmitBankEnquiry(){
      if(!ride)return;
      const p=await rideContact('get_ride_driver_details',ride.id);
      [box,dash].filter(Boolean).forEach(target=>{const card=document.createElement('div');card.id=target===box?'frCustomerDriverContact':'frCustomerDriverContactDashCard';card.className='notice';card.innerHTML='<b>🚗 Driver Confirmed</b><br>';contactActions(card,p?.full_name,p?.phone,'Driver');if(p?.vehicle_company||p?.vehicle_model||p?.vehicle_registration){const v=document.createElement('p');v.textContent='Vehicle: '+[p.vehicle_company,p.vehicle_model,p.vehicle_registration].filter(Boolean).join(' • ');card.append(v);}target.append(card);});
-   }catch(e){const n=document.createElement('p');n.className='notice';n.textContent='Driver contact load కాలేదు: '+(e.message||e);box.append(n);}
+   }catch(e){[box,dash].filter(Boolean).forEach(target=>{const n=document.createElement('p');n.className='notice';n.textContent='Driver contact load కాలేదు: '+(e.message||e);target.append(n);});}
  };
  window.frOpenSupportPage=function(){
    if(!currentUser){afterLoginAction=()=>showPage('frSupportFeedback');openAuth('login');return;}
