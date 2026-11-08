@@ -2,9 +2,13 @@
   "name": "friend-ride-qa",
   "private": true,
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:unit": "node --test tests/*.test.cjs",
+    "typecheck": "tsc --noEmit --target ES2020 --module none src/ride-contact.ts",
+    "build:runtime": "tsc --target ES2020 --module none --outFile assets/ride-contact.js src/ride-contact.ts"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.0"
+    "@playwright/test": "^1.56.0",
+    "typescript": "5.8.3"
   }
 }
