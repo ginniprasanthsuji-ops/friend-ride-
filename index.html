@@ -1596,11 +1596,12 @@ async function frRenderCustomerRideDriverAndPayment(ride){
 }
 
 
-let frRidePaymentTimer=null;
+let frRidePaymentTimer=null,frRidePaymentPollTimer=null;
 function frRideBtn(label,cls,fn){const b=document.createElement('button');b.type='button';b.className='btn '+(cls||'');b.textContent=label;b.onclick=fn;return b;}
 function frRideNotice(parent,msg){const p=document.createElement('p');p.className='notice';p.textContent=msg;parent.append(p);return p;}
 async function frRenderRidePaymentBox(ride,parent){
  if(!ride?.id||!parent)return;
+ if(frRidePaymentPollTimer){clearInterval(frRidePaymentPollTimer);frRidePaymentPollTimer=null;}
  const old=parent.querySelector('[data-fr-ride-payment]');old?.remove();
  const wrap=document.createElement('div');wrap.dataset.frRidePayment='1';wrap.className='fr-pay-box';wrap.style.marginTop='14px';
  const h=document.createElement('h3');h.textContent='UPI Payment & Invoice';wrap.append(h);
@@ -1635,7 +1636,7 @@ async function frRenderRidePaymentBox(ride,parent){
      try{const r=await sb.rpc('fr_customer_submit_ride_transaction',{p_ride_id:ride.id,p_transaction_id:input.value.trim()});if(r.error)throw r.error;alert('Transaction ID Driverకు పంపబడింది. Driver UPIలో verify చేసి Confirm చేసిన తర్వాతే Payment Success అవుతుంది.');await frRenderRidePaymentBox(ride,parent);}
      catch(e){alert('Transaction Submit: '+e.message);}
     }));
-   }else setMsg('Transaction ID: '+state.transaction_id+' • Driver Payment verify చేసి Confirm చేయాల్సి ఉంది.');
+   }else {setMsg('Transaction ID: '+state.transaction_id+' • Driver Payment verify చేసి Confirm చేయాల్సి ఉంది.');frRidePaymentPollTimer=setInterval(()=>{if(!document.hidden)frRenderRidePaymentBox(ride,parent).catch(e=>console.warn('Payment status refresh:',e.message));},10000);}
    const refresh=frRideBtn('↻ Refresh Payment Status','light',()=>frRenderRidePaymentBox(ride,parent));wrap.append(refresh);
  }else if(state.status==='success'){
    if(frRidePaymentTimer)clearInterval(frRidePaymentTimer);
@@ -1675,7 +1676,7 @@ async function frGetInvoiceData(rideId){
  const {data:pay,error:pe}=await sb.rpc('fr_get_ride_payment_state',{p_ride_id:rideId});if(pe)throw pe;
  if(pay?.status!=='success')throw Error('Driver confirmed payment required before invoice generation.');
  const [c,d]=await Promise.all([sb.rpc('get_ride_customer_details_v2',{p_ride_id:rideId}),sb.rpc('get_ride_driver_details',{p_ride_id:rideId})]);
- const customer=Array.isArray(c.data)?c.data[0]:c.data||{},driver=Array.isArray(d.data)?d.data[0]:d.data||{};
+ if(c.error)throw c.error;if(d.error)throw d.error;const customer=Array.isArray(c.data)?c.data[0]:c.data||{},driver=Array.isArray(d.data)?d.data[0]:d.data||{};
  return {ride,pay,customer,driver};
 }
 async function frDownloadRideInvoice(rideId,kind){
