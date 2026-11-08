@@ -2513,55 +2513,299 @@ function frSubmitBankEnquiry(){
  'use strict';
  const $=id=>document.getElementById(id);
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const phoneDigits=v=>String(v||'').replace(/\D/g,'');
- const waNumber=v=>{let n=phoneDigits(v);if(n.length===10)n='91'+n;else if(n.length===11&&n.startsWith('0'))n='91'+n.slice(1);return n;};
- function contactActions(parent,name,phone,who){
-   const raw=String(phone||'').trim(),digits=phoneDigits(raw);
-   const wrap=document.createElement('div');wrap.className='fr-contact-actions';
-   const title=document.createElement('p');title.innerHTML='<b>'+esc(who||'Contact')+':</b> '+esc(name||'—')+'<br><b>Mobile:</b> '+(digits?esc(raw):'Not available');parent.append(title);
-   if(digits){
-     const call=document.createElement('a');call.className='fr-call';call.href='tel:'+raw.replace(/[^+\d]/g,'');call.textContent='📞 Call';wrap.append(call);
-     const wa=waNumber(raw);if(wa){const chat=document.createElement('a');chat.className='fr-wa';chat.href='https://wa.me/'+wa;chat.target='_blank';chat.rel='noopener';chat.textContent='🟢 WhatsApp';wrap.append(chat);}
-   }
-   parent.append(wrap);
- }
- async function rideContact(rpc,id){
-   const {data,error}=await sb.rpc(rpc,{p_ride_id:id});if(error)throw error;
-   return Array.isArray(data)?data[0]:data;
- }
- async function renderDriverActiveRide(){
-   if(!currentUser||currentProfile?.role!=='driver')return;
-   const requests=$('driverRequestsList');if(!requests)return;
-   let panel=$('frDriverActiveRide');if(!panel){panel=document.createElement('div');panel.id='frDriverActiveRide';panel.className='card';requests.parentNode.insertBefore(panel,requests);}
-   try{
-     const {data,error}=await sb.from('rides').select('id,status,vehicle_type,pickup,drop,fare_offer,agreed_fare,created_at').eq('driver_id',currentUser.id).in('status',['accepted','confirmed','ongoing']).order('created_at',{ascending:false}).limit(1);
-     if(error)throw error;
-     const ride=data?.[0];if(!ride){panel.hidden=true;panel.innerHTML='';return;}
-     panel.hidden=false;panel.innerHTML='<h3>🚘 Active Ride • '+esc(ride.status)+'</h3><p><b>'+esc(ride.vehicle_type||'Ride')+'</b></p><p>'+esc(ride.pickup||'—')+' → '+esc(ride.drop||'—')+'</p><p>Fare: ₹'+esc(ride.agreed_fare??ride.fare_offer??'—')+'</p><div id="frDriverCustomerContact" class="notice">Customer contact loading…</div>';
-     try{const p=await rideContact('get_ride_customer_details',ride.id);const box=$('frDriverCustomerContact');if(box){box.textContent='';contactActions(box,p?.full_name,p?.phone,'Customer');}}
-     catch(e){const box=$('frDriverCustomerContact');if(box)box.textContent='Customer contact: '+(e.message||e);}
-   }catch(e){panel.hidden=false;panel.textContent='Active Ride details load కాలేదు: '+(e.message||e);}
- }
- const oldDriverLoad=window.loadDriverRideRequests;
- if(typeof oldDriverLoad==='function')window.loadDriverRideRequests=async function(){await oldDriverLoad.apply(this,arguments);await renderDriverActiveRide();};
- const oldCustomerLoad=window.loadMyRideTracking;
- window.loadMyRideTracking=async function(){
-   if(typeof oldCustomerLoad==='function')await oldCustomerLoad.apply(this,arguments);
-   if(!currentUser||currentProfile?.role!=='customer')return;
-   const box=$('liveRideStatus'),dash=$('frCustomerRideContactDash');if(!box&&!dash)return;
-   box?.querySelector('#frCustomerDriverContact')?.remove();if(dash)dash.innerHTML='';
-   try{
-     const {data,error}=await sb.from('rides').select('id,status,driver_id').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(10);
-     if(error)throw error;
-     const ride=(data||[]).find(r=>r.driver_id&&['accepted','confirmed','ongoing'].includes(String(r.status||'').toLowerCase()));
-     if(!ride)return;
-     const p=await rideContact('get_ride_driver_details',ride.id);
-     [box,dash].filter(Boolean).forEach(target=>{const card=document.createElement('div');card.id=target===box?'frCustomerDriverContact':'frCustomerDriverContactDashCard';card.className='notice';card.innerHTML='<b>🚗 Driver Confirmed</b><br>';contactActions(card,p?.full_name,p?.phone,'Driver');if(p?.vehicle_company||p?.vehicle_model||p?.vehicle_registration){const v=document.createElement('p');v.textContent='Vehicle: '+[p.vehicle_company,p.vehicle_model,p.vehicle_registration].filter(Boolean).join(' • ');card.append(v);}target.append(card);});
-   }catch(e){[box,dash].filter(Boolean).forEach(target=>{const n=document.createElement('p');n.className='notice';n.textContent='Driver contact load కాలేదు: '+(e.message||e);target.append(n);});}
- };
- window.frOpenSupportPage=function(){
-   if(!currentUser){afterLoginAction=()=>showPage('frSupportFeedback');openAuth('login');return;}
-   showPage('frSupportFeedback');
+const phoneDigits=v=>String(v||'').replace(/\D/g,'');
+
+const waNumber=v=>{
+  let n=phoneDigits(v);
+  if(n.length===10)n='91'+n;
+  else if(n.length===11&&n.startsWith('0'))n='91'+n.slice(1);
+  return n;
+};
+
+function contactActions(parent,name,phone,who){
+  const raw=String(phone||'').trim();
+  const digits=phoneDigits(raw);
+
+  const title=document.createElement('p');
+  title.innerHTML='<b>'+esc(who)+'</b>: '+esc(name||'—')+
+    '<br><b>Mobile:</b> '+(digits?esc(raw):'Not available');
+  parent.append(title);
+
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin-top:10px';
+
+  if(digits){
+    const call=document.createElement('a');
+    call.className='fr-call';
+    call.href='tel:'+raw.replace(/[^\d+]/g,'');
+    call.textContent='📞 Call';
+    wrap.append(call);
+
+    const wa=document.createElement('a');
+    wa.className='fr-wa';
+    wa.href='https://wa.me/'+waNumber(raw);
+    wa.target='_blank';
+    wa.rel='noopener';
+    wa.textContent='🟢 WhatsApp';
+    wrap.append(wa);
+  }
+
+  parent.append(wrap);
+}
+
+async function rideContact(rpc,id){
+  const {data,error}=await sb.rpc(rpc,{p_ride_id:id});
+  if(error)throw error;
+  return Array.isArray(data)?data[0]:data;
+}
+
+async function addRideProfilePhoto(card,path,bucket,alt){
+  if(!path)return;
+
+  try{
+    const {data,error}=await sb.storage
+      .from(bucket)
+      .createSignedUrl(path,600);
+
+    if(error)throw error;
+
+    if(data?.signedUrl){
+      const img=document.createElement('img');
+      img.src=data.signedUrl;
+      img.alt=alt;
+      img.style.cssText=
+        'width:100px;height:100px;object-fit:cover;'+
+        'border-radius:50%;border:3px solid #eee;'+
+        'display:block;margin:10px auto';
+
+      card.append(img);
+    }
+  }catch(e){
+    console.warn('Profile photo:',e.message);
+  }
+}
+
+function addVehicleDetails(card,p){
+  const box=document.createElement('div');
+  box.style.cssText=
+    'background:#f3effb;padding:12px;border-radius:12px;margin-top:12px';
+
+  const heading=document.createElement('b');
+  heading.textContent='🚘 Vehicle Details';
+  box.append(heading);
+
+  [
+    ['Vehicle Type',p.vehicle_type],
+    ['Company',p.vehicle_company],
+    ['Model',p.vehicle_model],
+    ['Registration Number',p.vehicle_registration]
+  ].forEach(([label,value])=>{
+    if(value){
+      const row=document.createElement('p');
+      row.textContent=label+': '+value;
+      box.append(row);
+    }
+  });
+
+  card.append(box);
+}
+
+async function buildRideContactCard(target,p,who){
+  const card=document.createElement('div');
+  card.className='notice';
+  card.style.cssText=
+    'background:white;border:1px solid #e3d9f2;'+
+    'border-radius:16px;padding:15px;margin-top:12px';
+
+  const heading=document.createElement('h3');
+  heading.textContent=who==='Driver'
+    ?'🚗 Confirmed Driver Profile'
+    :'👤 Confirmed Customer Profile';
+  card.append(heading);
+
+  if(who==='Driver'){
+    await addRideProfilePhoto(
+      card,p.driver_profile_photo_path,
+      'driver-profile-photos','Driver Profile'
+    );
+  }else{
+    await addRideProfilePhoto(
+      card,p.customer_profile_photo_path,
+      'customer-profile-photos','Customer Profile'
+    );
+  }
+
+  contactActions(card,p.full_name,p.phone,who);
+
+  if(who==='Driver'){
+    addVehicleDetails(card,p);
+  }
+
+  target.append(card);
+}
+
+// DRIVER: Customer profile after accepting ride
+async function renderDriverActiveRide(){
+  if(!currentUser||currentProfile?.role!=='driver')return;
+
+  const requests=$('driverRequestsList');
+  if(!requests)return;
+
+  let panel=$('frDriverActiveRide');
+
+  if(!panel){
+    panel=document.createElement('div');
+    panel.id='frDriverActiveRide';
+    panel.className='card';
+    requests.parentNode.insertBefore(panel,requests);
+  }
+
+  try{
+    const {data,error}=await sb.from('rides')
+      .select('id,status,vehicle_type,pickup,drop,fare_offer,agreed_fare,created_at')
+      .eq('driver_id',currentUser.id)
+      .in('status',['accepted','confirmed','ongoing'])
+      .order('created_at',{ascending:false})
+      .limit(1);
+
+    if(error)throw error;
+
+    const ride=data?.[0];
+
+    if(!ride){
+      panel.hidden=true;
+      panel.innerHTML='';
+      return;
+    }
+
+    panel.hidden=false;
+    panel.replaceChildren();
+
+    const heading=document.createElement('h3');
+    heading.textContent='🚘 Active Ride • '+ride.status;
+    panel.append(heading);
+
+    const details=document.createElement('p');
+    details.textContent=
+      (ride.pickup||'—')+' → '+(ride.drop||'—')+
+      ' | Fare ₹'+(ride.agreed_fare??ride.fare_offer??'—');
+    panel.append(details);
+
+    const p=await rideContact(
+      'get_ride_customer_details_v2',ride.id
+    );
+
+    if(p)await buildRideContactCard(panel,p,'Customer');
+
+  }catch(e){
+    panel.textContent='Customer Profile Error: '+e.message;
+  }
+}
+
+// Existing Accept Ride callback uses this function
+window.frRenderRideCustomerDetails=async function(rideId){
+  await renderDriverActiveRide();
+};
+
+const oldDriverLoad=window.loadDriverRideRequests;
+
+if(typeof oldDriverLoad==='function'){
+  window.loadDriverRideRequests=async function(){
+    await oldDriverLoad.apply(this,arguments);
+    await renderDriverActiveRide();
+  };
+}
+
+// CUSTOMER: Driver profile after ride confirmation
+const oldCustomerLoad=window.loadMyRideTracking;
+
+window.loadMyRideTracking=async function(){
+  if(typeof oldCustomerLoad==='function'){
+    await oldCustomerLoad.apply(this,arguments);
+  }
+
+  if(!currentUser||currentProfile?.role!=='customer')return;
+
+  const box=$('liveRideStatus');
+  const dash=$('frCustomerRideContactDash');
+
+  if(!box&&!dash)return;
+
+  box?.querySelector('#frCustomerDriverContact')?.remove();
+
+  if(dash)dash.innerHTML='';
+
+  try{
+    const {data,error}=await sb.from('rides')
+      .select('id,status,driver_id')
+      .eq('customer_id',currentUser.id)
+      .order('created_at',{ascending:false})
+      .limit(10);
+
+    if(error)throw error;
+
+    const ride=(data||[]).find(r=>
+      r.driver_id&&
+      ['accepted','confirmed','ongoing'].includes(
+        String(r.status||'').toLowerCase()
+      )
+    );
+
+    if(!ride)return;
+
+    const p=await rideContact(
+      'get_ride_driver_details',ride.id
+    );
+
+    if(!p)return;
+
+    for(const target of [box,dash].filter(Boolean)){
+      const card=document.createElement('div');
+      card.id=target===box
+        ?'frCustomerDriverContact'
+        :'frCustomerDriverContactDashCard';
+
+      await buildRideContactCard(target,p,'Driver');
+
+      target.lastElementChild.id=card.id;
+    }
+
+  }catch(e){
+    [box,dash].filter(Boolean).forEach(target=>{
+      const msg=document.createElement('div');
+      msg.className='notice';
+      msg.textContent='Driver Profile Error: '+e.message;
+      target.append(msg);
+    });
+  }
+};
+
+// Refresh contact when opening Customer Dashboard or Tracking
+const oldRideContactShow=window.showPage;
+
+if(typeof oldRideContactShow==='function'){
+  window.showPage=function(id){
+    const result=oldRideContactShow.apply(this,arguments);
+
+    if(
+      id==='customerDashboard'||
+      id==='tracking'
+    ){
+      setTimeout(()=>{
+        if(currentProfile?.role==='customer'){
+          window.loadMyRideTracking();
+        }
+      },200);
+    }
+
+    if(id==='driverDashboard'){
+      setTimeout(()=>renderDriverActiveRide(),200);
+    }
+
+    return result;
+  };
+}
+
  };
  window.frSubmitSupportFeedback=async function(){
    try{
