@@ -1627,14 +1627,25 @@ async function refreshDriverCustomerLocation(rideId){
   try{const {data,error}=await sb.from('ride_live_locations').select('user_id,latitude,longitude,updated_at').eq('ride_id',rideId).neq('user_id',currentUser.id).order('updated_at',{ascending:false}).limit(1).maybeSingle();if(error)throw error;if(!data)return;const pt=[Number(data.latitude),Number(data.longitude)];if(window.L&&$('driverLiveMap')){if(!frDriverLiveMap){frDriverLiveMap=L.map('driverLiveMap').setView(pt,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(frDriverLiveMap);}frDriverLiveMap.setView(pt,15);if(frCustomerMapMarker)frDriverLiveMap.removeLayer(frCustomerMapMarker);frCustomerMapMarker=L.marker(pt).addTo(frDriverLiveMap).bindPopup('Customer Live Location').openPopup();setTimeout(()=>frDriverLiveMap.invalidateSize(),150);}frShow('driverRideStatus','Customer Live Location updated • '+new Date(data.updated_at).toLocaleTimeString());}catch(e){frShow('driverRideStatus','Customer Location ఇంకా అందుబాటులో లేదు: '+e.message);}
 }
 async function startCustomerLiveTracking(rideId){
+  const button=$('frStartTwoWayTracking');
   try{
+    if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer login session లేదు. మళ్లీ Login చేయండి.');
+    if(!rideId)throw Error('Active Ride ID దొరకలేదు. My Active Ride Refresh చేయండి.');
+    if(button){button.disabled=true;button.textContent='⏳ Starting Live Tracking…';}
     const {data:ride,error}=await sb.from('rides').select('id,status,driver_id').eq('id',rideId).eq('customer_id',currentUser.id).maybeSingle();if(error)throw error;
-    if(!ride?.driver_id||!frCustomerTrackingStatusAllowed(ride.status))throw Error('ఈ Rideకు Driver assign కాలేదు లేదా Ride ముగిసింది. Driver assign అయిన తర్వాత Live Tracking ప్రారంభించండి. ప్రస్తుత Ride Status: '+(ride?.status||'Unavailable'));
+    if(!ride)throw Error('ఈ Ride మీ Accountలో కనిపించలేదు. My Active Ride Refresh చేయండి.');
+    if(!ride.driver_id||!frCustomerTrackingStatusAllowed(ride.status))throw Error('ఈ Rideకు Driver assign కాలేదు లేదా Ride ముగిసింది. ప్రస్తుత Ride Status: '+(ride.status||'Unavailable'));
     if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);
-    const send=async()=>{try{const p=await frPosition();const x=await sb.from('ride_live_locations').upsert({ride_id:rideId,user_id:currentUser.id,latitude:p.coords.latitude,longitude:p.coords.longitude,updated_at:new Date().toISOString()},{onConflict:'ride_id,user_id'});if(x.error)throw x.error;await refreshCustomerDriverLocation(rideId);frShow('liveRideStatus','మీ Location Driverకు Liveగా Share అవుతోంది ✓');}catch(e){frShow('liveRideStatus','Customer GPS update కాలేదు: '+e.message);}};
-    await send();frCustomerTrackTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='customer')send();},10000);
     showPage('tracking');frEnsureTrackingMap();
-  }catch(e){alert('Live Tracking: '+e.message);}
+    const send=async()=>{const p=await frPosition();const x=await sb.from('ride_live_locations').upsert({ride_id:rideId,user_id:currentUser.id,latitude:p.coords.latitude,longitude:p.coords.longitude,updated_at:new Date().toISOString()},{onConflict:'ride_id,user_id'});if(x.error)throw x.error;await refreshCustomerDriverLocation(rideId);frShow('liveRideStatus','మీ Location Driverకు Liveగా Share అవుతోంది ✓');};
+    await send();
+    frCustomerTrackTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='customer')send().catch(e=>frShow('liveRideStatus','Customer GPS update కాలేదు: '+e.message));},10000);
+    if(button){button.disabled=false;button.textContent='✓ Two-Way Live Tracking Active';}
+  }catch(e){
+    if(button){button.disabled=false;button.textContent='🛰️ Start Two-Way Live Tracking';}
+    frShow('liveRideStatus','Live Tracking ప్రారంభం కాలేదు: '+(e.message||e));
+    alert('Live Tracking: '+(e.message||e));
+  }
 }
 async function refreshCustomerDriverLocation(rideId){
   try{const {data:ride,error:re}=await sb.from('rides').select('driver_id').eq('id',rideId).eq('customer_id',currentUser.id).maybeSingle();if(re)throw re;if(!ride?.driver_id)return;const {data,error}=await sb.from('ride_live_locations').select('latitude,longitude,updated_at').eq('ride_id',rideId).eq('user_id',ride.driver_id).maybeSingle();if(error)throw error;if(data){const pt=[Number(data.latitude),Number(data.longitude)];frEnsureTrackingMap(pt);if(frDriverMapMarker)trackingMap.removeLayer(frDriverMapMarker);frDriverMapMarker=L.marker(pt).addTo(trackingMap).bindPopup('Assigned Driver • Live Location');frShow('trackingStatus','Driver Live Location updated: '+new Date(data.updated_at).toLocaleTimeString());}}catch(e){frShow('trackingStatus','Driver Location చదవలేకపోయాం: '+e.message);}
