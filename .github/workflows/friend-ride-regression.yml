@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Validate inline JavaScript and Version 10.1 integrations
+        run: node scripts/check-inline-js.mjs
       - run: npm install
       - run: npx playwright install --with-deps chromium
       - name: Start local static app server
