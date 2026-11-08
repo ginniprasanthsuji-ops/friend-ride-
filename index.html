@@ -186,8 +186,9 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 
 <style id="fr-v8-dashboard-catalogue-fix">
-/* Keep the public home interface stable; dashboards are entered only after account login. */
-#roleLauncher{pointer-events:none}
+/* Role launcher is an interactive account selector; clicks must reach its four role buttons. */
+#roleLauncher{pointer-events:auto}
+#roleLauncher .fr-launcher-inner,#roleLauncher .fr-launcher-grid,#roleLauncher .fr-role-card{pointer-events:auto}
 .market-product{overflow:hidden;border:1px solid #e8e0f2;border-radius:20px;background:linear-gradient(145deg,#fff,#f8f5ff);box-shadow:0 10px 22px #29134a12;transform:translateZ(0)}
 .market-product-art{height:126px;display:grid;place-items:center;font-size:66px;background:radial-gradient(circle at 28% 20%,#fff 0,#fff9 18%,transparent 43%),linear-gradient(145deg,#f4eaff,#fff0df);text-shadow:0 9px 7px #26104435;filter:drop-shadow(0 9px 6px #28133b25);transform:perspective(240px) rotateX(3deg)}
 .market-product-info{padding:11px 12px 5px}.market-product-info b{font-size:14px}.market-product .btn{margin:8px 10px 11px;width:calc(100% - 20px)}
@@ -835,8 +836,27 @@ async function reviewDriverApplication(driverId,decision){
 }
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
-function enterRole(role){selectedRole=role;try{localStorage.setItem('friendride_selected_role',role)}catch(_){}const gate=$('roleLauncher');if(gate)gate.classList.add('hide');openAuth('login',role);$('authModal').classList.add('fr-role-locked');}
-function openAuth(mode='login',role='customer'){selectedRole=role;try{localStorage.setItem('friendride_selected_role',role)}catch(_){}document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));switchAuth(mode);$('authModal').classList.add('show');$('authModal').classList.remove('fr-role-locked');}
+function enterRole(role){
+ const allowed=['customer','driver','partner','admin'];
+ const chosen=allowed.includes(String(role).toLowerCase())?String(role).toLowerCase():'customer';
+ selectedRole=chosen;
+ try{localStorage.setItem('friendride_selected_role',chosen)}catch(_){}
+ const gate=$('roleLauncher');if(gate)gate.classList.add('hide');
+ const modal=$('authModal');if(!modal)return;
+ document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===chosen));
+ switchAuth('login');
+ modal.classList.add('show','fr-role-locked');
+}
+function openAuth(mode='login',role='customer'){
+ const allowed=['customer','driver','partner','admin'];
+ const chosen=allowed.includes(String(role).toLowerCase())?String(role).toLowerCase():'customer';
+ selectedRole=chosen;
+ try{localStorage.setItem('friendride_selected_role',chosen)}catch(_){}
+ document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===chosen));
+ switchAuth(mode);
+ $('authModal').classList.add('show');
+ $('authModal').classList.remove('fr-role-locked');
+}
 function closeAuth(){$('authModal').classList.remove('show','fr-role-locked');clearMessage();if(!currentUser){const gate=$('roleLauncher');if(gate)gate.classList.add('hide');}}
 function chooseRole(r){selectedRole=r;try{localStorage.setItem('friendride_selected_role',r)}catch(_){}document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===r));$('addressField').classList.toggle('hide',r!=='customer');$('driverRegDocs').classList.toggle('hide',r!=='driver');$('partnerRegFields').classList.toggle('hide',r!=='partner');$('driverExtraFields').classList.toggle('hide',r!=='driver');$('partnerExtraFields').classList.toggle('hide',r!=='partner');}
 let frSelectedCustomerAvatar='male';
