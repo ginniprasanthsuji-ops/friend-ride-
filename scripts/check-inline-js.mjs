@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import vm from 'node:vm';
 const html=fs.readFileSync('index.html','utf8');
-const blocks=[...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script\\s*>/gi)].filter(([,attrs,body])=>! /\\bsrc\\s*=/.test(attrs)&&body.trim());
+const blocks=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)].filter(([,attrs,body])=>! /\bsrc\s*=/.test(attrs)&&body.trim());
 if(!blocks.length)throw new Error('No inline JavaScript blocks found.');
 let failed=false;
 for(let i=0;i<blocks.length;i++){try{new vm.Script(blocks[i][2],{filename:`index.html:inline-script-${i+1}`});console.log(`PASS inline script ${i+1}`);}catch(e){failed=true;console.error(`FAIL inline script ${i+1}: ${e.message}`);}}
