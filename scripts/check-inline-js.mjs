@@ -17,7 +17,9 @@ const checks=[
  ['Version 10.1 marker','name="application-version" content="10.1"'],
  ['Partner GPS save RPC','fr_partner_save_location'],
  ['Approved store geo RPC','fr_customer_list_approved_stores_geo'],
- ['Friend Mart map','friendMartMap']
+ ['Friend Mart map','friendMartMap'],
+ ['Bank enquiry secure persistence','fr_bank_enquiries'],
+ ['Admin bank enquiry review','frAdminLoadBankEnquiries']
 ];
 for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
 if(failed)process.exit(1);
