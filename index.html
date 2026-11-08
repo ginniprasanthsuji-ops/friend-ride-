@@ -1330,7 +1330,7 @@ async function verifyRegistrationOtpAndRegister(){
       const photo=await frUploadPrivateRegistrationFile($('regPartnerPhoto').files[0],'partner-profile-photos',data.user.id,'profile',3*1024*1024);uploadedFiles.push(['partner-profile-photos',photo]);
       registrationPaths={partner_profile_photo_path:photo};
     }
-    if(selectedRole==='driver')Object.assign(row,{driver_approval_status:'pending',vehicle_type:'Bike',vehicle_company:$('regVehicleCompany').value.trim(),vehicle_model:$('regVehicleModel').value.trim(),vehicle_number:$('regVehicleNumber').value.trim(),driver_license_number:$('regLicenseNumber').value.trim(),driver_aadhaar_number:$('regAadhaarNumber').value.trim(),driving_experience_years:Number($('regExperience').value||0)});
+    if(selectedRole==='driver')Object.assign(row,{driver_approval_status:'pending',vehicle_type:'Bike',vehicle_company:$('regVehicleCompany').value.trim(),vehicle_model:$('regVehicleModel').value.trim(),vehicle_number:$('regVehicleNumber').value.trim(),vehicle_registration:$('regVehicleNumber').value.trim(),driver_license_number:$('regLicenseNumber').value.trim(),driver_aadhaar_number:$('regAadhaarNumber').value.trim(),driving_experience_years:Number($('regExperience').value||0)});
     if(selectedRole==='partner')Object.assign(row,{partner_approval_status:'pending',business_name:$('regBusinessName').value.trim(),partner_category:$('regPartnerCategory').value,gstin:$('regGSTIN').value.trim(),upi_id:$('regUPI').value.trim(),phonepe_number:$('regPhonePe').value.trim()});
     if(selectedRole==='driver'||selectedRole==='partner'){
       // Dedicated SECURITY DEFINER RPC performs the one-time role assignment
@@ -2926,6 +2926,52 @@ if(typeof oldRideContactShow==='function'){
     return result;
   };
 }
+
+
+ // Customer/Driver can add or replace their private profile photo after registration.
+ async function frInstallProfilePhotoEditor(){
+   const box=$('profileInfo');
+   if(!box||!currentUser?.id||!currentProfile)return;
+   const role=String(currentProfile.role||'').toLowerCase();
+   if(!['customer','driver'].includes(role))return;
+   $('frProfilePhotoEditor')?.remove();
+   const bucket=role==='driver'?'driver-profile-photos':'customer-profile-photos';
+   const column=role==='driver'?'driver_profile_photo_path':'customer_profile_photo_path';
+   const card=document.createElement('div');card.id='frProfilePhotoEditor';card.className='notice';card.style.marginTop='14px';
+   const title=document.createElement('b');title.textContent='Profile Photo';card.append(title);
+   await addRideProfilePhoto(card,currentProfile[column],bucket,'My Profile');
+   const input=document.createElement('input');input.type='file';input.accept='image/jpeg,image/png,image/webp';input.style.marginTop='10px';card.append(input);
+   const button=document.createElement('button');button.type='button';button.className='btn purple';button.textContent='Upload / Update Photo';button.style.marginTop='8px';
+   const status=document.createElement('p');status.className='tiny muted';status.setAttribute('aria-live','polite');card.append(button,status);
+   button.addEventListener('click',async()=>{
+     const file=input.files?.[0];if(!file){status.textContent='ముందుగా JPG, PNG లేదా WEBP photo ఎంచుకోండి.';return;}
+     if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>3*1024*1024){status.textContent='Photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.';return;}
+     button.disabled=true;status.textContent='Photo upload అవుతోంది…';
+     try{
+       const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+       const path=currentUser.id+'/profile_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;
+       const uploaded=await sb.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type});
+       if(uploaded.error)throw uploaded.error;
+       const saved=await sb.from('profiles').update({[column]:path}).eq('id',currentUser.id);
+       if(saved.error){await sb.storage.from(bucket).remove([path]);throw saved.error;}
+       currentProfile={...currentProfile,[column]:path};
+       status.textContent='Profile photo Databaseలో సేవ్ అయింది ✓';
+       await frInstallProfilePhotoEditor();
+       if(role==='customer'&&typeof window.loadMyRideTracking==='function')await window.loadMyRideTracking();
+       if(role==='driver'&&typeof window.renderDriverActiveRide==='function')await window.renderDriverActiveRide();
+     }catch(e){status.textContent='Photo save కాలేదు: '+(e.message||e);}
+     finally{button.disabled=false;}
+   });
+   box.append(card);
+ }
+ const frPreviousAcceptSessionForPhoto=window.acceptSession;
+ if(typeof frPreviousAcceptSessionForPhoto==='function'){
+   window.acceptSession=async function(){
+     const result=await frPreviousAcceptSessionForPhoto.apply(this,arguments);
+     await frInstallProfilePhotoEditor();
+     return result;
+   };
+ }
 
  window.frSubmitSupportFeedback=async function(){
    try{
