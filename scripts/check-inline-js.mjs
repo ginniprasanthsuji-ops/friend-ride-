@@ -13,7 +13,11 @@ const checks=[
  ['Completed-only QR condition',"d.ride_status).toLowerCase()==='completed'"],
  ['OTP backend','Sms-otp'],
  ['Role-aware session restore','adminResult.data?.user_id===user.id'],
- ['Customer photo upload','frUploadPrivateRegistrationFile(customerPhoto']
+ ['Customer photo upload','frUploadPrivateRegistrationFile(customerPhoto'],
+ ['Version 10.1 marker','name="application-version" content="10.1"'],
+ ['Partner GPS save RPC','fr_partner_save_location'],
+ ['Approved store geo RPC','fr_customer_list_approved_stores_geo'],
+ ['Friend Mart map','friendMartMap']
 ];
 for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
 if(failed)process.exit(1);
