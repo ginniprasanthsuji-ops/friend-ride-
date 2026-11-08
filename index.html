@@ -199,6 +199,10 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <style id="fr-v8-notebook-updates">
 </style>
+<style id="fr-3d-registration-avatar-style">
+/* Universal gender selection with glossy 3D-style profile avatars */
+.fr-avatar-picks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:9px}.fr-avatar-pick{border:2px solid #e7e0ee;border-radius:19px;background:linear-gradient(145deg,#fff,#f5f8f4);padding:12px 8px;color:var(--ink);box-shadow:0 7px 18px #24104412;transition:.18s}.fr-avatar-pick.active{border-color:#13875b;background:linear-gradient(145deg,#eafff1,#fff4e7);box-shadow:0 0 0 3px #13875b20,0 9px 20px #13875b20}.fr-avatar-art{width:112px;height:112px;max-width:100%;display:grid;place-items:center;margin:0 auto 7px;border-radius:28px;background:radial-gradient(circle at 30% 18%,#fff 0,#fff9 20%,transparent 45%),linear-gradient(145deg,#e9fff0,#ccebd8);box-shadow:inset 0 3px 8px #fff,0 8px 16px #193c2922}.fr-avatar-pick[data-gender=female] .fr-avatar-art{background:radial-gradient(circle at 30% 18%,#fff 0,#fff9 20%,transparent 45%),linear-gradient(145deg,#fff0df,#ffd6b4)}.fr-avatar-art svg{width:100%;height:100%;filter:drop-shadow(0 5px 4px #0002)}.fr-avatar-pick b{display:block;font-size:16px}.fr-avatar-pick small{display:block;color:var(--muted);font-size:12px}
+</style>
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -608,18 +612,10 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="field"><label>Full Name *</label><input id="regName" placeholder="మీ పూర్తి పేరు"></div>
   <div id="customerRegPhotoFields">
   <div class="field"><label>Customer Profile Photo (Optional)</label><input id="regCustomerPhoto" type="file" accept="image/*" capture="user" onchange="frPreviewCustomerPhoto(this)"><small class="muted">ఫోటో అప్‌లోడ్ చేయడం తప్పనిసరి కాదు. ఫోటో లేకపోతే క్రింది కార్టూన్ అవతార్ ఉపయోగించండి.</small><div id="regCustomerPhotoPreview" class="hide" style="margin-top:8px"><img id="regCustomerPhotoImg" alt="Customer photo preview" style="width:64px;height:64px;object-fit:cover;border-radius:50%"></div></div>
-  <div class="field"><label>Gender *</label><div class="inline-actions"><button type="button" class="btn light" onclick="frSetAvatarGender('male')">♂ Male</button><button type="button" class="btn light" onclick="frSetAvatarGender('female')">♀ Female</button></div><input type="hidden" id="regCustomerGender" value="male"></div>
-  <div class="field"><label>Choose Your Cartoon Avatar (8 options)</label><div id="frAvatarChoices" class="grid" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-   <button type="button" class="tile fr-avatar-choice" data-avatar="👦" onclick="frSelectAvatar('👦')">👦<small>1</small></button>
-   <button type="button" class="tile fr-avatar-choice" data-avatar="🧑" onclick="frSelectAvatar('🧑')">🧑<small>2</small></button>
-   <button type="button" class="tile fr-avatar-choice" data-avatar="👨🏻" onclick="frSelectAvatar('👨🏻')">👨🏻<small>3</small></button>
-   <button type="button" class="tile fr-avatar-choice" data-avatar="👨🏽" onclick="frSelectAvatar('👨🏽')">👨🏽<small>4</small></button>
-   <button type="button" class="tile fr-avatar-choice" data-avatar="👧" onclick="frSelectAvatar('👧')">👧<small>5</small></button>
-   <button type="button" class="tile fr-avatar-choice" data-avatar="👩" onclick="frSelectAvatar('👩')">👩<small>6</small></button>
-   <button type="button" class="tile fr-avatar-choice" data-avatar="👩🏻" onclick="frSelectAvatar('👩🏻')">👩🏻<small>7</small></button>
-   <button type="button" class="tile fr-avatar-choice" data-avatar="👩🏽" onclick="frSelectAvatar('👩🏽')">👩🏽<small>8</small></button>
-  </div><input type="hidden" id="regCustomerAvatar" value="👦"><small class="muted">ఫోటో అప్‌లోడ్ చేయకపోతే ఎంచుకున్న అవతార్ ప్రొఫైల్ చిత్రంగా ఉపయోగించాలి.</small></div>
- </div>
+<div class="field fr-gender-avatar-field"><label>Gender / Avatar *</label><div class="fr-avatar-picks">
+  <button type="button" class="fr-avatar-pick active" data-gender="male" onclick="frSetAvatarGender('male')"><span class="fr-avatar-art"><!-- male avatar --><svg viewBox="0 0 120 120" role="img" aria-label="3D male avatar"><defs><linearGradient id="mshirt" x2="1" y2="1"><stop stop-color="#53c98a"/><stop offset="1" stop-color="#08763d"/></linearGradient><radialGradient id="mskin" cx="35%" cy="25%"><stop stop-color="#ffe0c3"/><stop offset="1" stop-color="#bd7752"/></radialGradient><linearGradient id="mhair" x2="0" y2="1"><stop stop-color="#51403a"/><stop offset="1" stop-color="#211a1b"/></linearGradient></defs><ellipse cx="60" cy="113" rx="39" ry="7" fill="#173c2a" opacity=".15"/><path d="M15 118Q18 78 45 76h30q27 2 30 42" fill="url(#mshirt)"/><path d="M42 77l18 17 18-17-8-8H50z" fill="#f1b88f"/><ellipse cx="60" cy="48" rx="28" ry="34" fill="url(#mskin)"/><path d="M32 47Q27 13 59 12q31 0 30 34l-7-12q-21 5-39-5z" fill="url(#mhair)"/><path d="M39 45q8-7 17-1M65 44q9-6 16 1" fill="none" stroke="#49302b" stroke-width="3" stroke-linecap="round"/><ellipse cx="48" cy="51" rx="3" ry="4" fill="#342725"/><ellipse cx="73" cy="51" rx="3" ry="4" fill="#342725"/><path d="M53 65q7 7 14 0" fill="none" stroke="#914e45" stroke-width="2.5" stroke-linecap="round"/><path d="M35 31q7-18 25-17" fill="none" stroke="#fff" stroke-width="4" opacity=".2" stroke-linecap="round"/></svg></span><b>Male</b><small>3D Avatar</small></button>
+  <button type="button" class="fr-avatar-pick" data-gender="female" onclick="frSetAvatarGender('female')"><span class="fr-avatar-art"><svg viewBox="0 0 120 120" role="img" aria-label="3D female avatar"><defs><linearGradient id="fshirt" x2="1" y2="1"><stop stop-color="#ffbd65"/><stop offset="1" stop-color="#ed6a24"/></linearGradient><radialGradient id="fskin" cx="35%" cy="25%"><stop stop-color="#ffe4ce"/><stop offset="1" stop-color="#c27d61"/></radialGradient><linearGradient id="fhair" x2="0" y2="1"><stop stop-color="#55332e"/><stop offset="1" stop-color="#24191b"/></linearGradient></defs><ellipse cx="60" cy="113" rx="39" ry="7" fill="#56311d" opacity=".15"/><path d="M15 118Q18 78 45 76h30q27 2 30 42" fill="url(#fshirt)"/><path d="M42 77l18 17 18-17-8-8H50z" fill="#eab18e"/><path d="M29 54Q23 8 60 10q39 0 32 48l-7 24-11-13H46L35 84z" fill="url(#fhair)"/><ellipse cx="60" cy="48" rx="27" ry="33" fill="url(#fskin)"/><path d="M34 42Q32 13 60 13q28 0 28 29-12-15-27-16-13 12-27 16z" fill="url(#fhair)"/><path d="M39 45q8-7 16-1M65 44q9-6 16 1" fill="none" stroke="#51312d" stroke-width="3" stroke-linecap="round"/><ellipse cx="48" cy="51" rx="3" ry="4" fill="#342725"/><ellipse cx="73" cy="51" rx="3" ry="4" fill="#342725"/><path d="M53 65q7 7 14 0" fill="none" stroke="#a34f55" stroke-width="2.5" stroke-linecap="round"/><path d="M35 30q8-16 24-16" fill="none" stroke="#fff" stroke-width="4" opacity=".22" stroke-linecap="round"/></svg></span><b>Female</b><small>3D Avatar</small></button>
+ </div><input type="hidden" id="regCustomerGender" value="male"><input type="hidden" id="regCustomerAvatar" value="male"><div class="notice">మీ Gender ఆధారంగా 3D Avatar ఎంచుకోబడుతుంది. Profileలో ఇదే Avatar ఉపయోగించబడుతుంది.</div></div>
   <div class="field"><label>Mobile Number *</label><input id="regPhone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile"></div>
   <div class="field"><label>Email (Optional)</label><input id="regEmail" type="email" placeholder="Email address (optional)"></div>
   <div id="addressField" class="field"><label>Complete Address *</label><textarea id="regAddress" placeholder="House, Street, Village, Mandal, District, PIN"></textarea></div><div id="driverRegDocs" class="hide"><div class="notice"><b>Driver Verification – Mandatory</b><br>Driver Photo, Driving Licence, Aadhaar Card మరియు Vehicle RC తప్పనిసరిగా upload చేయాలి. Admin approval వచ్చే వరకు account active కాదు.</div><div class="field"><label>Driver Profile Photo * Required</label><input id="regDriverPhoto" type="file" accept="image/*"></div><div class="field"><label>Driving Licence * Required</label><input id="regDriverLicense" type="file" accept="image/*,.pdf"></div><div class="field"><label>Aadhaar Card * Required</label><input id="regDriverAadhaar" type="file" accept="image/*,.pdf"></div><div class="field"><label>Vehicle RC * Required</label><input id="regDriverRC" type="file" accept="image/*,.pdf"></div></div><div id="partnerRegFields" class="hide"><div class="notice"><b>Partner Verification</b><br>Partner application, payment verification, తర్వాత Admin approval అవసరం.</div><div class="field"><label>Partner / Shop Owner Passport-size Photo * Required</label><input id="regPartnerPhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label>Partner Business / Store Category *</label><select id="regPartnerCategory" onchange="syncPartnerCatalogue(this.value)"><option value="">Select business category</option><option value="local_store">Grocery & General Store</option><option value="electrical">Electrical Shop</option><option value="electrician">Electrician Services</option><option value="hardware">Hardware & Plumbing</option><option value="chicken">Chicken Shop</option><option value="mutton">Mutton & Meat</option><option value="fish">Fish & Seafood</option><option value="vegetables">Vegetables & Fruits</option><option value="medical">Medical Store</option><option value="dairy">Milk & Dairy</option><option value="mobile">Mobile & Accessories</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery & Xerox</option><option value="restaurant">Restaurant / Tiffin</option><option value="other">Other Business</option></select></div><div class="field"><label>Business / Store / Restaurant Name *</label><input id="regBusinessName"></div><div class="field"><label>Business Address *</label><textarea id="regBusinessAddress"></textarea></div><div class="field"><label>Store GPS Coordinates *</label><div class="row"><input id="regBusinessLatitude" type="number" step="any" placeholder="Latitude" readonly><input id="regBusinessLongitude" type="number" step="any" placeholder="Longitude" readonly></div><button type="button" class="btn light" onclick="frCapturePartnerLocation()">📍 Capture Store GPS Location</button><small id="regBusinessLocationStatus" class="muted">Nearby-store discovery కోసం Shop GPS capture చేయండి.</small></div><div class="field"><label>Business Proof</label><input id="regBusinessProof" type="file" accept="image/*,.pdf"></div><div class="notice"><b>Your FRIEND RIDE Master Catalogue</b><br>మీ Business Categoryకి సంబంధించిన మన common catalogue Partner Dashboardలో కనిపిస్తుంది. అందులో items ఎంచుకుని మీ ధరలు నమోదు చేయవచ్చు.</div></div>
@@ -734,9 +730,8 @@ function enterRole(role){selectedRole=role;try{localStorage.setItem('friendride_
 function openAuth(mode='login',role='customer'){selectedRole=role;try{localStorage.setItem('friendride_selected_role',role)}catch(_){}document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));switchAuth(mode);$('authModal').classList.add('show');}
 function closeAuth(){$('authModal').classList.remove('show','fr-role-locked');clearMessage();if(!currentUser){const gate=$('roleLauncher');if(gate)gate.classList.add('hide');}}
 function chooseRole(r){selectedRole=r;try{localStorage.setItem('friendride_selected_role',r)}catch(_){}document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===r));$('addressField').classList.toggle('hide',r!=='customer');$('driverRegDocs').classList.toggle('hide',r!=='driver');$('partnerRegFields').classList.toggle('hide',r!=='partner');$('driverExtraFields').classList.toggle('hide',r!=='driver');$('partnerExtraFields').classList.toggle('hide',r!=='partner');}
-let frSelectedCustomerAvatar='👦';
-function frSetAvatarGender(gender){const el=$('regCustomerGender');if(el)el.value=gender;const choices=[...document.querySelectorAll('.fr-avatar-choice')];choices.forEach(b=>{const a=b.dataset.avatar||'';b.style.outline=(gender==='female'?a.includes('👩')||a==='👧':a.includes('👨')||a==='👦'||a==='🧑')?'2px solid #168447':'none';});}
-function frSelectAvatar(avatar){frSelectedCustomerAvatar=avatar;const el=$('regCustomerAvatar');if(el)el.value=avatar;document.querySelectorAll('.fr-avatar-choice').forEach(b=>{b.style.outline=b.dataset.avatar===avatar?'3px solid #168447':'none';});}
+let frSelectedCustomerAvatar='male';
+function frSetAvatarGender(gender){const g=gender==='female'?'female':'male';frSelectedCustomerAvatar=g;const el=$('regCustomerGender'),av=$('regCustomerAvatar');if(el)el.value=g;if(av)av.value=g;document.querySelectorAll('.fr-avatar-pick').forEach(b=>b.classList.toggle('active',b.dataset.gender===g));}
 function frCheckPrescriptionFile(input){const f=input?.files?.[0];const status=$('prescriptionFileStatus');if(!f){if(status)status.textContent='Prescription medicine cart కోసం ఫైల్ అవసరం.';return;}const ok=f.type==='application/pdf'||f.type.startsWith('image/');if(!ok||f.size>10*1024*1024){alert('JPG, PNG లేదా PDF మాత్రమే. గరిష్ఠ ఫైల్ పరిమాణం 10 MB.');input.value='';if(status)status.textContent='Valid prescription file ఎంచుకోండి.';return;}if(status)status.textContent='Selected: '+f.name;}
 function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>3*1024*1024){alert('Customer photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.');input.value='';$('regCustomerPhotoPreview')?.classList.add('hide');return;}const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
 function switchAuth(mode){clearMessage();const reg=mode==='register';const roleTitle=({customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'})[selectedRole]||'FRIEND RIDE';$('authTitle').textContent=roleTitle+(reg?' Registration':' Login');$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');$('customerRegPhotoFields').classList.toggle('hide',selectedRole!=='customer');$('driverRegDocs').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerRegFields').classList.toggle('hide',!reg||selectedRole!=='partner');$('driverExtraFields').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerExtraFields').classList.toggle('hide',!reg||selectedRole!=='partner');}
@@ -3044,6 +3039,171 @@ if(typeof oldRideContactShow==='function'){
  const oldShow=window.showPage;
  if(typeof oldShow==='function')window.showPage=function(id){const r=oldShow.apply(this,arguments);if(id==='adminDashboard'&&currentProfile?.role==='admin')setTimeout(frLoadAdminSupport,120);if(id==='customerDashboard'&&currentProfile?.role==='customer')setTimeout(()=>frLoadHomepageRatings(),100);return r;};
 })();
+</script>
+
+<script id="fr-market-quotation-payment-flow">
+let frMarketPayTimer=null,frMarketPayTickBusy=false;
+function frMarketMoney(paise){return '₹'+(Number(paise||0)/100).toFixed(2);}
+function frMarketEsc(v){return typeof safe==='function'?safe(v):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function loadPartnerOrders(status='all'){
+ const el=$('partnerOrderList');if(!el)return;
+ if(!currentUser||currentProfile?.role!=='partner'){el.textContent='Partner Login అవసరం.';return;}
+ el.innerHTML='<div class="notice">Orders loading…</div>';
+ try{
+  const dbStatus=status==='new'?'quote_requested':(status==='all'?null:status);
+  const {data,error}=await sb.rpc('fr_partner_list_market_orders',{p_status:dbStatus});if(error)throw error;
+  if(!data?.length){el.innerHTML='<div class="empty-state">ఇంకా Orders లేవు.</div>';return;}
+  el.innerHTML=data.map(o=>{
+   const items=Array.isArray(o.items)?o.items:[];
+   const lines=items.map(i=>'<div class="listrow" style="align-items:center;gap:8px"><div class="grow">'+(i.image_url?'<img src="'+frMarketEsc(i.image_url)+'" style="width:48px;height:48px;object-fit:cover;border-radius:8px">':'')+'<b>'+frMarketEsc(i.item_name)+'</b><small>Qty '+frMarketEsc(i.quantity)+'</small></div><div><label>Unit Price ₹</label><input id="frQuote_'+i.id+'" type="number" min="0.01" step="0.01" value="'+(i.partner_quote_paise!=null?frPaiseToRupees(i.partner_quote_paise):(i.unit_price_paise!=null?frPaiseToRupees(i.unit_price_paise):''))+'" placeholder="Price" style="width:105px"></div></div>').join('');
+   let action='';
+   if(['quote_requested','counter_offered'].includes(o.status))action='<div class="field"><label>Delivery Charge ₹</label><input id="frDelivery_'+o.order_id+'" type="number" min="0" step="0.01" value="0"></div><button class="btn green" onclick="frPartnerSendQuote(\''+o.order_id+'\')">Send Quotation to Customer</button><button class="btn light" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'rejected\')">Reject Order</button>';
+   else if(o.status==='payment_pending')action='<div class="notice">Customer accepted quotation. Waiting for UPI payment. Verify your bank/UPI app before confirming.</div><button class="btn green" onclick="frPartnerConfirmMarketPayment(\''+o.order_id+'\')">Confirm Payment Received</button>';
+   else if(o.status==='accepted')action='<div class="status ok">Payment verified / Order confirmed</div><button class="btn green" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'preparing\')">Start Preparing</button>';
+   else if(o.status==='preparing')action='<button class="btn green" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'ready\')">Mark Ready</button>';
+   else if(o.status==='ready')action='<div class="notice">Ready for Driver Pickup.</div>';
+   const phone=(o.customer_phone||'').replace(/[^0-9+]/g,'');
+   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p><b>Customer:</b> '+frMarketEsc(o.customer_name||'Customer')+'</p><p><b>Mobile:</b> '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p><b>Delivery:</b> '+frMarketEsc(o.delivery_address)+'</p>'+lines+action+'</div>';
+  }).join('');
+ }catch(e){el.innerHTML='<div class="notice">Orders load కాలేదు: '+frMarketEsc(e.message||e)+'</div>';}
+}
+async function frPartnerSendQuote(orderId){
+ const card=[...document.querySelectorAll('#partnerOrderList .card')].find(c=>c.innerHTML.includes(orderId));if(!card)return;
+ const inputs=[...card.querySelectorAll('input[id^="frQuote_"]')],quotes=[];
+ for(const input of inputs){const v=Number(input.value);if(!Number.isFinite(v)||v<=0){alert('ప్రతి Itemకు సరైన ధర ఇవ్వండి.');return;}quotes.push({item_id:input.id.replace('frQuote_',''),price_paise:frRupeesToPaise(v)});}
+ const delivery=Number(card.querySelector('#frDelivery_'+orderId)?.value||0);
+ if(!Number.isFinite(delivery)||delivery<0){alert('Delivery Charge సరిగా నమోదు చేయండి.');return;}
+ try{const {error}=await sb.rpc('fr_partner_quote_market_order',{p_order_id:orderId,p_quotes:quotes,p_delivery_fee_paise:frRupeesToPaise(delivery)});if(error)throw error;alert('Quotation Customerకు పంపబడింది.');await loadPartnerOrders();}
+ catch(e){alert('Quotation పంపబడలేదు: '+(e.message||e));}
+}
+async function frPartnerConfirmMarketPayment(orderId){
+ if(!confirm('Customer payment మీ Shop bank/UPI accountలో నిజంగా వచ్చిందని verify చేశారా? Verify చేసిన తర్వాత మాత్రమే Confirm చేయండి.'))return;
+ try{const {error}=await sb.rpc('fr_partner_confirm_market_payment',{p_order_id:orderId,p_payment_reference:null});if(error)throw error;alert('Payment confirmed. Order is now confirmed.');await loadPartnerOrders();}
+ catch(e){alert(e.message||e);}
+}
+async function frLoadCustomerMarketOrders(){
+ const el=$('frCustomerMarketOrders');if(!el||!currentUser)return;
+ el.innerHTML='<div class="notice">Shop Orders loading…</div>';
+ try{
+  const {data,error}=await sb.rpc('fr_customer_list_market_orders');if(error)throw error;
+  if(!data?.length){el.innerHTML='<div class="empty-state">Shop Orders ఇంకా లేవు.</div>';return;}
+  el.innerHTML=data.map(o=>{
+   const items=Array.isArray(o.items)?o.items:[];
+   const lines=items.map(i=>'<div class="listrow"><span>'+frMarketEsc(i.item_name)+' × '+frMarketEsc(i.quantity)+'</span><b>'+(i.partner_quote_paise==null?'Price pending':frMarketMoney(Number(i.partner_quote_paise)*Number(i.quantity)))+'</b></div>').join('');
+   let actions='';
+   if(o.status==='quoted')actions='<div class="fr-quote-total"><div>Items Total: <b>'+frMarketMoney(o.quote_subtotal_paise)+'</b></div><div>Delivery Charge: <b>'+frMarketMoney(o.delivery_fee_paise)+'</b></div><div>Total Amount: <span class="fr-pay-total">'+frMarketMoney(o.total_amount_paise)+'</span></div></div><button class="btn green" onclick="frCustomerAcceptQuote(\''+o.order_id+'\')">Confirm Quotation & Pay</button><button class="btn light" onclick="frCustomerSendCounter(\''+o.order_id+'\')">Counter Price</button>';
+   else if(o.status==='payment_pending')actions='<div class="fr-quote-total"><b>Total to Pay: </b><span class="fr-pay-total">'+frMarketMoney(o.total_amount_paise)+'</span></div><button class="btn green" onclick="frCustomerOpenMarketPayment(\''+o.order_id+'\')">Open Shop QR / Pay Now</button><div id="frPayPanel_'+o.order_id+'"></div>';
+   else if(o.status==='accepted')actions='<div class="notice" style="background:#e8f8ef;color:#087b43">✓ Payment received and verified. Order Confirmed.<br><b>Thank You! ❤️ Use Again.</b></div>';
+   else if(o.status==='cancelled')actions='<div class="notice">Order cancelled. Payment was not confirmed within the payment window.</div>';
+   const phone=(o.partner_phone||'').replace(/[^0-9+]/g,'');
+   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p>Shop: '+frMarketEsc(o.partner_name)+'</p><p>Shop Phone: '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p>Delivery: '+frMarketEsc(o.delivery_address)+'</p>'+lines+actions+'</div>';
+  }).join('');
+ }catch(e){el.innerHTML='<div class="notice">Shop Orders load కాలేదు: '+frMarketEsc(e.message||e)+'</div>';}
+}
+async function frCustomerAcceptQuote(id){
+ try{const {error}=await sb.rpc('fr_customer_accept_market_quote',{p_order_id:id});if(error)throw error;await frLoadCustomerMarketOrders();frCustomerOpenMarketPayment(id);}
+ catch(e){alert(e.message||e);}
+}
+async function frCustomerOpenMarketPayment(id){
+ const panel=$('frPayPanel_'+id);if(!panel)return;
+ panel.innerHTML='<div class="notice">Shop QR loading…</div>';
+ try{
+  const {data,error}=await sb.rpc('fr_customer_market_payment_details',{p_order_id:id});if(error)throw error;
+  const d=Array.isArray(data)?data[0]:data;if(!d)throw Error('Payment details unavailable');
+  let qr='';
+  if(d.qr_path){const signed=await sb.storage.from('provider-payment-qr').createSignedUrl(d.qr_path,600);if(!signed.error&&signed.data?.signedUrl)qr='<img class="fr-pay-qr" src="'+frMarketEsc(signed.data.signedUrl)+'" alt="Shop UPI QR Code">';}
+  const upi=d.upi_id||'';
+  const payUri=upi?'upi://pay?pa='+encodeURIComponent(upi)+'&pn='+encodeURIComponent('FRIEND RIDE Shop')+'&am='+(Number(d.total_amount_paise)/100).toFixed(2)+'&cu=INR&tn='+encodeURIComponent('FRIEND RIDE '+d.order_number):'';
+  panel.innerHTML='<div class="fr-pay-box"><h3>Pay to Shop / UPI QR</h3><div class="fr-pay-total" style="text-align:center">'+frMarketMoney(d.total_amount_paise)+'</div>'+qr+(upi?'<p style="text-align:center"><b>UPI ID:</b> '+frMarketEsc(upi)+'</p>':'')+(payUri?'<a class="fr-pay-link" href="'+frMarketEsc(payUri)+'">Open UPI App & Pay</a>':'')+'<div class="fr-pay-timer" id="frPayTimer_'+id+'">05:00</div><p class="tiny muted" style="text-align:center">First 5 minutes + automatic 3-minute extension. Same Shop QR remains active.</p><div class="notice">Payment చేసిన తర్వాత Shop Owner తన bank/UPI accountలో receipt verify చేసి Confirm చేస్తారు. QR scan లేదా screenshot మాత్రమే payment success కాదు.</div><button class="btn light" onclick="frLoadCustomerMarketOrders()">Refresh Payment Status</button></div>';
+  frStartMarketPayCountdown(id,d.expires_at,d.extension_used);
+ }catch(e){panel.innerHTML='<div class="notice">'+frMarketEsc(e.message||e)+'</div>';await frLoadCustomerMarketOrders();}
+}
+function frStartMarketPayCountdown(id,expiresAt,extended){
+ if(frMarketPayTimer)clearInterval(frMarketPayTimer);
+ let ticking=false;
+ const tick=async()=>{
+  const el=$('frPayTimer_'+id);if(!el){clearInterval(frMarketPayTimer);return;}
+  const left=Math.max(0,new Date(expiresAt).getTime()-Date.now());
+  const sec=Math.ceil(left/1000);el.textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
+  if(left<=0&&!ticking){ticking=true;el.textContent='00:00';try{
+    const {data,error}=await sb.rpc('fr_customer_tick_market_payment',{p_order_id:id});if(error)throw error;
+    const r=Array.isArray(data)?data[0]:data;
+    if(r?.status==='payment_pending'&&r.expires_at){await frCustomerOpenMarketPayment(id);}
+    else{clearInterval(frMarketPayTimer);await frLoadCustomerMarketOrders();}
+   }catch(e){console.warn('Payment timer:',e);await frLoadCustomerMarketOrders();}}
+ };
+ tick();frMarketPayTimer=setInterval(tick,1000);
+}
+</script>
+
+<script id="fr-partner-live-digital-catalogue">
+/* Customer catalogue is loaded from the selected Partner's own published catalogue.
+   Fixed prices are displayed; blank prices are explicitly sent as Ask Price requests. */
+let frCustomerCatalogueRows=[];
+let frCustomerCatalogueBusy=false;
+async function openFriendStore(id){
+ const store=(frApprovedStores||[]).find(x=>String(x.id)===String(id));
+ if(!store){showMessage('ఈ Approved Store వివరాలు దొరకలేదు.','bad');return;}
+ frActiveStore=store;frMarketCategory='All';
+ $('customerCatalogueTitle').textContent=store.name;
+ $('customerCatalogueType').textContent=store.category;
+ $('customerCatalogueSub').textContent='ఈ షాప్ ప్రచురించిన వస్తువులు, ధరలు మరియు అందుబాటు';
+ $('customerCatalogueSearch').value='';
+ const grid=$('customerCatalogueGrid');
+ if(grid)grid.innerHTML='<div class="market-empty">ఈ షాప్ Digital Catalogue లోడ్ అవుతోంది…</div>';
+ const panel=$('medicalPrescriptionPanel');if(panel)panel.style.display=store.type==='medical'?'block':'none';
+ showPage('customerCatalogue');
+ try{
+  const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:store.id});
+  if(error)throw error;
+  frCustomerCatalogueRows=(data||[]).map(x=>({...x,pricePaise:x.price_paise==null?null:Number(x.price_paise),offerPaise:x.offer_price_paise==null?null:Number(x.offer_price_paise)}));
+  frMarketCategory='All';renderStoreCategories();renderCustomerCatalogue();
+  $('customerCatalogueSub').textContent=frCustomerCatalogueRows.length
+   ? frCustomerCatalogueRows.length+' వస్తువులు • Shop Owner ధరలు & availability'
+   : 'ఈ షాప్ ఇంకా Catalogue items publish చేయలేదు. Shop Owner తన Catalogueలో items జోడించాలి.';
+ }catch(e){
+  frCustomerCatalogueRows=[];
+  if(grid)grid.innerHTML='<div class="market-empty">Digital Catalogue లోడ్ కాలేదు: '+safe(e.message||e)+'</div>';
+ }
+}
+function renderStoreCategories(){
+ const rows=frCustomerCatalogueRows||[];
+ const cats=['All',...new Set(rows.map(x=>x.category).filter(Boolean))];
+ const sel=$('customerCatalogueCategorySelect');
+ if(sel){sel.innerHTML=cats.map(c=>'<option value="'+safe(c)+'">'+(c==='All'?'All Items / అన్ని వస్తువులు':safe(c))+'</option>').join('');sel.value=cats.includes(frMarketCategory)?frMarketCategory:'All';}
+ const tiles=$('frCatalogueCategoryTiles');
+ if(tiles)tiles.innerHTML=cats.filter(c=>c!=='All').map((c,i)=>'<button class="fr-catalogue-category-tile" data-category="'+safe(c)+'" onclick="frSelectCatalogueCategory(this.dataset.category)"><span class="market-product-art">'+(i%2?'🛍️':'📦')+'</span><b>'+safe(c)+'</b></button>').join('');
+ const head=$('frCatalogueVisualHead');
+ if(head&&frActiveStore)head.innerHTML='<div class="notice"><b>'+safe(frActiveStore.name)+'</b><br>Shop-specific Digital Catalogue</div>';
+}
+function renderCustomerCatalogue(){
+ if(!frActiveStore)return;
+ const q=($('customerCatalogueSearch')?.value||'').trim().toLowerCase();
+ const rows=(frCustomerCatalogueRows||[]).filter(x=>(frMarketCategory==='All'||x.category===frMarketCategory)&&(!q||(x.item_name+' '+x.category+' '+(x.master_sku||'')).toLowerCase().includes(q)));
+ const grid=$('customerCatalogueGrid');if(!grid)return;
+ grid.innerHTML=rows.map((x,i)=>{
+  const name=safe(x.item_name),cat=safe(x.category||'Products'),unit=safe(x.unit||'');
+  const img=String(x.image_url||'').trim();
+  const photo=img?'<img src="'+safe(img)+'" alt="'+name+'" loading="lazy">':'<span class="product-art-object">'+frProductArt({name:x.item_name,category:x.category})+'</span>';
+  const hasPrice=x.pricePaise!==null;
+  const shown=hasPrice?(x.offerPaise!==null&&x.offerPaise>0?x.offerPaise:x.pricePaise):null;
+  const price=shown===null?'<div class="market-price">Ask Price • Shop Quotation</div>':'<div class="market-price">₹'+(shown/100).toFixed(2)+(x.offerPaise!==null&&x.offerPaise>0?' <small>Offer</small>':'')+'</div>';
+  const stock=x.available?'<span class="stock-mark yes">✓ Available</span>':'<span class="stock-mark no">Out of Stock</span>';
+  return '<article class="market-product market-product-3d"><div class="market-product-art-3d">'+photo+'</div><div class="market-product-info"><b>'+name+'</b><small class="muted">'+cat+(unit?' • '+unit:'')+'</small>'+price+stock+'</div><button class="btn purple" '+(!x.available?'disabled':'')+' onclick="frAddPartnerCatalogueItem('+frCustomerCatalogueRows.indexOf(x)+')">'+(hasPrice?'＋ Add to Cart':'＋ Ask Price')+'</button></article>';
+ }).join('')||'<div class="market-empty">ఈ కేటగిరీలో Shop Owner publish చేసిన items లేవు.</div>';
+}
+function frAddPartnerCatalogueItem(index){
+ const x=frCustomerCatalogueRows[index];if(!x||!frActiveStore)return;
+ if(!x.available){alert('ఈ వస్తువు ప్రస్తుతం అందుబాటులో లేదు.');return;}
+ const rx=!!x.prescription_required;
+ if(rx&&!$('customerPrescriptionFile')?.files?.[0]){alert('ఈ మందుకు Doctor Prescription తప్పనిసరిగా అప్‌లోడ్ చేయాలి.');return;}
+ const unitPaise=x.pricePaise===null?null:(x.offerPaise!==null&&x.offerPaise>0?x.offerPaise:x.pricePaise);
+ const existing=frMarketCart.find(c=>c.catalogueItemId===x.id&&String(c.storeId)===String(frActiveStore.id));
+ if(existing)existing.qty++;
+ else frMarketCart.push({name:x.item_name,partner:frActiveStore.name,storeId:frActiveStore.id,qty:1,price:unitPaise===null?null:unitPaise/100,pricing:unitPaise===null?'request':'fixed',catalogueItemId:x.id,imageUrl:x.image_url||null,prescriptionRequired:rx});
+ renderMarketCart();
+ showMessage(unitPaise===null?'Ask Price request Cartలో చేరింది. Shop Owner Quotation పంపుతారు.':'Shop ధరతో Item Cartలో చేరింది. Final quotation Shop నిర్ధారిస్తుంది.','good');
+}
 </script>
 
 <script src="./assets/ride-contact.js"></script>
