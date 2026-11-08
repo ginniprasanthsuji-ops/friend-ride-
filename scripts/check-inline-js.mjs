@@ -15,6 +15,23 @@ for (let i = 0; i < blocks.length; i++) {
     console.error(`FAIL inline script ${i + 1}: ${error.message}`);
   }
 }
+const requiredIntegrations = [
+  ['Customer profile photo storage', "customer-profile-photos"],
+  ['Assigned ride customer details RPC', "get_ride_customer_details_v2"],
+  ['Completed ride QR RPC', "get_ride_payment_details_v1"],
+  ['Completed ride QR status gate', "d.provider_qr_path"],
+  ['Auth session restore', "sb.auth.getSession()"],
+  ['Role-aware session restore', "chooseRole(selectedRole)"],
+  ['Registration OTP backend', "Sms-otp"],
+];
+for (const [label, token] of requiredIntegrations) {
+  if (!html.includes(token)) {
+    failed = true;
+    console.error(`FAIL integration check: ${label}`);
+  } else {
+    console.log(`PASS integration check: ${label}`);
+  }
+}
 const ids = [...html.matchAll(/\bid\s*=\s*["']([^"']+)["']/g)].map(m => m[1]);
 const duplicates = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
 console.log(`Checked ${blocks.length} inline scripts and ${ids.length} literal HTML IDs.`);
