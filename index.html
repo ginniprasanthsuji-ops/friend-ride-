@@ -219,6 +219,16 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 #home #frHomeRatings{margin-bottom:24px;background:linear-gradient(135deg,#fff,#fff8e9);border:1px solid #f1e4c7;border-radius:24px}
 @media(max-width:380px){#home .join-card .grid{gap:6px}#home .join-card .tile{min-height:100px;padding:9px 4px}}
 </style>
+<style id="fr-digital-catalogue-entry-fix">
+.fr-store-card{display:flex;flex-direction:column;align-items:stretch;gap:10px;padding:12px;border:1px solid #eadff5;border-radius:18px;background:linear-gradient(145deg,#fff,#f7f1ff);box-shadow:0 8px 18px #32105a12}
+.fr-store-card .market-store-art{width:100%;min-height:92px;border-radius:14px}
+.fr-store-card .market-store-info{padding:0;min-width:0}
+.fr-open-digital-catalogue{width:100%;border:0;border-radius:13px;padding:12px 10px;background:linear-gradient(100deg,#5522b8,#8a35d5);color:#fff;font-weight:850;font-size:14px;box-shadow:0 6px 14px #5420b52b}
+.fr-catalogue-category-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.fr-catalogue-category-tile{border:1px solid #e7d9f5;border-radius:13px;padding:10px 6px;background:linear-gradient(145deg,#fff,#f1e8ff);color:#45206e;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:78px}
+.fr-catalogue-category-tile .market-product-art{font-size:24px}
+@media(max-width:360px){.fr-catalogue-category-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -488,6 +498,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
    <label>Upload Prescription (JPG / PNG / PDF)</label><input id="customerPrescriptionFile" type="file" accept="image/*,.pdf" onchange="frCheckPrescriptionFile(this)">
    <small id="prescriptionFileStatus" class="muted">Prescription medicine cart కోసం ఫైల్ అవసరం.</small>
   </div>
+  <div id="frCatalogueCategoryTiles" class="fr-catalogue-category-tiles" aria-label="Store catalogue categories"></div>
   <div class="field"><label>Catalogue Category / క్యాటలాగ్ కేటగిరీ</label><select id="customerCatalogueCategorySelect" onchange="frMarketCategory=this.value;renderCustomerCatalogue()"><option value="All">All Items</option></select></div>
   <div class="market-search"><input id="customerCatalogueSearch" placeholder="Search products in catalogue" oninput="renderCustomerCatalogue()"></div>
   <div id="customerCatalogueGrid" class="market-product-grid"></div>
@@ -1153,7 +1164,7 @@ function renderFriendStores(){
  const el=$('friendMartStoreGrid');if(!el)return;
  const items=frApprovedStores.filter(x=>(cat==='all'||x.type===cat)&&(!q||(x.name+' '+x.area+' '+x.category).toLowerCase().includes(q)));
  const sorted=items.map(x=>({...x,distance:frCustomerMarketCoords&&Number.isFinite(x.latitude)&&Number.isFinite(x.longitude)?frDistanceKm([frCustomerMarketCoords.lat,frCustomerMarketCoords.lon],[x.latitude,x.longitude]):null})).sort((a,b)=>a.distance==null?1:b.distance==null?-1:a.distance-b.distance);
- el.innerHTML=sorted.map(x=>`<button class="market-store" onclick="openFriendStore('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small>${x.distance==null?'<small>GPS location not available</small>':`<small class="market-store-distance">${x.distance.toFixed(1)} km away (straight-line)</small>`}<small>View store & visual catalogue →</small></div></button>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో షాపులు లేవు.</div>';
+ el.innerHTML=sorted.map(x=>`<article class="market-store fr-store-card"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.category)} • ${safe(x.area)}</small>${x.distance==null?'<small>GPS location not available</small>':`<small class="market-store-distance">${x.distance.toFixed(1)} km away (straight-line)</small>`}</div><button type="button" class="fr-open-digital-catalogue" onclick="openFriendStore('${x.id}')">📖 Open Digital Catalogue</button></article>`).join('')||'<div class="market-empty">ఈ కేటగిరీలో షాపులు లేవు.</div>';
  frRenderStoreMap(sorted);
 }
 function openFriendStore(id){
@@ -3593,6 +3604,12 @@ function renderStoreCategories(){
  if(tiles)tiles.innerHTML=cats.filter(c=>c!=='All').map((c,i)=>'<button class="fr-catalogue-category-tile" data-category="'+safe(c)+'" onclick="frSelectCatalogueCategory(this.dataset.category)"><span class="market-product-art">'+(i%2?'🛍️':'📦')+'</span><b>'+safe(c)+'</b></button>').join('');
  const head=$('frCatalogueVisualHead');
  if(head&&frActiveStore)head.innerHTML='<div class="notice"><b>'+safe(frActiveStore.name)+'</b><br>Shop-specific Digital Catalogue</div>';
+}
+function frSelectCatalogueCategory(category){
+ const cats=['All',...new Set((frCustomerCatalogueRows||[]).map(x=>x.category).filter(Boolean))];
+ frMarketCategory=cats.includes(category)?category:'All';
+ const select=$('customerCatalogueCategorySelect');if(select)select.value=frMarketCategory;
+ renderCustomerCatalogue();
 }
 function renderCustomerCatalogue(){
  if(!frActiveStore)return;
