@@ -67,7 +67,19 @@ test('Friend Mart partner GPS registration, dashboard update and nearby store ma
     captureCustomer: 'function',
     renderMap: 'function'
   });
-  const source = await page.locator('body').innerText();
-  expect(source).toContain('Store Map Location');
-  expect(source).toContain('Use My Current Location');
+  await expect(page.locator('#partnerDashboard')).toContainText('Store Map Location');
+  await expect(page.locator('#storeBrowse')).toContainText('Use My Current Location');
+});
+
+test('Bank service enquiry is connected to customer submission and admin review', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#bankServiceSelected')).toBeAttached();
+  await expect(page.locator('#bankEnquiryStatus')).toBeAttached();
+  await expect(page.locator('#frAdminBankEnquiryList')).toBeAttached();
+  const functions = await page.evaluate(() => ({
+    submit: typeof window.frSubmitBankEnquiry,
+    adminLoad: typeof window.frAdminLoadBankEnquiries,
+    adminUpdate: typeof window.frAdminUpdateBankEnquiry
+  }));
+  expect(functions).toEqual({ submit: 'function', adminLoad: 'function', adminUpdate: 'function' });
 });
