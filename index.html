@@ -1678,19 +1678,48 @@ async function refreshNearbyDrivers(){
     frShow('trackingStatus',rows.length?rows.length+' Online Drivers 15 KM పరిధిలో కనిపించారు. Driver Accept చేసిన తర్వాత Live Tracking ప్రారంభమవుతుంది.':'15 KM పరిధిలో ప్రస్తుతం Online Drivers లేరు.');
   }catch(e){frShow('trackingStatus','Nearby Drivers లోడ్ కాలేదు: '+e.message);}
 }
+async function frRenderCustomerRideDriverAndPayment(ride){
+  const box=$('liveRideStatus');if(!box||!ride?.driver_id)return;
+  try{
+    const {data,error}=await sb.rpc('get_ride_payment_details_v1',{p_ride_id:ride.id});
+    if(error)throw error;
+    const d=Array.isArray(data)?data[0]:data;if(!d)return;
+    const card=document.createElement('div');card.className='notice';card.style.marginTop='10px';
+    const h=document.createElement('b');h.textContent='Driver & Payment Details';card.append(h);
+    const name=document.createElement('p');name.textContent='Driver: '+(d.driver_name||'Driver');card.append(name);
+    const phone=document.createElement('p');phone.textContent='Mobile: '+(d.driver_phone||'Not available');card.append(phone);
+    if(String(d.ride_status).toLowerCase()==='completed'&&d.provider_qr_path){
+      const {data:signed,error:signError}=await sb.storage.from('provider-payment-qr').createSignedUrl(d.provider_qr_path,300);
+      if(signError)throw signError;
+      if(signed?.signedUrl){
+        const label=document.createElement('p');label.textContent='Ride Completed — Driver Payment QR';card.append(label);
+        const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Driver payment QR';img.style.cssText='width:210px;max-width:100%;height:auto;display:block;border-radius:12px;background:#fff;padding:8px';card.append(img);
+        const fare=document.createElement('p');fare.textContent='Agreed Fare: ₹'+(d.agreed_fare??ride.agreed_fare??'—');card.append(fare);
+      }
+    }else if(String(d.ride_status).toLowerCase()==='completed'){
+      const note=document.createElement('p');note.textContent='Ride Completed. Driver QR ఇంకా నమోదు చేయలేదు.';card.append(note);
+    }
+    box.append(card);
+  }catch(e){console.warn('Customer driver/payment details unavailable:',e.message);}
+}
 async function loadMyRideTracking(){
   if(!currentUser||currentProfile?.role!=='customer')return;
   try{
     const {data,error}=await sb.from('rides').select('*').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(10);if(error)throw error;
     const box=$('liveRideStatus');if(!box)return;
     if(!data?.length){box.textContent='ఇంకా Rides లేవు.';return;}
-    const active=data.find(r=>!['completed','cancelled','rejected'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;frTrackingRideData=active;
+    const active=data.find(r=>!['completed','cancelled','rejected','canceled'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;frTrackingRideData=active;
     box.innerHTML='<b>'+safe(active.vehicle_type)+' • '+safe(active.status)+'</b><p>'+safe(active.pickup)+' → '+safe(active.drop)+'</p><p>మీ Offer ₹'+safe(active.fare_offer)+' | Agreed ₹'+safe(active.agreed_fare??'—')+'</p><small>Ride ID: '+safe(active.id)+'</small>';
     if(String(active.status).toLowerCase()==='counter_offered'){
       const a=document.createElement('button');a.className='btn';a.textContent='Accept Driver Counter Offer';a.onclick=async()=>{const x=await sb.rpc('accept_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(a);
       const d=document.createElement('button');d.className='btn light';d.textContent='Reject Counter Offer';d.onclick=async()=>{const x=await sb.rpc('decline_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(d);
     }
-    if(active.driver_id&&['accepted','ongoing'].includes(String(active.status).toLowerCase())){const b=document.createElement('button');b.className='btn purple';b.textContent='🛰️ Start Two-Way Live Tracking';b.onclick=()=>startCustomerLiveTracking(active.id);box.append(b);}
+    if(active.driver_id&&['accepted','ongoing'].includes(String(active.status).toLowerCase())){
+      await frRenderCustomerRideDriverAndPayment(active);
+      const b=document.createElement('button');b.className='btn purple';b.textContent='🛰️ Start Two-Way Live Tracking';b.onclick=()=>startCustomerLiveTracking(active.id);box.append(b);
+    }else if(active.driver_id&&String(active.status).toLowerCase()==='completed'){
+      await frRenderCustomerRideDriverAndPayment(active);
+    }
   }catch(e){frShow('liveRideStatus','My Rides Error: '+e.message);}
 }
 async function startCustomerTrackingFromPanel(){if(frActiveRideId)await startCustomerLiveTracking(frActiveRideId);else await loadMyRideTracking();}
