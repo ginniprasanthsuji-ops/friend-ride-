@@ -1668,7 +1668,18 @@ async function frRenderDriverRidePayment(ride,parent){
  const h=document.createElement('h4');h.textContent='Customer UPI Payment';box.append(h);
  const {data,error}=await sb.rpc('fr_get_ride_payment_state',{p_ride_id:ride.id});if(error)throw error;
  const p=data||{status:'not_started'};
- if(p.status==='awaiting_driver_confirmation'){
+ if(p.status==='pending'){
+  const amount=document.createElement('p');amount.textContent='Ride Payment QR • ₹'+Number(p.amount).toFixed(2);box.append(amount);
+  if(p.qr_path){
+   const signed=await sb.storage.from('provider-payment-qr').createSignedUrl(p.qr_path,600);
+   if(signed.error)throw signed.error;
+   if(signed.data?.signedUrl){const img=document.createElement('img');img.src=signed.data.signedUrl;img.alt='Your UPI QR for this completed ride';img.style.cssText='display:block;width:min(100%,260px);height:auto;margin:10px auto;border:1px solid #e8e0f2;border-radius:14px;padding:8px;background:#fff';box.append(img);}
+  }else{
+   frRideNotice(box,'Driver QR image path is not available. Check your uploaded UPI QR in Profile.');
+  }
+  const expiry=document.createElement('p');expiry.className='notice';expiry.textContent='ఈ QRను Customer స్కాన్ చేసి చెల్లించవచ్చు. గడువు: '+(p.expires_at?new Date(p.expires_at).toLocaleTimeString():'5 minutes');box.append(expiry);
+  box.append(frRideBtn('↻ Refresh Payment Status','light',()=>loadDriverRideRequests()));
+ }else if(p.status==='awaiting_driver_confirmation'){
   const amount=document.createElement('p');amount.textContent='Customer submitted Transaction ID • ₹'+Number(p.amount).toFixed(2);box.append(amount);
   const txn=document.createElement('p');txn.textContent='UPI Transaction ID: '+p.transaction_id;txn.style.fontWeight='900';box.append(txn);
   const warning=document.createElement('p');warning.textContent='మీ UPI / Bank Appలో డబ్బు నిజంగా అందిందో చూసిన తర్వాత మాత్రమే Confirm Payment నొక్కండి.';box.append(warning);
