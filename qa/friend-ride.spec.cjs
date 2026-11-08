@@ -166,7 +166,8 @@ test('Role-specific order, ride and customer alert preview controls have audio a
     tone: typeof window.frPlayAlertTone,
     classify: typeof window.frClassifyAlert,
     preview: typeof window.frPreviewAlertTone,
+    speakPreview: typeof window.frSpeakAlert,
     voice: typeof window.frRideSpeakNotification
   }));
-  expect(functions).toEqual({ unlock: 'function', tone: 'function', classify: 'function', preview: 'function', voice: 'function' });
+  expect(functions).toEqual({ unlock: 'function', tone: 'function', classify: 'function', preview: 'function', speakPreview: 'function', voice: 'function' });
 });
