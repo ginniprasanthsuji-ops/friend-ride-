@@ -155,3 +155,16 @@ test('Admin Driver KYC document review page is wired to protected review RPCs', 
   expect(functions).toEqual({ load: 'function', review: 'function' });
   await expect(page.locator('#adminDashboard')).toContainText('Driver KYC Documents');
 });
+
+test('Role-specific order, ride and customer alert preview controls have audio and voice handlers', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.fr-alert-preview-buttons button')).toHaveCount(3);
+  const functions = await page.evaluate(() => ({
+    unlock: typeof window.frUnlockAlertAudio,
+    tone: typeof window.frPlayAlertTone,
+    classify: typeof window.frClassifyAlert,
+    preview: typeof window.frPreviewAlertTone,
+    voice: typeof window.frRideSpeakNotification
+  }));
+  expect(functions).toEqual({ unlock: 'function', tone: 'function', classify: 'function', preview: 'function', voice: 'function' });
+});
