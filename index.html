@@ -3585,6 +3585,7 @@ function frAddPartnerCatalogueItem(index){
   add(question,'user');input.value='';send.disabled=true;send.textContent='…';
   const loading=add('మీ సందేహానికి సమాధానం సిద్ధం చేస్తున్నాను…','bot');
   try{
+   if(!currentUser){loading.textContent='AI సహాయకుడిని ఉపయోగించడానికి ముందుగా మీ Customer / Driver / Partner / Admin ఖాతాలో Login చేయండి.';return;}
    const page=document.querySelector('.page.active')?.id||'';
    const {data,error}=await sb.functions.invoke('friend-ride-ai-assistant',{body:{question,role:currentProfile?.role||selectedRole||'user',page,history}});
    if(error)throw error;
