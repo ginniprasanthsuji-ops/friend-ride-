@@ -1848,9 +1848,19 @@ function frClassifyAlert(row){
  if(role==='customer'&&(isOrder||isRide||/accepted|confirmed|arrived|completed|cancelled|ఆమోద|చేరుకున్న|పూర్తి/.test(t)))return 'customer';
  return null;
 }
+function frSpeakAlert(kind){
+ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return;
+ try{
+  window.speechSynthesis.cancel();
+  const phrases={order:'Order arrived. Order arrived. Order arrived.',ride:'New ride. New ride. New ride.',customer:'Your FRIEND RIDE update is here. Your order or ride status has changed.'};
+  const utterance=new SpeechSynthesisUtterance(phrases[kind]||phrases.customer);
+  utterance.lang='en-IN';utterance.rate=0.88;utterance.pitch=1.02;utterance.volume=1;
+  window.speechSynthesis.speak(utterance);
+ }catch(e){console.warn('Voice preview unavailable:',e);}
+}
 function frPreviewAlertTone(kind){
  frUnlockAlertAudio();
- const play=()=>{frPlayAlertTone(kind);frRideSpeakNotification({title:kind==='order'?'New order':kind==='ride'?'New ride':'Customer update',message:kind==='order'?'Order arrived':kind==='ride'?'Ride booking':'Your order update'});};
+ const play=()=>{frPlayAlertTone(kind);frSpeakAlert(kind);};
  if(frAlertAudioCtx?.state==='suspended')frAlertAudioCtx.resume().then(play);else play();
  const out=document.getElementById('frNotifyPermissionStatus');
  if(out)out.textContent=kind==='order'?'“Order arrived” — మూడు సార్లు వినిపిస్తుంది.':kind==='ride'?'“New ride” — మూడు సార్లు వినిపిస్తుంది.':'Customer update — పూర్తి వాయిస్ అలర్ట్.';
