@@ -1741,6 +1741,23 @@ function frRideRenderNotifications(){
     </article>`;
   }).join('');
 }
+function frRideSpeakNotification(n){
+ try{
+  if(document.hidden||!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return;
+  const role=String(currentProfile?.role||selectedRole||'').toLowerCase();
+  const raw=String((n?.title||'')+' '+(n?.message||'')).toLowerCase();
+  let phrase='';
+  if(role==='partner'&&/order|ఆర్డర్|shop/.test(raw))phrase='Order arrived. Order arrived. Order arrived.';
+  else if(role==='driver'&&/ride|booking|రైడ్|బుకింగ్/.test(raw))phrase='New ride. New ride. New ride.';
+  else if(role==='customer'&&/order|ఆర్డర్/.test(raw))phrase='Your order update. Your order update.';
+  else if(role==='customer'&&/ride|రైడ్/.test(raw))phrase='Your ride update. Your ride update.';
+  if(!phrase)return;
+  window.speechSynthesis.cancel();
+  const utterance=new SpeechSynthesisUtterance(phrase);
+  utterance.lang='en-IN';utterance.rate=0.92;utterance.pitch=1;utterance.volume=1;
+  window.speechSynthesis.speak(utterance);
+ }catch(e){console.warn('Notification voice unavailable:',e?.message||e);}
+}
 function frRideShowToast(n, browserAlert=false){
   const box=document.getElementById('frRideLiveToast');
   if(box){
@@ -1750,7 +1767,8 @@ function frRideShowToast(n, browserAlert=false){
     clearTimeout(frRideToastTimer);
     frRideToastTimer=setTimeout(()=>box.classList.remove('show'),9000);
   }
-  try{if(navigator.vibrate)navigator.vibrate([140,70,140]);}catch(_){}
+  try{if(navigator.vibrate)navigator.vibrate(selectedRole==='partner'?[250,120,250,120,450]:selectedRole==='driver'?[180,100,180,100,380]:[100,60,100]);}catch(_){}
+  frRideSpeakNotification(n);
   if(browserAlert && 'Notification' in window && Notification.permission==='granted' && document.hidden){
     try{
       const notice=new Notification(n.title||'FRIEND RIDE', {
