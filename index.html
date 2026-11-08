@@ -529,7 +529,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <section id="gst" class="page"><div class="card"><h2>GST Bills & Invoices</h2><div class="field"><label>Business Name</label><input id="gstBusiness"></div><div class="field"><label>GSTIN</label><input id="gstNumber" maxlength="15"></div><div class="field"><label>Customer Name</label><input id="gstCustomer"></div><div class="field"><label>Invoice Amount ₹</label><input id="gstAmount" type="number"></div><div class="field"><label>GST Rate</label><select id="gstRate"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div><button class="btn purple" onclick="previewGST()">Calculate Invoice</button><div id="gstResult" class="notice">GST calculation preview will appear here.</div><div class="notice">This is a calculation preview, not a compliant tax invoice. Confirm HSN/SAC, place of supply, tax split and statutory invoice details before issuing.</div></div></section>
 
 
-<section id="catalogue" class="page"><div class="card"><h2>FRIEND RIDE – Partner Master Catalogue</h2><p class="muted">మన FRIEND RIDE Master Catalogueలో 1,300+ వివరమైన entries ఉన్నాయి. మీ business type ఆధారంగా సంబంధిత category/items మాత్రమే కనిపిస్తాయి. మీరు ధర నమోదు చేయవచ్చు. ధర నిర్ణయించకపోతే Price on Requestగా ఉంచవచ్చు.</p><div class="field"><label>Your Business Category</label><select id="catalogueBusinessType" onchange="syncPartnerCatalogue(this.value)"><option value="">Select category</option><option value="local_store">Grocery & General Store</option><option value="electrical">Electrical Shop</option><option value="electrician">Electrician Services</option><option value="hardware">Hardware & Plumbing</option><option value="chicken">Chicken Shop</option><option value="mutton">Mutton & Meat</option><option value="fish">Fish & Seafood</option><option value="vegetables">Vegetables & Fruits</option><option value="medical">Medical Store</option><option value="dairy">Milk & Dairy</option><option value="mobile">Mobile & Accessories</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery & Xerox</option><option value="restaurant">Restaurant / Tiffin</option><option value="other">Other Business</option></select></div><div class="notice">మీ వ్యాపారానికి సంబంధించిన వస్తువులను ఎంచుకుని ధరలు, స్టాక్ వివరాలను ఎప్పుడైనా మార్చుకోవచ్చు.</div><div class="field"><label>Master Catalogue Category</label><select id="catalogueCategorySelect" onchange="loadMasterItems()"><option value="">Select business category first</option></select></div><div class="field"><label>Search in 1,300+ FRIEND RIDE Master Catalogue Entries</label><input id="masterCatalogueSearch" placeholder="Product name / SKU / category search" oninput="loadMasterItems()"><small id="masterCatalogueCount" class="muted">1,300+ master entries available</small></div><div class="field"><label>Select Item from FRIEND RIDE Catalogue</label><select id="masterCatalogueItem" onchange="useMasterItem()"><option value="">Select catalogue item</option></select></div><div id="masterCatalogueDetails" class="notice">Select an item to view SKU, unit and detailed description.</div><div class="field"><label>Or Add Item Name</label><input id="catalogueItemName" placeholder="Item name"></div><div class="row"><div class="field"><label>Your Price ₹ (Optional)</label><input id="cataloguePrice" type="number" min="0" placeholder="Leave blank for Price on Request"></div><div class="field"><label>Offer Price ₹ (Optional)</label><input id="catalogueOfferPrice" type="number" min="0"></div></div><div class="field"><label>Pricing Type</label><select id="cataloguePricingType"><option value="fixed">Fixed Price</option><option value="request">Price on Request / Ask Partner</option></select></div><div class="field"><label>Description</label><textarea id="catalogueDescription"></textarea></div><div class="field"><label>Item Photo</label><input id="cataloguePhoto" type="file" accept="image/*"></div><div class="row"><div class="field"><label>Prep Time (min) – Restaurant</label><input id="cataloguePrepTime" type="number" value="20"></div><div class="field"><label>Availability</label><select id="catalogueAvailable"><option value="true">Available</option><option value="false">Out of Stock</option></select></div></div><button class="btn purple" onclick="addCatalogueItem()">Add to My Catalogue</button><hr><h3>My Catalogue & Pricing</h3><div id="partnerCatalogList" class="empty-state">Select your business category to load FRIEND RIDE Master Catalogue.</div><div class="notice">Add to My Catalogue నొక్కితే Partner item, ధర, availability మరియు photo Supabaseలో save అవుతాయి. Admin-approved Partner items మాత్రమే Customer Store Catalogueలో కనిపిస్తాయి.</div></div></section>
+<section id="catalogue" class="page"><div class="card"><h2>FRIEND RIDE – Partner Master Catalogue</h2><p class="muted">మన FRIEND RIDE Master Catalogueలో 1,300+ వివరమైన entries ఉన్నాయి. మీ business type ఆధారంగా సంబంధిత category/items మాత్రమే కనిపిస్తాయి. మీరు ధర నమోదు చేయవచ్చు. ధర నిర్ణయించకపోతే Price on Requestగా ఉంచవచ్చు.</p><div class="field"><label>Your Business Category</label><select id="catalogueBusinessType" onchange="syncPartnerCatalogue(this.value)"><option value="">Select category</option><option value="local_store">Grocery & General Store</option><option value="electrical">Electrical Shop</option><option value="electrician">Electrician Services</option><option value="hardware">Hardware & Plumbing</option><option value="chicken">Chicken Shop</option><option value="mutton">Mutton & Meat</option><option value="fish">Fish & Seafood</option><option value="vegetables">Vegetables & Fruits</option><option value="medical">Medical Store</option><option value="dairy">Milk & Dairy</option><option value="mobile">Mobile & Accessories</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery & Xerox</option><option value="restaurant">Restaurant / Tiffin</option><option value="other">Other Business</option></select></div><div class="notice">మీ వ్యాపారానికి సంబంధించిన వస్తువులను ఎంచుకుని ధరలు, స్టాక్ వివరాలను ఎప్పుడైనా మార్చుకోవచ్చు.</div><div class="field"><label>Master Catalogue Category</label><select id="catalogueCategorySelect" onchange="loadMasterItems()"><option value="">Select business category first</option></select></div><div class="field"><label>మీ స్వంత Item Category (Custom Item కోసం)</label><input id="frCustomCatalogCategory" maxlength="80" placeholder="ఉదా: Fresh Chicken / Snacks / Special Items"></div><div class="notice">ఒక్కో షాప్‌కు గరిష్ఠంగా 200 items. ప్రతి itemకు మీ ఫోటో upload చేయవచ్చు (గరిష్ఠం 5 MB). Master Catalogue item లేదా మీ స్వంత వస్తువు రెండూ అనుమతించబడతాయి.</div><div class="field"><label>Search in 1,300+ FRIEND RIDE Master Catalogue Entries</label><input id="masterCatalogueSearch" placeholder="Product name / SKU / category search" oninput="loadMasterItems()"><small id="masterCatalogueCount" class="muted">1,300+ master entries available</small></div><div class="field"><label>Select Item from FRIEND RIDE Catalogue</label><select id="masterCatalogueItem" onchange="useMasterItem()"><option value="">Select catalogue item</option></select></div><div id="masterCatalogueDetails" class="notice">Select an item to view SKU, unit and detailed description.</div><div class="field"><label>Or Add Item Name</label><input id="catalogueItemName" placeholder="Item name"></div><div class="row"><div class="field"><label>Your Price ₹ (Optional)</label><input id="cataloguePrice" type="number" min="0" placeholder="Leave blank for Price on Request"></div><div class="field"><label>Offer Price ₹ (Optional)</label><input id="catalogueOfferPrice" type="number" min="0"></div></div><div class="field"><label>Pricing Type</label><select id="cataloguePricingType"><option value="fixed">Fixed Price</option><option value="request">Price on Request / Ask Partner</option></select></div><div class="field"><label>Description</label><textarea id="catalogueDescription"></textarea></div><div class="field"><label>Item Photo</label><input id="cataloguePhoto" type="file" accept="image/*"></div><div class="row"><div class="field"><label>Prep Time (min) – Restaurant</label><input id="cataloguePrepTime" type="number" value="20"></div><div class="field"><label>Availability</label><select id="catalogueAvailable"><option value="true">Available</option><option value="false">Out of Stock</option></select></div></div><button class="btn purple" onclick="addCatalogueItem()">Add to My Catalogue</button><hr><h3>My Catalogue & Pricing</h3><div id="partnerCatalogList" class="empty-state">Select your business category to load FRIEND RIDE Master Catalogue.</div><div class="notice">Add to My Catalogue నొక్కితే Partner item, ధర, availability మరియు photo Supabaseలో save అవుతాయి. Admin-approved Partner items మాత్రమే Customer Store Catalogueలో కనిపిస్తాయి.</div></div></section>
 <section id="subscription" class="page"><div class="card"><h2>Partner Subscription</h2><p class="muted">Choose a plan for your business.</p><div class="feature-grid"><div class="feature-box"><span class="tag">STARTER</span><h3>Basic</h3><div class="offer-price">₹299<small>/month</small></div><p class="tiny">Catalogue listing, basic order panel</p><button class="btn light" onclick="choosePlan('Basic',299)">Choose Basic</button></div><div class="feature-box"><span class="tag">POPULAR</span><h3>Growth</h3><div class="offer-price">₹599<small>/month</small></div><p class="tiny">Orders, offers, reports</p><button class="btn purple" onclick="choosePlan('Growth',599)">Choose Growth</button></div><div class="feature-box"><span class="tag">PRO</span><h3>Premium</h3><div class="offer-price">₹999<small>/month</small></div><p class="tiny">Advanced reports and promotions</p><button class="btn light" onclick="choosePlan('Premium',999)">Choose Premium</button></div></div><div id="subscriptionStatus" class="notice">No active subscription loaded.</div><div class="notice">Sample UI prices only. Live billing requires server-created Cashfree orders and payment verification.</div></div></section>
 <section id="referrals" class="page"><div class="card"><h2>Partner Referral Program</h2><div class="kpi-grid"><div class="kpi"><strong id="referralCode">FR-PARTNER</strong><span>Referral Code</span></div><div class="kpi"><strong>0</strong><span>Joined Partners</span></div><div class="kpi"><strong>₹0</strong><span>Rewards</span></div><div class="kpi"><strong>0</strong><span>Pending</span></div></div><button class="btn purple" onclick="sharePartnerReferral()">Share Referral</button><div class="notice">Reward eligibility and payouts require server-side validation.</div></div></section>
 <section id="partnerReports" class="page"><div class="card"><h2>Partner Reports</h2><div class="kpi-grid"><div class="kpi"><strong>₹0</strong><span>Gross Sales</span></div><div class="kpi"><strong>₹0</strong><span>Commission</span></div><div class="kpi"><strong>₹0</strong><span>Net Settlement</span></div><div class="kpi"><strong>0</strong><span>Completed Orders</span></div></div><div class="notice">Sales and settlement reports load from verified order/payment records after schema mapping.</div></div></section>
@@ -2200,7 +2200,7 @@ function frRideStartAfterLogin(){
 
 // Set this to the VAPID public key generated for the deployed push sender.
 // Keep the matching VAPID private key ONLY in Supabase Edge Function secrets.
-const FR_VAPID_PUBLIC_KEY = '';
+const FR_VAPID_PUBLIC_KEY = 'BFLy76zpL3f2yiBCYf0_xbtvmFqIQTZbUJdtgYRgSvwdEE0P9WgSem8nJ4Y_C3tv3KhMKsu92kouVMWwglbTyiA';
 function frV8UrlBase64ToUint8Array(base64String){
   const padding='='.repeat((4-base64String.length%4)%4);
   const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
@@ -3652,6 +3652,123 @@ function frSetupLocationAutocomplete(){
  document.addEventListener('click',e=>{if(!e.target.closest('.fr-location-field'))document.querySelectorAll('.fr-location-suggestions').forEach(x=>x.classList.remove('open'));});
 }
 document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();frInitBookingMap();});
+</script>
+
+<script id="fr-digital-catalogue-live">
+(function(){
+ const bucket='fr-partner-catalogue';
+ const $id=id=>document.getElementById(id);
+ const esc=v=>typeof safe==='function'?safe(v):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const categoryArt={
+  local_store:'🛒',electrical:'💡',electrician:'🧰',hardware:'🔩',chicken:'🍗',mutton:'🥩',
+  fish:'🐟',vegetables:'🥬',medical:'💊',dairy:'🥛',mobile:'📱',bakery:'🥐',
+  stationery:'📚',restaurant:'🍱',other:'🛍️'
+ };
+ function toPaise(v){return v===''||v==null?null:Math.round(Number(v)*100);}
+ function fromRow(r){return {id:r.id,sku:r.master_sku,name:r.item_name,cat:r.category,unit:r.unit||'',description:r.description||'',price:r.price_paise==null?null:Number(r.price_paise)/100,offer:r.offer_price_paise==null?0:Number(r.offer_price_paise)/100,image:r.image_url||'',available:!!r.available,prescriptionCheck:!!r.prescription_required,businessType:$id('catalogueBusinessType')?.value||''};}
+ window.frPartnerLoadCatalogue=async function(){
+  const el=$id('partnerCatalogList');if(!el||!currentUser?.id||currentProfile?.role!=='partner')return;
+  el.className='notice';el.textContent='మీ షాప్ Catalogue loading…';
+  try{
+   const {data,error}=await sb.rpc('fr_partner_list_catalogue');if(error)throw error;
+   localCatalogue=(data||[]).map(fromRow);
+   renderCatalogue();
+   const count=$id('masterCatalogueCount');if(count)count.textContent=localCatalogue.length+' / 200 shop items saved';
+  }catch(e){el.className='notice';el.textContent='Catalogue load error: '+e.message;}
+ };
+ window.syncPartnerCatalogue=function(type){
+  const sel=$id('catalogueBusinessType');if(sel&&type)sel.value=type;
+  const cat=$id('catalogueCategorySelect');if(!cat)return;
+  const data=(FRIEND_MASTER_CATALOGUE||{})[type]||{};
+  cat.innerHTML='<option value="">Select catalogue category</option>'+Object.keys(data).map(k=>'<option value="'+esc(k)+'">'+esc(k)+'</option>').join('');
+  const item=$id('masterCatalogueItem');if(item)item.innerHTML='<option value="">Select catalogue item</option>';
+  const search=$id('masterCatalogueSearch');if(search)search.value='';
+  const details=$id('masterCatalogueDetails');if(details)details.textContent='Select an item to view SKU, unit and detailed description.';
+  window.frPartnerLoadCatalogue();
+ };
+ window.loadMasterItems=function(){
+  const type=$id('catalogueBusinessType')?.value,cat=$id('catalogueCategorySelect')?.value;
+  const all=((FRIEND_MASTER_CATALOGUE[type]||{})[cat]||[]);
+  const q=($id('masterCatalogueSearch')?.value||'').trim().toLowerCase();
+  const filtered=all.filter(x=>!q||[x.id,x.name,x.baseName,x.category,x.description,x.unit].join(' ').toLowerCase().includes(q));
+  const select=$id('masterCatalogueItem');if(select)select.innerHTML='<option value="">Select catalogue item ('+filtered.length+')</option>'+filtered.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.id+' · '+x.name)+'</option>').join('');
+  const count=$id('masterCatalogueCount');if(count)count.textContent=filtered.length+' matching master items • '+FRIEND_MASTER_ITEMS.length+' total master items • '+(localCatalogue?.length||0)+'/200 shop items saved';
+ };
+ window.addCatalogueItem=async function(){
+  if(!currentUser?.id||currentProfile?.role!=='partner'){alert('Approved Partner login అవసరం.');return;}
+  const type=$id('catalogueBusinessType')?.value||currentProfile?.business_category||'other';
+  const selected=FRIEND_MASTER_ITEMS.find(x=>x.id===$id('masterCatalogueItem')?.value);
+  const name=($id('catalogueItemName')?.value||'').trim()||(selected?.baseName||'');
+  const category=($id('frCustomCatalogCategory')?.value||'').trim()||$id('catalogueCategorySelect')?.value||selected?.category||'My Custom Items';
+  const raw=$id('cataloguePrice')?.value||'',offerRaw=$id('catalogueOfferPrice')?.value||'';
+  const price=raw===''?null:Number(raw),offer=offerRaw===''?null:Number(offerRaw);
+  const pricing=$id('cataloguePricingType')?.value||'fixed';
+  const file=$id('cataloguePhoto')?.files?.[0]||null;
+  if(!name){alert('Item Name నమోదు చేయండి లేదా Master Catalogue item ఎంచుకోండి.');return;}
+  if(pricing==='fixed'&&(!Number.isFinite(price)||price<=0)){alert('Fixed Price కోసం సరైన ధర నమోదు చేయండి.');return;}
+  if(offer!==null&&(!Number.isFinite(offer)||offer<0||(price!==null&&offer>price))){alert('Offer Price సాధారణ ధర కంటే ఎక్కువగా ఉండకూడదు.');return;}
+  if(file&&(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>5*1024*1024)){alert('JPG, PNG లేదా WEBP ఫోటో మాత్రమే. గరిష్ఠ పరిమాణం 5 MB.');return;}
+  const existing=localCatalogue.find(x=>selected&&x.sku===selected.id);
+  if(!existing&&localCatalogue.length>=200){alert('ఒక్కో షాప్‌కు గరిష్ఠంగా 200 Catalogue items మాత్రమే.');return;}
+  const btn=document.querySelector('#partnerCatalogue button[onclick="addCatalogueItem()"]');if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  try{
+   let imageUrl=existing?.image||'';
+   if(file){
+    const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+    const path=currentUser.id+'/'+(crypto.randomUUID?crypto.randomUUID():Date.now())+'.'+ext;
+    const up=await sb.storage.from(bucket).upload(path,file,{upsert:true,contentType:file.type,cacheControl:'3600'});
+    if(up.error)throw up.error;
+    imageUrl=sb.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+   }
+   const sku=selected?.id||existing?.sku||('CUSTOM-'+(crypto.randomUUID?crypto.randomUUID():Date.now()));
+   const {error}=await sb.rpc('fr_partner_save_catalogue_item',{
+    p_master_sku:sku,p_item_name:name,p_category:category,p_unit:selected?.unit||'piece',
+    p_description:($id('catalogueDescription')?.value||selected?.description||'').trim(),
+    p_price_paise:pricing==='request'?null:toPaise(raw),p_offer_price_paise:toPaise(offerRaw),
+    p_image_url:imageUrl||null,p_available:$id('catalogueAvailable')?.value!=='false',
+    p_prescription_required:!!selected?.prescriptionCheck
+   });
+   if(error)throw error;
+   await frPartnerLoadCatalogue();
+   ['catalogueItemName','catalogueDescription','cataloguePrice','catalogueOfferPrice','frCustomCatalogCategory'].forEach(id=>{if($id(id))$id(id).value='';});
+   if($id('cataloguePhoto'))$id('cataloguePhoto').value='';
+   if($id('masterCatalogueItem'))$id('masterCatalogueItem').value='';
+   alert('Catalogue item Supabaseలో విజయవంతంగా Save అయింది.');
+  }catch(e){alert('Catalogue Save కాలేదు: '+e.message);}
+  finally{if(btn){btn.disabled=false;btn.textContent='Add to My Catalogue';}}
+ };
+ window.renderCatalogue=function(){
+  const el=$id('partnerCatalogList');if(!el)return;
+  if(!localCatalogue.length){el.className='empty-state';el.textContent='ఇంకా Shop Catalogue items లేవు. Master item ఎంచుకోండి లేదా మీ స్వంత item ఫోటోతో జోడించండి.';return;}
+  el.className='';
+  el.innerHTML=localCatalogue.map((x,i)=>'<article class="partner-catalog-row '+(x.available?'':'unavailable')+'">'+
+   '<div style="display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;align-items:center">'+
+   (x.image?'<img src="'+esc(x.image)+'" alt="'+esc(x.name)+'" loading="lazy" style="width:92px;height:92px;object-fit:cover;border-radius:13px;background:#f3edf8">':'<div style="width:92px;height:92px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#f5eaff,#fff1df);font-size:42px">'+(categoryArt[x.businessType]||'🛍️')+'</div>')+
+   '<div><b>'+esc(x.name)+'</b><br><small class="muted">'+esc(x.sku)+' • '+esc(x.cat)+' • '+esc(x.unit)+'</small><br><b style="color:#5620b5">'+(x.price==null?'Price on Request':'₹'+x.price.toFixed(2))+'</b>'+(x.offer?' <small>Offer ₹'+x.offer.toFixed(2)+'</small>':'')+'<br><span class="stock-mark '+(x.available?'yes':'no')+'">'+(x.available?'✓ Available':'✕ Out of Stock')+'</span></div></div>'+
+   '<div class="partner-price-editor"><div><label>Your Price ₹</label><input id="partnerPrice_'+i+'" type="number" min="0" step=".01" value="'+(x.price??'')+'"></div><div><label>Offer Price ₹</label><input id="partnerOffer_'+i+'" type="number" min="0" step=".01" value="'+(x.offer||'')+'"></div><button class="btn purple" style="width:auto;margin:0;padding:9px 10px" onclick="updatePartnerCataloguePrice('+i+')">Save</button></div>'+
+   '<div class="row" style="justify-content:space-between;margin-top:8px"><small class="muted">'+esc(x.description||'')+'</small><button class="btn '+(x.available?'light':'green')+'" style="width:auto;margin:0;padding:6px 10px" onclick="togglePartnerItemAvailability('+i+')">'+(x.available?'Mark unavailable':'Mark available')+'</button></div></article>').join('');
+ };
+ window.updatePartnerCataloguePrice=async function(i){
+  const x=localCatalogue[i];if(!x)return;
+  const raw=$id('partnerPrice_'+i).value,off=$id('partnerOffer_'+i).value;
+  const price=raw===''?null:Number(raw),offer=off===''?null:Number(off);
+  if(price!==null&&(!Number.isFinite(price)||price<=0)){alert('సరైన ధర నమోదు చేయండి.');return;}
+  if(offer!==null&&(!Number.isFinite(offer)||offer<0||(price!==null&&offer>price))){alert('Offer Price సరిచూడండి.');return;}
+  try{const {error}=await sb.rpc('fr_partner_save_catalogue_item',{p_master_sku:x.sku,p_item_name:x.name,p_category:x.cat,p_unit:x.unit,p_description:x.description,p_price_paise:toPaise(raw),p_offer_price_paise:toPaise(off),p_image_url:x.image||null,p_available:x.available,p_prescription_required:!!x.prescriptionCheck});if(error)throw error;await frPartnerLoadCatalogue();}
+  catch(e){alert('Price save కాలేదు: '+e.message);}
+ };
+ window.togglePartnerItemAvailability=async function(i){
+  const x=localCatalogue[i];if(!x)return;
+  try{const {error}=await sb.rpc('fr_partner_save_catalogue_item',{p_master_sku:x.sku,p_item_name:x.name,p_category:x.cat,p_unit:x.unit,p_description:x.description,p_price_paise:x.price==null?null:toPaise(String(x.price)),p_offer_price_paise:x.offer?toPaise(String(x.offer)):null,p_image_url:x.image||null,p_available:!x.available,p_prescription_required:!!x.prescriptionCheck});if(error)throw error;await frPartnerLoadCatalogue();}
+  catch(e){alert('Availability update కాలేదు: '+e.message);}
+ };
+ const originalAccept=window.acceptSession;
+ if(typeof originalAccept==='function'&&!window.__frCatalogSessionHook){
+  window.__frCatalogSessionHook=true;
+  window.acceptSession=async function(user){const result=await originalAccept(user);if(currentProfile?.role==='partner')setTimeout(frPartnerLoadCatalogue,250);return result;};
+ }
+ document.addEventListener('DOMContentLoaded',()=>{if(currentProfile?.role==='partner')frPartnerLoadCatalogue();});
+})();
 </script>
 </body>
 </html>
