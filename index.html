@@ -2674,11 +2674,13 @@ function contactActions(parent,name,phone,who){
 async function rideContact(rpc,id){
   const {data,error}=await sb.rpc(rpc,{p_ride_id:id});
   if(error)throw error;
-  return Array.isArray(data)?data[0]:data;
+  const row=Array.isArray(data)?data[0]:data;
+  if(!row)return null;
+  return window.FRRideContact?FRRideContact.normalize(row):row;
 }
 
 async function addRideProfilePhoto(card,path,bucket,alt){
-  if(!path)return;
+  if(!path){const note=document.createElement('p');note.className='tiny muted';note.textContent='Profile photo is not available in the saved profile.';card.append(note);return;}
 
   try{
     const {data,error}=await sb.storage
@@ -2700,6 +2702,7 @@ async function addRideProfilePhoto(card,path,bucket,alt){
     }
   }catch(e){
     console.warn('Profile photo:',e.message);
+    const note=document.createElement('p');note.className='tiny muted';note.textContent='Profile photo could not be loaded: '+(e.message||e);card.append(note);
   }
 }
 
@@ -2716,7 +2719,7 @@ function addVehicleDetails(card,p){
     ['Vehicle Type',p.vehicle_type],
     ['Company',p.vehicle_company],
     ['Model',p.vehicle_model],
-    ['Registration Number',p.vehicle_registration]
+    ['Registration Number',p.vehicle_registration||p.vehicle_number]
   ].forEach(([label,value])=>{
     if(value){
       const row=document.createElement('p');
@@ -2724,11 +2727,13 @@ function addVehicleDetails(card,p){
       box.append(row);
     }
   });
+  if(!box.querySelector('p')){const missing=document.createElement('p');missing.className='tiny muted';missing.textContent='Vehicle details are not saved in the Driver profile yet.';box.append(missing);}
 
   card.append(box);
 }
 
 async function buildRideContactCard(target,p,who){
+  p=window.FRRideContact?FRRideContact.normalize(p):p;
   const card=document.createElement('div');
   card.className='notice';
   card.style.cssText=
@@ -2743,12 +2748,12 @@ async function buildRideContactCard(target,p,who){
 
   if(who==='Driver'){
     await addRideProfilePhoto(
-      card,p.driver_profile_photo_path,
+      card,p.driver_profile_photo_path||p.profile_photo_path||p.driver_photo_path,
       'driver-profile-photos','Driver Profile'
     );
   }else{
     await addRideProfilePhoto(
-      card,p.customer_profile_photo_path,
+      card,p.customer_profile_photo_path||p.profile_photo_path||p.customer_photo_path,
       'customer-profile-photos','Customer Profile'
     );
   }
@@ -2782,7 +2787,7 @@ async function renderDriverActiveRide(){
     const {data,error}=await sb.from('rides')
       .select('id,status,vehicle_type,pickup,drop,fare_offer,agreed_fare,created_at')
       .eq('driver_id',currentUser.id)
-      .in('status',['accepted','confirmed','ongoing'])
+      .in('status',['accepted','confirmed','ongoing','in_progress','started'])
       .order('created_at',{ascending:false})
       .limit(1);
 
@@ -2864,9 +2869,7 @@ window.loadMyRideTracking=async function(){
 
     const ride=(data||[]).find(r=>
       r.driver_id&&
-      ['accepted','confirmed','ongoing'].includes(
-        String(r.status||'').toLowerCase()
-      )
+      (window.FRRideContact?FRRideContact.confirmedStatus(r.status):['accepted','confirmed','ongoing'].includes(String(r.status||'').toLowerCase()))
     );
 
     if(!ride)return;
@@ -2997,6 +3000,7 @@ if(typeof oldRideContactShow==='function'){
 })();
 </script>
 
+<script src="./assets/ride-contact.js"></script>
 </body>
 </html>
 <style>
