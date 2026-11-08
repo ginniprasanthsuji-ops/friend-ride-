@@ -2489,13 +2489,14 @@ function frSubmitBankEnquiry(){
    if(typeof oldCustomerLoad==='function')await oldCustomerLoad.apply(this,arguments);
    if(!currentUser||currentProfile?.role!=='customer')return;
    const box=$('liveRideStatus');if(!box)return;
+   box.querySelector('#frCustomerDriverContact')?.remove();
    try{
      const {data,error}=await sb.from('rides').select('id,status,driver_id').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(10);
      if(error)throw error;
      const ride=(data||[]).find(r=>r.driver_id&&['accepted','ongoing'].includes(String(r.status||'').toLowerCase()));
      if(!ride)return;
      const p=await rideContact('get_ride_driver_details',ride.id);
-     const card=document.createElement('div');card.className='notice';card.innerHTML='<b>🚗 Driver Confirmed</b><br>';
+     const card=document.createElement('div');card.id='frCustomerDriverContact';card.className='notice';card.innerHTML='<b>🚗 Driver Confirmed</b><br>';
      contactActions(card,p?.full_name,p?.phone,'Driver');
      if(p?.vehicle_company||p?.vehicle_model||p?.vehicle_registration){const v=document.createElement('p');v.textContent='Vehicle: '+[p.vehicle_company,p.vehicle_model,p.vehicle_registration].filter(Boolean).join(' • ');card.append(v);}
      box.append(card);
