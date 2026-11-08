@@ -1601,6 +1601,7 @@ async function loadMyRideTracking(){
     if(!data?.length){box.textContent='ఇంకా Rides లేవు.';return;}
     const active=data.find(r=>!['completed','cancelled','rejected','canceled'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;
     box.innerHTML='<b>'+safe(active.vehicle_type)+' • '+safe(active.status)+'</b><p>'+safe(active.pickup)+' → '+safe(active.drop)+'</p><p>మీ Offer ₹'+safe(active.fare_offer)+' | Agreed ₹'+safe(active.agreed_fare??'—')+'</p><small>Ride ID: '+safe(active.id)+'</small>';
+    if(active.driver_id)await frRenderCustomerRideDriverAndPayment(active);
     if(String(active.status).toLowerCase()==='counter_offered'){
       const a=document.createElement('button');a.className='btn';a.textContent='Accept Driver Counter Offer';a.onclick=async()=>{const x=await sb.rpc('accept_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(a);
       const d=document.createElement('button');d.className='btn light';d.textContent='Reject Counter Offer';d.onclick=async()=>{const x=await sb.rpc('decline_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(d);
