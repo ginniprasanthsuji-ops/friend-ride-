@@ -1675,8 +1675,14 @@ async function frGetInvoiceData(rideId){
  const {data:ride,error}=await sb.from('rides').select('*').eq('id',rideId).single();if(error)throw error;
  const {data:pay,error:pe}=await sb.rpc('fr_get_ride_payment_state',{p_ride_id:rideId});if(pe)throw pe;
  if(pay?.status!=='success')throw Error('Driver confirmed payment required before invoice generation.');
- const [c,d]=await Promise.all([sb.rpc('get_ride_customer_details_v2',{p_ride_id:rideId}),sb.rpc('get_ride_driver_details',{p_ride_id:rideId})]);
- if(c.error)throw c.error;if(d.error)throw d.error;const customer=Array.isArray(c.data)?c.data[0]:c.data||{},driver=Array.isArray(d.data)?d.data[0]:d.data||{};
+ let customer={},driver={};
+ if(currentProfile?.role==='driver'){
+  const c=await sb.rpc('get_ride_customer_details_v2',{p_ride_id:rideId});if(c.error)throw c.error;customer=Array.isArray(c.data)?c.data[0]:c.data||{};
+  const p=await sb.from('profiles').select('full_name,phone,whatsapp_phone,vehicle_type,vehicle_company,vehicle_model,vehicle_registration,vehicle_number').eq('id',currentUser.id).single();if(p.error)throw p.error;driver=p.data||{};
+ }else if(currentProfile?.role==='customer'){
+  const d=await sb.rpc('get_ride_driver_details',{p_ride_id:rideId});if(d.error)throw d.error;driver=Array.isArray(d.data)?d.data[0]:d.data||{};
+  const p=await sb.from('profiles').select('full_name,phone,whatsapp_phone').eq('id',currentUser.id).single();if(p.error)throw p.error;customer=p.data||{};
+ }else throw Error('Customer or Driver login required for invoice.');
  return {ride,pay,customer,driver};
 }
 async function frDownloadRideInvoice(rideId,kind){
