@@ -205,6 +205,20 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 </style>
 <style id="fr-alert-preview-style">.fr-alert-preview{margin-top:14px;padding:12px;border:1px solid rgba(255,255,255,.24);border-radius:14px;background:rgba(255,255,255,.08)}.fr-alert-preview-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.fr-alert-preview-buttons button{border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 11px;background:#fff;color:#34204e;font-weight:700;font-size:12px}</style>
 <style id="fr-role-specific-auth-fix">#authModal .rolegrid{display:none!important}#authModal #authRegisterButton.hide{display:none!important}</style>
+<style id="fr-home-rearranged-sections">
+#home .join-card{margin:22px 16px 24px;padding:20px;border:0;border-radius:24px;background:linear-gradient(130deg,#fff0e6 0%,#f4eaff 48%,#e5f6ff 100%);box-shadow:0 12px 28px #41206a16}
+#home .join-card h2{font-weight:850;color:#40206d;margin:0 0 15px}
+#home .join-card .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#home .join-card .tile{min-height:112px;padding:12px 7px;border:1px solid #ffffffcc;border-radius:18px;background:linear-gradient(155deg,#fff,#fff9);box-shadow:0 7px 16px #44205b12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#392052}
+#home .join-card .tile:nth-child(1){background:linear-gradient(145deg,#fff2d9,#ffd3a8)}
+#home .join-card .tile:nth-child(2){background:linear-gradient(145deg,#e4f5ff,#c5e4ff)}
+#home .join-card .tile:nth-child(3){background:linear-gradient(145deg,#f1e6ff,#dfccff)}
+#home .join-card .tile .emoji{font-size:30px}
+#home .join-card .tile b{font-size:12px;line-height:1.25;text-align:center}
+#home .fr-support-home-entry{margin-top:28px;background:linear-gradient(135deg,#fff4e9,#f4eaff);border:1px solid #eadcf8;border-radius:24px}
+#home #frHomeRatings{margin-bottom:24px;background:linear-gradient(135deg,#fff,#fff8e9);border:1px solid #f1e4c7;border-radius:24px}
+@media(max-width:380px){#home .join-card .grid{gap:6px}#home .join-card .tile{min-height:100px;padding:9px 4px}}
+</style>
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -227,7 +241,10 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 </header>
 <main>
 <section id="home" class="page active">
- <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('explore')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Services ↗</span></div><div class="banner-art">🛵</div></div><div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
+ <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('explore')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Services ↗</span></div><div class="banner-art">🛵</div></div>
+  <div class="card join-card"><h2>Join FRIEND RIDE</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')"><span class="emoji">👤</span><b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')"><span class="emoji">🚗</span><b>Driver Registration</b></button><button class="tile" onclick="openAuth('register','partner')"><span class="emoji">🏪</span><b>Partner Registration</b></button></div></div>
+</section>
+<div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
  <button type="button" class="fr-ai-launch" id="frAiLaunch" draggable="false" aria-label="Open FRIEND RIDE AI Assistant"><span class="fr-ai-orb">✦</span><span>FR AI సహాయం</span></button>
 <section class="fr-ai-panel" id="frAiPanel" aria-label="FRIEND RIDE AI Assistant">
  <header class="fr-ai-head"><div><strong>✦ FRIEND RIDE AI సహాయకుడు</strong><small>మీ సందేహాలకు తెలుగులో వెంటనే సహాయం</small></div><button type="button" class="fr-ai-close" id="frAiClose" aria-label="Close">×</button></header>
@@ -237,14 +254,15 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  </div>
  <form class="fr-ai-form" id="frAiForm"><input id="frAiInput" maxlength="1500" autocomplete="off" placeholder="మీ సందేహం ఇక్కడ టైప్ చేయండి…" aria-label="Ask FRIEND RIDE AI"><button id="frAiSend" type="submit">Send</button></form>
  <div class="fr-ai-foot">మీ OTP, UPI PIN లేదా Password ఎప్పుడూ ఇక్కడ పంపవద్దు.</div>
-</section>
  <div class="card fr-support-home-entry" id="frSupportHomeEntry"><h2>💬 Help & Support</h2><p class="muted">మీకు ఏదైనా సమస్య ఉందా? Complaint నమోదు చేయండి లేదా మీ Feedback & Rating ఇవ్వండి.</p><button type="button" class="btn purple" onclick="frOpenSupportPage()">✍️ Complaint / Feedback ఇవ్వండి</button></div>
  <section id="frHomeRatings" class="card" aria-label="Customer Ratings">
   <div class="home-section-title"><h2>⭐ Customer Ratings</h2><button type="button" onclick="frLoadHomepageRatings()">Refresh</button></div>
   <p class="muted">Our customers share their FRIEND RIDE experience.</p>
   <div id="frHomepageRatingsList"><p class="muted">Ratings loading…</p></div>
   <button class="btn light" onclick="frOpenSupportPage()">Give Your Rating</button>
- </section>
+ </section
+</section>
+>
 <div class="fr-poster-rail" aria-label="Friend Ride offers and safety posters">
  <button class="fr-poster fr-poster-ins" onclick="showPage('offers')">
   <span class="fr-poster-copy"><span class="fr-poster-kicker">DRIVER PARTNER BENEFIT</span><h3>₹2 లక్షల వరకు ప్రమాద బీమా</h3><p>డ్రైవర్ భద్రతకు ప్రాధాన్యం. బీమా అర్హత, షరతులు మరియు కవరేజ్ నిబంధనలకు లోబడి ఉంటుంది.</p><span class="fr-poster-cta">Know More</span></span><span class="fr-poster-art">🛡️</span>
@@ -303,9 +321,6 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  </div>
  <div class="home-section-title"><h2>More Services</h2><button onclick="showPage('explore')">View All →</button></div>
  <div class="home-more-grid"><button onclick="requireLogin(()=>showPage('parcel'))">📦<b>Parcel</b></button><button onclick="requireLogin(()=>showPage('goods'))">🚚<b>Goods</b></button><button onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b></button><button onclick="requireLogin(()=>showPage('scheduled'))">🗓️<b>Schedule</b></button></div>
- <div class="card join-card"><h2>Join FRIEND RIDE</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')"><span class="emoji">👤</span><b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')"><span class="emoji">🚗</span><b>Driver Registration</b></button><button class="tile" onclick="openAuth('register','partner')"><span class="emoji">🏪</span><b>Partner Registration</b></button></div></div>
-</section>
-
 <section id="explore" class="page"><div class="card"><h2>Explore FRIEND RIDE Services</h2><p class="muted">మీకు కావాల్సిన సేవను ఎంచుకోండి.</p><div class="grid">
 <button class="tile" onclick="showPage('ride')">🛵<b>Ride Booking</b><small>Bike / Auto / Car</small></button>
 <button class="tile" onclick="showPage('parcel')">📦<b>Parcel Delivery</b></button>
