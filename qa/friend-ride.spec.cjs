@@ -247,3 +247,18 @@ test('QA read-only backend probe does not assume every table has an id column', 
   expect(source).toContain("?select=*&limit=0");
   expect(source).not.toContain("?select=id&limit=0");
 });
+
+
+test('Customer nearby-driver map uses approved-driver RPC, not direct RLS-hidden table reads', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain("sb.rpc('fr_customer_list_nearby_drivers'");
+  expect(source).not.toContain("sb.from('driver_locations').select('driver_id,latitude,longitude,is_online,updated_at')");
+});
+
+test('Driver going offline updates existing GPS row without invalid upsert', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain("sb.from('driver_locations').update({is_online:false");
+  expect(source).not.toContain("upsert({driver_id:currentUser.id,is_online:false");
+});
