@@ -1121,8 +1121,16 @@ window.frRestoringSession=true;
 sb.auth.getSession().then(async({data,error})=>{
  if(error){console.warn('FRIEND RIDE session restore delayed:',error.message);return;}
  if(data?.session?.user){
-  try{await acceptSession(data.session.user);}
-  catch(e){console.error('FRIEND RIDE session restore error:',e);showMessage('Login Session కొనసాగుతోంది. Profile load సమస్య: '+(e.message||e)+' — Logout చేయకుండా మళ్లీ ప్రయత్నించండి.','error');}
+  try{
+   const user=data.session.user;
+   const profileResult=await sb.from('profiles').select('role').eq('id',user.id).maybeSingle();
+   if(profileResult.error)throw profileResult.error;
+   const adminResult=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();
+   if(adminResult.error)throw adminResult.error;
+   selectedRole=adminResult.data?'admin':(profileResult.data?.role||user.user_metadata?.role||'customer');
+   chooseRole(selectedRole);
+   await acceptSession(user);
+  }catch(e){console.error('FRIEND RIDE session restore error:',e);showMessage('Login Session కొనసాగుతోంది. Profile load సమస్య: '+(e.message||e)+' — Logout చేయకుండా మళ్లీ ప్రయత్నించండి.','error');}
  }
 }).catch(e=>console.warn('FRIEND RIDE session restore retry on next load:',e))
 .finally(()=>{window.frRestoringSession=false;});
