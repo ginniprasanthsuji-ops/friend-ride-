@@ -358,7 +358,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="field"><label>Service Details / Skills</label><textarea id="spDetails" placeholder="Describe your services, equipment, menu, packages or skills"></textarea></div>
   <div class="field"><label>UPI ID / Payment Contact (Optional)</label><input id="spUPI" placeholder="name@upi"></div>
   <label class="tiny"><input id="spTerms" type="checkbox" style="width:auto"> I agree to verification, Terms &amp; Privacy Policy *</label>
-  <div class="notice">Photo and Aadhaar document are for verification only. Keep documents in a private Supabase Storage bucket with restricted Admin access; do not make Aadhaar files public. Registration will remain Pending until Admin verification and approval.</div>
+  <div class="notice">మీ అప్లికేషన్ Admin పరిశీలనలో ఉంటుంది. ఆమోదం వచ్చిన తర్వాత Provider సేవలు ప్రారంభించవచ్చు.</div>
   <button class="btn purple" onclick="validateServiceProviderRegistration()">Submit Provider Application</button>
   <div id="spRegStatus" class="notice">Application details will be checked before submission.</div>
  </div>
@@ -490,7 +490,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <section id="parcelRelease" class="page"><div class="card"><h2>Parcel Delivery – Secure Handover</h2><p>Delivery OTP will be generated only after verified payment. Driver enters OTP and confirms payment before parcel release.</p><div class="field"><label>Tracking ID</label><input id="parcelTrackingId" placeholder="FR-PARCEL-000001"></div><div class="field"><label>Delivery OTP</label><input id="parcelDeliveryOtp" maxlength="6" inputmode="numeric"></div><button class="btn purple" onclick="confirmParcelRelease()">Driver: Confirm Payment & Release Parcel</button><div id="parcelReleaseStatus" class="notice">Awaiting verified payment and recipient OTP.</div><div class="notice">Payment status, OTP issue/verify and release must be enforced server-side; this screen is not a secure payment verification by itself.</div></div></section>
 <section id="orders" class="page"><div class="card"><h2>My Bookings & Orders</h2><p class="muted">Ride, parcel, food, shop and service bookings.</p><div id="ordersInfo" class="notice">మీ bookings ఇక్కడ కనిపిస్తాయి.</div><h3>Shop Orders / ధరల వివరాలు</h3><div id="frCustomerMarketOrders" class="empty-state">Shop orders loading…</div><button class="btn light" onclick="showPage('tracking')">Open Live Tracking</button></div></section>
 <section id="tracking" class="page"><div class="card"><h2>Live Tracking</h2><div class="row"><button class="btn purple">Ride</button><button class="btn light">Parcel</button><button class="btn light">Food / Shop</button></div><div class="track-actions"><button onclick="showTrackingMode('driver')">🚗 Track Driver</button><button onclick="showTrackingMode('route')">🧭 View Route</button><button onclick="showTrackingMode('pickup')">📍 Pickup Point</button><button onclick="showTrackingMode('support')">🆘 SOS / Help</button></div><div id="trackingMap" style="margin-top:12px"></div><div class="listrow"><div class="grow"><b id="trackingTitle">Live Driver Tracking</b><br><small id="trackingStatus" class="muted">Booking confirm అయిన తర్వాత driver location కనిపిస్తుంది.</small></div><span id="trackingPill" class="pill">Waiting</span></div><div class="row"><button class="btn light" onclick="refreshTracking()">↻ Refresh Location</button><button class="btn light" onclick="callDriver()">📞 Call Driver</button></div><div id="liveRideStatus" class="notice">మీ Active Ride వివరాలు ఇక్కడ కనిపిస్తాయి.</div><div class="row"><button class="btn light" onclick="loadMyRideTracking()">My Active Ride</button><button class="btn light" onclick="startCustomerTrackingFromPanel()">Share My Live Location</button></div><div class="card" style="margin-top:12px"><h3>🆘 Emergency & Personal Contact</h3><div class="row"><a class="btn red" href="tel:112">112 Emergency</a><a class="btn light" href="tel:100">100 Police</a><a class="btn light" href="tel:108">108 Ambulance</a></div><div class="field"><label>Personal Emergency Contact Name</label><input id="emergencyContactName" placeholder="Relative / Friend"></div><div class="field"><label>Personal Emergency Mobile</label><input id="emergencyContactPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><div class="row"><button class="btn light" onclick="savePersonalEmergencyContact()">Save Contact</button><button class="btn light" onclick="callPersonalEmergencyContact()">Call Personal Contact</button></div><button class="btn red" style="width:100%;margin-top:8px" onclick="sendRideSOS()">🆘 SEND SOS LOCATION</button><div id="sosStatus" class="notice">Emergency call links are available. SOS records the current GPS location when signed in.</div></div></div></section>
-<section id="wallet" class="page"><div class="card"><h2>Wallet & Payments</h2><div class="stats"><div class="stat"><small>Wallet Balance</small><b>₹0.00</b></div><div class="stat"><small>Reward Points</small><b>0</b></div></div><div class="notice">Cashfree payment gateway / wallet ledger / refunds require verified merchant configuration and server-side payment verification. Do not collect live money using frontend-only code.</div><button class="btn purple" onclick="showMessage('Payment gateway configuration అవసరం.','error')">Add Money</button></div></section>
+<section id="wallet" class="page"><div class="card"><h2>Wallet & Payments</h2><div class="stats"><div class="stat"><small>Wallet Balance</small><b>₹0.00</b></div><div class="stat"><small>Reward Points</small><b>0</b></div></div><div class="notice">Walletలో డబ్బు జోడించే సదుపాయం ప్రస్తుతం అందుబాటులో లేదు.</div><button class="btn purple" onclick="showMessage('Payment gateway configuration అవసరం.','error')">Add Money</button></div></section>
 <section id="offers" class="page"><div class="card"><h2>🎁 Offers & Rewards</h2>
 <div class="feature-grid">
  <div class="feature-box"><span class="tag">CUSTOMER REFERRAL CASH</span><h3>₹50 Cash Reward</h3><p class="tiny">మీ referral ద్వారా వచ్చిన customer 2 eligible orders పూర్తి చేసిన తర్వాత ₹50 referral cash reward అర్హత వస్తుంది.</p></div>
@@ -1697,7 +1697,7 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><p class="muted">This is a digitally generated ride payment receipt. Keep the UPI transaction reference for records.</p><button onclick="window.print()">Download / Save as PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>';
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>';
   w.document.open();w.document.write(html);w.document.close();
  }catch(e){w.close();alert('Invoice: '+e.message);}
 }
@@ -3560,6 +3560,41 @@ function frAddPartnerCatalogueItem(index){
 </script>
 
 <script src="./assets/ride-contact.js"></script>
+
+<button type="button" class="fr-ai-launch" id="frAiLaunch" aria-label="Open FRIEND RIDE AI Assistant"><span class="fr-ai-orb">✦</span><span>FR AI సహాయం</span></button>
+<section class="fr-ai-panel" id="frAiPanel" aria-label="FRIEND RIDE AI Assistant">
+ <header class="fr-ai-head"><div><strong>✦ FRIEND RIDE AI సహాయకుడు</strong><small>మీ సందేహాలకు తెలుగులో వెంటనే సహాయం</small></div><button type="button" class="fr-ai-close" id="frAiClose" aria-label="Close">×</button></header>
+ <div class="fr-ai-body" id="frAiMessages" aria-live="polite">
+  <div class="fr-ai-msg bot">నమస్కారం! FRIEND RIDEలో ఏ ఆప్షన్ ఎలా ఉపయోగించాలో అడగండి. ఒక్కో దశగా తెలుగులో వివరిస్తాను.</div>
+  <div class="fr-ai-suggestions"><button type="button" data-fr-ai-q="Ride ఎలా బుక్ చేయాలి?">Ride ఎలా బుక్ చేయాలి?</button><button type="button" data-fr-ai-q="Driverగా ఎలా Online అవ్వాలి?">Driver Help</button><button type="button" data-fr-ai-q="UPI Payment ఎలా చేయాలి?">UPI Payment</button></div>
+ </div>
+ <form class="fr-ai-form" id="frAiForm"><input id="frAiInput" maxlength="1500" autocomplete="off" placeholder="మీ సందేహం ఇక్కడ టైప్ చేయండి…" aria-label="Ask FRIEND RIDE AI"><button id="frAiSend" type="submit">Send</button></form>
+ <div class="fr-ai-foot">మీ OTP, UPI PIN లేదా Password ఎప్పుడూ ఇక్కడ పంపవద్దు.</div>
+</section>
+<script>
+(()=>{
+ const panel=document.getElementById('frAiPanel'),launch=document.getElementById('frAiLaunch'),close=document.getElementById('frAiClose'),form=document.getElementById('frAiForm'),input=document.getElementById('frAiInput'),messages=document.getElementById('frAiMessages'),send=document.getElementById('frAiSend');
+ if(!panel||!launch||!form||!input||!messages)return;
+ const history=[];
+ const add=(text,who='bot')=>{const el=document.createElement('div');el.className='fr-ai-msg '+who;el.textContent=text;messages.append(el);messages.scrollTop=messages.scrollHeight;return el;};
+ const open=()=>{panel.classList.add('open');input.focus();};
+ launch.addEventListener('click',open);close?.addEventListener('click',()=>panel.classList.remove('open'));
+ messages.querySelectorAll('[data-fr-ai-q]').forEach(b=>b.addEventListener('click',()=>{input.value=b.dataset.frAiQ||'';form.requestSubmit();}));
+ form.addEventListener('submit',async ev=>{
+  ev.preventDefault();const question=input.value.trim();if(!question||send.disabled)return;
+  add(question,'user');input.value='';send.disabled=true;send.textContent='…';
+  const loading=add('మీ సందేహానికి సమాధానం సిద్ధం చేస్తున్నాను…','bot');
+  try{
+   const page=document.querySelector('.page.active')?.id||'';
+   const {data,error}=await sb.functions.invoke('friend-ride-ai-assistant',{body:{question,role:currentProfile?.role||selectedRole||'user',page,history}});
+   if(error)throw error;
+   if(!data?.ok||!data?.answer)throw new Error(data?.error||'AI సమాధానం అందుబాటులో లేదు.');
+   loading.textContent=data.answer;history.push({role:'user',content:question},{role:'assistant',content:data.answer});if(history.length>8)history.splice(0,history.length-8);
+  }catch(e){loading.textContent=e?.context?.error||e?.message||'AI సహాయం ప్రస్తుతం అందుబాటులో లేదు. కొద్దిసేపటి తర్వాత ప్రయత్నించండి.';}
+  finally{send.disabled=false;send.textContent='Send';messages.scrollTop=messages.scrollHeight;}
+ });
+})();
+</script>
 </body>
 </html>
 <style>
@@ -3577,4 +3612,18 @@ input,textarea,select{box-shadow:0 1px 2px #24104405}
 .fr-pay-total{font-size:23px;font-weight:950;color:#13875b}
 .fr-quote-total{background:#fff8e8;border:1px solid #f4d58a;border-radius:12px;padding:11px;margin:10px 0}
 .fr-pay-link{display:block;text-align:center;background:#13875b;color:#fff;padding:12px;border-radius:12px;font-weight:900;text-decoration:none;margin:8px 0}
+
+/* FRIEND RIDE AI help assistant */
+.fr-ai-launch{position:fixed;right:18px;bottom:22px;z-index:9998;border:0;border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,#13875b,#ff8a24);color:#fff;font-weight:900;box-shadow:0 8px 26px #1b0d3340;display:flex;align-items:center;gap:9px;cursor:pointer}
+.fr-ai-launch .fr-ai-orb{width:28px;height:28px;border-radius:50%;background:#fff;color:#13875b;display:grid;place-items:center;font-size:17px}
+.fr-ai-panel{position:fixed;right:16px;bottom:86px;z-index:9999;width:min(390px,calc(100vw - 24px));height:min(590px,calc(100dvh - 120px));background:#fff;border:1px solid #e8def3;border-radius:20px;box-shadow:0 18px 55px #1b0d3350;display:none;flex-direction:column;overflow:hidden}
+.fr-ai-panel.open{display:flex}.fr-ai-head{padding:14px 16px;background:linear-gradient(120deg,#13875b,#ff8a24);color:#fff;display:flex;align-items:center;justify-content:space-between}
+.fr-ai-head strong{font-size:16px}.fr-ai-head small{display:block;opacity:.9}.fr-ai-close{border:0;background:#ffffff28;color:#fff;border-radius:10px;padding:7px 11px;font-size:20px}
+.fr-ai-body{padding:14px;flex:1;overflow:auto;background:#f8f7fb;display:flex;flex-direction:column;gap:10px}
+.fr-ai-msg{max-width:90%;padding:10px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.5}
+.fr-ai-msg.bot{align-self:flex-start;background:#fff;border:1px solid #ece6f2;color:#28213a;border-bottom-left-radius:4px}.fr-ai-msg.user{align-self:flex-end;background:#e8f7ee;color:#174b32;border-bottom-right-radius:4px}
+.fr-ai-suggestions{display:flex;gap:7px;flex-wrap:wrap}.fr-ai-suggestions button{border:1px solid #d8c9e9;background:#fff;border-radius:18px;padding:7px 10px;color:#45236e;font-size:12px;font-weight:700}
+.fr-ai-form{padding:11px;border-top:1px solid #eee8f4;display:flex;gap:8px;background:#fff}.fr-ai-form input{min-width:0;flex:1;border:1px solid #ded5e8;border-radius:12px;padding:12px;font-size:14px}
+.fr-ai-form button{border:0;border-radius:12px;padding:0 16px;background:#13875b;color:#fff;font-weight:900}.fr-ai-foot{font-size:10px;color:#827b8e;padding:0 12px 8px;background:#fff}
+@media(max-width:480px){.fr-ai-panel{right:8px;bottom:78px;width:calc(100vw - 16px);height:min(590px,calc(100dvh - 100px))}.fr-ai-launch{right:12px;bottom:14px}}
 </style>
