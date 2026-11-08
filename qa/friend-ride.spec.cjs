@@ -11,16 +11,20 @@ test('FRIEND RIDE production page boots and exposes the four role entry points',
   expect(errors, 'Uncaught browser exceptions').toEqual([]);
 });
 
-test('local runtime diagnostics capture an injected test error without sending it off-device', async ({ page }) => {
+test('local runtime diagnostics capture errors on-device while remaining hidden from non-admin users', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   const badge = page.locator('#frDiagBadge');
-  await expect(badge).toBeVisible();
+  await expect(badge).toBeHidden();
+  const externalRequests = [];
+  page.on('request', request => {
+    if (new URL(request.url()).origin !== new URL(page.url()).origin) externalRequests.push(request.url());
+  });
   await page.evaluate(() => window.dispatchEvent(new ErrorEvent('error', { message: 'QA injected diagnostic check' })));
-  await expect(badge).toContainText(/issues \(1\)/);
-  await badge.click();
-  await expect(page.locator('#frDiagLog')).toContainText('QA injected diagnostic check');
+  const entries = await page.evaluate(() => JSON.parse(localStorage.getItem('fr_runtime_diagnostics_v1') || '[]'));
+  expect(entries.some(entry => entry.kind === 'JavaScript' && entry.message === 'QA injected diagnostic check')).toBe(true);
+  await expect(badge).toBeHidden();
+  expect(externalRequests).toEqual([]);
 });
-
 test('automated QA page runs its checks and reports live-only constraints separately', async ({ page }) => {
   await page.goto('./test.html', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#duration')).not.toHaveText('—', { timeout: 30000 });
