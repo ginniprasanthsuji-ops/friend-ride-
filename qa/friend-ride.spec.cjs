@@ -35,3 +35,15 @@ test('automated QA page runs its checks and reports live-only constraints separa
   expect(audit.blocked.some(x => x.name.includes('Cashfree'))).toBe(true);
   expect(audit.blocked.some(x => x.name.includes('KYC'))).toBe(true);
 });
+
+test('Help & Support routes to the working Complaints & Feedback form', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#frSupportMenu')).toContainText(/Complaints & Feedback/);
+  await expect(page.locator('#frSupportMenu')).toHaveAttribute('onclick', 'frOpenSupportPage()');
+  await expect(page.locator('#support')).toContainText(/Open Complaints & Feedback/);
+  await expect(page.locator('#support')).not.toContainText(/support table mapping/i);
+  await expect(page.locator('#frSupportFeedback')).toBeAttached();
+  await expect(page.locator('#frSupportMessage')).toBeAttached();
+  expect(await page.evaluate(() => typeof window.frSubmitSupportFeedback)).toBe('function');
+  expect(await page.evaluate(() => typeof window.frLoadAdminSupport)).toBe('function');
+});
