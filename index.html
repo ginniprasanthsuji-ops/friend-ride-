@@ -1563,8 +1563,8 @@ async function saveRideRequest(){
 async function refreshNearbyDrivers(){
   try{
     const coords=frParsePickupCoords();if(!coords){frShow('trackingStatus','GPS Pickup Location ఎంచుకుంటే 15 KMలోని Online Drivers కనిపిస్తారు.');return;}
-    const {data,error}=await sb.from('driver_locations').select('driver_id,latitude,longitude,is_online,updated_at').eq('is_online',true);if(error)throw error;
-    const now=Date.now(),rows=(data||[]).filter(d=>d.latitude!=null&&d.longitude!=null&&d.is_online===true&&(!d.updated_at||now-new Date(d.updated_at).getTime()<300000)).map(d=>({...d,distance:frDistanceKm(coords,[Number(d.latitude),Number(d.longitude)])})).filter(d=>d.distance<=15);
+    const {data,error}=await sb.rpc('fr_customer_list_nearby_drivers',{p_lat:coords[0],p_lng:coords[1],p_radius_km:15});if(error)throw error;
+    const rows=(data||[]).filter(d=>d.latitude!=null&&d.longitude!=null&&d.is_online===true).map(d=>({...d,distance:frDistanceKm(coords,[Number(d.latitude),Number(d.longitude)])})).filter(d=>Number.isFinite(d.distance)&&d.distance<=15);
     frNearbyMarkers.forEach(m=>trackingMap?.removeLayer(m));frNearbyMarkers=[];
     if(trackingMap){rows.forEach(d=>{const m=L.marker([Number(d.latitude),Number(d.longitude)]).addTo(trackingMap).bindPopup('Online Driver • '+d.distance.toFixed(1)+' km');frNearbyMarkers.push(m);});}
     frShow('trackingStatus',rows.length?rows.length+' Online Drivers 15 KM పరిధిలో కనిపించారు. Driver Accept చేసిన తర్వాత Live Tracking ప్రారంభమవుతుంది.':'15 KM పరిధిలో ప్రస్తుతం Online Drivers లేరు.');
@@ -1638,7 +1638,7 @@ async function toggleOnline(){
   try{
     if(!currentUser||currentProfile?.role!=='driver')throw Error('Driver OTP Login అవసరం.');
     const approved=['approved','verified','active'].includes(String(currentProfile.driver_approval_status||'pending').toLowerCase());if(!approved)throw Error('Admin approval వచ్చే వరకు Online అవ్వలేరు.');
-    if(online){online=false;if(frDriverTrackTimer)clearInterval(frDriverTrackTimer);if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);const x=await sb.from('driver_locations').upsert({driver_id:currentUser.id,is_online:false,updated_at:new Date().toISOString()},{onConflict:'driver_id'});if(x.error)throw x.error;$('onlineBtn').textContent='Go Online';$('onlineBtn').className='btn green';return;}
+    if(online){online=false;if(frDriverTrackTimer)clearInterval(frDriverTrackTimer);if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);const x=await sb.from('driver_locations').update({is_online:false,updated_at:new Date().toISOString()}).eq('driver_id',currentUser.id);if(x.error)throw x.error;$('onlineBtn').textContent='Go Online';$('onlineBtn').className='btn green';return;}
     const publish=async()=>{const p=await frPosition();const loc={driver_id:currentUser.id,latitude:p.coords.latitude,longitude:p.coords.longitude,is_online:true,updated_at:new Date().toISOString()};const x=await sb.from('driver_locations').upsert(loc,{onConflict:'driver_id'});if(x.error)throw x.error;if(frActiveRideId){const y=await sb.from('ride_live_locations').upsert({ride_id:frActiveRideId,user_id:currentUser.id,latitude:p.coords.latitude,longitude:p.coords.longitude,updated_at:new Date().toISOString()},{onConflict:'ride_id,user_id'});if(y.error)throw y.error;await refreshDriverCustomerLocation(frActiveRideId);}frShow('driverGpsStatus','Online • GPS '+p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5));};
     await publish();online=true;$('onlineBtn').textContent='Go Offline';$('onlineBtn').className='btn red';
     if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);frOnlineGpsTimer=setInterval(()=>{if(!document.hidden&&online&&currentUser?.id&&currentProfile?.role==='driver')publish().catch(e=>frShow('driverGpsStatus','GPS Update Error: '+e.message));},10000);
