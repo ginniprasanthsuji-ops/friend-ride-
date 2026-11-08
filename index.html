@@ -1578,7 +1578,9 @@ async function frRenderCustomerRideDriverAndPayment(ride){
    sb.rpc('get_ride_payment_details_v1',{p_ride_id:ride.id})
   ]);
   if(detailResult.error)throw detailResult.error;
-  const d=Array.isArray(detailResult.data)?detailResult.data[0]:detailResult.data;
+  let d=Array.isArray(detailResult.data)?detailResult.data[0]:detailResult.data;
+  const p=Array.isArray(paymentResult.data)?paymentResult.data[0]:paymentResult.data;
+  if(!d&&p)d={full_name:p.driver_name,phone:p.driver_phone};
   if(!d)throw Error('Assigned Driver details are not available for this ride.');
   const card=document.createElement('div');card.className='notice';card.style.marginTop='10px';card.dataset.frDriverContact='true';
   const title=document.createElement('b');title.textContent='Driver & Vehicle Details';card.append(title);
@@ -1587,7 +1589,7 @@ async function frRenderCustomerRideDriverAndPayment(ride){
   const phone=String(d.phone||'').replace(/[^+\\d]/g,'');add('Phone',phone||'Not available');
   if(phone){const digits=phone.replace(/\\D/g,'');const actions=document.createElement('div');actions.className='row';const call=document.createElement('a');call.className='btn light';call.href='tel:'+phone;call.textContent='📞 Call Driver';const wa=document.createElement('a');wa.className='btn green';wa.href='https://wa.me/'+(digits.startsWith('91')?digits:'91'+digits);wa.target='_blank';wa.rel='noopener noreferrer';wa.textContent='WhatsApp Driver';actions.append(call,wa);card.append(actions);}
   if(d.driver_profile_photo_path){const {data:signed,error}=await sb.storage.from('driver-profile-photos').createSignedUrl(d.driver_profile_photo_path,300);if(error)throw error;if(signed?.signedUrl){const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Driver profile';img.style.cssText='width:76px;height:76px;object-fit:cover;border-radius:50%;display:block;margin-top:8px';card.append(img);}}
-  if(paymentResult.error)throw paymentResult.error;const p=Array.isArray(paymentResult.data)?paymentResult.data[0]:paymentResult.data;
+  if(paymentResult.error)throw paymentResult.error;
   if(String(p?.ride_status||ride.status).toLowerCase()==='completed'&&p?.provider_qr_path){const {data:signed,error}=await sb.storage.from('provider-payment-qr').createSignedUrl(p.provider_qr_path,300);if(error)throw error;if(signed?.signedUrl){const label=document.createElement('p');label.textContent='Ride Completed — Driver Payment QR';card.append(label);const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Driver payment QR';img.style.cssText='width:210px;max-width:100%;height:auto;display:block;border-radius:12px;background:#fff;padding:8px';card.append(img);add('Agreed Fare','₹'+(p.agreed_fare??ride.agreed_fare??'—'));}}
   box.querySelector('[data-frDriverContact]')?.remove();box.append(card);
  }catch(e){console.warn('Customer driver details unavailable:',e.message);}
