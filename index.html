@@ -1520,7 +1520,7 @@ async function callDriver(){
     if(error)throw error;
     const d=Array.isArray(data)?data[0]:data;
     if(!d)throw Error('Driver ఇంకా Ride Accept చేయలేదు లేదా Contact అందుబాటులో లేదు.');
-    const phone=String(d.phone||'').replace(/[^+\\d]/g,'');
+    const phone=String(d.phone||'').replace(/[^+\d]/g,'');
     if(!phone)throw Error('Driver phone number profileలో నమోదు కాలేదు.');
     location.href='tel:'+phone;
   }catch(e){alert('Call Driver: '+(e.message||e));}
@@ -2520,7 +2520,7 @@ function frSubmitBankEnquiry(){
    const wrap=document.createElement('div');wrap.className='fr-contact-actions';
    const title=document.createElement('p');title.innerHTML='<b>'+esc(who||'Contact')+':</b> '+esc(name||'—')+'<br><b>Mobile:</b> '+(digits?esc(raw):'Not available');parent.append(title);
    if(digits){
-     const call=document.createElement('a');call.className='fr-call';call.href='tel:'+raw.replace(/[^+\\d]/g,'');call.textContent='📞 Call';wrap.append(call);
+     const call=document.createElement('a');call.className='fr-call';call.href='tel:'+raw.replace(/[^+\d]/g,'');call.textContent='📞 Call';wrap.append(call);
      const wa=waNumber(raw);if(wa){const chat=document.createElement('a');chat.className='fr-wa';chat.href='https://wa.me/'+wa;chat.target='_blank';chat.rel='noopener';chat.textContent='🟢 WhatsApp';wrap.append(chat);}
    }
    parent.append(wrap);
