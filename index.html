@@ -529,7 +529,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="profile" class="page"><div class="card"><h2>My Profile</h2><div id="profileInfo" class="muted">Login చేయండి.</div><button class="btn red" onclick="logout()">Logout</button></div></section>
 <section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div></section>
-<section id="support" class="page"><div class="card"><h2>Help & Support</h2><div class="field"><label>Issue</label><textarea id="supportIssue"></textarea></div><button class="btn purple" onclick="showMessage('Support request UI సిద్ధంగా ఉంది; support table mapping ఇంకా చేయాలి.','good')">Submit Support Request</button></div></section>
+<section id="support" class="page"><div class="card"><h2>💬 Complaints & Feedback</h2><p class="muted">ఈ పాత Support లింక్ ఇప్పుడు కొత్త Complaint & Feedback ఫారమ్‌కు తీసుకెళ్తుంది.</p><button class="btn purple" onclick="frOpenSupportPage()">Open Complaints & Feedback</button></div></section>
 <section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
 <section id="cart" class="page"><div class="card"><h2>🛒 My Cart</h2><p class="muted">మీ Friend Mart / Food Delivery items ఇక్కడ కనిపిస్తాయి.</p><div class="notice">మీరు ఎంచుకున్న వస్తువులు ఇక్కడ కనిపిస్తాయి. షాపింగ్ కొనసాగించండి.</div><button class="btn purple" onclick="showPage('shops')">Explore Stores</button><div class="notice" style="margin-top:12px"><b>Charges Transparency</b><br>Platform charge: 2.5% (eligible order valueపై). Delivery charge: location, distance మరియు delivery partner quote ఆధారంగా checkout ముందు చూపబడుతుంది. Final payable amount paymentకి ముందు చూపించాలి.</div></div></section>
 </main>
@@ -579,7 +579,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <button class="menu-item" onclick="menuGo('reports')"><span class="mi">📊</span>Reports & Analytics</button>
  <button class="menu-item" onclick="menuGo('paymentApprovals')"><span class="mi">💰</span>Payment & Approval Queue</button><button class="menu-item" onclick="menuGo('platformBusinessSettings')"><span class="mi">☎️</span>Toll-Free / GST Details</button><button class="menu-item" onclick="menuGo('settings')"><span class="mi">⚙️</span>System Settings</button>
  <div class="menu-label">More</div>
- <button class="menu-item" onclick="menuGo('support')"><span class="mi">❓</span>Help & Support</button>
+ <button class="menu-item" id="frSupportMenu" onclick="frOpenSupportPage()"><span class="mi">💬</span>Complaints & Feedback</button>
  <button class="menu-item" onclick="menuGo('about')"><span class="mi">ℹ️</span>About Us</button>
  <button class="menu-item" onclick="logout()"><span class="mi">🚪</span>Logout</button>
 </aside></div>
