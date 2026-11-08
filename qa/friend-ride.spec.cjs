@@ -131,6 +131,32 @@ test('Shop QR payment workflow is connected for customer and approved partner', 
   expect((await page.locator('body').innerText()).length).toBeGreaterThan(0);
 });
 
+test('Complaints & Feedback menu opens the real form and switches rating fields correctly', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#frSupportMenu')).toBeAttached();
+  await expect(page.locator('#frSupportFeedback')).toBeAttached();
+  expect(await page.evaluate(() => typeof window.frOpenSupportPage)).toBe('function');
+  await page.evaluate(() => window.frOpenSupportPage());
+  await expect(page.locator('#frSupportFeedback')).toHaveClass(/active/);
+  await expect(page.locator('#frSupportKind')).toBeVisible();
+  await expect(page.locator('#frSupportRatingWrap')).toBeHidden();
+  await page.locator('#frSupportKind').selectOption('feedback');
+  await expect(page.locator('#frSupportRatingWrap')).toBeVisible();
+  await page.locator('#frSupportKind').selectOption('complaint');
+  await expect(page.locator('#frSupportRatingWrap')).toBeHidden();
+  await expect(page.locator('#frSupportMessage')).toBeVisible();
+});
+
+test('Homepage customer ratings are visible near the top and refresh on Home navigation', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.showPage('home'));
+  await expect(page.locator('#frHomeRatings')).toBeVisible();
+  await expect(page.locator('#frHomepageRatingsList')).toBeVisible();
+  await expect(page.locator('#frHomeRatings')).toContainText('Customer Ratings');
+  await expect(page.locator('#frHomeRatings button[onclick="frOpenSupportPage()"]')).toContainText('Give Your Rating');
+  expect(await page.evaluate(() => typeof window.frLoadHomepageRatings)).toBe('function');
+});
+
 test('Admin can review complaints and publish selected feedback to the homepage', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#frAdminSupportPanel')).toBeAttached();
@@ -141,9 +167,10 @@ test('Admin can review complaints and publish selected feedback to the homepage'
     loadAdmin: typeof window.frLoadAdminSupport,
     setStatus: typeof window.frAdminSetSupportStatus,
     publish: typeof window.frAdminPublishFeedback,
-    homepage: typeof window.frLoadHomepageRatings
+    homepage: typeof window.frLoadHomepageRatings,
+    openSupport: typeof window.frOpenSupportPage
   }));
-  expect(functions).toEqual({ loadAdmin: 'function', setStatus: 'function', publish: 'function', homepage: 'function' });
+  expect(functions).toEqual({ loadAdmin: 'function', setStatus: 'function', publish: 'function', homepage: 'function', openSupport: 'function' });
 });
 
 test('Admin Driver KYC document review page is wired to protected review RPCs', async ({ page }) => {
