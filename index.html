@@ -2791,8 +2791,13 @@ async function rideContact(rpc,id){
   return window.FRRideContact?FRRideContact.normalize(row):row;
 }
 
-async function addRideProfilePhoto(card,path,bucket,alt){
-  if(!path){const note=document.createElement('p');note.className='tiny muted';note.textContent='Profile photo is not available in the saved profile.';card.append(note);return;}
+function frCustomerAvatarData(gender){
+ const female=gender==='female';
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8ed8ff"/><stop offset="1" stop-color="#6540bd"/></linearGradient><radialGradient id="skin" cx=".35" cy=".25" r=".8"><stop stop-color="#ffe0bd"/><stop offset="1" stop-color="#c9875f"/></radialGradient><linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+(female?'#ff9fc9':'#4fc8b2')+'"/><stop offset="1" stop-color="'+(female?'#b83e83':'#146c85')+'"/></linearGradient><linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+(female?'#56304a':'#293047')+'"/><stop offset="1" stop-color="'+(female?'#24162f':'#101827')+'"/></linearGradient></defs><rect x="4" y="4" width="192" height="192" rx="42" fill="url(#bg)"/><ellipse cx="100" cy="183" rx="62" ry="12" fill="#1c2455" opacity=".2"/><path d="M42 184c5-40 25-58 58-58s53 18 58 58" fill="url(#shirt)"/><path d="M73 126l27 25 27-25-10-16H83z" fill="url(#skin)"/><ellipse cx="100" cy="77" rx="39" ry="47" fill="url(#skin)"/><path d="'+(female?'M60 83c-7-44 14-62 42-62 34 0 49 22 40 65l-8-17-5-21c-18 17-41 22-68 18z':'M61 67c2-37 22-50 43-50 27 0 42 17 37 47-18-5-32-17-39-28-10 16-24 26-41 31z')+'" fill="url(#hair)"/><ellipse cx="85" cy="80" rx="4" ry="5" fill="#362b36"/><ellipse cx="115" cy="80" rx="4" ry="5" fill="#362b36"/><path d="M91 101q9 8 18 0" fill="none" stroke="#9d4c55" stroke-width="3" stroke-linecap="round"/><path d="M70 63q15-13 30-9M101 54q16-5 29 8" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="5" stroke-linecap="round"/><circle cx="55" cy="45" r="8" fill="#fff" opacity=".5"/><circle cx="151" cy="131" r="10" fill="#fff" opacity=".25"/></svg>';
+ return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+async function addRideProfilePhoto(card,path,bucket,alt,avatarGender){
+  if(!path){if(avatarGender==='male'||avatarGender==='female'){const img=document.createElement('img');img.src=frCustomerAvatarData(avatarGender);img.alt=alt+' 3D Avatar';img.style.cssText='width:100px;height:100px;object-fit:cover;border-radius:24px;border:2px solid #eee;display:block;margin:10px auto;box-shadow:0 8px 20px rgba(30,20,70,.18)';card.append(img);return;}const note=document.createElement('p');note.className='tiny muted';note.textContent='Profile photo is not available in the saved profile.';card.append(note);return;}
 
   try{
     const {data,error}=await sb.storage
@@ -2866,7 +2871,7 @@ async function buildRideContactCard(target,p,who){
   }else{
     await addRideProfilePhoto(
       card,p.customer_profile_photo_path||p.profile_photo_path||p.customer_photo_path,
-      'customer-profile-photos','Customer Profile'
+      'customer-profile-photos','Customer Profile',p.customer_avatar_gender
     );
   }
 
@@ -3051,7 +3056,7 @@ if(typeof oldRideContactShow==='function'){
    const column=role==='driver'?'driver_profile_photo_path':'customer_profile_photo_path';
    const card=document.createElement('div');card.id='frProfilePhotoEditor';card.className='notice';card.style.marginTop='14px';
    const title=document.createElement('b');title.textContent='Profile Photo';card.append(title);
-   await addRideProfilePhoto(card,currentProfile[column],bucket,'My Profile');
+   await addRideProfilePhoto(card,currentProfile[column],bucket,'My Profile',currentProfile.customer_avatar_gender);
    const input=document.createElement('input');input.type='file';input.accept='image/jpeg,image/png,image/webp';input.style.marginTop='10px';card.append(input);
    const button=document.createElement('button');button.type='button';button.className='btn purple';button.textContent='Upload / Update Photo';button.style.marginTop='8px';
    const status=document.createElement('p');status.className='tiny muted';status.setAttribute('aria-live','polite');card.append(button,status);
