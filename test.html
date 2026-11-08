@@ -72,8 +72,8 @@ async function run(){
    let sessionToken=null;
    try{
     const projectRef=new URL(base).hostname.split('.')[0];
-    const candidates=[localStorage.getItem('sb-'+projectRef+'-auth-token'),...Object.keys(localStorage).filter(k=>k.startsWith('sb-')&&k.endsWith('-auth-token')).map(k=>localStorage.getItem(k))].filter(Boolean);
-    for(const raw of candidates){try{const parsed=JSON.parse(raw);const token=parsed?.access_token||parsed?.currentSession?.access_token||parsed?.session?.access_token;if(token){sessionToken=token;break;}}catch(_){}}
+    const candidates=[localStorage.getItem('friend-ride-auth-v1'),localStorage.getItem('sb-'+projectRef+'-auth-token'),...Object.keys(localStorage).filter(k=>k.startsWith('sb-')&&k.endsWith('-auth-token')).map(k=>localStorage.getItem(k))].filter(Boolean);
+    for(const raw of candidates){try{const parsed=JSON.parse(raw);const token=parsed?.access_token||parsed?.currentSession?.access_token||parsed?.session?.access_token||parsed?.data?.session?.access_token;if(token&&String(token).split('.').length===3){sessionToken=token;break;}}catch(_){}}
    }catch(_){}
    const headers={'apikey':key[1],'Authorization':'Bearer '+(sessionToken||key[1])};
    report.source.push({name:'Authenticated QA session',ok:!!sessionToken,detail:sessionToken?'Using current signed-in Supabase session for read-only RLS checks':'No signed-in session found; backend checks will be marked AUTH REQUIRED'});
