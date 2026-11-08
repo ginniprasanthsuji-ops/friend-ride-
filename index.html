@@ -735,7 +735,7 @@ let frSelectedCustomerAvatar='👦';
 function frSetAvatarGender(gender){const el=$('regCustomerGender');if(el)el.value=gender;const choices=[...document.querySelectorAll('.fr-avatar-choice')];choices.forEach(b=>{const a=b.dataset.avatar||'';b.style.outline=(gender==='female'?a.includes('👩')||a==='👧':a.includes('👨')||a==='👦'||a==='🧑')?'2px solid #168447':'none';});}
 function frSelectAvatar(avatar){frSelectedCustomerAvatar=avatar;const el=$('regCustomerAvatar');if(el)el.value=avatar;document.querySelectorAll('.fr-avatar-choice').forEach(b=>{b.style.outline=b.dataset.avatar===avatar?'3px solid #168447':'none';});}
 function frCheckPrescriptionFile(input){const f=input?.files?.[0];const status=$('prescriptionFileStatus');if(!f){if(status)status.textContent='Prescription medicine cart కోసం ఫైల్ అవసరం.';return;}const ok=f.type==='application/pdf'||f.type.startsWith('image/');if(!ok||f.size>10*1024*1024){alert('JPG, PNG లేదా PDF మాత్రమే. గరిష్ఠ ఫైల్ పరిమాణం 10 MB.');input.value='';if(status)status.textContent='Valid prescription file ఎంచుకోండి.';return;}if(status)status.textContent='Selected: '+f.name;}
-function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return; if(!f.type.startsWith('image/')){alert('Image file మాత్రమే ఎంచుకోండి.');input.value='';return;} const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
+function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>3*1024*1024){alert('Customer photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.');input.value='';$('regCustomerPhotoPreview')?.classList.add('hide');return;}const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
 function switchAuth(mode){clearMessage();const reg=mode==='register';const roleTitle=({customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'})[selectedRole]||'FRIEND RIDE';$('authTitle').textContent=roleTitle+(reg?' Registration':' Login');$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');$('customerRegPhotoFields').classList.toggle('hide',selectedRole!=='customer');$('driverRegDocs').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerRegFields').classList.toggle('hide',!reg||selectedRole!=='partner');$('driverExtraFields').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerExtraFields').classList.toggle('hide',!reg||selectedRole!=='partner');}
 function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||'customerDashboard';}
 async function register(){return sendRegistrationOtp();}
@@ -1290,17 +1290,24 @@ async function verifyRegistrationOtpAndRegister(){
         if(savedDocs.error)throw savedDocs.error;
       }
     } else {
-      // Keep the existing Customer registration path unchanged.
+      // Customer photo is private Storage content; only its path is persisted in profiles.
+      const customerPhoto=$('regCustomerPhoto')?.files?.[0];
+      if(customerPhoto){
+        if(!['image/jpeg','image/png','image/webp'].includes(customerPhoto.type)||customerPhoto.size>3*1024*1024)throw Error('Customer photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.');
+        const photoPath=await frUploadPrivateRegistrationFile(customerPhoto,'customer-profile-photos',data.user.id,'profile',3*1024*1024);
+        uploadedFiles.push(['customer-profile-photos',photoPath]);
+        registrationPaths.customer_profile_photo_path=photoPath;
+      }
       const existing=await sb.from('profiles').select('id,role').eq('id',data.user.id).maybeSingle();
       if(existing.error)throw existing.error;
       if(existing.data){
         const existingRole=String(existing.data.role||'customer').toLowerCase();
         if(existingRole!=='customer')throw Error('ఈ మొబైల్ ఇప్పటికే '+existingRole.toUpperCase()+' accountగా ఉంది. అదే accountతో Login చేయండి.');
-        const updateRow={...row};delete updateRow.id;delete updateRow.role;
+        const updateRow={...row,...registrationPaths};delete updateRow.id;delete updateRow.role;
         const saved=await sb.from('profiles').update(updateRow).eq('id',data.user.id);
         if(saved.error)throw saved.error;
       } else {
-        const saved=await sb.from('profiles').insert(row);
+        const saved=await sb.from('profiles').insert({...row,...registrationPaths});
         if(saved.error)throw saved.error;
       }
     }
