@@ -143,3 +143,15 @@ test('Admin can review complaints and publish selected feedback to the homepage'
   }));
   expect(functions).toEqual({ loadAdmin: 'function', setStatus: 'function', publish: 'function', homepage: 'function' });
 });
+
+test('Admin Driver KYC document review page is wired to protected review RPCs', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#driverDocumentReviews')).toBeAttached();
+  await expect(page.locator('#driverDocumentReviewList')).toBeAttached();
+  const functions = await page.evaluate(() => ({
+    load: typeof window.loadDriverDocumentReviews,
+    review: typeof window.reviewDriverDocument
+  }));
+  expect(functions).toEqual({ load: 'function', review: 'function' });
+  await expect(page.locator('#adminDashboard')).toContainText('Driver KYC Documents');
+});
