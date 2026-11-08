@@ -806,7 +806,7 @@ function closeAuth(){$('authModal').classList.remove('show','fr-role-locked');cl
 function chooseRole(r){selectedRole=r;document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===r));$('addressField').classList.toggle('hide',r!=='customer');$('driverRegDocs').classList.toggle('hide',r!=='driver');$('partnerRegFields').classList.toggle('hide',r!=='partner');$('driverExtraFields').classList.toggle('hide',r!=='driver');$('partnerExtraFields').classList.toggle('hide',r!=='partner');}
 function frSetAvatarGender(gender){const g=gender==='female'?'female':'male';const el=$('regCustomerGender'),av=$('regCustomerAvatar');if(el)el.value=g;if(av)av.value=g;document.querySelectorAll('.fr-avatar-pick').forEach(b=>b.classList.toggle('active',b.dataset.gender===g));}
 function frCheckPrescriptionFile(input){const f=input?.files?.[0];const status=$('prescriptionFileStatus');if(!f){if(status)status.textContent='Prescription medicine cart కోసం ఫైల్ అవసరం.';return;}const ok=f.type==='application/pdf'||f.type.startsWith('image/');if(!ok||f.size>10*1024*1024){alert('JPG, PNG లేదా PDF మాత్రమే. గరిష్ఠ ఫైల్ పరిమాణం 10 MB.');input.value='';if(status)status.textContent='Valid prescription file ఎంచుకోండి.';return;}if(status)status.textContent='Selected: '+f.name;}
-function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return; if(!f.type.startsWith('image/')){alert('Image file మాత్రమే ఎంచుకోండి.');input.value='';return;} const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
+function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>3*1024*1024){alert('Customer photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.');input.value='';$('regCustomerPhotoPreview')?.classList.add('hide');return;}const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
 function switchAuth(mode){clearMessage();const reg=mode==='register';const roleTitle=({customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'})[selectedRole]||'FRIEND RIDE';$('authTitle').textContent=roleTitle+(reg?' Registration':' Login');$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');$('customerRegPhotoFields').classList.toggle('hide',selectedRole!=='customer');$('driverRegDocs').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerRegFields').classList.toggle('hide',!reg||selectedRole!=='partner');$('driverExtraFields').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerExtraFields').classList.toggle('hide',!reg||selectedRole!=='partner');}
 function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||'customerDashboard';}
 async function register(){return sendRegistrationOtp();}
@@ -833,8 +833,11 @@ async function acceptSession(user){
  if(adminCheck.data){dbRole='admin';}else if(dbRole==='admin'){throw new Error('ఈ ఖాతాకు Admin permission లేదు.');}
  if(!['customer','driver','partner','admin'].includes(dbRole))dbRole='customer';
  if(selectedRole!==dbRole)throw new Error('మీరు ఎంచుకున్న account type ఈ ఖాతాతో సరిపోలడం లేదు.');
- if(dbRole==='driver'){const approval=String(profile?.driver_approval_status||user.user_metadata?.driver_approval_status||'pending').toLowerCase();const isApproved=['approved','verified','active'].includes(approval);$('driverApproval').textContent=isApproved?'Approved':'Approval Pending';$('driverApproval').className='status '+(isApproved?'ok':'');$('onlineBtn').disabled=!isApproved;const photoPath=profile?.driver_profile_photo_path;if(photoPath){const {data:signed}=await sb.storage.from('driver-profile-photos').createSignedUrl(photoPath,3600);if(signed?.signedUrl&&$('driverProfilePhotoImg')){$('driverProfilePhotoImg').src=signed.signedUrl;$('driverProfilePhotoPreview').classList.remove('hide');}}}
- selectedRole=dbRole;$('profileInfo').innerHTML='<b>'+safe(profile?.full_name||profile?.name||user.user_metadata?.full_name||'User')+'</b><p>Mobile: '+safe(user.phone||'')+'</p><p>Account: '+safe(dbRole.toUpperCase())+'</p><p>'+safe(profile?.address||user.user_metadata?.address||'')+'</p>';
+ let profilePhotoHtml='';
+ if(dbRole==='driver'){const approval=String(profile?.driver_approval_status||user.user_metadata?.driver_approval_status||'pending').toLowerCase();const isApproved=['approved','verified','active'].includes(approval);$('driverApproval').textContent=isApproved?'Approved':'Approval Pending';$('driverApproval').className='status '+(isApproved?'ok':'');$('onlineBtn').disabled=!isApproved;const photoPath=profile?.driver_profile_photo_path;if(photoPath){const {data:signed}=await sb.storage.from('driver-profile-photos').createSignedUrl(photoPath,3600);if(signed?.signedUrl&&$('driverProfilePhotoImg')){$('driverProfilePhotoImg').src=signed.signedUrl;$('driverProfilePhotoPreview').classList.remove('hide');}if(signed?.signedUrl)profilePhotoHtml='<img src="'+safe(signed.signedUrl)+'" alt="Driver profile" style="width:58px;height:58px;border-radius:50%;object-fit:cover;margin-bottom:8px">';}}
+ if(dbRole==='customer'&&profile?.customer_profile_photo_path){const {data:signed}=await sb.storage.from('customer-profile-photos').createSignedUrl(profile.customer_profile_photo_path,3600);if(signed?.signedUrl)profilePhotoHtml='<img src="'+safe(signed.signedUrl)+'" alt="Customer profile" style="width:58px;height:58px;border-radius:50%;object-fit:cover;margin-bottom:8px">';}
+ if(dbRole==='partner'&&profile?.partner_profile_photo_path){const {data:signed}=await sb.storage.from('partner-profile-photos').createSignedUrl(profile.partner_profile_photo_path,3600);if(signed?.signedUrl)profilePhotoHtml='<img src="'+safe(signed.signedUrl)+'" alt="Partner profile" style="width:58px;height:58px;border-radius:50%;object-fit:cover;margin-bottom:8px">';}
+ selectedRole=dbRole;$('profileInfo').innerHTML=profilePhotoHtml+'<b>'+safe(profile?.full_name||profile?.name||user.user_metadata?.full_name||'User')+'</b><p>Mobile: '+safe(user.phone||'')+'</p><p>Account: '+safe(dbRole.toUpperCase())+'</p><p>'+safe(profile?.address||user.user_metadata?.address||'')+'</p>';
  $('customerWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Customer');$('driverWelcome').textContent='Welcome, '+(profile?.full_name||user.user_metadata?.full_name||'Driver');
  $('drawerUser').textContent=(profile?.full_name||user.user_metadata?.full_name||'FRIEND RIDE user')+' • '+dbRole.toUpperCase();if($('headerAuth'))$('headerAuth').textContent='Account';
  closeAuth();showPage(dashboardFor(dbRole));if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
@@ -1532,6 +1535,11 @@ async function verifyRegistrationOtpAndRegister(){
     const {data,error}=await sb.auth.setSession(session);if(error)throw error;if(!data.user)throw Error('OTP verify అయింది కానీ Auth user session రాలేదు.');
     const uid=data.user.id;
     const row={id:uid,full_name:v.name,phone:'+91'+digits,address:selectedRole==='customer'?v.address:(selectedRole==='partner'?$('regBusinessAddress').value.trim():null)};
+    if(selectedRole==='customer'&&$('regCustomerPhoto')?.files?.[0]){
+      const photoPath=await frUploadRegistrationFile('customer-profile-photos',uid,'profile',$('regCustomerPhoto').files[0]);
+      uploaded.push({bucket:'customer-profile-photos',path:photoPath});
+      row.customer_profile_photo_path=photoPath;
+    }
     if(selectedRole==='driver')Object.assign(row,{vehicle_type:'Bike',vehicle_company:$('regVehicleCompany').value.trim(),vehicle_model:$('regVehicleModel').value.trim(),vehicle_number:$('regVehicleNumber').value.trim(),driver_license_number:$('regLicenseNumber').value.trim(),driver_aadhaar_number:frDigits('regAadhaarNumber'),driving_experience_years:Number($('regExperience').value||0)});
     if(selectedRole==='partner')Object.assign(row,{business_name:$('regBusinessName').value.trim(),partner_category:$('regPartnerCategory').value,gstin:$('regGSTIN').value.trim(),upi_id:$('regUPI').value.trim(),phonepe_number:frDigits('regPhonePe')});
 
@@ -1582,7 +1590,9 @@ async function verifyRegistrationOtpAndRegister(){
         const saved=await sb.from('profiles').update(updateRow).eq('id',uid);if(saved.error)throw saved.error;
       } else {const saved=await sb.from('profiles').insert({...row,role:'customer'});if(saved.error)throw saved.error;}
     }
-    try{await sb.auth.updateUser({data:{gender:$('regCustomerGender')?.value||'male',profile_avatar:$('regCustomerAvatar')?.value||'male'}});}catch(metaError){console.warn('Avatar metadata save warning',metaError);}
+    if(selectedRole==='customer'){
+      try{await sb.auth.updateUser({data:{gender:$('regCustomerGender')?.value||'male',profile_avatar:$('regCustomerAvatar')?.value||'male'}});}catch(metaError){console.warn('Avatar metadata save warning',metaError);}
+    }
     uploaded.length=0;
     await acceptSession(data.user);
     showMessage('Registration విజయవంతమైంది. Driver/Partner approval pendingలో ఉంటుంది.','good');
@@ -2349,6 +2359,25 @@ function frSubmitBankEnquiry(){
 </script>
 
 <script id="fr-phase2-lifecycle">
+async function frRenderRideCustomerDetails(rideId){
+  const box=$('driverRideStatus');if(!box||!rideId)return;
+  try{
+    const {data,error}=await sb.rpc('get_ride_customer_details_v2',{p_ride_id:rideId});
+    if(error)throw error;
+    const customer=Array.isArray(data)?data[0]:data;
+    if(!customer)return;
+    const card=document.createElement('div');card.className='notice';card.style.marginTop='8px';
+    const heading=document.createElement('b');heading.textContent='Customer Details';card.append(heading);
+    if(customer.customer_profile_photo_path){
+      const {data:signed,error:photoError}=await sb.storage.from('customer-profile-photos').createSignedUrl(customer.customer_profile_photo_path,300);
+      if(!photoError&&signed?.signedUrl){const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Customer profile';img.style.cssText='width:52px;height:52px;border-radius:50%;object-fit:cover;display:block;margin:8px 0';card.append(img);}
+    }
+    const name=document.createElement('p');name.textContent='Name: '+(customer.full_name||'Customer');card.append(name);
+    const phone=document.createElement('p');phone.textContent='Mobile: '+(customer.phone||'Not available');card.append(phone);
+    const existing=box.querySelector('[data-fr-customer-details]');if(existing)existing.remove();
+    card.dataset.frCustomerDetails='true';box.append(card);
+  }catch(e){console.warn('Assigned ride customer details unavailable:',e.message);}
+}
 async function frLoadDriverActiveRide(){
   try{
     if(!currentUser||currentProfile?.role!=='driver')throw Error('Driver login అవసరం.');
@@ -2357,6 +2386,7 @@ async function frLoadDriverActiveRide(){
     if(!data){frActiveRideId=null;frTrackingRideData=null;frShow('driverRideStatus','Active Ride లేదు.');return null;}
     frActiveRideId=data.id;frTrackingRideData=data;
     frShow('driverRideStatus','Active Ride • '+data.status+' • '+data.pickup+' → '+data.drop+' • Ride ID: '+data.id);
+    await frRenderRideCustomerDetails(data.id);
     return data;
   }catch(e){frShow('driverRideStatus','Active Ride Error: '+e.message);return null;}
 }
