@@ -506,7 +506,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 • Cancelled orders/rides లెక్కలోకి రావు. Self-referral, fake accounts, duplicate referrals అనుమతించబడవు.<br>
 • ప్రతి eligible referralకు ఒక్కసారి మాత్రమే reward. Server verification మరియు అవసరమైన Admin approval తర్వాత reward/subscription credit అవుతుంది.<br>
 • Monthly Valuable Giftsకు ప్రత్యేక eligibility, availability మరియు selection rules వర్తిస్తాయి.</div>
-<div class="notice">Rewards మరియు subscriptions నిజంగా credit కావడానికి secure Supabase/Edge Function integration అవసరం. ఈ HTMLలో offer display మాత్రమే.</div></div></section>
+</div></section>
 
 <section id="customerDashboard" class="page"><div class="card hero"><div class="eyebrow">CUSTOMER SPACE</div><h1>Customer Dashboard</h1><p id="customerWelcome">Welcome</p></div><div class="stats"><div class="stat"><small>Wallet</small><b>₹0</b></div><div class="stat"><small>Reward Points</small><b>0</b></div><div class="stat"><small>Bookings</small><b>—</b></div><div class="stat"><small>Status</small><b>Active</b></div></div><div class="grid" style="margin-top:12px"><button class="tile" onclick="showPage('ride')">🚘<b>Book Ride</b></button><button class="tile" onclick="showPage('orders')">🧾<b>My Orders</b></button><button class="tile" onclick="showPage('wallet')">💳<b>Wallet</b></button><button class="tile" onclick="showPage('profile')">👤<b>My Profile</b></button></div></section>
 
@@ -3565,8 +3565,8 @@ function frAddPartnerCatalogueItem(index){
 <section class="fr-ai-panel" id="frAiPanel" aria-label="FRIEND RIDE AI Assistant">
  <header class="fr-ai-head"><div><strong>✦ FRIEND RIDE AI సహాయకుడు</strong><small>మీ సందేహాలకు తెలుగులో వెంటనే సహాయం</small></div><button type="button" class="fr-ai-close" id="frAiClose" aria-label="Close">×</button></header>
  <div class="fr-ai-body" id="frAiMessages" aria-live="polite">
-  <div class="fr-ai-msg bot">నమస్కారం! FRIEND RIDEలో ఏ ఆప్షన్ ఎలా ఉపయోగించాలో అడగండి. ఒక్కో దశగా తెలుగులో వివరిస్తాను.</div>
-  <div class="fr-ai-suggestions"><button type="button" data-fr-ai-q="Ride ఎలా బుక్ చేయాలి?">Ride ఎలా బుక్ చేయాలి?</button><button type="button" data-fr-ai-q="Driverగా ఎలా Online అవ్వాలి?">Driver Help</button><button type="button" data-fr-ai-q="UPI Payment ఎలా చేయాలి?">UPI Payment</button></div>
+  <div class="fr-ai-msg bot">నమస్కారం! నేను FRIEND RIDE AI సహాయకుడిని. Customer, Driver, Partner, Admin — మీకు ఏ సందేహం ఉన్నా తెలుగులో అడగండి. ఒక్కో దశగా వివరిస్తాను.</div>
+  <div class="fr-ai-suggestions"><button type="button" data-fr-ai-q="Customerగా Ride ఎలా బుక్ చేయాలి?">Customer Help</button><button type="button" data-fr-ai-q="Driver Ride Accept చేసి Start ఎలా చేయాలి?">Driver Help</button><button type="button" data-fr-ai-q="Partnerగా Shop Catalogue ఎలా నిర్వహించాలి?">Partner Help</button><button type="button" data-fr-ai-q="UPI QR Payment, Transaction ID, Invoice ఎలా పనిచేస్తాయి?">Payment Help</button></div>
  </div>
  <form class="fr-ai-form" id="frAiForm"><input id="frAiInput" maxlength="1500" autocomplete="off" placeholder="మీ సందేహం ఇక్కడ టైప్ చేయండి…" aria-label="Ask FRIEND RIDE AI"><button id="frAiSend" type="submit">Send</button></form>
  <div class="fr-ai-foot">మీ OTP, UPI PIN లేదా Password ఎప్పుడూ ఇక్కడ పంపవద్దు.</div>
