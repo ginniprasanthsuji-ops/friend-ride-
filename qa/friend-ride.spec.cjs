@@ -136,7 +136,8 @@ test('Complaints & Feedback menu opens the real form and switches rating fields 
   await expect(page.locator('#frSupportMenu')).toBeAttached();
   await expect(page.locator('#frSupportFeedback')).toBeAttached();
   expect(await page.evaluate(() => typeof window.frOpenSupportPage)).toBe('function');
-  await page.evaluate(() => window.frOpenSupportPage());
+  await page.evaluate(() => window.openDrawer());
+  await page.locator('#frSupportMenu').click();
   await expect(page.locator('#frSupportFeedback')).toHaveClass(/active/);
   await expect(page.locator('#frSupportKind')).toBeVisible();
   await expect(page.locator('#frSupportRatingWrap')).toBeHidden();
