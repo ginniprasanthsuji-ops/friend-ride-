@@ -1786,6 +1786,53 @@ function frRideSpeakNotification(n){
   window.speechSynthesis.speak(utterance);
  }catch(e){console.warn('Notification voice unavailable:',e?.message||e);}
 }
+let frAlertAudioCtx=null,frAlertAudioUnlocked=false,frAlertToneTimer=null;
+function frUnlockAlertAudio(){
+ try{
+  const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+  if(!frAlertAudioCtx)frAlertAudioCtx=new Ctx();
+  if(frAlertAudioCtx.state==='suspended')frAlertAudioCtx.resume();
+  frAlertAudioUnlocked=true;
+ }catch(e){console.warn('Alert audio unavailable:',e);}
+}
+function frPlayAlertTone(kind){
+ if(!frAlertAudioUnlocked||!frAlertAudioCtx)return;
+ try{
+  if(frAlertToneTimer){clearInterval(frAlertToneTimer);frAlertToneTimer=null;}
+  const ctx=frAlertAudioCtx;
+  const pattern=kind==='order'?[880,1175,880,1175,880,1175,880,1175,880,1175,880,1175]:
+    kind==='ride'?[740,988,740,988,740,988,740,988,740,988,740,988]:[660,880];
+  let step=0;
+  const play=()=>{
+   if(step>=pattern.length){clearInterval(frAlertToneTimer);frAlertToneTimer=null;return;}
+   const osc=ctx.createOscillator(),gain=ctx.createGain(),now=ctx.currentTime;
+   osc.type='sine';osc.frequency.value=pattern[step];
+   gain.gain.setValueAtTime(0.0001,now);gain.gain.exponentialRampToValueAtTime(0.13,now+0.025);gain.gain.exponentialRampToValueAtTime(0.0001,now+0.22);
+   osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+0.24);step++;
+  };
+  play();frAlertToneTimer=setInterval(play,kind==='customer'?320:520);
+ }catch(e){console.warn('Alert tone failed:',e);}
+}
+function frClassifyAlert(row){
+ const t=((row?.title||'')+' '+(row?.message||'')).toLowerCase();
+ const role=String(currentProfile?.role||selectedRole||'').toLowerCase();
+ const isOrder=/order|store order|market order|ఆర్డర్|ఆర్డరు|షాప్/.test(t);
+ const isRide=/ride|booking|trip|రైడ్|బుకింగ్/.test(t);
+ if(role==='partner'&&isOrder)return 'order';
+ if(role==='driver'&&isRide)return 'ride';
+ if(role==='customer'&&(isOrder||isRide||/accepted|confirmed|arrived|completed|cancelled|ఆమోద|చేరుకున్న|పూర్తి/.test(t)))return 'customer';
+ return null;
+}
+function frPreviewAlertTone(kind){
+ frUnlockAlertAudio();
+ const play=()=>{frPlayAlertTone(kind);frRideSpeakNotification({title:kind==='order'?'New order':kind==='ride'?'New ride':'Customer update',message:kind==='order'?'Order arrived':kind==='ride'?'Ride booking':'Your order update'});};
+ if(frAlertAudioCtx?.state==='suspended')frAlertAudioCtx.resume().then(play);else play();
+ const out=document.getElementById('frNotifyPermissionStatus');
+ if(out)out.textContent=kind==='order'?'“Order arrived” — మూడు సార్లు వినిపిస్తుంది.':kind==='ride'?'“New ride” — మూడు సార్లు వినిపిస్తుంది.':'Customer update — పూర్తి వాయిస్ అలర్ట్.';
+}
+document.addEventListener('pointerdown',frUnlockAlertAudio,{passive:true});
+document.addEventListener('keydown',frUnlockAlertAudio);
+
 function frRideShowToast(n, browserAlert=false){
   const box=document.getElementById('frRideLiveToast');
   if(box){
@@ -1796,6 +1843,7 @@ function frRideShowToast(n, browserAlert=false){
     frRideToastTimer=setTimeout(()=>box.classList.remove('show'),9000);
   }
   try{if(navigator.vibrate)navigator.vibrate(selectedRole==='partner'?[250,120,250,120,450]:selectedRole==='driver'?[180,100,180,100,380]:[100,60,100]);}catch(_){}
+  const tone=frClassifyAlert(n);if(tone)frPlayAlertTone(tone);
   frRideSpeakNotification(n);
   if(browserAlert && 'Notification' in window && Notification.permission==='granted' && document.hidden){
     try{
