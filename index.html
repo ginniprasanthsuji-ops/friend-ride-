@@ -204,6 +204,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 .fr-avatar-picks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:9px}.fr-avatar-pick{border:2px solid #e7e0ee;border-radius:19px;background:linear-gradient(145deg,#fff,#f5f8f4);padding:12px 8px;color:var(--ink);box-shadow:0 7px 18px #24104412;transition:.18s}.fr-avatar-pick.active{border-color:#13875b;background:linear-gradient(145deg,#eafff1,#fff4e7);box-shadow:0 0 0 3px #13875b20,0 9px 20px #13875b20}.fr-avatar-art{width:112px;height:112px;max-width:100%;display:grid;place-items:center;margin:0 auto 7px;border-radius:28px;background:radial-gradient(circle at 30% 18%,#fff 0,#fff9 20%,transparent 45%),linear-gradient(145deg,#e9fff0,#ccebd8);box-shadow:inset 0 3px 8px #fff,0 8px 16px #193c2922}.fr-avatar-pick[data-gender=female] .fr-avatar-art{background:radial-gradient(circle at 30% 18%,#fff 0,#fff9 20%,transparent 45%),linear-gradient(145deg,#fff0df,#ffd6b4)}.fr-avatar-art svg{width:100%;height:100%;filter:drop-shadow(0 5px 4px #0002)}.fr-avatar-pick b{display:block;font-size:16px}.fr-avatar-pick small{display:block;color:var(--muted);font-size:12px}
 </style>
 <style id="fr-alert-preview-style">.fr-alert-preview{margin-top:14px;padding:12px;border:1px solid rgba(255,255,255,.24);border-radius:14px;background:rgba(255,255,255,.08)}.fr-alert-preview-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.fr-alert-preview-buttons button{border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 11px;background:#fff;color:#34204e;font-weight:700;font-size:12px}</style>
+<style id="fr-role-specific-auth-fix">#authModal .rolegrid{display:none!important}#authModal #authRegisterButton.hide{display:none!important}</style>
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -589,7 +590,6 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <button class="menu-item" onclick="menuGo('customerDashboard')"><span class="mi">👤</span>Customer Dashboard</button>
  <button class="menu-item" onclick="menuGo('driverDashboard')"><span class="mi">🚗</span>Driver Dashboard</button>
  <button class="menu-item" onclick="menuGo('partnerDashboard')"><span class="mi">🏪</span>Partner Dashboard</button>
- <button class="menu-item" onclick="menuGo('adminDashboard')"><span class="mi">🛡️</span>Admin Dashboard</button>
  <div class="menu-label">Services</div>
  <button class="menu-item" onclick="menuGo('ride')"><span class="mi">🛵</span>Ride Booking</button>
  <button class="menu-item" onclick="menuGo('goods')"><span class="mi">🚚</span>Goods Delivery</button>
@@ -618,6 +618,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <button class="menu-item" onclick="menuGo('paymentApprovals')"><span class="mi">💰</span>Payment & Approval Queue</button><button class="menu-item" onclick="menuGo('platformBusinessSettings')"><span class="mi">☎️</span>Toll-Free / GST Details</button><button class="menu-item" onclick="menuGo('settings')"><span class="mi">⚙️</span>System Settings</button>
  <div class="menu-label">More</div>
  <button class="menu-item" id="frSupportMenu" onclick="frOpenSupportPage()"><span class="mi">💬</span>Complaints & Feedback</button>
+ <button class="menu-item" onclick="menuGo('adminDashboard')"><span class="mi">🛡️</span>Admin Dashboard</button>
  <button class="menu-item" onclick="menuGo('about')"><span class="mi">ℹ️</span>About Us</button>
  <button class="menu-item" onclick="logout()"><span class="mi">🚪</span>Logout</button>
 </aside></div>
@@ -625,7 +626,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <div id="authModal" class="modal"><div class="modalbox">
  <div class="modalhead"><h2 id="authTitle">Login to FRIEND RIDE</h2><button class="close" onclick="closeAuth()">✕</button></div>
  <div id="message"></div>
- <div class="rolegrid">
+ <div class="rolegrid" aria-hidden="true" hidden>
   <button class="role active" data-role="customer" onclick="chooseRole('customer')">👤 Customer</button>
   <button class="role" data-role="driver" onclick="chooseRole('driver')">🚗 Driver</button>
   <button class="role" data-role="partner" onclick="chooseRole('partner')">🏪 Partner</button>
@@ -636,8 +637,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <button class="btn" style="width:100%" onclick="sendLoginOtp()">Send SMS OTP</button>
   <div class="field" id="otpArea"><label>SMS OTP</label><input id="loginOtp" type="tel" inputmode="numeric" maxlength="6" placeholder="6 digit OTP" autocomplete="one-time-code"></div>
   <button class="btn light" style="width:100%" onclick="verifyLoginOtp()">Verify OTP & Continue</button>
-  <button class="btn light" style="width:100%;margin-top:8px" onclick="startAdminLogin()">🛡️ Admin OTP Login</button>
-  <button class="btn light" style="width:100%;margin-top:8px" onclick="switchAuth('register')">New Customer / Driver / Partner Registration</button>
+  <button id="authRegisterButton" class="btn light" style="width:100%;margin-top:8px" onclick="switchAuth('register')">New Customer Registration</button>
  </div>
  <div id="registerForm" class="hide">
   <div class="field"><label>Full Name *</label><input id="regName" placeholder="మీ పూర్తి పేరు"></div>
@@ -809,17 +809,16 @@ async function reviewDriverApplication(driverId,decision){
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){selectedRole=role;try{localStorage.setItem('friendride_selected_role',role)}catch(_){}const gate=$('roleLauncher');if(gate)gate.classList.add('hide');openAuth('login',role);$('authModal').classList.add('fr-role-locked');}
-function openAuth(mode='login',role='customer'){selectedRole=role;try{localStorage.setItem('friendride_selected_role',role)}catch(_){}document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));switchAuth(mode);$('authModal').classList.add('show');}
+function openAuth(mode='login',role='customer'){selectedRole=role;try{localStorage.setItem('friendride_selected_role',role)}catch(_){}document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));switchAuth(mode);$('authModal').classList.add('show');$('authModal').classList.remove('fr-role-locked');}
 function closeAuth(){$('authModal').classList.remove('show','fr-role-locked');clearMessage();if(!currentUser){const gate=$('roleLauncher');if(gate)gate.classList.add('hide');}}
 function chooseRole(r){selectedRole=r;try{localStorage.setItem('friendride_selected_role',r)}catch(_){}document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===r));$('addressField').classList.toggle('hide',r!=='customer');$('driverRegDocs').classList.toggle('hide',r!=='driver');$('partnerRegFields').classList.toggle('hide',r!=='partner');$('driverExtraFields').classList.toggle('hide',r!=='driver');$('partnerExtraFields').classList.toggle('hide',r!=='partner');}
 let frSelectedCustomerAvatar='male';
 function frSetAvatarGender(gender){const g=gender==='female'?'female':'male';frSelectedCustomerAvatar=g;const el=$('regCustomerGender'),av=$('regCustomerAvatar');if(el)el.value=g;if(av)av.value=g;document.querySelectorAll('.fr-avatar-pick').forEach(b=>b.classList.toggle('active',b.dataset.gender===g));}
 function frCheckPrescriptionFile(input){const f=input?.files?.[0];const status=$('prescriptionFileStatus');if(!f){if(status)status.textContent='Prescription medicine cart కోసం ఫైల్ అవసరం.';return;}const ok=f.type==='application/pdf'||f.type.startsWith('image/');if(!ok||f.size>10*1024*1024){alert('JPG, PNG లేదా PDF మాత్రమే. గరిష్ఠ ఫైల్ పరిమాణం 10 MB.');input.value='';if(status)status.textContent='Valid prescription file ఎంచుకోండి.';return;}if(status)status.textContent='Selected: '+f.name;}
 function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>3*1024*1024){alert('Customer photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.');input.value='';$('regCustomerPhotoPreview')?.classList.add('hide');return;}const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
-function switchAuth(mode){clearMessage();const reg=mode==='register';const roleTitle=({customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'})[selectedRole]||'FRIEND RIDE';$('authTitle').textContent=roleTitle+(reg?' Registration':' Login');$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');$('customerRegPhotoFields').classList.toggle('hide',selectedRole!=='customer');$('driverRegDocs').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerRegFields').classList.toggle('hide',!reg||selectedRole!=='partner');$('driverExtraFields').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerExtraFields').classList.toggle('hide',!reg||selectedRole!=='partner');}
+function switchAuth(mode){clearMessage();const reg=mode==='register';const roleTitle=({customer:'Customer',driver:'Driver',partner:'Partner',admin:'Admin'})[selectedRole]||'FRIEND RIDE';$('authTitle').textContent=roleTitle+(reg?' Registration':' Login');$('loginForm').classList.toggle('hide',reg);$('registerForm').classList.toggle('hide',!reg);$('addressField').classList.toggle('hide',selectedRole!=='customer');$('customerRegPhotoFields').classList.toggle('hide',selectedRole!=='customer');$('driverRegDocs').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerRegFields').classList.toggle('hide',!reg||selectedRole!=='partner');$('driverExtraFields').classList.toggle('hide',!reg||selectedRole!=='driver');$('partnerExtraFields').classList.toggle('hide',!reg||selectedRole!=='partner');const registerButton=$('authRegisterButton');if(registerButton){registerButton.textContent='New '+roleTitle+' Registration';registerButton.classList.toggle('hide',selectedRole==='admin');}const sendButton=$('loginForm')?.querySelector('button[onclick="sendLoginOtp()"]');if(sendButton)sendButton.textContent=selectedRole==='admin'?'Send Admin SMS OTP':'Send '+roleTitle+' SMS OTP';const verifyButton=$('loginForm')?.querySelector('button[onclick="verifyLoginOtp()"]');if(verifyButton)verifyButton.textContent='Verify '+roleTitle+' OTP & Continue';}
 function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||'customerDashboard';}
 async function register(){return sendRegistrationOtp();}
-function otpBackendNotice(){showMessage('APITXT SMS-OTP integration కోసం మీ existing Supabase Sms-otp Edge Function request/response formatను SQL/backend దశలో verify చేసి connect చేస్తాం. ప్రస్తుతం OTP controls UI మాత్రమే; OTP పంపినట్టు చూపించదు.','error');}
 function sendLoginOtp(){const p=normalizePhone($('loginPhone').value);if(!p){showMessage('సరైన 10 digit mobile number ఇవ్వండి.');return;}otpBackendNotice();}
 function verifyLoginOtp(){if(($('loginOtp').value||'').trim().length<4){showMessage('OTP నమోదు చేయండి.');return;}otpBackendNotice();}
 function sendRegistrationOtp(){const p=normalizePhone($('regPhone').value);if(!p){showMessage('సరైన 10 digit mobile number ఇవ్వండి.');return;}otpBackendNotice();}
