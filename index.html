@@ -2215,43 +2215,47 @@ function frV8UrlBase64ToUint8Array(base64String){
 }
 async function frEnableDeviceAlerts(){
   const out=document.getElementById('frNotifyPermissionStatus');
-  if(!currentUser?.id){if(out)out.textContent='ముందుగా Customer / Driver Login చేయండి.';return;}
-  if(!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)){
-    if(out)out.textContent='ఈ Browserలో Web Push అందుబాటులో లేదు. Chromeలో FRIEND RIDE తెరవండి.';
-    return;
+  if(!currentUser?.id){if(out)out.textContent='ముందుగా Login చేయండి.';return;}
+  if(!('Notification' in window)||!('serviceWorker' in navigator)||!('PushManager' in window)){
+    if(out)out.textContent='Chrome Browserలో FRIEND RIDE తెరిచి ప్రయత్నించండి.';return;
+  }
+  if(Notification.permission==='denied'){
+    if(out)out.textContent='ఫోన్ Settings → Site Settings → Notificationsలో FRIEND RIDEను Allow చేయండి.';return;
   }
   try{
     const permission=await Notification.requestPermission();
     if(permission!=='granted'){if(out)out.textContent='Notification permission ఇవ్వలేదు.';return;}
-    const registration=await navigator.serviceWorker.register('./service-worker.js');
+    const registration=await navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'});
     await navigator.serviceWorker.ready;
-    if(!FR_VAPID_PUBLIC_KEY){
-      if(out)out.textContent='ఫోన్ Notification permission ON అయింది. Background Push కోసం VAPID public key + Supabase Edge Function deploy చేయాలి.';
-      return;
-    }
+    await registration.update().catch(()=>{});
+    if(!FR_VAPID_PUBLIC_KEY)throw new Error('VAPID Public Key లేదు.');
     const applicationServerKey=frV8UrlBase64ToUint8Array(FR_VAPID_PUBLIC_KEY);
     let subscription=await registration.pushManager.getSubscription();
+    if(subscription){
+      const oldJson=subscription.toJSON();
+      const oldKey=subscription.options?.applicationServerKey;
+      const sameKey=oldKey&&oldKey.byteLength===applicationServerKey.byteLength&&
+        applicationServerKey.every((v,i)=>v===new Uint8Array(oldKey)[i]);
+      if(!sameKey){
+        await sb.from('fr_push_subscriptions').update({is_active:false,updated_at:new Date().toISOString()})
+          .eq('endpoint',oldJson.endpoint).eq('user_id',currentUser.id);
+        await subscription.unsubscribe();
+        subscription=null;
+      }
+    }
     if(!subscription){
-      subscription=await registration.pushManager.subscribe({
-        userVisibleOnly:true,
-        applicationServerKey
-      });
+      subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey});
     }
     const json=subscription.toJSON();
-    const row={
-      user_id:currentUser.id,
-      endpoint:json.endpoint,
-      p256dh:json.keys?.p256dh,
-      auth_key:json.keys?.auth,
-      user_agent:navigator.userAgent,
-      is_active:true,
-      updated_at:new Date().toISOString()
-    };
+    if(!json.endpoint||!json.keys?.p256dh||!json.keys?.auth)throw new Error('Push Subscription keys పూర్తిగా రాలేదు.');
+    const row={user_id:currentUser.id,endpoint:json.endpoint,p256dh:json.keys.p256dh,auth_key:json.keys.auth,
+      user_agent:navigator.userAgent,is_active:true,updated_at:new Date().toISOString()};
     const {error}=await sb.from('fr_push_subscriptions').upsert(row,{onConflict:'endpoint'});
     if(error)throw error;
-    if(out)out.textContent='ఈ పరికరం Background Push కోసం నమోదు అయింది.';
+    if(out)out.textContent='Background Push విజయవంతంగా నమోదు అయింది. ఫోన్ Lockలో ఉన్నప్పుడు కూడా Alerts రావాలి.';
   }catch(e){
-    if(out)out.textContent='Notification setup error: '+(e.message||e);
+    if(out)out.textContent='Push setup error: '+(e.message||e);
+    console.error('FR Background Push setup failed:',e);
   }
 }
 
