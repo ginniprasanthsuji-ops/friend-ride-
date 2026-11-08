@@ -47,3 +47,27 @@ test('Help & Support routes to the working Complaints & Feedback form', async ({
   expect(await page.evaluate(() => typeof window.frSubmitSupportFeedback)).toBe('function');
   expect(await page.evaluate(() => typeof window.frLoadAdminSupport)).toBe('function');
 });
+
+test('Friend Mart partner GPS registration, dashboard update and nearby store map are wired', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#friendMartMap')).toBeAttached();
+  await expect(page.locator('#friendMartLocationStatus')).toBeAttached();
+  await expect(page.locator('#partnerGpsSaveStatus')).toBeAttached();
+  await expect(page.locator('#regBusinessLatitude')).toBeAttached();
+  await expect(page.locator('#regBusinessLongitude')).toBeAttached();
+  const functions = await page.evaluate(() => ({
+    capturePartner: typeof window.frCapturePartnerLocation,
+    savePartner: typeof window.frSavePartnerDashboardLocation,
+    captureCustomer: typeof window.frCaptureCustomerMarketLocation,
+    renderMap: typeof window.frRenderStoreMap
+  }));
+  expect(functions).toEqual({
+    capturePartner: 'function',
+    savePartner: 'function',
+    captureCustomer: 'function',
+    renderMap: 'function'
+  });
+  const source = await page.locator('body').innerText();
+  expect(source).toContain('Store Map Location');
+  expect(source).toContain('Use My Current Location');
+});
