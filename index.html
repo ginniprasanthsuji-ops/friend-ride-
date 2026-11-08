@@ -222,7 +222,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <header class="topbar home-topbar">
  <button class="iconbtn menu-open" aria-label="Open side menu" onclick="openDrawer()">☰</button>
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
- <button class="notify-btn" aria-label="Login / Account" onclick="currentUser?showPage('profile'):openAuth('login','customer')">♙</button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
+ <button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
 </header>
 <main>
 <section id="home" class="page active">
@@ -1718,7 +1718,53 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>';
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button><script>setTimeout(()=>window.print(),500)<\/script>
+<style id="fr-home-profile-avatar-style">
+.fr-home-profile-btn{width:42px;height:42px;min-width:42px;padding:3px!important;border-radius:50%!important;display:grid;place-items:center;overflow:hidden;background:linear-gradient(145deg,#fff,#f1eaff)!important;border:2px solid #fff!important;box-shadow:0 3px 12px #160b2a30}
+.fr-home-profile-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.fr-home-profile-btn #frHomeProfileAvatar{width:100%;height:100%;display:grid;place-items:center}
+.fr-home-profile-btn #frHomeProfileAvatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+</style>
+<script id="fr-home-profile-avatar">
+async function frRefreshHomeProfileAvatar(){
+ const btn=document.getElementById('frHomeProfileButton'),photo=document.getElementById('frHomeProfileImage'),fallback=document.getElementById('frHomeProfileAvatar');
+ if(!btn||!photo||!fallback)return;
+ photo.hidden=true;photo.removeAttribute('src');fallback.innerHTML='';
+ const role=String(currentProfile?.role||'customer').toLowerCase();
+ const path=role==='driver'?currentProfile?.driver_profile_photo_path:role==='partner'?currentProfile?.partner_profile_photo_path:currentProfile?.customer_profile_photo_path;
+ const bucket=role==='driver'?'driver-profile-photos':role==='partner'?'partner-profile-photos':'customer-profile-photos';
+ if(path){
+  try{
+   const {data,error}=await sb.storage.from(bucket).createSignedUrl(path,3600);
+   if(error)throw error;
+   if(data?.signedUrl){
+    photo.onload=()=>{photo.hidden=false;fallback.hidden=true;};
+    photo.onerror=()=>{photo.hidden=true;fallback.hidden=false;};
+    photo.src=data.signedUrl;
+    return;
+   }
+  }catch(e){console.warn('Home profile photo unavailable:',e.message);}
+ }
+ fallback.hidden=false;
+ const gender=currentProfile?.customer_avatar_gender==='female'?'female':'male';
+ const avatar=frCustomerAvatarData(gender);
+ const img=document.createElement('img');img.src=avatar;img.alt='3D profile avatar';fallback.append(img);
+}
+(function(){
+ const original=acceptSession;
+ acceptSession=async function(user){
+  const result=await original.apply(this,arguments);
+  await frRefreshHomeProfileAvatar();
+  return result;
+ };
+ const oldLogout=logout;
+ logout=async function(){const result=await oldLogout.apply(this,arguments);await frRefreshHomeProfileAvatar();return result;};
+ document.addEventListener('DOMContentLoaded',()=>frRefreshHomeProfileAvatar());
+ if(currentUser?.id)frRefreshHomeProfileAvatar();
+})();
+</script>
+
+</body></html>';
   w.document.open();w.document.write(html);w.document.close();
  }catch(e){w.close();alert('Invoice: '+e.message);}
 }
