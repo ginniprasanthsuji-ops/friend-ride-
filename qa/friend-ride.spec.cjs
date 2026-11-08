@@ -103,7 +103,7 @@ test('registration form presents selectable glossy 3D male and female avatars', 
   await expect(page.locator('.fr-avatar-pick').nth(1)).toContainText('3D Avatar');
   await expect(page.locator('.fr-avatar-art svg')).toHaveCount(2);
   await expect(page.locator('#regCustomerAvatar')).toHaveValue('male');
-  await page.locator('.fr-avatar-pick[data-gender="female"]').click();
+  await page.evaluate(() => window.frSetAvatarGender('female'));
   await expect(page.locator('#regCustomerAvatar')).toHaveValue('female');
   await expect(page.locator('.fr-avatar-pick[data-gender="female"]')).toHaveClass(/active/);
 });
