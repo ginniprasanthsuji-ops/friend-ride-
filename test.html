@@ -70,7 +70,7 @@ async function run(){
   if(cfg&&key){
    const base=cfg[1],headers={'apikey':key[1],'Authorization':'Bearer '+key[1]};
    for(const table of ['profiles','rides','driver_locations','fr_market_orders','fr_market_order_items','fr_partner_catalogue_items','fr_parcel_orders','fr_service_requests','fr_service_providers','fr_push_subscriptions']){
-    try{const r=await fetch(base+'/rest/v1/'+table+'?select=id&limit=0',{headers,cache:'no-store'});report.backend.push({name:table+' read endpoint',ok:r.status===401||r.status===403?null:r.ok,detail:'HTTP '+r.status+' (read-only; auth-required responses are not treated as failures)'})}
+    try{const r=await fetch(base+'/rest/v1/'+table+'?select=*&limit=0',{headers,cache:'no-store'});report.backend.push({name:table+' read endpoint',ok:r.status===401||r.status===403?null:r.ok,detail:'HTTP '+r.status+' (read-only; auth-required responses are not treated as failures)'})}
     catch(e){report.backend.push({name:table+' read endpoint',ok:false,detail:e.message})}
    }
    for(const [name,args] of [['fr_customer_list_approved_stores',{p_category:null}],['fr_customer_list_approved_service_providers',{p_category_slug:null}]]){
