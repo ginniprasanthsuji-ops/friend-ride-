@@ -3107,9 +3107,23 @@ if(typeof oldRideContactShow==='function'){
      if(typeof showMessage==='function')showMessage('మీ వివరాలు విజయవంతంగా పంపబడ్డాయి.','good');
    }catch(e){const status=$('frSupportSubmitStatus');if(status)status.textContent='పంపలేకపోయాం: '+(e.message||e);else alert(e.message||e);}
  };
+ window.frOpenSupportPage=function(){
+   try{
+     if(typeof closeDrawer==='function')closeDrawer();
+     if(typeof install==='function')install();
+     if(typeof showPage!=='function')throw Error('Page navigation అందుబాటులో లేదు.');
+     showPage('frSupportFeedback');
+     syncSupportForm();
+     const first=$('frSupportKind');
+     if(first)first.focus({preventScroll:true});
+   }catch(e){
+     console.error('FRIEND RIDE support navigation failed:',e);
+     alert('Complaints & Feedback తెరవలేకపోయాం. మళ్లీ ప్రయత్నించండి.');
+   }
+ };
  function syncSupportForm(){const k=$('frSupportKind')?.value||'complaint';const r=$('frSupportRatingWrap');if(r)r.hidden=k!=='feedback';const l=$('frSupportRideWrap');if(l)l.hidden=k!=='complaint';}
  window.frLoadAdminSupport=function(){
-   if(currentProfile?.role!=='admin'&&selectedRole!=='admin'){alert('Admin access అవసరం.');return;}
+   if(!currentUser||currentProfile?.role!=='admin'){alert('Admin login అవసరం.');return;}
    const box=$('frAdminSupportList');if(!box)return;
    box.textContent='Complaints & Feedback loading…';
    sb.from('fr_support_feedback').select('*').order('created_at',{ascending:false}).limit(150).then(({data,error})=>{
@@ -3148,7 +3162,13 @@ if(typeof oldRideContactShow==='function'){
    const drawer=document.querySelector('.drawer');
    if(drawer&&!$('frSupportMenu')){const b=document.createElement('button');b.id='frSupportMenu';b.className='menu-item';b.innerHTML='<span class="mi">💬</span>Complaints & Feedback';b.onclick=()=>{closeDrawer();frOpenSupportPage();};const logout=[...drawer.querySelectorAll('.menu-item')].find(x=>/logout/i.test(x.textContent));if(logout)logout.before(b);else drawer.append(b);}
    const home=$('home');
-   if(home&&!$('frHomeRatings')){const section=document.createElement('div');section.id='frHomeRatings';section.className='card';section.innerHTML='<div class="home-section-title"><h2>⭐ Customer Ratings</h2><button type="button" onclick="frLoadHomepageRatings()">Refresh</button></div><p class="muted">Our customers share their FRIEND RIDE experience.</p><div id="frHomepageRatingsList"><p class="muted">Ratings loading…</p></div><button class="btn light" onclick="frOpenSupportPage()">Give Your Rating</button>';home.append(section);frLoadHomepageRatings();}
+   if(home&&!$('frHomeRatings')){
+     const section=document.createElement('div');section.id='frHomeRatings';section.className='card';
+     section.innerHTML='<div class="home-section-title"><h2>⭐ Customer Ratings</h2><button type="button" onclick="frLoadHomepageRatings()">Refresh</button></div><p class="muted">Our customers share their FRIEND RIDE experience.</p><div id="frHomepageRatingsList"><p class="muted">Ratings loading…</p></div><button class="btn light" onclick="frOpenSupportPage()">Give Your Rating</button>';
+     const banner=home.querySelector('.home-banner-wrap');
+     if(banner)banner.after(section);else home.append(section);
+     frLoadHomepageRatings();
+   }
    const customerDash=$('customerDashboard');
    if(customerDash&&!$('frCustomerRideContactDash')){const rideCard=document.createElement('div');rideCard.id='frCustomerRideContactDash';rideCard.className='card';rideCard.innerHTML='<h3>🚗 My Confirmed Ride & Driver Contact</h3><p class="muted">Driver మీ Ride Confirm చేసిన తర్వాత పేరు, మొబైల్, Call మరియు WhatsApp ఇక్కడ కనిపిస్తాయి.</p>';customerDash.append(rideCard);}
    const admin=$('adminDashboard');
@@ -3159,7 +3179,7 @@ if(typeof oldRideContactShow==='function'){
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
  const oldShow=window.showPage;
- if(typeof oldShow==='function')window.showPage=function(id){const r=oldShow.apply(this,arguments);if(id==='adminDashboard'&&currentProfile?.role==='admin')setTimeout(frLoadAdminSupport,120);if(id==='customerDashboard'&&currentProfile?.role==='customer')setTimeout(()=>frLoadHomepageRatings(),100);return r;};
+ if(typeof oldShow==='function')window.showPage=function(id){const r=oldShow.apply(this,arguments);if(id==='adminDashboard'&&currentProfile?.role==='admin')setTimeout(frLoadAdminSupport,120);if(id==='customerDashboard'&&currentProfile?.role==='customer')setTimeout(()=>frLoadHomepageRatings(),100);if(id==='home')setTimeout(()=>frLoadHomepageRatings(),100);return r;};
 })();
 </script>
 
