@@ -240,3 +240,10 @@ test('Driver sees assigned customer name, phone and private profile photo path t
   expect(source).toContain('customer-profile-photos');
   expect(source).toContain('Assigned ride customer details unavailable');
 });
+
+test('QA read-only backend probe does not assume every table has an id column', async ({ page }) => {
+  await page.goto('./test.html', { waitUntil: 'domcontentloaded' });
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain("?select=*&limit=0");
+  expect(source).not.toContain("?select=id&limit=0");
+});
