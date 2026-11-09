@@ -1834,6 +1834,13 @@ async function frRenderRidePaymentBox(ride,parent){
    const meta=document.createElement('p');meta.textContent='Amount: ₹'+Number(state.amount).toFixed(2)+' • UPI Ref: '+(state.transaction_id||'—');wrap.append(meta);
    wrap.append(frRideBtn('⬇ Download Customer Invoice (PDF)','green',()=>frDownloadRideInvoice(ride.id,'customer')));
    wrap.append(frRideBtn('Share Customer Invoice on WhatsApp','light',()=>frShareRideInvoice(ride.id,'customer')));
+   const thanks=document.createElement('p');thanks.textContent='ధన్యవాదాలు! FRIEND RIDEను ఉపయోగించినందుకు కృతజ్ఞతలు. మళ్లీ ప్రయాణించాలనుకుంటే Ride Again ఎంచుకోండి.';thanks.style.cssText='font-weight:800;margin-top:14px;text-align:center';wrap.append(thanks);
+   wrap.append(frRideBtn('↻ Thank You! Ride Again','green',()=>{
+     if(frRidePaymentTimer){clearInterval(frRidePaymentTimer);frRidePaymentTimer=null;}
+     if(frRidePaymentPollTimer){clearInterval(frRidePaymentPollTimer);frRidePaymentPollTimer=null;}
+     frActiveRideId=null;
+     showPage('ride');
+   }));
  }
  parent.append(wrap);
 }
