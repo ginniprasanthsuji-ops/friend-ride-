@@ -1719,11 +1719,11 @@ async function acceptSession(authUser){
     if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);
     frDriverRequestTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='driver')loadDriverRideRequests();},10000);
   }
-  if(role==='customer')loadMyRideTracking();
+  if(role==='customer'){loadMyRideTracking();if(frCustomerRideRefreshTimer)clearInterval(frCustomerRideRefreshTimer);frCustomerRideRefreshTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id&&currentProfile?.role==='customer')loadMyRideTracking();},8000);}
   if(afterLoginAction){const fn=afterLoginAction;afterLoginAction=null;fn();}
 }
 async function logout(){
-  if(frDriverTrackTimer)clearInterval(frDriverTrackTimer);if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);if(frNearbyTimer)clearInterval(frNearbyTimer);if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);
+  if(frDriverTrackTimer)clearInterval(frDriverTrackTimer);if(frCustomerTrackTimer)clearInterval(frCustomerTrackTimer);if(frCustomerRideRefreshTimer)clearInterval(frCustomerRideRefreshTimer);frCustomerRideRefreshTimer=null;if(frNearbyTimer)clearInterval(frNearbyTimer);if(frOnlineGpsTimer)clearInterval(frOnlineGpsTimer);if(frDriverRequestTimer)clearInterval(frDriverRequestTimer);
   if(driverWatchId!==null){navigator.geolocation?.clearWatch(driverWatchId);driverWatchId=null;}
   await sb.auth.signOut({scope:'local'});currentUser=null;currentProfile=null;online=false;frActiveRideId=null;selectedRole='customer';if($('headerAuth'))$('headerAuth').textContent='Login';$('drawerUser').textContent='One app. Every local need.';closeDrawer();showPage('home');
 }
@@ -1781,7 +1781,7 @@ async function frRenderCustomerRideDriverAndPayment(ride){
 }
 
 
-let frRidePaymentTimer=null,frRidePaymentPollTimer=null;
+let frRidePaymentTimer=null,frRidePaymentPollTimer=null,frCustomerRideRefreshTimer=null;
 function frRideBtn(label,cls,fn){const b=document.createElement('button');b.type='button';b.className='btn '+(cls||'');b.textContent=label;b.onclick=fn;return b;}
 function frRideNotice(parent,msg){const p=document.createElement('p');p.className='notice';p.textContent=msg;parent.append(p);return p;}
 async function frRenderRidePaymentBox(ride,parent){
@@ -1987,10 +1987,40 @@ async function frRenderRideCustomerDetails(rideId){
   }catch(e){console.warn('Assigned ride customer details unavailable:',e.message);}
 }
 
+async function frRenderDriverQrSetup(box){
+ const panel=document.createElement('div');panel.className='notice';panel.style.marginBottom='14px';
+ const title=document.createElement('h4');title.textContent='మీ Ride Payment UPI QR';panel.append(title);
+ const info=document.createElement('p');info.textContent='Ride Complete చేసిన వెంటనే Customer Dashboardలో ఈ QR కనిపిస్తుంది. Payment అందిన తర్వాత Driver Dashboardలో Confirm Payment నొక్కండి.';panel.append(info);
+ try{
+  const {data:profile,error}=await sb.from('profiles').select('provider_qr_path').eq('id',currentUser.id).single();if(error)throw error;
+  if(profile?.provider_qr_path){
+   const signed=await sb.storage.from('provider-payment-qr').createSignedUrl(profile.provider_qr_path,300);
+   if(signed.error)throw signed.error;
+   if(signed.data?.signedUrl){const img=document.createElement('img');img.src=signed.data.signedUrl;img.alt='Your saved UPI payment QR';img.style.cssText='display:block;width:min(100%,220px);max-height:220px;object-fit:contain;margin:10px auto;background:#fff;padding:8px;border-radius:12px';panel.append(img);}
+   const saved=document.createElement('p');saved.textContent='✓ Payment QR సేవ్ అయింది';panel.append(saved);
+  }else{const missing=document.createElement('p');missing.textContent='⚠️ ఇంకా UPI QR Upload చేయలేదు. QR Upload చేసిన తర్వాతే Customerకు Payment QR కనిపిస్తుంది.';panel.append(missing);}
+  const input=document.createElement('input');input.type='file';input.accept='image/png,image/jpeg,image/webp';input.style.display='block';input.style.margin='10px 0';panel.append(input);
+  const btn=frRideBtn(profile?.provider_qr_path?'Update My Payment QR':'Upload My Payment QR','green',async()=>{
+   try{
+    const f=input.files?.[0];if(!f)throw Error('ముందుగా UPI QR Image ఎంచుకోండి.');
+    if(!['image/png','image/jpeg','image/webp'].includes(f.type))throw Error('PNG, JPG లేదా WEBP QR Image మాత్రమే అప్‌లోడ్ చేయండి.');
+    if(f.size<1||f.size>2*1024*1024)throw Error('QR Image 2 MB లోపు ఉండాలి.');
+    btn.disabled=true;btn.textContent='Uploading…';
+    const ext=f.type==='image/png'?'png':(f.type==='image/webp'?'webp':'jpg');
+    const path=currentUser.id+'/ride-payment-qr-'+Date.now()+'.'+ext;
+    const up=await sb.storage.from('provider-payment-qr').upload(path,f,{upsert:false,contentType:f.type});if(up.error)throw up.error;
+    const save=await sb.rpc('fr_driver_save_payment_qr',{p_qr_path:path});if(save.error)throw save.error;
+    currentProfile={...(currentProfile||{}),provider_qr_path:path};alert('మీ UPI QR విజయవంతంగా సేవ్ అయింది. Pending completed ride ఉంటే Payment QR వెంటనే activate అవుతుంది.');await loadDriverRideRequests();
+   }catch(e){alert('UPI QR Upload: '+e.message);btn.disabled=false;btn.textContent=profile?.provider_qr_path?'Update My Payment QR':'Upload My Payment QR';}
+  });panel.append(btn);
+ }catch(e){const err=document.createElement('p');err.textContent='Payment QR వివరాలు లోడ్ కాలేదు: '+e.message;panel.append(err);}
+ box.append(panel);
+}
 async function loadDriverRideRequests(){
  if(!currentUser||currentProfile?.role!=='driver')return;
  const box=$('driverRequestsList');if(!box)return;box.replaceChildren();
  try{
+  await frRenderDriverQrSetup(box);
   const [assignedResult,requestsResult]=await Promise.all([
    sb.from('rides').select('*').eq('driver_id',currentUser.id).in('status',['accepted','ongoing','completed']).order('created_at',{ascending:false}).limit(20),
    sb.rpc('get_driver_requests')
@@ -2013,12 +2043,23 @@ async function loadDriverRideRequests(){
     }));
     if(r.status==='ongoing')card.append(frRideBtn('✓ Complete My Ride','green',async()=>{
       if(!confirm('ఈ Ride పూర్తయిందా? Complete చేయాలా?'))return;
-      try{const x=await sb.rpc('fr_driver_complete_ride',{p_ride_id:r.id});if(x.error)throw x.error;frActiveRideId=r.id;alert('Ride Completed. Customer ఇప్పుడు UPI QR Payment చేయవచ్చు.');await loadDriverRideRequests();}
+      try{const x=await sb.rpc('fr_driver_complete_ride',{p_ride_id:r.id});if(x.error)throw x.error;frActiveRideId=r.id;alert('Ride Completed. Customer Dashboardలో UPI QR Payment ఆటోమేటిక్‌గా కనిపిస్తుంది. మీ Dashboardలో కూడా QR మరియు Payment Confirmation కనిపిస్తాయి. QR Upload చేయకపోతే ముందుగా My Payment QR Upload చేయండి.');await loadDriverRideRequests();}
       catch(e){alert('Complete My Ride: '+e.message);}
     }));
     if(r.status==='completed')await frRenderDriverRidePayment(r,card);
     box.append(card);
     if(r.status!=='completed')await frRenderRideCustomerDetails(r.id);
+   }
+  }
+  const completed=assigned.filter(r=>String(r.status).toLowerCase()==='completed').slice(0,5);
+  if(completed.length){
+   const completedTitle=document.createElement('h4');completedTitle.textContent='Completed Rides — Payment QR & Confirmation';box.append(completedTitle);
+   for(const r of completed){
+    const card=document.createElement('div');card.className='live-driver-card';card.style.marginBottom='12px';
+    const h=document.createElement('b');h.textContent='✓ Ride Completed • ₹'+(r.agreed_fare??r.fare_offer);card.append(h);
+    const route=document.createElement('p');route.textContent=(r.pickup||r.pickup_text||'—')+' → '+(r.drop||r.drop_text||'—');card.append(route);
+    const id=document.createElement('small');id.textContent='Ride ID: '+r.id;card.append(id);
+    await frRenderDriverRidePayment(r,card);box.append(card);
    }
   }
   if(requestsResult.error)throw requestsResult.error;
