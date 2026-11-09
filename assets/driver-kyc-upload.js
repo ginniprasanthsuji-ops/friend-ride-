@@ -63,6 +63,7 @@
   }
 
   window.saveDriverDetails = async function saveDriverDetails() {
+    // Uploads documents to the private driver-kyc-documents bucket.
     const uploaded = [];
     try {
       if (!currentUser?.id || !currentProfile || currentProfile.role !== 'driver' || selectedRole !== 'driver') {
