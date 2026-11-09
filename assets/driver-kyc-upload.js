@@ -78,7 +78,7 @@
 
       if (!['Bike', 'Auto', 'Car'].includes(vehicleType)) throw new Error('Vehicle Type ఎంచుకోండి.');
       if (vehicleRegistration.length < 5 || vehicleRegistration.length > 20) throw new Error('Valid Vehicle Registration Number నమోదు చేయండి.');
-      if (!/^[A-Z0-9 -]{5,25}$/.test(drivingLicenseNumber)) throw new Error('Valid Driving Licence Number నమోదు చేయండి.');
+      if (!/^[A-Z0-9 \/-]{5,30}$/.test(drivingLicenseNumber)) throw new Error('Valid Driving Licence Number నమోదు చేయండి.');
       if (experience !== null && (!Number.isInteger(experience) || experience < 0 || experience > 60)) {
         throw new Error('Driving Experience 0 నుంచి 60 సంవత్సరాల మధ్య ఉండాలి.');
       }
