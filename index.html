@@ -1772,7 +1772,7 @@ async function frRenderCustomerRideDriverAndPayment(ride){
   const add=(label,value)=>{if(value){const p=document.createElement('p');p.textContent=label+': '+value;card.append(p);}};
   add('Driver',d.full_name||'Driver');add('Vehicle Type',d.vehicle_type);add('Vehicle',[(d.vehicle_company||'').trim(),(d.vehicle_model||'').trim()].filter(Boolean).join(' '));add('Vehicle Number',d.vehicle_registration);
   const phone=String(d.phone||'').replace(/[^+\\d]/g,'');add('Phone',phone||'Not available');
-  if(phone){const digits=phone.replace(/\\D/g,'');const actions=document.createElement('div');actions.className='row';const call=document.createElement('a');call.className='btn light';call.href='tel:'+phone;call.textContent='📞 Call Driver';const wa=document.createElement('a');wa.className='btn green';wa.href='https://wa.me/'+(digits.startsWith('91')?digits:'91'+digits);wa.target='_blank';wa.rel='noopener noreferrer';wa.textContent='WhatsApp Driver';actions.append(call,wa);card.append(actions);}
+  if(phone){const digits=phone.replace(/\D/g,'');const actions=document.createElement('div');actions.className='row';const call=document.createElement('a');call.className='btn light';call.href='tel:'+phone;call.textContent='📞 Call Driver';const wa=document.createElement('a');wa.className='btn green';wa.href='https://wa.me/'+(digits.startsWith('91')?digits:'91'+digits);wa.target='_blank';wa.rel='noopener noreferrer';wa.textContent='WhatsApp Driver';actions.append(call,wa);card.append(actions);}
   if(d.driver_profile_photo_path){const {data:signed,error}=await sb.storage.from('driver-profile-photos').createSignedUrl(d.driver_profile_photo_path,300);if(error)throw error;if(signed?.signedUrl){const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Driver profile';img.style.cssText='width:76px;height:76px;object-fit:cover;border-radius:50%;display:block;margin-top:8px';card.append(img);}}
   if(paymentResult.error)throw paymentResult.error;
 
@@ -3933,7 +3933,7 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
   if(!name){alert('Item Name నమోదు చేయండి లేదా Master Catalogue item ఎంచుకోండి.');return;}
   if(pricing==='fixed'&&(!Number.isFinite(price)||price<=0)){alert('Fixed Price కోసం సరైన ధర నమోదు చేయండి.');return;}
   if(offer!==null&&(!Number.isFinite(offer)||offer<0||price===null||offer>price)){alert('Offer Price ఇవ్వాలంటే సాధారణ ధర కూడా నమోదు చేయాలి; Offer Price సాధారణ ధర కంటే ఎక్కువగా ఉండకూడదు.');return;}
-  if(file&&(!/^image\\/(jpeg|png|webp)$/.test(file.type)||file.size>5*1024*1024)){alert('JPG, PNG లేదా WEBP ఫోటో మాత్రమే. గరిష్ఠ పరిమాణం 5 MB.');return;}
+  if(file&&(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>5*1024*1024)){alert('JPG, PNG లేదా WEBP ఫోటో మాత్రమే. గరిష్ఠ పరిమాణం 5 MB.');return;}
   const existing=editing||localCatalogue.find(x=>selected&&x.sku===selected.id);
   if(!existing&&localCatalogue.length>=200){alert('ఒక్కో షాప్‌కు గరిష్ఠంగా 200 Catalogue items మాత్రమే.');return;}
   if(!file&&!existing?.image){alert('Customer Digital Catalogueలో ఫోటో కనిపించేందుకు ప్రతి కొత్త వస్తువుకు JPG / PNG / WEBP ఫోటో upload చేయండి.');return;}
