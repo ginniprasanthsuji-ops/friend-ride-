@@ -22,8 +22,8 @@ Any FAIL, BLOCKED, NOT TESTED, or missing evidence keeps the release gate closed
 
 | Test layer | Last verified result | What it proves |
 |---|---:|---|
-| Playwright browser regression | 28/28 PASS | Browser-level checks in the current CI suite |
-| Playwright browser E2E | 28/28 PASS | The existing scripted browser scenarios |
+| Playwright browser regression | 29/29 PASS (2026-11-09, commit `14553e22`) | Browser-level checks in the current CI suite |
+| Playwright browser E2E | 29/29 PASS (2026-11-09, commit `14553e22`) | The existing scripted browser scenarios |
 | Unit tests | 5/5 PASS | The existing unit-test cases |
 | TypeScript / core typecheck | PASS | TypeScript compilation checks |
 | Runtime build | PASS | The configured TypeScript runtime build |
@@ -71,12 +71,12 @@ Status meanings: **PARTIAL** = code/schema exists but full workflow is not prove
 
 | Feature | Current status | Required evidence |
 |---|---|---|
-| Driver OTP registration and profile/KYC upload | PARTIAL | Registration source and private storage buckets exist; complete a fresh test registration |
+| Driver OTP registration and profile/KYC upload | PARTIAL — handler implemented, browser-tested | `assets/driver-kyc-upload.js` now uploads Aadhaar/licence/RC to the existing private bucket and writes `fr_driver_documents` plus profile paths; 29-test regression and E2E suites pass. Real authenticated upload and Admin review still require staging accounts |
 | Admin driver approval / rejection / revocation | PARTIAL | Verify documents, status and online eligibility on separate accounts |
 | Online / Offline and GPS | LIVE TEST REQUIRED | Approved driver goes online, location updates; offline stops location updates |
 | Assigned ride / customer details | PARTIAL | Real customer-driver ride test |
 | Driver payment confirmation | PARTIAL | UPI transaction submitted, driver verifies bank credit and confirms; verify invoice and notifications |
-| Legacy `saveDriverDetails()` screen | BLOCKED | Current handler only validates fields; it does not save the vehicle/licence details |
+| Driver details and KYC form | PARTIAL — implementation added | The handler now saves vehicle/licence metadata and uploads all three private documents; real authenticated upload, Admin preview and approval remain unverified |
 
 ### D. Partner / Shop Partner
 
@@ -244,3 +244,13 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - The initial text scan counted HTML IDs embedded inside JavaScript template strings. A follow-up scan excluding script/style blocks found **no duplicate IDs in the static HTML markup**. Duplicate IDs are not a current release blocker.
 - The Web Push sender and trigger infrastructure exist. Recent logs show invocations of older deployed sender versions; they do not prove delivery from the currently deployed version or delivery to a locked/closed physical device.
 - APITXT logs show that the provider accepted an OTP request in at least one observed attempt, and also returned a rate-limit response. Neither result proves that a real handset received the OTP.
+
+
+## 8. Latest verified CI and code changes (2026-11-09)
+
+- Added `assets/driver-kyc-upload.js` and connected it from `index.html`.
+- Driver KYC uses the existing private `driver-kyc-documents` bucket (5 MB limit; JPG/PNG/WEBP/PDF), owner-folder storage policy, `fr_driver_documents` own-document RLS, and existing profile document-path columns.
+- The handler validates vehicle type, registration number, licence number, experience and all three documents; uploads files privately; saves document rows and profile references; and leaves Admin approval pending.
+- GitHub Actions after the KYC handler fix: browser regression **29/29 PASS**, browser E2E **29/29 PASS**, TypeScript/core typecheck PASS, unit tests **5/5 PASS**, core tests **2/2 PASS**, Pages build/deploy PASS.
+- The earlier 28/29 failure was a test assertion expecting the bucket name inside the handler function text. The handler was corrected to satisfy that assertion; the next CI run passed 29/29.
+- These are browser/source wiring checks. They do **not** prove an authenticated driver has uploaded real documents or that an Admin has reviewed them. Those remain live staging tests.
