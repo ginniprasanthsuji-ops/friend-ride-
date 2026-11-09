@@ -384,3 +384,22 @@ test('Partner catalogue supports editing an existing item without duplicating it
   expect(source).toContain('onclick="editPartnerCatalogueItem(');
   expect(source).toContain("sb.storage.from('fr-partner-catalogue').upload");
 });
+
+
+test('Admin platform GST and toll-free settings are wired to secure RPCs and billing keeps seller GST separate', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#platformBusinessSettings')).toContainText(/Toll-Free Number/);
+  await expect(page.locator('#platformBusinessSettings #platformTollFree')).toBeAttached();
+  await expect(page.locator('#platformBusinessSettings #platformGSTIN')).toBeAttached();
+  await expect(page.locator('#platformBusinessSettings #platformBusinessStatus')).toBeAttached();
+  await expect(page.locator('#gst #gstNumber')).toHaveAttribute('maxlength', '15');
+  await expect(page.locator('#gst #gstPlatformDetails')).toBeAttached();
+  const wiring = await page.evaluate(() => ({
+    load: typeof window.loadPlatformDetails,
+    save: typeof window.savePlatformDetails,
+    source: document.documentElement.innerHTML.includes('fr_admin_save_platform_business_details'),
+    separateSellerAndPlatform: document.querySelector('#gst')?.textContent.includes('Seller / Partner GSTIN') &&
+      document.querySelector('#gst')?.textContent.includes('Platform GSTIN వేరుగా ఉంటుంది')
+  }));
+  expect(wiring).toEqual({ load: 'function', save: 'function', source: true, separateSellerAndPlatform: true });
+});
