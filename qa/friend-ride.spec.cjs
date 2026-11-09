@@ -403,3 +403,25 @@ test('Admin platform GST and toll-free settings are wired to secure RPCs and bil
   }));
   expect(wiring).toEqual({ load: 'function', save: 'function', source: true, separateSellerAndPlatform: true });
 });
+
+
+test('Driver KYC form loads the private upload handler and persists profile/document references', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#driverReg')).toBeAttached();
+  await expect(page.locator('#driverLicense')).toBeAttached();
+  await expect(page.locator('#aadhaarFile')).toHaveAttribute('type', 'file');
+  await expect(page.locator('#licenseFile')).toHaveAttribute('type', 'file');
+  await expect(page.locator('#rcFile')).toHaveAttribute('type', 'file');
+  const handler = await page.evaluate(() =>
+    typeof window.saveDriverDetails === 'function' ? window.saveDriverDetails.toString() : ''
+  );
+  expect(handler).toContain('driver-kyc-documents');
+  expect(handler).toContain('fr_driver_documents');
+  expect(handler).toContain('vehicle_registration');
+  expect(handler).toContain('driving_license_number');
+  expect(handler).toContain('driver_aadhaar_document_path');
+  expect(handler).toContain('verification_status');
+  expect(errors).toEqual([]);
+});
