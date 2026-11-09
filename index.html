@@ -3871,7 +3871,7 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
  const originalAccept=window.acceptSession;
  if(typeof originalAccept==='function'&&!window.__frCatalogSessionHook){
   window.__frCatalogSessionHook=true;
-  window.acceptSession=async function(user){const result=await originalAccept(user);if(currentProfile?.role==='partner')setTimeout(frPartnerLoadCatalogue,250);return result;};
+  window.acceptSession=async function(user,expectedRole=null){const result=await originalAccept(user,expectedRole);if(currentProfile?.role==='partner')setTimeout(frPartnerLoadCatalogue,250);return result;};
  }
  document.addEventListener('DOMContentLoaded',()=>{if(currentProfile?.role==='partner')frPartnerLoadCatalogue();});
 })();
