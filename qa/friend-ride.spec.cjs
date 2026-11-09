@@ -11,6 +11,40 @@ test('FRIEND RIDE production page boots and exposes the four role entry points',
   expect(errors, 'Uncaught browser exceptions').toEqual([]);
 });
 
+
+test('each dashboard menu entry requests the matching account role before OTP login', async ({ page }) => {
+  const cases = [
+    ['customerDashboard', 'customer'],
+    ['driverDashboard', 'driver'],
+    ['partnerDashboard', 'partner'],
+    ['adminDashboard', 'admin']
+  ];
+  for (const [dashboard, role] of cases) {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.evaluate(id => window.menuGo(id), dashboard);
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await expect(page.locator('#authModal')).toHaveAttribute('data-active-role', role);
+  }
+});
+
+test('role router maps all four verified profile roles to their own dashboard', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const result = await page.evaluate(() => ({
+    roleTitles: window.frRoleAuthSelfTest(),
+    routes: ['customer', 'driver', 'partner', 'admin'].map(role => [role, window.dashboardFor(role)])
+  }));
+  expect(result.roleTitles.every(item => item.pass)).toBe(true);
+  expect(result.routes).toEqual([
+    ['customer', 'customerDashboard'],
+    ['driver', 'driverDashboard'],
+    ['partner', 'partnerDashboard'],
+    ['admin', 'adminDashboard']
+  ]);
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain('window.acceptSession(data.user, requestedRole)');
+  expect(source).toContain('expectedRole&&String(expectedRole).toLowerCase()!==role');
+});
+
 test('local runtime diagnostics capture errors on-device while remaining hidden from non-admin users', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   const badge = page.locator('#frDiagBadge');
