@@ -3868,12 +3868,30 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
   const select=$id('masterCatalogueItem');if(select)select.innerHTML='<option value="">Select catalogue item ('+filtered.length+')</option>'+filtered.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.id+' · '+x.name)+'</option>').join('');
   const count=$id('masterCatalogueCount');if(count)count.textContent=filtered.length+' matching master items • '+FRIEND_MASTER_ITEMS.length+' total master items • '+(localCatalogue?.length||0)+'/200 shop items saved';
  };
+ let frEditingCatalogueSku=null;
+ window.editPartnerCatalogueItem=function(i){
+  const x=localCatalogue[i];if(!x)return;
+  frEditingCatalogueSku=x.sku;
+  if($id('catalogueBusinessType'))$id('catalogueBusinessType').value=x.businessType||'other';
+  if($id('catalogueItemName'))$id('catalogueItemName').value=x.name||'';
+  if($id('frCustomCatalogCategory'))$id('frCustomCatalogCategory').value=x.cat||'';
+  if($id('cataloguePrice'))$id('cataloguePrice').value=x.price==null?'':String(x.price);
+  if($id('catalogueOfferPrice'))$id('catalogueOfferPrice').value=x.offer?String(x.offer):'';
+  if($id('cataloguePricingType'))$id('cataloguePricingType').value=x.price==null?'request':'fixed';
+  if($id('catalogueDescription'))$id('catalogueDescription').value=x.description||'';
+  if($id('catalogueAvailable'))$id('catalogueAvailable').value=x.available?'true':'false';
+  if($id('cataloguePhoto'))$id('cataloguePhoto').value='';
+  if($id('masterCatalogueItem'))$id('masterCatalogueItem').value='';
+  const btn=document.querySelector('#partnerCatalogue button[onclick="addCatalogueItem()"]');
+  if(btn)btn.textContent='Save Catalogue Changes';
+  document.getElementById('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'});
+ };
  window.addCatalogueItem=async function(){
   if(!currentUser?.id||currentProfile?.role!=='partner'){alert('Approved Partner login అవసరం.');return;}
-  const type=$id('catalogueBusinessType')?.value||currentProfile?.business_category||'other';
   const selected=FRIEND_MASTER_ITEMS.find(x=>x.id===$id('masterCatalogueItem')?.value);
-  const name=($id('catalogueItemName')?.value||'').trim()||(selected?.baseName||'');
-  const category=($id('frCustomCatalogCategory')?.value||'').trim()||$id('catalogueCategorySelect')?.value||selected?.category||'My Custom Items';
+  const editing=frEditingCatalogueSku?localCatalogue.find(x=>x.sku===frEditingCatalogueSku):null;
+  const name=($id('catalogueItemName')?.value||'').trim()||(selected?.baseName||editing?.name||'');
+  const category=($id('frCustomCatalogCategory')?.value||'').trim()||$id('catalogueCategorySelect')?.value||selected?.category||editing?.cat||'My Custom Items';
   const raw=$id('cataloguePrice')?.value||'',offerRaw=$id('catalogueOfferPrice')?.value||'';
   const price=raw===''?null:Number(raw),offer=offerRaw===''?null:Number(offerRaw);
   const pricing=$id('cataloguePricingType')?.value||'fixed';
@@ -3881,36 +3899,38 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
   if(!name){alert('Item Name నమోదు చేయండి లేదా Master Catalogue item ఎంచుకోండి.');return;}
   if(pricing==='fixed'&&(!Number.isFinite(price)||price<=0)){alert('Fixed Price కోసం సరైన ధర నమోదు చేయండి.');return;}
   if(offer!==null&&(!Number.isFinite(offer)||offer<0||price===null||offer>price)){alert('Offer Price ఇవ్వాలంటే సాధారణ ధర కూడా నమోదు చేయాలి; Offer Price సాధారణ ధర కంటే ఎక్కువగా ఉండకూడదు.');return;}
-  if(file&&(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>5*1024*1024)){alert('JPG, PNG లేదా WEBP ఫోటో మాత్రమే. గరిష్ఠ పరిమాణం 5 MB.');return;}
-  const existing=localCatalogue.find(x=>selected&&x.sku===selected.id);
+  if(file&&(!/^image\\/(jpeg|png|webp)$/.test(file.type)||file.size>5*1024*1024)){alert('JPG, PNG లేదా WEBP ఫోటో మాత్రమే. గరిష్ఠ పరిమాణం 5 MB.');return;}
+  const existing=editing||localCatalogue.find(x=>selected&&x.sku===selected.id);
   if(!existing&&localCatalogue.length>=200){alert('ఒక్కో షాప్‌కు గరిష్ఠంగా 200 Catalogue items మాత్రమే.');return;}
   if(!file&&!existing?.image){alert('Customer Digital Catalogueలో ఫోటో కనిపించేందుకు ప్రతి కొత్త వస్తువుకు JPG / PNG / WEBP ఫోటో upload చేయండి.');return;}
   const btn=document.querySelector('#partnerCatalogue button[onclick="addCatalogueItem()"]');if(btn){btn.disabled=true;btn.textContent='Saving…';}
   try{
-   let imageUrl=existing?.image||'';
+   let imageUrl=existing?.image||existing?.image_url||'';
    if(file){
     const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
     const path=currentUser.id+'/'+(crypto.randomUUID?crypto.randomUUID():Date.now())+'.'+ext;
-    const up=await sb.storage.from(bucket).upload(path,file,{upsert:true,contentType:file.type,cacheControl:'3600'});
+    const up=await sb.storage.from('fr-partner-catalogue').upload(path,file,{upsert:true,contentType:file.type,cacheControl:'3600'});
     if(up.error)throw up.error;
-    imageUrl=sb.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+    imageUrl=sb.storage.from('fr-partner-catalogue').getPublicUrl(path).data.publicUrl;
    }
-   const sku=selected?.id||existing?.sku||('CUSTOM-'+(crypto.randomUUID?crypto.randomUUID():Date.now()));
+   const sku=editing?.sku||selected?.id||existing?.sku||('CUSTOM-'+(crypto.randomUUID?crypto.randomUUID():Date.now()));
    const {error}=await sb.rpc('fr_partner_save_catalogue_item',{
-    p_master_sku:sku,p_item_name:name,p_category:category,p_unit:selected?.unit||'piece',
-    p_description:($id('catalogueDescription')?.value||selected?.description||'').trim(),
+    p_master_sku:sku,p_item_name:name,p_category:category,p_unit:selected?.unit||existing?.unit||'piece',
+    p_description:($id('catalogueDescription')?.value||selected?.description||existing?.description||'').trim(),
     p_price_paise:pricing==='request'?null:toPaise(raw),p_offer_price_paise:toPaise(offerRaw),
     p_image_url:imageUrl||null,p_available:$id('catalogueAvailable')?.value!=='false',
-    p_prescription_required:!!selected?.prescriptionCheck
+    p_prescription_required:!!(selected?.prescriptionCheck||existing?.prescriptionCheck)
    });
    if(error)throw error;
+   frEditingCatalogueSku=null;
    await frPartnerLoadCatalogue();
    ['catalogueItemName','catalogueDescription','cataloguePrice','catalogueOfferPrice','frCustomCatalogCategory'].forEach(id=>{if($id(id))$id(id).value='';});
    if($id('cataloguePhoto'))$id('cataloguePhoto').value='';
    if($id('masterCatalogueItem'))$id('masterCatalogueItem').value='';
+   if(btn)btn.textContent='Add to My Catalogue';
    alert('Catalogue item Supabaseలో విజయవంతంగా Save అయింది.');
   }catch(e){alert('Catalogue Save కాలేదు: '+e.message);}
-  finally{if(btn){btn.disabled=false;btn.textContent='Add to My Catalogue';}}
+  finally{if(btn){btn.disabled=false;if(!frEditingCatalogueSku)btn.textContent='Add to My Catalogue';}}
  };
  window.renderCatalogue=function(){
   const el=$id('partnerCatalogList');if(!el)return;
@@ -3921,7 +3941,7 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
    (x.image?'<img src="'+esc(x.image)+'" alt="'+esc(x.name)+'" loading="lazy" style="width:92px;height:92px;object-fit:cover;border-radius:13px;background:#f3edf8">':'<div style="width:92px;height:92px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#f5eaff,#fff1df);font-size:42px">'+(categoryArt[x.businessType]||'🛍️')+'</div>')+
    '<div><b>'+esc(x.name)+'</b><br><small class="muted">'+esc(x.sku)+' • '+esc(x.cat)+' • '+esc(x.unit)+'</small><br><b style="color:#5620b5">'+(x.price==null?'Price on Request':'₹'+x.price.toFixed(2))+'</b>'+(x.offer?' <small>Offer ₹'+x.offer.toFixed(2)+'</small>':'')+'<br><span class="stock-mark '+(x.available?'yes':'no')+'">'+(x.available?'✓ Available':'✕ Out of Stock')+'</span></div></div>'+
    '<div class="partner-price-editor"><div><label>Your Price ₹</label><input id="partnerPrice_'+i+'" type="number" min="0" step=".01" value="'+(x.price??'')+'"></div><div><label>Offer Price ₹</label><input id="partnerOffer_'+i+'" type="number" min="0" step=".01" value="'+(x.offer||'')+'"></div><button class="btn purple" style="width:auto;margin:0;padding:9px 10px" onclick="updatePartnerCataloguePrice('+i+')">Save</button></div>'+
-   '<div class="row" style="justify-content:space-between;margin-top:8px"><small class="muted">'+esc(x.description||'')+'</small><button class="btn '+(x.available?'light':'green')+'" style="width:auto;margin:0;padding:6px 10px" onclick="togglePartnerItemAvailability('+i+')">'+(x.available?'Mark unavailable':'Mark available')+'</button></div></article>').join('');
+   '<div class="row" style="justify-content:space-between;margin-top:8px"><small class="muted">'+esc(x.description||'')+'</small><div class="row"><button class="btn light" style="width:auto;margin:0;padding:6px 10px" onclick="editPartnerCatalogueItem('+i+')">Edit Item</button><button class="btn '+(x.available?'light':'green')+'" style="width:auto;margin:0;padding:6px 10px" onclick="togglePartnerItemAvailability('+i+')">'+(x.available?'Mark unavailable':'Mark available')+'</button></div></div></article>').join('');
  };
  window.updatePartnerCataloguePrice=async function(i){
   const x=localCatalogue[i];if(!x)return;
@@ -3974,6 +3994,9 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
     document.getElementById('partnerRegFields')?.classList.toggle('hide',!isRegister||role!=='partner');
     document.getElementById('driverExtraFields')?.classList.toggle('hide',!isRegister||role!=='driver');
     document.getElementById('partnerExtraFields')?.classList.toggle('hide',!isRegister||role!=='partner');
+    // The final auth router must call the shared role-aware renderer; otherwise
+    // the earlier form fix is bypassed by this later override.
+    if(typeof frSyncRegistrationFields==='function')frSyncRegistrationFields(isRegister?'register':'login');
     const registerButton=document.getElementById('authRegisterButton');
     if(registerButton){registerButton.textContent='New '+roleNames[role]+' Registration';registerButton.classList.toggle('hide',role==='admin');}
     const send=document.querySelector('#loginForm button[onclick="sendLoginOtp()"]');
