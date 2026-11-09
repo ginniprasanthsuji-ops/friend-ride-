@@ -363,3 +363,24 @@ test('Floating App Status diagnostics is restricted to Admin Dashboard and posit
   await expect(page.locator('#frDiagBadge')).toBeHidden();
   await expect(page.locator('#frDiagPanel')).toBeHidden();
 });
+
+
+test('Final auth router refreshes the role-specific registration field renderer', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain("frSyncRegistrationFields(isRegister?'register':'login')");
+  expect(source).toContain("frSetRegistrationGroup('regAvatarFields'");
+  expect(source).toContain("frSetRegistrationGroup('customerRegPhotoFields'");
+  expect(source).toContain("frSetRegistrationGroup('driverRegDocs'");
+  expect(source).toContain("frSetRegistrationGroup('partnerRegFields'");
+});
+
+test('Partner catalogue supports editing an existing item without duplicating its SKU', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain('window.editPartnerCatalogueItem=function(i)');
+  expect(source).toContain('const editing=frEditingCatalogueSku?localCatalogue.find(x=>x.sku===frEditingCatalogueSku):null');
+  expect(source).toContain('const sku=editing?.sku||selected?.id||existing?.sku');
+  expect(source).toContain('onclick="editPartnerCatalogueItem(');
+  expect(source).toContain("sb.storage.from('fr-partner-catalogue').upload");
+});
