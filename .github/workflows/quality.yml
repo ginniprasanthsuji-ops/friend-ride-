@@ -18,3 +18,22 @@ jobs:
       - run: npm run build:runtime
       - run: npm run test:unit
       - run: npm run test:core
+
+  browser-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - name: Start local app server
+        run: |
+          python3 -m http.server 4173 --directory . >/tmp/friend-ride-http.log 2>&1 &
+          echo $! >/tmp/friend-ride-http.pid
+          sleep 2
+      - name: Run browser regression suite
+        env:
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173
+        run: npx playwright test
