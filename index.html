@@ -4017,6 +4017,8 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
   window.switchAuth=function(mode){
     const role=persistRole(selectedRole);
     const isRegister=mode==='register';
+    // Keep the shared registration renderer in sync with this final router.
+    frAuthMode=isRegister?'register':'login';
     clearMessage();
     const title=document.getElementById('authTitle');
     if(title)title.textContent=roleNames[role]+(isRegister?' Registration':' Login');
