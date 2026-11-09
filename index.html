@@ -3882,7 +3882,7 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
   if($id('catalogueAvailable'))$id('catalogueAvailable').value=x.available?'true':'false';
   if($id('cataloguePhoto'))$id('cataloguePhoto').value='';
   if($id('masterCatalogueItem'))$id('masterCatalogueItem').value='';
-  const btn=document.querySelector('#partnerCatalogue button[onclick="addCatalogueItem()"]');
+  const btn=document.querySelector('#catalogue button[onclick="addCatalogueItem()"]');
   if(btn)btn.textContent='Save Catalogue Changes';
   document.getElementById('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'});
  };
@@ -3917,7 +3917,7 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
    const {error}=await sb.rpc('fr_partner_save_catalogue_item',{
     p_master_sku:sku,p_item_name:name,p_category:category,p_unit:selected?.unit||existing?.unit||'piece',
     p_description:($id('catalogueDescription')?.value||selected?.description||existing?.description||'').trim(),
-    p_price_paise:pricing==='request'?null:toPaise(raw),p_offer_price_paise:toPaise(offerRaw),
+    p_price_paise:pricing==='request'?null:toPaise(raw),p_offer_price_paise:offerRaw===''?null:toPaise(offerRaw),
     p_image_url:imageUrl||null,p_available:$id('catalogueAvailable')?.value!=='false',
     p_prescription_required:!!(selected?.prescriptionCheck||existing?.prescriptionCheck)
    });
@@ -3948,8 +3948,8 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
   const raw=$id('partnerPrice_'+i).value,off=$id('partnerOffer_'+i).value;
   const price=raw===''?null:Number(raw),offer=off===''?null:Number(off);
   if(price!==null&&(!Number.isFinite(price)||price<=0)){alert('సరైన ధర నమోదు చేయండి.');return;}
-  if(offer!==null&&(!Number.isFinite(offer)||offer<0||(price!==null&&offer>price))){alert('Offer Price సరిచూడండి.');return;}
-  try{const {error}=await sb.rpc('fr_partner_save_catalogue_item',{p_master_sku:x.sku,p_item_name:x.name,p_category:x.cat,p_unit:x.unit,p_description:x.description,p_price_paise:toPaise(raw),p_offer_price_paise:toPaise(off),p_image_url:x.image||null,p_available:x.available,p_prescription_required:!!x.prescriptionCheck});if(error)throw error;await frPartnerLoadCatalogue();}
+  if(offer!==null&&(!Number.isFinite(offer)||offer<0||price===null||offer>price)){alert('Offer Price సరిచూడండి.');return;}
+  try{const {error}=await sb.rpc('fr_partner_save_catalogue_item',{p_master_sku:x.sku,p_item_name:x.name,p_category:x.cat,p_unit:x.unit,p_description:x.description,p_price_paise:toPaise(raw),p_offer_price_paise:off===''?null:toPaise(off),p_image_url:x.image||null,p_available:x.available,p_prescription_required:!!x.prescriptionCheck});if(error)throw error;await frPartnerLoadCatalogue();}
   catch(e){alert('Price save కాలేదు: '+e.message);}
  };
  window.togglePartnerItemAvailability=async function(i){
