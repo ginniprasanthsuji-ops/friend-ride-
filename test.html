@@ -18,7 +18,7 @@ const $=id=>document.getElementById(id),report={started:null,finished:null,sourc
 const cases=[
 ['01','Login & OTP','OTP expiry/format simulation',()=>/sendLoginOtp|verifyLoginOtp/i.test(window.APP_SOURCE),'Source handlers present'],
 ['02','Role & Profile','Four-role allowlist simulation',()=>['customer','driver','partner','admin'].every(x=>window.APP_SOURCE.includes(x)),'Role names found'],
-['03','Driver & Partner KYC','Private upload, document review rows and profile photo paths',()=>/driver-kyc-documents/.test(window.APP_SOURCE)&&/partner-profile-photos/.test(window.APP_SOURCE)&&/fr_driver_documents/.test(window.APP_SOURCE),'Private KYC buckets and review records wired'],
+['03','Driver & Partner KYC','Private upload, document review rows and profile photo paths',()=>/driver-kyc-documents/.test(window.APP_SOURCE)&&/assets\\/driver-kyc-upload\\.js/.test(window.APP_SOURCE)&&/partner-profile-photos/.test(window.APP_SOURCE)&&/fr_driver_documents/.test(window.APP_SOURCE),'Driver private KYC save handler and partner KYC review wiring present'],
 ['04','Admin Approval','Approval workflow references',()=>/fr_admin_list_partner_applications|fr_admin_review_partner|admin_review_driver/i.test(window.APP_SOURCE),'Admin approval marker'],
 ['05','Driver Online & GPS','Secure nearby-driver RPC and safe offline GPS update',()=>/rpc\(['\"]fr_customer_list_nearby_drivers['\"]/.test(window.APP_SOURCE)&&/from\(['\"]driver_locations['\"]\)\.update\(/.test(window.APP_SOURCE)&&!/from\(['\"]driver_locations['\"]\)\.select\(/.test(window.APP_SOURCE),'Nearby-driver RPC + update-only offline transition'],
 ['06','Ride Booking','Ride persistence source',()=>/saveRideRequest|from\(['"]rides['"]\)\.insert/i.test(window.APP_SOURCE),'Ride insert marker'],
