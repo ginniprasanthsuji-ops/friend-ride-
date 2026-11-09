@@ -145,6 +145,50 @@ test('role-aware voice and background push notification handlers are present', a
   expect(source).toContain('requireInteraction');
 });
 
+test('Customer, Driver and Partner registration forms show only their own fields when roles change', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const states = await page.evaluate(() => {
+    const visible = id => {
+      const el = document.getElementById(id);
+      return !!el && !el.hidden && !el.classList.contains('hide');
+    };
+    window.switchAuth('register');
+    const read = role => {
+      window.chooseRole(role);
+      return {
+        avatar: visible('regAvatarFields'),
+        customerPhoto: visible('customerRegPhotoFields'),
+        customerAddress: visible('addressField'),
+        driverDocs: visible('driverRegDocs'),
+        driverDetails: visible('driverExtraFields'),
+        partnerBusiness: visible('partnerRegFields'),
+        partnerPayment: visible('partnerExtraFields')
+      };
+    };
+    return {
+      customer: read('customer'),
+      driver: read('driver'),
+      partner: read('partner'),
+      vehicleTypes: [...document.querySelectorAll('#regVehicleType option')].map(x => x.value),
+      genderOptions: [...document.querySelectorAll('#regAvatarFields .fr-avatar-pick')].map(x => x.dataset.gender)
+    };
+  });
+  expect(states.customer).toEqual({
+    avatar: true, customerPhoto: true, customerAddress: true,
+    driverDocs: false, driverDetails: false, partnerBusiness: false, partnerPayment: false
+  });
+  expect(states.driver).toEqual({
+    avatar: true, customerPhoto: false, customerAddress: false,
+    driverDocs: true, driverDetails: true, partnerBusiness: false, partnerPayment: false
+  });
+  expect(states.partner).toEqual({
+    avatar: true, customerPhoto: false, customerAddress: false,
+    driverDocs: false, driverDetails: false, partnerBusiness: true, partnerPayment: true
+  });
+  expect(states.vehicleTypes).toEqual(['Bike', 'Auto', 'Car']);
+  expect(states.genderOptions).toEqual(['male', 'female']);
+});
+
 test('registration form presents selectable glossy 3D male and female avatars', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#customerRegPhotoFields')).toBeAttached();
