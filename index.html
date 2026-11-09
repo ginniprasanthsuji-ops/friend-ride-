@@ -4155,3 +4155,27 @@ window.frRefreshHomeProfileAvatar=async function(){
 </script>
 
 <script src="./assets/driver-kyc-upload.js"></script>
+
+<script id="fr-customer-qr-entry">
+(function(){
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('entry') !== 'customer' && params.get('role') !== 'customer') return;
+    const openCustomer = function(){
+      if (typeof window.enterRole === 'function') {
+        window.enterRole('customer');
+      } else {
+        setTimeout(openCustomer, 150);
+      }
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', openCustomer, { once: true });
+    } else {
+      setTimeout(openCustomer, 80);
+    }
+  } catch (error) {
+    console.warn('FR customer QR entry:', error);
+  }
+})();
+</script>
+
