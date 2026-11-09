@@ -44,6 +44,8 @@ test('role router maps all four verified profile roles to their own dashboard', 
   expect(source).toContain('window.acceptSession(data.user, requestedRole)');
   expect(source).toContain('expectedRole&&String(expectedRole).toLowerCase()!==role');
   expect(source).toContain('originalAccept(user,expectedRole)');
+  expect(source).toContain('frStartOtpCooldown(button,60');
+  expect(source).toContain('frStartOtpCooldown(button,/60 seconds');
 });
 
 test('local runtime diagnostics capture errors on-device while remaining hidden from non-admin users', async ({ page }) => {
