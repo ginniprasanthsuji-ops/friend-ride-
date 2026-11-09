@@ -1852,7 +1852,7 @@ async function frRenderDriverRidePayment(ride,parent){
   }else{
    frRideNotice(box,'Driver QR image path is not available. Check your uploaded UPI QR in Profile.');
   }
-  const expiry=document.createElement('p');expiry.className='notice';expiry.textContent='ఈ QRను Customer స్కాన్ చేసి చెల్లించవచ్చు. గడువు: '+(p.expires_at?new Date(p.expires_at).toLocaleTimeString():'5 minutes');box.append(expiry);
+  const expiry=document.createElement('p');expiry.className='notice';expiry.textContent='ఈ QRను Customer స్కాన్ చేసి చెల్లించవచ్చు. గడువు: '+(p.expires_at?new Date(p.expires_at).toLocaleTimeString():'15 minutes');box.append(expiry);
   box.append(frRideBtn('↻ Refresh Payment Status','light',()=>loadDriverRideRequests()));
  }else if(p.status==='awaiting_driver_confirmation'){
   const amount=document.createElement('p');amount.textContent='Customer submitted Transaction ID • ₹'+Number(p.amount).toFixed(2);box.append(amount);
