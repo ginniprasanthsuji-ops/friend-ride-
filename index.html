@@ -1755,8 +1755,8 @@ async function refreshNearbyDrivers(){
     frShow('trackingStatus',rows.length?rows.length+' Online Drivers 15 KM పరిధిలో కనిపించారు. Driver Accept చేసిన తర్వాత Live Tracking ప్రారంభమవుతుంది.':'15 KM పరిధిలో ప్రస్తుతం Online Drivers లేరు.');
   }catch(e){frShow('trackingStatus','Nearby Drivers లోడ్ కాలేదు: '+e.message);}
 }
-async function frRenderCustomerRideDriverAndPayment(ride){
- const box=$('liveRideStatus');if(!box||!ride?.driver_id)return;
+async function frRenderCustomerRideDriverAndPayment(ride,targetBox){
+ const box=targetBox||$('liveRideStatus');if(!box||!ride?.driver_id)return;
  try{
   const [detailResult,paymentResult]=await Promise.all([
    sb.rpc('get_ride_driver_details',{p_ride_id:ride.id}),
@@ -1916,6 +1916,20 @@ async function loadMyRideTracking(){
     const active=data.find(r=>r.driver_id&&frCustomerTrackingStatusAllowed(r.status))||data.find(r=>!['completed','cancelled','rejected','canceled'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;
     box.innerHTML='<b>'+safe(active.vehicle_type)+' • '+safe(active.status)+'</b><p>'+safe(active.pickup)+' → '+safe(active.drop)+'</p><p>మీ Offer ₹'+safe(active.fare_offer)+' | Agreed ₹'+safe(active.agreed_fare??'—')+'</p><small>Ride ID: '+safe(active.id)+'</small>';
     if(active.driver_id)await frRenderCustomerRideDriverAndPayment(active);
+    const completedHistory=data.filter(r=>String(r.status||'').toLowerCase()==='completed'&&r.id!==active.id).slice(0,5);
+    if(completedHistory.length){
+      const history=document.createElement('section');history.className='notice';history.style.marginTop='14px';
+      const historyTitle=document.createElement('h3');historyTitle.textContent='Completed Rides — QR Payment & Invoices';history.append(historyTitle);
+      for(const ride of completedHistory){
+        const card=document.createElement('div');card.className='live-driver-card';card.style.margin='12px 0';
+        const heading=document.createElement('b');heading.textContent='✓ Completed • '+(ride.vehicle_type||'Ride')+' • ₹'+Number(ride.agreed_fare??ride.fare_offer??0).toFixed(2);card.append(heading);
+        const route=document.createElement('p');route.textContent=(ride.pickup||ride.pickup_text||'—')+' → '+(ride.drop||ride.drop_text||'—');card.append(route);
+        const rideId=document.createElement('small');rideId.textContent='Ride ID: '+ride.id;card.append(rideId);
+        if(ride.driver_id)await frRenderCustomerRideDriverAndPayment(ride,card);
+        history.append(card);
+      }
+      box.append(history);
+    }
     if(String(active.status).toLowerCase()==='counter_offered'){
       const a=document.createElement('button');a.className='btn';a.textContent='Accept Driver Counter Offer';a.onclick=async()=>{const x=await sb.rpc('accept_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(a);
       const d=document.createElement('button');d.className='btn light';d.textContent='Reject Counter Offer';d.onclick=async()=>{const x=await sb.rpc('decline_counter_offer',{p_ride_id:active.id});if(x.error)alert(x.error.message);else loadMyRideTracking();};box.append(d);
