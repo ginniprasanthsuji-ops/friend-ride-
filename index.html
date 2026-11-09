@@ -1529,7 +1529,7 @@ async function verifyRegistrationOtpAndRegister(){
         if(saved.error)throw saved.error;
       }
     }
-    await window.acceptSession(data.user, requestedRole);showMessage('Registration విజయవంతమైంది.','good');
+    await window.acceptSession(data.user, selectedRole);showMessage('Registration విజయవంతమైంది.','good');
   } catch(e){for(const [bucket,path] of uploadedFiles){try{await sb.storage.from(bucket).remove([path]);}catch(_){}}showMessage('Registration పూర్తి కాలేదు: '+e.message);}
 }
 
