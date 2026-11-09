@@ -2074,7 +2074,7 @@ async function loadDriverRideRequests(){
    const counter=frRideBtn('₹ Counter Offer','light',async()=>{const f=Number(prompt('మీ Counter Offer ధర (₹)'));if(!Number.isFinite(f)||f<=0)return;try{const a=await sb.rpc('counter_offer_ride',{p_ride_id:r.id,p_counter_fare:f});if(a.error)throw a.error;alert('Counter Offer పంపబడింది ✓');}catch(e){alert('Counter Offer: '+e.message);}});
    card.append(h,p,accept,counter);box.append(card);
   });
-  if(!active.length&&!requests.length){const empty=document.createElement('p');empty.textContent='ప్రస్తుతం Active Ride లేదా New Request లేదు.';box.append(empty);}
+  if(!active.length&&!completed.length&&!requests.length){const empty=document.createElement('p');empty.textContent='ప్రస్తుతం Active Ride లేదా New Request లేదు.';box.append(empty);}
  }catch(e){box.textContent='Ride Requests Error: '+e.message;}
 }
 async function callDriver(){
