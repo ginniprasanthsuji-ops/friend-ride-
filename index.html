@@ -1799,7 +1799,7 @@ async function frRenderRidePaymentBox(ride,parent){
  let state=stateResult.data||{status:'not_started'};
  const setMsg=t=>frRideNotice(wrap,t);
  if(state.status==='not_started'||state.status==='expired'){
-   setMsg(state.status==='expired'?'గత QR గడువు ముగిసింది. కొత్త QR Session ప్రారంభించండి.':'Driver QR ద్వారా UPI Payment చేయండి. QR 5 నిమిషాలు మాత్రమే పనిచేస్తుంది.');
+   setMsg(state.status==='expired'?'గత QR గడువు ముగిసింది. కొత్త QR Session ప్రారంభించండి.':'Driver QR ద్వారా UPI Payment చేయండి. QR Session 15 నిమిషాలు పనిచేస్తుంది.');
    wrap.append(frRideBtn(state.status==='expired'?'Generate New QR':'Pay Driver via UPI QR','green',async()=>{
     try{
      const r=await sb.rpc('fr_customer_create_ride_payment',{p_ride_id:ride.id});if(r.error)throw r.error;
