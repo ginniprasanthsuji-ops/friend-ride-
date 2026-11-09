@@ -43,6 +43,7 @@ test('role router maps all four verified profile roles to their own dashboard', 
   const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
   expect(source).toContain('window.acceptSession(data.user, requestedRole)');
   expect(source).toContain('expectedRole&&String(expectedRole).toLowerCase()!==role');
+  expect(source).toContain('originalAccept(user,expectedRole)');
 });
 
 test('local runtime diagnostics capture errors on-device while remaining hidden from non-admin users', async ({ page }) => {
