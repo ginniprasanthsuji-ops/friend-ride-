@@ -229,3 +229,18 @@ No production customer data or live payments should be used for test runs. Use i
 The automated browser suite is green, but multiple visible UI flows are still placeholders, Food/Restaurant ordering is not connected, Cashfree subscription/payment integration is not present as a verified server flow, provider registration is not wired to its existing backend tables/storage, security-advisor findings need review, and there is no Android AAB in the inspected repository.
 
 This file must be updated as fixes and evidence are completed. Do not change any item to PASS based solely on source presence or mock simulation.
+
+
+## 6. AI Assistant
+
+**Status: BLOCKED / configuration required.**
+
+The active `friend-ride-ai-assistant` Edge Function checks for the `OPENAI_API_KEY` secret and returns HTTP 503 when it is absent. Recent function invocation logs include four HTTP 503 responses for this function. The 200 responses may include preflight requests and do not prove successful AI answers.
+
+Required: configure the OpenAI API key in Supabase Edge Function Secrets (never in frontend code), then test authenticated prompts, quota limits, error handling and role/page context. Do not paste the secret into GitHub or this chat.
+
+## 7. Audit corrections and notes
+
+- The initial text scan counted HTML IDs embedded inside JavaScript template strings. A follow-up scan excluding script/style blocks found **no duplicate IDs in the static HTML markup**. Duplicate IDs are not a current release blocker.
+- The Web Push sender and trigger infrastructure exist. Recent logs show invocations of older deployed sender versions; they do not prove delivery from the currently deployed version or delivery to a locked/closed physical device.
+- APITXT logs show that the provider accepted an OTP request in at least one observed attempt, and also returned a rate-limit response. Neither result proves that a real handset received the OTP.
