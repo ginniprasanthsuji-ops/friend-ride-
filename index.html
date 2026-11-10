@@ -2637,7 +2637,7 @@ function frAddPartnerCatalogueItem(index){
    const {data,error}=await sb.rpc('fr_customer_submit_ride_transaction',{p_ride_id:id,p_transaction_id:tx});if(error)throw error;
    if(data?.status==='success'){await customerPayment(frTrackingRideData);return;}
    const out=document.getElementById('frRidePaymentStatus');if(out)out.textContent='Transaction ID Driverకు పంపబడింది. Driver payment receipt verify చేసే వరకు వేచి ఉండండి.';
-   await customerPayment(window.frTrackingRideData);
+   await customerPayment(frTrackingRideData);
   }catch(e){const out=document.getElementById('frRidePaymentStatus');if(out)out.textContent='Submit కాలేదు: '+(e.message||e);}
  };
  async function driverPayments(){
