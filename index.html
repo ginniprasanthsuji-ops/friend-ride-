@@ -2596,7 +2596,7 @@ function frAddPartnerCatalogueItem(index){
 <script id="fr-ride-payment-ui-fix">
 (function(){
  'use strict';
- let frRidePayTick=null;
+ let frRidePayTick=null,frCurrentRidePaymentId=null;
  const esc=v=>typeof safe==='function'?safe(v):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function panel(id,afterId){
   let el=document.getElementById(id);
@@ -2623,19 +2623,19 @@ function frAddPartnerCatalogueItem(index){
    if(signError||!signed?.signedUrl)throw signError||Error('UPI QR image open కాలేదు.');
    el.innerHTML='<h3>💳 Ride Completed – Pay Driver</h3><div class="fr-ride-pay-amount">'+amount+'</div><img class="fr-ride-pay-qr" src="'+esc(signed.signedUrl)+'" alt="Driver UPI payment QR"><div class="notice">1. పై QRను Google Pay / PhonePe / Paytm ద్వారా Scan చేసి చెల్లించండి.<br>2. Payment చేసిన తర్వాత UPI Transaction ID నమోదు చేయండి.<br>3. Driver Bank/UPIలో receipt verify చేసి Confirm చేస్తారు. QR screenshot మాత్రమే payment proof కాదు.</div><div class="fr-ride-pay-timer" id="frCustomerRidePayTimer">05:00</div><label class="field"><span>UPI Transaction ID</span><input id="frRidePaymentTxn" maxlength="40" minlength="8" autocomplete="off" placeholder="8–40 letters / numbers"></label><button class="btn green" type="button" onclick="frCustomerSubmitRideTransaction()">Submit Transaction ID</button><button class="btn light" type="button" onclick="frCustomerRidePaymentRefresh()">Refresh / New QR</button><div id="frRidePaymentStatus" class="notice" aria-live="polite"></div>';
    timer(p.expires_at,document.getElementById('frCustomerRidePayTimer'));
-   window.frCurrentRidePaymentId=ride.id;
+   frCurrentRidePaymentId=ride.id;
   }catch(e){el.innerHTML='<h3>💳 Ride Payment</h3><div class="notice">Payment QR లోడ్ కాలేదు: '+esc(e.message||e)+'</div><button class="btn light" type="button" onclick="frCustomerRidePaymentRefresh()">Try Again</button>';}
  }
  window.frCustomerRidePaymentRefresh=async function(){
-  const ride=window.frTrackingRideData;if(ride)await customerPayment(ride);
+  const ride=frTrackingRideData;if(ride)await customerPayment(ride);
  };
  window.frCustomerSubmitRideTransaction=async function(){
   try{
-   const id=window.frCurrentRidePaymentId,tx=document.getElementById('frRidePaymentTxn')?.value.trim();
+   const id=frCurrentRidePaymentId,tx=document.getElementById('frRidePaymentTxn')?.value.trim();
    if(!id)throw Error('Ride ID అందుబాటులో లేదు.');
    if(!/^[A-Za-z0-9-]{8,40}$/.test(tx||''))throw Error('సరైన 8–40 అక్షరాల UPI Transaction ID ఇవ్వండి.');
    const {data,error}=await sb.rpc('fr_customer_submit_ride_transaction',{p_ride_id:id,p_transaction_id:tx});if(error)throw error;
-   if(data?.status==='success'){await customerPayment(window.frTrackingRideData);return;}
+   if(data?.status==='success'){await customerPayment(frTrackingRideData);return;}
    const out=document.getElementById('frRidePaymentStatus');if(out)out.textContent='Transaction ID Driverకు పంపబడింది. Driver payment receipt verify చేసే వరకు వేచి ఉండండి.';
    await customerPayment(window.frTrackingRideData);
   }catch(e){const out=document.getElementById('frRidePaymentStatus');if(out)out.textContent='Submit కాలేదు: '+(e.message||e);}
@@ -2665,7 +2665,7 @@ function frAddPartnerCatalogueItem(index){
  };
  window.frDriverRidePaymentsRefresh=driverPayments;
  const oldLoad=window.loadMyRideTracking;
- if(typeof oldLoad==='function')window.loadMyRideTracking=async function(){await oldLoad.apply(this,arguments);const r=window.frTrackingRideData;if(r&&String(r.status).toLowerCase()==='completed')await customerPayment(r);else{const el=document.getElementById('frCustomerRidePayment');if(el)el.hidden=true;}};
+ if(typeof oldLoad==='function')window.loadMyRideTracking=async function(){await oldLoad.apply(this,arguments);const r=frTrackingRideData;if(r&&String(r.status).toLowerCase()==='completed')await customerPayment(r);else{const el=document.getElementById('frCustomerRidePayment');if(el)el.hidden=true;}};
  const oldComplete=window.frCompleteMyRide;
  if(typeof oldComplete==='function')window.frCompleteMyRide=async function(){await oldComplete.apply(this,arguments);await driverPayments();};
  const oldShow=window.showPage;
