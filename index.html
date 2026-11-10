@@ -2585,6 +2585,95 @@ function frAddPartnerCatalogueItem(index){
 }
 </script>
 
+
+<style id="fr-ride-payment-ui-fix">
+.fr-ride-pay-card{border:1px solid #d8d1eb;background:#fff;border-radius:16px;padding:15px;margin:12px 0;box-shadow:0 5px 18px #27134a0b}
+.fr-ride-pay-card h3{margin:0 0 8px}.fr-ride-pay-qr{display:block;width:min(250px,80%);aspect-ratio:1;object-fit:contain;margin:12px auto;border:1px solid #ddd;border-radius:12px;padding:8px;background:#fff}
+.fr-ride-pay-amount{font-size:25px;font-weight:900;text-align:center;color:#13875b}
+.fr-ride-pay-timer{font-size:24px;font-weight:900;text-align:center;color:#c64a25;font-variant-numeric:tabular-nums}
+.fr-ride-pay-card .field{margin-top:10px}.fr-ride-pay-card input{width:100%;box-sizing:border-box}
+</style>
+<script id="fr-ride-payment-ui-fix">
+(function(){
+ 'use strict';
+ let frRidePayTick=null;
+ const esc=v=>typeof safe==='function'?safe(v):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function panel(id,afterId){
+  let el=document.getElementById(id);
+  if(!el){const anchor=document.getElementById(afterId);if(!anchor)return null;el=document.createElement('div');el.id=id;anchor.insertAdjacentElement('afterend',el);}
+  el.className='fr-ride-pay-card';return el;
+ }
+ function timer(expiresAt,target){
+  if(frRidePayTick)clearInterval(frRidePayTick);
+  const tick=()=>{const left=Math.max(0,Math.ceil((new Date(expiresAt).getTime()-Date.now())/1000));if(target)target.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');if(left<=0){clearInterval(frRidePayTick);frRidePayTick=null;}};
+  tick();frRidePayTick=setInterval(tick,1000);
+ }
+ async function customerPayment(ride){
+  const el=panel('frCustomerRidePayment','liveRideStatus');if(!el)return;
+  if(!currentUser||currentProfile?.role!=='customer'||!ride?.id||String(ride.status).toLowerCase()!=='completed'){el.hidden=true;return;}
+  el.hidden=false;el.innerHTML='<h3>💳 Ride Payment</h3><div class="notice">Secure payment QR session loading…</div>';
+  try{
+   const {data,error}=await sb.rpc('fr_customer_create_ride_payment',{p_ride_id:ride.id});if(error)throw error;
+   const p=Array.isArray(data)?data[0]:data;if(!p)throw Error('Payment session response రాలేదు.');
+   const amount='₹'+Number(p.amount||0).toFixed(2);
+   if(p.status==='success'){el.innerHTML='<h3>💳 Ride Payment</h3><div class="notice">✓ Payment Driver ద్వారా Confirm అయింది. Amount: <b>'+amount+'</b><br>Transaction ID: '+esc(p.transaction_id||'—')+'</div>';return;}
+   if(p.status==='awaiting_driver_confirmation'){el.innerHTML='<h3>💳 Ride Payment</h3><div class="fr-ride-pay-amount">'+amount+'</div><div class="notice">మీ UPI Transaction ID Driverకు పంపబడింది. Driver తన Bank/UPIలో డబ్బు వచ్చిందని నిర్ధారించిన తర్వాత Payment Confirm అవుతుంది.<br>Transaction ID: <b>'+esc(p.transaction_id||'—')+'</b></div><button class="btn light" type="button" onclick="frCustomerRidePaymentRefresh()">Refresh Payment Status</button>';return;}
+   if(!p.qr_path)throw Error('Driver UPI QR image అందుబాటులో లేదు. Driver తన Profileలో UPI QR upload చేయాలి.');
+   const {data:signed,error:signError}=await sb.storage.from('provider-payment-qr').createSignedUrl(p.qr_path,300);
+   if(signError||!signed?.signedUrl)throw signError||Error('UPI QR image open కాలేదు.');
+   el.innerHTML='<h3>💳 Ride Completed – Pay Driver</h3><div class="fr-ride-pay-amount">'+amount+'</div><img class="fr-ride-pay-qr" src="'+esc(signed.signedUrl)+'" alt="Driver UPI payment QR"><div class="notice">1. పై QRను Google Pay / PhonePe / Paytm ద్వారా Scan చేసి చెల్లించండి.<br>2. Payment చేసిన తర్వాత UPI Transaction ID నమోదు చేయండి.<br>3. Driver Bank/UPIలో receipt verify చేసి Confirm చేస్తారు. QR screenshot మాత్రమే payment proof కాదు.</div><div class="fr-ride-pay-timer" id="frCustomerRidePayTimer">05:00</div><label class="field"><span>UPI Transaction ID</span><input id="frRidePaymentTxn" maxlength="40" minlength="8" autocomplete="off" placeholder="8–40 letters / numbers"></label><button class="btn green" type="button" onclick="frCustomerSubmitRideTransaction()">Submit Transaction ID</button><button class="btn light" type="button" onclick="frCustomerRidePaymentRefresh()">Refresh / New QR</button><div id="frRidePaymentStatus" class="notice" aria-live="polite"></div>';
+   timer(p.expires_at,document.getElementById('frCustomerRidePayTimer'));
+   window.frCurrentRidePaymentId=ride.id;
+  }catch(e){el.innerHTML='<h3>💳 Ride Payment</h3><div class="notice">Payment QR లోడ్ కాలేదు: '+esc(e.message||e)+'</div><button class="btn light" type="button" onclick="frCustomerRidePaymentRefresh()">Try Again</button>';}
+ }
+ window.frCustomerRidePaymentRefresh=async function(){
+  const ride=window.frTrackingRideData;if(ride)await customerPayment(ride);
+ };
+ window.frCustomerSubmitRideTransaction=async function(){
+  try{
+   const id=window.frCurrentRidePaymentId,tx=document.getElementById('frRidePaymentTxn')?.value.trim();
+   if(!id)throw Error('Ride ID అందుబాటులో లేదు.');
+   if(!/^[A-Za-z0-9-]{8,40}$/.test(tx||''))throw Error('సరైన 8–40 అక్షరాల UPI Transaction ID ఇవ్వండి.');
+   const {data,error}=await sb.rpc('fr_customer_submit_ride_transaction',{p_ride_id:id,p_transaction_id:tx});if(error)throw error;
+   if(data?.status==='success'){await customerPayment(window.frTrackingRideData);return;}
+   const out=document.getElementById('frRidePaymentStatus');if(out)out.textContent='Transaction ID Driverకు పంపబడింది. Driver payment receipt verify చేసే వరకు వేచి ఉండండి.';
+   await customerPayment(window.frTrackingRideData);
+  }catch(e){const out=document.getElementById('frRidePaymentStatus');if(out)out.textContent='Submit కాలేదు: '+(e.message||e);}
+ };
+ async function driverPayments(){
+  const el=panel('frDriverRidePayment','driverRideStatus');if(!el)return;
+  if(!currentUser||currentProfile?.role!=='driver'){el.hidden=true;return;}
+  el.hidden=false;el.innerHTML='<h3>💳 Completed Ride Payments</h3><div class="notice">Payment requests loading…</div>';
+  try{
+   const {data:rides,error}=await sb.from('rides').select('id,completed_at,pickup,drop,customer_id').eq('driver_id',currentUser.id).eq('status','completed').order('completed_at',{ascending:false}).limit(10);
+   if(error)throw error;
+   const rows=[];
+   for(const ride of (rides||[])){const x=await sb.rpc('fr_get_ride_payment_state',{p_ride_id:ride.id});if(x.error)throw x.error;const p=Array.isArray(x.data)?x.data[0]:x.data;if(p&&p.status!=='not_started')rows.push({ride,p});}
+   if(!rows.length){el.innerHTML='<h3>💳 Completed Ride Payments</h3><div class="notice">ఇంకా Ride Payment requests లేవు. Customer Ride Complete అయిన తర్వాత ఇక్కడ కనిపిస్తాయి.</div>';return;}
+   el.innerHTML='<h3>💳 Completed Ride Payments</h3>'+rows.map(({ride,p})=>{
+    const amount='₹'+Number(p.amount||0).toFixed(2);
+    if(p.status==='success')return '<div class="notice"><b>✓ Payment Confirmed</b><br>'+esc(ride.pickup||'Pickup')+' → '+esc(ride.drop||'Drop')+'<br>Amount: '+amount+'<br>Transaction ID: '+esc(p.transaction_id||'—')+'</div>';
+    if(p.status==='awaiting_driver_confirmation')return '<div class="notice"><b>⚠️ Customer submitted payment</b><br>'+esc(ride.pickup||'Pickup')+' → '+esc(ride.drop||'Drop')+'<br>Amount: '+amount+'<br>Transaction ID: <b>'+esc(p.transaction_id||'—')+'</b><p>మీ Bank / UPI accountలో డబ్బు జమ అయిందని స్వయంగా verify చేసిన తర్వాత మాత్రమే Confirm నొక్కండి.</p><button class="btn green" type="button" onclick="frDriverConfirmRidePayment(\\''+ride.id+'\\')">Confirm Money Received</button></div>';
+    return '<div class="notice"><b>Payment QR Session: '+esc(p.status)+'</b><br>Amount: '+amount+'<br>Customer ఇంకా Transaction ID submit చేయలేదు.</div>';
+   }).join('')+'<button class="btn light" type="button" onclick="frDriverRidePaymentsRefresh()">↻ Refresh Payment Requests</button>';
+  }catch(e){el.innerHTML='<h3>💳 Completed Ride Payments</h3><div class="notice">Payment status load కాలేదు: '+esc(e.message||e)+'</div>';}
+ }
+ window.frDriverConfirmRidePayment=async function(rideId){
+  if(!confirm('మీ Bank / UPI accountలో ఈ మొత్తం నిజంగా అందిందని verify చేశారా?'))return;
+  try{const {data,error}=await sb.rpc('fr_driver_confirm_ride_payment',{p_ride_id:rideId});if(error)throw error;alert('Payment Confirmed: '+(data?.status||'success'));await driverPayments();}
+  catch(e){alert('Payment confirm కాలేదు: '+(e.message||e));}
+ };
+ window.frDriverRidePaymentsRefresh=driverPayments;
+ const oldLoad=window.loadMyRideTracking;
+ if(typeof oldLoad==='function')window.loadMyRideTracking=async function(){await oldLoad.apply(this,arguments);const r=window.frTrackingRideData;if(r&&String(r.status).toLowerCase()==='completed')await customerPayment(r);else{const el=document.getElementById('frCustomerRidePayment');if(el)el.hidden=true;}};
+ const oldComplete=window.frCompleteMyRide;
+ if(typeof oldComplete==='function')window.frCompleteMyRide=async function(){await oldComplete.apply(this,arguments);await driverPayments();};
+ const oldShow=window.showPage;
+ if(typeof oldShow==='function')window.showPage=function(id){oldShow.apply(this,arguments);if(id==='tracking'&&currentProfile?.role==='customer')setTimeout(()=>window.loadMyRideTracking?.(),250);if(id==='driverDashboard'&&currentProfile?.role==='driver')setTimeout(driverPayments,250);};
+ document.addEventListener('DOMContentLoaded',()=>{if(currentProfile?.role==='driver')driverPayments();});
+})();
+</script>
+
 </body>
 </html>
 <style>
