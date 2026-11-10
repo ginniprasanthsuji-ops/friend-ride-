@@ -309,6 +309,8 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <button class="fr-home-service fr-hs-pink" onclick="requireLogin(()=>showPage('homeServices'))"><span>🧰</span><b>Home Services</b><small>Experts at home</small></button>
   <button class="fr-home-service fr-hs-cyan" onclick="requireLogin(()=>showPage('scheduled'))"><span>🗓️</span><b>Schedule</b><small>Book in advance</small></button>
   <button class="fr-home-service fr-hs-violet" onclick="showPage('explore')"><span>▦</span><b>All Services</b><small>Explore more</small></button>
+  <button class="fr-home-service fr-hs-pink" onclick="requireLogin(()=>showPage('laundryService'))"><span>👕</span><b>Laundry</b><small>Wash • Iron • Dry Clean</small></button>
+  <button class="fr-home-service fr-hs-blue" onclick="requireLogin(()=>showPage('billPayments'))"><span>💳</span><b>Recharges & Bills</b><small>Mobile • Gas • Credit Card</small></button>
  </div>
  <div class="fr-home-quick-actions">
   <button onclick="requireLogin(()=>showPage('orders'))"><span>🧾</span><b>My Orders</b><small>Bookings & orders</small></button>
@@ -386,6 +388,8 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <button class="tile" onclick="showPage('shopping')">🛍️<b>Shopping</b></button>
 <button class="tile" onclick="showPage('scheduled')">🗓️<b>Scheduled Booking</b></button>
 <button class="tile" onclick="showPage('bankingServices')">🏦<b>Banking &amp; Financial Services</b><small>Banking • Insurance • Bill payments</small></button>
+<button class="tile" onclick="requireLogin(()=>showPage('laundryService'))">👕<b>Laundry Services</b><small>Wash • Iron • Dry Clean • Pickup &amp; Drop</small></button>
+<button class="tile" onclick="requireLogin(()=>showPage('billPayments'))">💳<b>Recharges &amp; All Bills</b><small>Mobile • Electricity • Gas • Credit Card</small></button>
 <button class="tile" onclick="openEventService('Catering Services')">🍽️<b>Catering Services</b><small>Events & functions</small></button>
 <button class="tile" onclick="openEventService('DJ – Sound & Lights')">🎧<b>DJ – Sound & Lights</b><small>Events & celebrations</small></button>
 <button class="tile" onclick="openEventService('Beauty Makeover')">💄<b>Beauty Makeover</b><small>Makeup & styling</small></button>
@@ -444,6 +448,76 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div id="spRegStatus" class="notice">Application details will be checked before submission.</div>
  </div>
 </section>
+
+
+<section id="laundryService" class="page">
+ <div class="fr-super-hero laundry"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • LAUNDRY</span><h1>Fresh Clothes. More Time.</h1><p>మీ బట్టలు మీ ఇంటి దగ్గర నుంచే Pickup &amp; Delivery.</p><div class="fr-super-hero-icon">👕</div></div>
+ <div class="fr-super-section"><h2>Choose Laundry Service</h2><p class="muted">మీకు కావాల్సిన సేవను ఎంచుకోండి.</p><div class="fr-super-options">
+  <button onclick="frLaundrySelect('Normal Wash')"><span>🫧</span><b>Normal Wash</b><small>Per KG</small></button>
+  <button onclick="frLaundrySelect('Wash & Iron')"><span>👔</span><b>Wash &amp; Iron</b><small>Per KG</small></button>
+  <button onclick="frLaundrySelect('Iron Only')"><span>♨️</span><b>Iron Only</b><small>Per Piece</small></button>
+  <button onclick="frLaundrySelect('Dry Cleaning')"><span>✨</span><b>Dry Cleaning</b><small>Per Piece</small></button>
+  <button onclick="frLaundrySelect('Blanket & Bedsheet')"><span>🛏️</span><b>Blanket &amp; Bedsheet</b><small>Per Piece</small></button>
+  <button onclick="frLaundrySelect('Shoe Cleaning')"><span>👟</span><b>Shoe Cleaning</b><small>Per Pair</small></button>
+  <button onclick="frLaundrySelect('Premium Laundry')"><span>🧺</span><b>Premium Laundry</b><small>Per KG / Piece</small></button>
+  <button onclick="frLaundrySelect('Express Laundry')"><span>⚡</span><b>Express Laundry</b><small>Priority Service</small></button>
+ </div></div>
+ <div class="card fr-super-booking"><h2>Schedule Pickup &amp; Delivery</h2>
+  <div class="field"><label>Selected Service</label><input id="frLaundrySelected" readonly placeholder="Choose a laundry service above"></div>
+  <div class="row"><div class="field"><label>Pickup Date</label><input id="frLaundryDate" type="date"></div><div class="field"><label>Pickup Time</label><input id="frLaundryTime" type="time"></div></div>
+  <div class="field"><label>Pickup Address</label><textarea id="frLaundryAddress" placeholder="Enter house number, street and area"></textarea></div>
+  <div class="field"><label>Special Instructions (Optional)</label><input id="frLaundryNotes" placeholder="E.g. separate white clothes"></div>
+  <div class="notice">Final price depends on partner shop rates and actual weight / item count. Partner availability and serviceable area will be confirmed before order acceptance.</div>
+  <button class="btn purple" onclick="frSuperServiceNotice('Laundry')">Find Laundry Partners</button>
+ </div><div class="notice">Laundry UI preview. Live partner catalogue, order creation and pickup assignment require backend integration.</div>
+</section>
+<section id="billPayments" class="page">
+ <div class="fr-super-hero bills"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • PAYMENTS HUB</span><h1>Recharges &amp; All Bill Payments</h1><p>మీ రోజువారీ రీఛార్జ్‌లు, బిల్లులు ఒకేచోట.</p><div class="fr-super-hero-icon">💳</div></div>
+ <div class="fr-super-section"><h2>Select a Payment Category</h2><div class="fr-super-options bills-grid">
+  <button onclick="frBillSelect('Mobile Recharge')"><span>📱</span><b>Mobile Recharge</b><small>Prepaid / Postpaid</small></button>
+  <button onclick="frBillSelect('Electricity Bill')"><span>💡</span><b>Electricity</b><small>Power Bill</small></button>
+  <button onclick="frBillSelect('LPG Gas Booking')"><span>🔥</span><b>Gas Booking</b><small>LPG Cylinder</small></button>
+  <button onclick="frBillSelect('Piped Gas Bill')"><span>♨️</span><b>Piped Gas</b><small>Gas Utility Bill</small></button>
+  <button onclick="frBillSelect('Water Bill')"><span>💧</span><b>Water Bill</b><small>Water Utility</small></button>
+  <button onclick="frBillSelect('DTH Recharge')"><span>📺</span><b>DTH Recharge</b><small>TV Subscription</small></button>
+  <button onclick="frBillSelect('Broadband Bill')"><span>🌐</span><b>Broadband</b><small>Internet Bill</small></button>
+  <button onclick="frBillSelect('Credit Card Bill')"><span>💳</span><b>Credit Card Bill</b><small>Supported issuers</small></button>
+  <button onclick="frBillSelect('FASTag Recharge')"><span>🚘</span><b>FASTag</b><small>Vehicle Tag Recharge</small></button>
+  <button onclick="frBillSelect('Insurance Premium')"><span>🛡️</span><b>Insurance</b><small>Eligible premiums</small></button>
+  <button onclick="frBillSelect('Loan EMI')"><span>🏦</span><b>Loan EMI</b><small>Supported lenders</small></button>
+  <button onclick="frBillSelect('Municipal Tax')"><span>🏛️</span><b>Municipal Bills</b><small>Where supported</small></button>
+ </div></div>
+ <div class="card fr-super-booking"><h2>Bill Payment Details</h2>
+  <div class="field"><label>Selected Category</label><input id="frBillSelected" readonly placeholder="Select a category above"></div>
+  <div class="field"><label>Mobile Number / Consumer ID / Card Reference</label><input id="frBillReference" placeholder="Enter required biller reference"></div>
+  <div class="field"><label>Operator / Biller / Bank</label><input id="frBillProvider" placeholder="Select or enter provider"></div>
+  <div class="notice">Bill fetch, exact amount, payment and receipt will be enabled only after integration with an authorised BBPS / recharge partner. Never enter card CVV, ATM PIN, UPI PIN or OTP here.</div>
+  <button class="btn purple" onclick="frSuperServiceNotice('Bill payment')">Continue to Bill Fetch</button>
+ </div><div class="notice">Payment UI preview only. No money will be collected until authorised provider integration is completed and tested.</div>
+</section>
+<style id="fr-super-services-ui">
+.fr-super-hero{position:relative;overflow:hidden;border-radius:24px;padding:22px 20px 26px;color:#fff;margin:4px 0 16px;min-height:190px}
+.fr-super-hero.laundry{background:radial-gradient(circle at 90% 18%,#9cebd0 0,transparent 27%),linear-gradient(120deg,#075c55,#159b83)}
+.fr-super-hero.bills{background:radial-gradient(circle at 90% 18%,#ffcf83 0,transparent 27%),linear-gradient(120deg,#25104d,#5a2bb1)}
+.fr-super-back{border:1px solid #ffffff65;background:#ffffff20;color:white;border-radius:11px;padding:7px 12px;margin-bottom:17px;font-weight:800}
+.fr-super-kicker{display:block;font-size:10px;font-weight:900;letter-spacing:1.2px;opacity:.85}
+.fr-super-hero h1{font-size:25px;line-height:1.15;max-width:75%;margin:8px 0}
+.fr-super-hero p{font-size:13px;max-width:75%;color:#f1eaff}
+.fr-super-hero-icon{position:absolute;right:18px;bottom:16px;font-size:76px;filter:drop-shadow(0 9px 10px #0003)}
+.fr-super-section{margin:14px 0}
+.fr-super-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.fr-super-options button{min-height:112px;text-align:left;border:1px solid #e5deee;border-radius:17px;background:linear-gradient(145deg,#fff,#f8f5ff);padding:13px;color:#261c39;box-shadow:0 5px 16px #25104d0b}
+.fr-super-options button span{display:block;font-size:25px;margin-bottom:5px}
+.fr-super-options button b{display:block;font-size:13px}
+.fr-super-options button small{display:block;color:#80778f;font-size:11px;margin-top:3px}
+.fr-super-booking h2{font-size:18px}
+@media(min-width:650px){.fr-super-options{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
+<script id="fr-super-services-actions">
+function frLaundrySelect(name){const el=document.getElementById('frLaundrySelected');if(el)el.value=name;}
+function frBillSelect(name){const el=document.getElementById('frBillSelected');if(el)el.value=name;}
+function frSuperServiceNotice(service){alert(service+' interface is ready. Partner/API integration and live transaction testing are still required before accepting real bookings or payments.');}
+</script>
 
 <section id="bankingServices" class="page">
  <div class="fr-bank-shell">
