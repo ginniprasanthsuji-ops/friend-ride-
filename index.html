@@ -2643,21 +2643,37 @@ function frAddPartnerCatalogueItem(index){
  async function driverPayments(){
   const el=panel('frDriverRidePayment','driverRideStatus');if(!el)return;
   if(!currentUser||currentProfile?.role!=='driver'){el.hidden=true;return;}
-  el.hidden=false;el.innerHTML='<h3>💳 Completed Ride Payments</h3><div class="notice">Payment requests loading…</div>';
+  el.hidden=false;el.innerHTML=frDriverRideQrUploadMarkup()+'<h3>💳 Completed Ride Payments</h3><div class="notice">Payment requests loading…</div>';
   try{
    const {data:rides,error}=await sb.from('rides').select('id,completed_at,pickup,drop,customer_id').eq('driver_id',currentUser.id).eq('status','completed').order('completed_at',{ascending:false}).limit(10);
    if(error)throw error;
    const rows=[];
    for(const ride of (rides||[])){const x=await sb.rpc('fr_get_ride_payment_state',{p_ride_id:ride.id});if(x.error)throw x.error;const p=Array.isArray(x.data)?x.data[0]:x.data;if(p&&p.status!=='not_started')rows.push({ride,p});}
-   if(!rows.length){el.innerHTML='<h3>💳 Completed Ride Payments</h3><div class="notice">ఇంకా Ride Payment requests లేవు. Customer Ride Complete అయిన తర్వాత ఇక్కడ కనిపిస్తాయి.</div>';return;}
-   el.innerHTML='<h3>💳 Completed Ride Payments</h3>'+rows.map(({ride,p})=>{
+   if(!rows.length){el.innerHTML=frDriverRideQrUploadMarkup()+'<h3>💳 Completed Ride Payments</h3><div class="notice">ఇంకా Ride Payment requests లేవు. Customer Ride Complete అయిన తర్వాత ఇక్కడ కనిపిస్తాయి.</div>';return;}
+   el.innerHTML=frDriverRideQrUploadMarkup()+'<h3>💳 Completed Ride Payments</h3>'+rows.map(({ride,p})=>{
     const amount='₹'+Number(p.amount||0).toFixed(2);
     if(p.status==='success')return '<div class="notice"><b>✓ Payment Confirmed</b><br>'+esc(ride.pickup||'Pickup')+' → '+esc(ride.drop||'Drop')+'<br>Amount: '+amount+'<br>Transaction ID: '+esc(p.transaction_id||'—')+'</div>';
     if(p.status==='awaiting_driver_confirmation')return `<div class="notice"><b>⚠️ Customer submitted payment</b><br>${esc(ride.pickup||'Pickup')} → ${esc(ride.drop||'Drop')}<br>Amount: ${amount}<br>Transaction ID: <b>${esc(p.transaction_id||'—')}</b><p>మీ Bank / UPI accountలో డబ్బు జమ అయిందని స్వయంగా verify చేసిన తర్వాత మాత్రమే Confirm నొక్కండి.</p><button class="btn green" type="button" onclick="frDriverConfirmRidePayment('${esc(ride.id)}')">Confirm Money Received</button></div>`;
     return '<div class="notice"><b>Payment QR Session: '+esc(p.status)+'</b><br>Amount: '+amount+'<br>Customer ఇంకా Transaction ID submit చేయలేదు.</div>';
    }).join('')+'<button class="btn light" type="button" onclick="frDriverRidePaymentsRefresh()">↻ Refresh Payment Requests</button>';
-  }catch(e){el.innerHTML='<h3>💳 Completed Ride Payments</h3><div class="notice">Payment status load కాలేదు: '+esc(e.message||e)+'</div>';}
+  }catch(e){el.innerHTML=frDriverRideQrUploadMarkup()+'<h3>💳 Completed Ride Payments</h3><div class="notice">Payment status load కాలేదు: '+esc(e.message||e)+'</div>';}
  }
+
+ function frDriverRideQrUploadMarkup(){return '<div class="notice"><b>Driver UPI Payment QR</b><p>Ride పూర్తయిన తర్వాత Customerకు Payment QR చూపించడానికి మీ అసలు UPI QR తప్పనిసరి.</p><input id="frDriverRideQrFile" type="file" accept="image/png,image/jpeg,image/webp"><button class="btn purple" type="button" onclick="frDriverSaveRidePaymentQr()">Upload / Update My UPI QR</button><small>PNG / JPG / WEBP • గరిష్ఠం 2 MB</small></div>';}
+ window.frDriverSaveRidePaymentQr=async function(){
+  let path=null;
+  try{
+   if(!currentUser||currentProfile?.role!=='driver')throw Error('Driver login అవసరం.');
+   const file=document.getElementById('frDriverRideQrFile')?.files?.[0];
+   if(!file||!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size<=0||file.size>2*1024*1024)throw Error('2 MB లోపు PNG / JPG / WEBP UPI QR image ఎంచుకోండి.');
+   path=await frUploadRegistrationFile('provider-payment-qr',currentUser.id,'upi_qr',file);
+   const {error}=await sb.from('profiles').update({provider_qr_path:path}).eq('id',currentUser.id);
+   if(error){await sb.storage.from('provider-payment-qr').remove([path]);throw error;}
+   if(currentProfile)currentProfile.provider_qr_path=path;
+   alert('మీ UPI QR విజయవంతంగా Save అయింది. ఇక Completed Ride Paymentలో Customerకు QR కనిపిస్తుంది.');
+   await driverPayments();
+  }catch(e){alert('UPI QR Save కాలేదు: '+(e.message||e));}
+ };
  window.frDriverConfirmRidePayment=async function(rideId){
   if(!confirm('మీ Bank / UPI accountలో ఈ మొత్తం నిజంగా అందిందని verify చేశారా?'))return;
   try{const {data,error}=await sb.rpc('fr_driver_confirm_ride_payment',{p_ride_id:rideId});if(error)throw error;alert('Payment Confirmed: '+(data?.status||'success'));await driverPayments();}
