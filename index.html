@@ -487,13 +487,12 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <button onclick="frBillSelect('Loan EMI')"><span>🏦</span><b>Loan EMI</b><small>Supported lenders</small></button>
   <button onclick="frBillSelect('Municipal Tax')"><span>🏛️</span><b>Municipal Bills</b><small>Where supported</small></button>
  </div></div>
- <div class="card fr-super-booking"><h2>Bill Payment Details</h2>
+ <div class="card fr-super-booking"><h2>Secure Bill Payment Redirect</h2>
   <div class="field"><label>Selected Category</label><input id="frBillSelected" readonly placeholder="Select a category above"></div>
-  <div class="field"><label>Mobile Number / Consumer ID / Card Reference</label><input id="frBillReference" placeholder="Enter required biller reference"></div>
-  <div class="field"><label>Operator / Biller / Bank</label><input id="frBillProvider" placeholder="Select or enter provider"></div>
-  <div class="notice">Bill fetch, exact amount, payment and receipt will be enabled only after integration with an authorised BBPS / recharge partner. Never enter card CVV, ATM PIN, UPI PIN or OTP here.</div>
-  <button class="btn purple" onclick="frSuperServiceNotice('Bill payment')">Continue to Bill Fetch</button>
- </div><div class="notice">Payment UI preview only. No money will be collected until authorised provider integration is completed and tested.</div>
+  <div class="notice">Bharat Connect (NPCI Bharat BillPay) అధికారిక Customer Page తెరుచుకుంటుంది. అక్కడ మీ Bank / authorised payment channel ఎంచుకుని Bill Pay చేయండి. FRIEND RIDE మీ Consumer ID, Card Number, OTP, PIN, CVV లేదా Payment వివరాలను సేకరించదు.</div>
+  <button class="btn purple" onclick="frOpenOfficialBillPayment()">Continue to Official Bill Payment</button>
+  <p><small>External website: www.bharat-connect.com • You will leave FRIEND RIDE. Payment confirmation and receipt are issued by the chosen payment channel, not FRIEND RIDE.</small></p>
+ </div><div class="notice">This is a referral to the official Bharat Connect customer guide, not a direct payment gateway or automatic bill-payment integration.</div>
 </section>
 <style id="fr-super-services-ui">
 .fr-super-hero{position:relative;overflow:hidden;border-radius:24px;padding:22px 20px 26px;color:#fff;margin:4px 0 16px;min-height:190px}
@@ -513,6 +512,15 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 .fr-super-booking h2{font-size:18px}
 @media(min-width:650px){.fr-super-options{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
+<script id="fr-official-bill-redirect">
+function frOpenOfficialBillPayment(){
+ const category=document.getElementById('frBillSelected')?.value||'';
+ if(!category){alert('ముందుగా Bill Category ఎంచుకోండి.');return;}
+ const url='https://www.bharat-connect.com/customers/?page-section-id=howToPay';
+ const ok=confirm('మీరు FRIEND RIDE నుంచి అధికారిక Bharat Connect websiteకు వెళ్తున్నారు. అక్కడ authorised payment channel ఎంచుకుని చెల్లించాలి. Continue?');
+ if(ok)window.open(url,'_blank','noopener,noreferrer');
+}
+</script>
 <script id="fr-admin-service-requests">
 async function frAdminLoadServiceRequests(){
  const box=document.getElementById('frAdminServiceRequestsList');if(!box)return;
