@@ -516,7 +516,33 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <script id="fr-super-services-actions">
 function frLaundrySelect(name){const el=document.getElementById('frLaundrySelected');if(el)el.value=name;}
 function frBillSelect(name){const el=document.getElementById('frBillSelected');if(el)el.value=name;}
-function frSuperServiceNotice(service){alert(service+' interface is ready. Partner/API integration and live transaction testing are still required before accepting real bookings or payments.');}
+async function frSuperServiceNotice(service){
+ try{
+  if(!currentUser)throw Error('ముందుగా Login చేయండి.');
+  const isLaundry=service==='Laundry';
+  const category=(document.getElementById(isLaundry?'frLaundrySelected':'frBillSelected')?.value||'').trim();
+  if(!category)throw Error(isLaundry?'ముందుగా Laundry Service ఎంచుకోండి.':'ముందుగా Bill Category ఎంచుకోండి.');
+  const reference=document.getElementById('frBillReference')?.value.trim()||null;
+  const provider=document.getElementById('frBillProvider')?.value.trim()||null;
+  const address=document.getElementById('frLaundryAddress')?.value.trim()||null;
+  if(isLaundry&&!address)throw Error('Pickup Address ఇవ్వండి.');
+  if(!isLaundry&&!reference)throw Error('Mobile Number / Consumer ID / Card Reference ఇవ్వండి.');
+  const payload={
+   customer_id:currentUser.id,
+   service_kind:isLaundry?'laundry':'bill_payment',
+   service_category:category,
+   reference_value:isLaundry?null:reference,
+   provider_name:isLaundry?null:provider,
+   preferred_date:isLaundry?(document.getElementById('frLaundryDate')?.value||null):null,
+   preferred_time:isLaundry?(document.getElementById('frLaundryTime')?.value||null):null,
+   service_address:isLaundry?address:null,
+   notes:isLaundry?(document.getElementById('frLaundryNotes')?.value.trim()||null):null
+  };
+  const {data,error}=await sb.from('fr_customer_service_requests').insert(payload).select('request_number').single();
+  if(error)throw error;
+  alert('మీ Request నమోదు అయింది. Request ID: '+data.request_number+'\\nFRIEND RIDE టీమ్ మీతో సంప్రదిస్తుంది. ఇది ఇంకా instant bill payment కాదు.');
+ }catch(e){alert('Request submit కాలేదు: '+(e.message||e));}
+}
 </script>
 
 <section id="bankingServices" class="page">
