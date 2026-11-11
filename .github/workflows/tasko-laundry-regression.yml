@@ -50,7 +50,10 @@ jobs:
             'Private KYC storage': html.includes("bucket='fr-provider-kyc'"),
             'TASKO/Laundry booking table migration': sql.includes('create table if not exists public.fr_service_bookings'),
             'Provider KYC table migration': kyc.includes('create table if not exists public.fr_service_provider_applications'),
-            'KYC private bucket policy': kyc.includes("values ('fr-provider-kyc','fr-provider-kyc',false")
+            'KYC private bucket policy': kyc.includes("values ('fr-provider-kyc','fr-provider-kyc',false"),
+            'Admin KYC review screen': html.includes('id="adminProviderKyc"') && html.includes('frAdminReviewProviderKyc'),
+            'Approved TASKO/Laundry provider assignment': html.includes('providerOptionsFor(r)') && html.includes("p.provider_gender===r.preferred_helper_gender"),
+            'Masked ID confirmation': html.includes('spMaskedIdConfirm')
           };
           for (const [name, ok] of Object.entries(checks)) console.log(`${ok ? 'PASS' : 'FAIL'} ${name}`);
           if (Object.values(checks).some(x => !x)) process.exit(1);
