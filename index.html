@@ -291,6 +291,12 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <button class="fr-poster fr-poster-safe" onclick="showPage('explore')">
   <span class="fr-poster-copy"><span class="fr-poster-kicker">ROAD SAFETY REMINDER</span><h3>ఫోన్ చూస్తూ డ్రైవ్ చేయవద్దు</h3><p>డ్రైవింగ్ సమయంలో మొబైల్ వాడకండి • మద్యం సేవించి వాహనం నడపకండి • అత్యవసర వాహనాలకు దారి ఇవ్వండి.</p><span class="fr-poster-cta">Safe Driving</span></span><span class="fr-poster-art">🚸</span>
  </button>
+ <button class="fr-poster fr-poster-home" onclick="requireLogin(()=>showPage('homeServices'))">
+  <span class="fr-poster-copy"><span class="fr-poster-kicker">TASKO / GIGGER</span><h3>రోజువారీ పనులకు సహాయకులు</h3><p>Verified Giggers • Flexible Hours • Admin Approved Booking.</p><span class="fr-poster-cta">Book a Gigger</span></span><span class="fr-poster-art">🧰</span>
+ </button>
+ <button class="fr-poster fr-poster-fast" onclick="requireLogin(()=>showPage('laundryServices'))">
+  <span class="fr-poster-copy"><span class="fr-poster-kicker">FRIEND RIDE LAUNDRY</span><h3>Wash • Iron • Dry Clean</h3><p>Per KG / Per Piece pricing with doorstep pickup & delivery.</p><span class="fr-poster-cta">Book Laundry Pickup</span></span><span class="fr-poster-art">🧺</span>
+ </button>
 </div>
 <div class="fr-poster-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 
@@ -903,7 +909,7 @@ async function reviewDriverApplication(driverId,decision){
   await loadDriverApprovals();
  }catch(e){const el=$('driverApprovalMessage');if(el)el.textContent='Approval update failed: '+e.message;alert('Driver approval update failed: '+e.message);}
 }
-function showPage(id){if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
+function showPage(id){if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}if(id==='laundryServices'&&currentProfile?.role==='admin'){const p=document.getElementById('laundryAdminPanel');if(p)p.classList.remove('hide');}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){
  const allowed=['customer','driver','partner','admin'];
