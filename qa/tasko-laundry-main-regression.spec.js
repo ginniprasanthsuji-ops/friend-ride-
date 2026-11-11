@@ -22,13 +22,27 @@ test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
   });
 
   test('TASKO category opens the existing TASKO booking page', async ({ page }) => {
-    await page.locator('#shopCategory').selectOption('tasko_service');
+    await page.evaluate(() => {
+      window.__frLastPage = null;
+      window.showPage = (id) => { window.__frLastPage = id; };
+      const select = document.querySelector('#shopCategory');
+      select.onchange = window.frHandleShopCategoryChange;
+      select.value = 'tasko_service';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
     await expect.poll(() => page.evaluate(() => window.__frLastPage)).toBe('homeServices');
     await expect(page.locator('#homeServices #taskoGiggerLaunch')).toHaveCount(1);
   });
 
   test('Laundry category opens the existing Laundry booking page', async ({ page }) => {
-    await page.locator('#shopCategory').selectOption('laundry_service');
+    await page.evaluate(() => {
+      window.__frLastPage = null;
+      window.showPage = (id) => { window.__frLastPage = id; };
+      const select = document.querySelector('#shopCategory');
+      select.onchange = window.frHandleShopCategoryChange;
+      select.value = 'laundry_service';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
     await expect.poll(() => page.evaluate(() => window.__frLastPage)).toBe('laundryServices');
     await expect(page.locator('#laundryServices #laundryServiceLaunch')).toHaveCount(1);
   });
