@@ -35,3 +35,28 @@ create policy "Customers read own service bookings"
 -- Provider/admin assignment, update and operational dashboard policies must be added
 -- only after matching the actual FRIEND RIDE profiles/roles schema and approval RPCs.
 grant insert, select on public.fr_service_bookings to authenticated;
+
+-- Admins are verified using the existing admin_users(user_id) allow-list.
+drop policy if exists "Admins read all service bookings" on public.fr_service_bookings;
+create policy "Admins read all service bookings"
+  on public.fr_service_bookings for select to authenticated
+  using (exists (
+    select 1 from public.admin_users a where a.user_id = (select auth.uid())
+  ));
+
+drop policy if exists "Assigned providers read their service bookings" on public.fr_service_bookings;
+create policy "Assigned providers read their service bookings"
+  on public.fr_service_bookings for select to authenticated
+  using (assigned_provider_id = (select auth.uid()));
+
+drop policy if exists "Admins update service bookings" on public.fr_service_bookings;
+create policy "Admins update service bookings"
+  on public.fr_service_bookings for update to authenticated
+  using (exists (
+    select 1 from public.admin_users a where a.user_id = (select auth.uid())
+  ))
+  with check (exists (
+    select 1 from public.admin_users a where a.user_id = (select auth.uid())
+  ));
+
+grant update on public.fr_service_bookings to authenticated;
