@@ -6,6 +6,7 @@ test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
     await page.route('https://**/*', route => route.abort());
     await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.evaluate(() => {
+      window.currentUser = { id: 'playwright-test-user' };
       window.requireLogin = (callback) => callback();
       // Isolate navigation from unrelated global auth/role state in this legacy single-file app.
       window.__frLastPage = null;
