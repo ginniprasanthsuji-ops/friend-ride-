@@ -3005,6 +3005,7 @@ async function frAdminUpdateBankEnquiry(id,status){
  function sync(){
   [
    ['shopCategory','all','All Store Categories'],
+   // TASKO and Laundry are service categories shown only in the Store Category selector.
    ['friendMartCategory','all','All Store Categories'],
    ['catalogueBusinessType','','Select category'],
    ['regPartnerCategory','','Select business category']
@@ -3014,6 +3015,7 @@ async function frAdminUpdateBankEnquiry(id,status){
    el.replaceChildren();
    const first=document.createElement('option');first.value=emptyValue;first.textContent=placeholder;el.appendChild(first);
    categories.forEach(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;el.appendChild(o);});
+   if(id==='shopCategory') [['tasko_service','TASKO / GIGGER Services'],['laundry_service','Laundry Services']].forEach(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;el.appendChild(o);});
    el.value=categories.some(([v])=>v===selected)||selected===emptyValue?selected:emptyValue;
   });
  }
