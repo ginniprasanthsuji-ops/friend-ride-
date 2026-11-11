@@ -537,7 +537,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="field"><label>సహాయకుడి ఎంపిక</label><div class="fr-helper-gender"><label><input type="radio" name="frHelperGender" value="no_preference" checked> ఎవరైనా సరే</label><label><input type="radio" name="frHelperGender" value="female"> మహిళా సహాయకురాలు</label><label><input type="radio" name="frHelperGender" value="male"> పురుష సహాయకుడు</label></div><small class="muted">మీ ఎంపికకు సరిపోయే ధృవీకరించిన సహాయకుడు అందుబాటులో ఉంటేనే బుకింగ్ కేటాయించబడుతుంది.</small></div>
   <div class="field"><label for="frTaskoDate">కావాల్సిన తేదీ</label><input id="frTaskoDate" type="date"></div>
   <div class="field"><label for="frTaskoTime">కావాల్సిన సమయం</label><input id="frTaskoTime" type="time"></div>
-  <div class="field"><label for="frTaskoDuration">అంచనా పని సమయం</label><select id="frTaskoDuration"><option value="">పని సమయం ఎంచుకోండి</option><option value="2">గరిష్ఠం 2 గంటలు • ₹150</option><option value="4">2 గంటలకు మించి–4 గంటలు • ₹250</option><option value="6">4 గంటలకు మించి–6 గంటలు • ₹350</option><option value="8">6 గంటలకు మించి–8 గంటలు • ₹400</option><option value="9">9 గంటలు • ₹450</option><option value="10">10 గంటలు • ₹500</option><option value="11">11 గంటలు • ₹550</option><option value="12">12 గంటలు • ₹600</option></select><small class="muted">చివరి ఛార్జీ పని స్వభావం, వాస్తవ సమయం ఆధారంగా బుకింగ్ నిర్ధారణకు ముందు చూపించబడుతుంది.</small></div>
+  <div class="field"><label for="frTaskoDuration">అంచనా పని సమయం</label><input id="frTaskoDuration" type="number" min="1" max="24" step="1" inputmode="numeric" placeholder="గంటల్లో నమోదు చేయండి (1–24)" oninput="frTaskoUpdateFee()"><p id="frTaskoFeePreview" class="notice" aria-live="polite">అంచనా TASKO ఛార్జీ ఇక్కడ కనిపిస్తుంది.</p><small class="muted">8 గంటల వరకు నిర్ణీత ధర. 8 గంటలు దాటిన తర్వాత ప్రతి అదనపు గంటకు ₹50. గంటలను పూర్తి సంఖ్యలో నమోదు చేయాలి; గరిష్ఠం 24 గంటలు.</small></div>
   <div class="notice"><b>TASKO సేవా నియమాలు — బుకింగ్‌కు ముందు తప్పనిసరిగా చదవండి</b><ol><li>మీరు ఎంచుకున్న కేటగిరీ మరియు ఉప-సేవకు సంబంధించిన పనులనే సహాయకుడు చేయాలి.</li><li>ఎంచుకోని ఇతర పనులు చేయమని సహాయకుడిని అడగకూడదు. అదనపు పని కావాలంటే కొత్త సేవా అభ్యర్థన లేదా Admin అనుమతి అవసరం.</li><li>1–2 గంటలకు ₹150, 2–4 గంటలకు ₹250, 4–6 గంటలకు ₹350, 6–8 గంటలకు ₹400. 8 గంటలు దాటిన తర్వాత ప్రతి అదనపు గంటకు ₹50 అదనంగా చెల్లించాలి.</li><li>4 గంటలకు మించిన పని సమయంలో కస్టమర్ తాగునీరు అందించాలి. అందించలేని పరిస్థితిలో Admin‌కు కాల్ చేసి FRIEND RIDE ద్వారా వాటర్ బాటిల్ లేదా అవసరమైన సహాయాన్ని అభ్యర్థించవచ్చు. అందుబాటు/ధర ముందుగా నిర్ధారించబడుతుంది.</li><li>ప్రభుత్వ ఫీజులు, టికెట్లు, ప్రయాణం, వస్తువుల కొనుగోలు ఖర్చులు సేవా ఛార్జీలో కలవవు; ముందస్తు అనుమతి తప్పనిసరి.</li><li>OTP, UPI PIN, ATM PIN, పాస్‌వర్డ్ లేదా బ్యాంక్ రహస్య వివరాలు సహాయకుడికి ఇవ్వకూడదు.</li><li>సహాయకుడితో గౌరవంగా, సురక్షితంగా వ్యవహరించాలి. పని పరిధి లేదా భద్రతపై సమస్య ఉంటే వెంటనే Admin‌ను సంప్రదించాలి.</li></ol><label style="display:flex;gap:8px;align-items:flex-start"><input id="frTaskoTerms" type="checkbox" style="width:auto;margin-top:4px"> పై నియమాలు చదివి అంగీకరిస్తున్నాను. నేను ఎంచుకున్న సేవ మాత్రమే చేయించుకుంటాను.</label></div>
   <div class="field"><label for="frTaskoAddress">సేవ అందించాల్సిన చిరునామా / కలవాల్సిన ప్రదేశం</label><textarea id="frTaskoAddress" placeholder="ఇంటి చిరునామా లేదా కార్యాలయం పేరు, ప్రాంతం"></textarea></div>
   <div class="field"><label for="frTaskoNotes">మీ పని గురించి వివరించండి</label><textarea id="frTaskoNotes" placeholder="మీకు ఏ పని చేయించుకోవాలో సులభంగా వివరించండి"></textarea></div>
@@ -2942,6 +2942,14 @@ function frTaskoCategoryChanged(){
  sub.innerHTML='<option value="">ఉప-సేవ ఎంచుకోండి</option>'+(frTaskoSubservices[cat]||[]).map(x=>'<option value="'+safe(x)+'">'+safe(x)+'</option>').join('');
 }
 function frChooseLaundry(value,label){const el=document.getElementById('frLaundrySelected');if(el)el.value=value;document.querySelectorAll('.fr-service-choice').forEach(b=>b.classList.toggle('active',b.textContent.includes(value)));}
+function frTaskoCalculateFee(hours){return hours<=2?150:hours<=4?250:hours<=6?350:400+Math.max(0,hours-8)*50;}
+function frTaskoUpdateFee(){
+ const el=document.getElementById('frTaskoDuration'),out=document.getElementById('frTaskoFeePreview');
+ const hours=Number(el?.value||0);
+ if(!out)return;
+ if(!Number.isInteger(hours)||hours<1||hours>24){out.textContent='1 నుంచి 24 గంటల మధ్య పూర్తి గంటలను నమోదు చేయండి.';return;}
+ out.textContent='ఎంచుకున్న '+hours+' గంటలకు అంచనా TASKO సేవా ఛార్జీ: ₹'+frTaskoCalculateFee(hours);
+}
 async function frSubmitServiceBooking(kind){
  const isTasko=kind==='tasko',prefix=isTasko?'frTasko':'frLaundry',status=document.getElementById(isTasko?'frTaskoStatus':'frLaundryStatus');
  const get=id=>document.getElementById(id)?.value?.trim()||'';
@@ -2956,10 +2964,10 @@ async function frSubmitServiceBooking(kind){
  if(!currentUser){requireLogin(()=>frSubmitServiceBooking(kind));return;}
  if(!category||!address||!date||!time){if(status)status.textContent='దయచేసి కేటగిరీ, తేదీ, సమయం మరియు చిరునామా నమోదు చేయండి.';return;}
  if(isTasko&&!subcategory){if(status)status.textContent='దయచేసి ఉప-సేవను కూడా ఎంచుకోండి.';return;}
- if(isTasko&&(!duration||!termsAccepted)){if(status)status.textContent='పని సమయం ఎంచుకుని TASKO నియమాలను అంగీకరించండి.';return;}
+ if(isTasko&&(!Number.isInteger(duration)||duration<1||duration>24||!termsAccepted)){if(status)status.textContent='పని సమయం ఎంచుకుని TASKO నియమాలను అంగీకరించండి.';return;}
  if(status)status.textContent='మీ బుకింగ్ అభ్యర్థనను నమోదు చేస్తున్నాం…';
  try{
-  const taskoFee=isTasko?(duration<=2?150:duration<=4?250:duration<=6?350:400+Math.max(0,duration-8)*50):null;
+  const taskoFee=isTasko?frTaskoCalculateFee(duration):null;
   const payload={customer_id:currentUser.id,service_type:kind,category,subcategory:subcategory||null,preferred_helper_gender:gender,service_date:date,service_time:time,pickup_address:address,notes:notes||null,status:'pending',...(isTasko?{service_duration_hours:duration,terms_accepted:true,quoted_amount:taskoFee}: {})};
   const {error}=await sb.from('fr_service_bookings').insert(payload);
   if(error)throw error;
