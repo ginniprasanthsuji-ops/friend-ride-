@@ -2,7 +2,9 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });
+    page.setDefaultTimeout(15000);
+    await page.route('https://**/*', route => route.abort());
+    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.evaluate(() => {
       window.requireLogin = (callback) => callback();
       if (typeof window.showPage === 'function') window.showPage('shops');
