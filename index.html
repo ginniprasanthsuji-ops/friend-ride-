@@ -1269,12 +1269,12 @@ window.frHandleShopCategoryChange = function(){
  const category=select?.value||'all';
  if(category==='tasko_service'){
   if(select)select.value='all';
-  showPage('homeServices');
+  window.showPage('homeServices');
   return;
  }
  if(category==='laundry_service'){
   if(select)select.value='all';
-  showPage('laundryServices');
+  window.showPage('laundryServices');
   return;
  }
  loadApprovedStores();
