@@ -40,4 +40,4 @@ jobs:
           cat /tmp/friendride-http.log
           exit 1
       - name: Run TASKO / Laundry / Admin Playwright tests
-        run: npx playwright test qa/tasko-laundry-main-regression.spec.js --reporter=line
+        run: npx playwright test qa/tasko-laundry-main-regression.spec.js --reporter=line --timeout=15000 --retries=0
