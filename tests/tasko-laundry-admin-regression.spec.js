@@ -4,7 +4,10 @@ test.describe('Admin regression — TASKO and Laundry Store Category entry point
   test.beforeEach(async ({ page }) => {
     await page.goto('http://127.0.0.1:4173/');
     // Bypass OTP for this UI-routing regression only; no backend writes are made.
-    await page.evaluate(() => { window.requireLogin = (callback) => callback(); });
+    await page.evaluate(() => {
+      window.requireLogin = (callback) => callback();
+      if (typeof window.showPage === 'function') window.showPage('shops');
+    });
   });
 
   test('Store Category lists TASKO / GIGGER and Laundry', async ({ page }) => {
