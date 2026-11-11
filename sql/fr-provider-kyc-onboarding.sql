@@ -98,3 +98,11 @@ create policy "Admins read provider KYC files"
 
 -- The reference friend is optional; collect it only when they have agreed to be contacted.
 -- Never collect/store full Aadhaar numbers, OTPs, PINs or passwords in this application.
+
+drop policy if exists "Providers delete own KYC files" on storage.objects;
+create policy "Providers delete own KYC files"
+  on storage.objects for delete to authenticated
+  using (
+    bucket_id = 'fr-provider-kyc'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+  );
