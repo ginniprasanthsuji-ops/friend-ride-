@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - main
+      - yf-test-1-to-15
       - feature/tasko-laundry-services
 jobs:
   playwright-regression:
