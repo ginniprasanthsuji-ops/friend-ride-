@@ -32,8 +32,6 @@ drop policy if exists "Customers read own service bookings" on public.fr_service
 create policy "Customers read own service bookings"
   on public.fr_service_bookings for select to authenticated
   using (auth.uid() = customer_id);
--- Provider/admin assignment, update and operational dashboard policies must be added
--- only after matching the actual FRIEND RIDE profiles/roles schema and approval RPCs.
 grant insert, select on public.fr_service_bookings to authenticated;
 
 -- Admins are verified using the existing admin_users(user_id) allow-list.
