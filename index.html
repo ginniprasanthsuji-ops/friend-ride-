@@ -380,7 +380,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <p class="muted">Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
   <div class="field"><label>Service Category *</label>
    <select id="spCategory">
-    <option value="Home Services">Home Services</option>
+    <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Home Services">Home Services</option>
     <option value="Catering Services">Catering Services</option>
     <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
     <option value="Beauty Makeover">Beauty Makeover</option>
@@ -392,6 +392,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="field"><label>Complete Address *</label><textarea id="spAddress" placeholder="House, street, village, mandal, district, PIN"></textarea></div>
   <div class="field"><label>Profile Photo / Passport-size Photo * Required</label><input id="spPhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="user"></div>
   <div class="field"><label>Aadhaar Card Document * Required (JPG / PNG / PDF)</label><input id="spAadhaarFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"></div>
+  <div class="row"><div class="field"><label>Emergency Contact Name *</label><input id="spEmergencyName" placeholder="Emergency contact name"></div><div class="field"><label>Emergency Contact Mobile *</label><input id="spEmergencyPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile"></div></div>
   <div class="field"><label>Work Experience (Years)</label><input id="spExperience" type="number" min="0" placeholder="Years of experience"></div>
   <div class="field"><label>Service Details / Skills</label><textarea id="spDetails" placeholder="Describe your services, equipment, menu, packages or skills"></textarea></div>
   <div class="field"><label>UPI ID / Payment Contact (Optional)</label><input id="spUPI" placeholder="name@upi"></div>
@@ -472,7 +473,26 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="shopping" class="page"><div class="card"><h2>Shopping</h2><div class="field"><label>What do you need?</label><textarea id="shoppingItems" placeholder="List your items"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="shoppingAddress"></textarea></div><button class="btn purple" onclick="simpleRequest('Shopping request','shoppingAddress','shoppingItems')">Submit Shopping Request</button></div></section>
 
-<section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painting</option><option>Carpenter</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Choose technician (approved technicians load from database)</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">Minimum advance payment: ₹50. Booking request is confirmed only after server verifies the advance payment.</div><button class="btn purple" onclick="submitServiceRequest()">Submit Service Request</button></div><div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
+<section id="homeServices" class="page"><div class="card"><h2>Book Home Service</h2><div class="field"><label>Select Technician Profession</label><select id="homeServiceType"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painting</option><option>Carpenter</option></select></div><div class="field"><label>Select Approved Technician</label><select id="homeServiceTechnician"><option value="">Choose technician (approved technicians load from database)</option></select></div><div class="field"><label>Service Address (Default address or add another)</label><textarea id="homeServiceAddress" placeholder="Use profile address or enter another address"></textarea></div><div class="field"><label>Work Details</label><textarea id="homeServiceNotes"></textarea></div><div class="row"><div class="field"><label>Preferred Date</label><input id="homeServiceDate" type="date"></div><div class="field"><label>Preferred Time</label><input id="homeServiceTime" type="time"></div></div><div class="notice">Minimum advance payment: ₹50. Booking request is confirmed only after server verifies the advance payment.</div><button class="btn purple" onclick="submitServiceRequest()">Submit Service Request</button></div>
+<div class="card" id="taskoGiggerLaunch">
+ <div class="eyebrow" style="color:#6b35bd">FRIEND RIDE • TASKO / GIGGER</div>
+ <h2>🧰 TASKO – Daily Helper Booking</h2>
+ <p class="muted">ఇంటి పనులు, షాపు సహాయం, ప్యాకింగ్, క్లీనింగ్, లోకల్ అసిస్టెన్స్ వంటి పనులకు ధృవీకరించిన Giggerను బుక్ చేయండి.</p>
+ <div class="notice"><b>పారితోషికం:</b> 6 గంటల వరకు ₹150–₹400 (పని ఆధారంగా Admin quote). 6 గంటలు దాటితే ₹400 + ప్రతి అదనపు గంటకు ₹50. Final amount పని గంటలు మరియు ఆమోదించిన quote ఆధారంగా నిర్ధారించబడుతుంది.</div>
+ <div class="field"><label>Work Category *</label><select id="taskoCategory"><option>General Helper</option><option>House Cleaning</option><option>Shop Assistant</option><option>Packing & Loading</option><option>Office Assistant</option><option>Event Helper</option><option>Delivery Helper</option><option>Other Local Work</option></select></div>
+ <div class="row"><div class="field"><label>Required Hours *</label><select id="taskoHours" onchange="frTaskoPricePreview()"><option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6" selected>6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option><option value="10">10 hours</option><option value="12">12 hours</option></select></div><div class="field"><label>Helper Preference</label><select id="taskoGender"><option value="no_preference">No preference</option><option value="male">Male</option><option value="female">Female</option></select></div></div>
+ <div id="taskoPricePreview" class="notice">Estimated rate: ₹150–₹400 for up to 6 hours. Final quote after review.</div>
+ <div class="row"><div class="field"><label>Work Date *</label><input id="taskoDate" type="date"></div><div class="field"><label>Start Time *</label><input id="taskoTime" type="time"></div></div>
+ <div class="field"><label>Full Work Address *</label><textarea id="taskoAddress" placeholder="House / street / area / village"></textarea></div>
+ <div class="field"><label>Work Instructions *</label><textarea id="taskoNotes" maxlength="1200" placeholder="Describe the work, tools/materials and any safety details"></textarea></div>
+ <button class="btn purple" onclick="frSubmitTaskoBooking()">Request a Gigger</button>
+ <div id="taskoBookingStatus" class="notice">Your request will be sent to FRIEND RIDE Admin for assignment.</div>
+ <hr><h3>Are you looking for daily work?</h3><p class="muted tiny">Register as a TASKO Gigger. Your profile and identity document will be reviewed by Admin before you can receive work.</p>
+ <button class="btn light" onclick="requireLogin(()=>openServiceProviderRegister('TASKO / QUICKMATE Assistant'))">Register as TASKO Gigger</button>
+ <div id="taskoMyBookings" class="notice"><button class="btn light" onclick="requireLogin(frLoadMyTaskoBookings)">My TASKO Bookings / Work</button></div>
+ <div id="taskoAdminPanel" class="hide"><hr><h3>Admin – TASKO Control Centre</h3><button class="btn light" onclick="frAdminLoadTasko()">Refresh Gigger Applications & Bookings</button><div id="taskoAdminApplications"></div><div id="taskoAdminBookings"></div></div>
+</div>
+<div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
   <button class="btn purple" onclick="openServiceProviderRegister('Home Services')">Register as Home Service Provider</button></div></section>
 
 <section id="storeBrowse" class="page">
@@ -855,7 +875,7 @@ async function reviewDriverApplication(driverId,decision){
   await loadDriverApprovals();
  }catch(e){const el=$('driverApprovalMessage');if(el)el.textContent='Approval update failed: '+e.message;alert('Driver approval update failed: '+e.message);}
 }
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
+function showPage(id){if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){
  const allowed=['customer','driver','partner','admin'];
@@ -2723,26 +2743,161 @@ function openServiceProviderRegister(category){
  if(el && category) el.value=category;
  showPage('serviceProviderRegister');
 }
-function validateServiceProviderRegistration(){
- const required=['spName','spPhone','spAddress'];
- if(required.some(id=>!document.getElementById(id)?.value.trim())){
-  alert('పేరు, మొబైల్ నంబర్ మరియు పూర్తి చిరునామా నమోదు చేయండి.');return;
- }
- const phone=document.getElementById('spPhone').value.replace(/\\D/g,'');
- if(phone.length!==10){alert('సరైన 10 digit mobile number ఇవ్వండి.');return;}
- const photo=document.getElementById('spPhoto').files[0];
- const aadhaar=document.getElementById('spAadhaarFile').files[0];
- if(!photo || !['image/jpeg','image/png','image/webp'].includes(photo.type) || photo.size>3*1024*1024){
-  alert('Passport-size photo JPG/PNG/WEBP formatలో 3 MB లోపు తప్పనిసరి.');return;
- }
- if(!aadhaar || !(['image/jpeg','image/png','image/webp','application/pdf'].includes(aadhaar.type)) || aadhaar.size>5*1024*1024){
-  alert('Aadhaar document JPG/PNG/WEBP/PDF formatలో 5 MB లోపు తప్పనిసరి.');return;
- }
- if(!document.getElementById('spTerms').checked){alert('Terms & Privacy Policy అంగీకరించండి.');return;}
+async function validateServiceProviderRegistration(){
  const status=document.getElementById('spRegStatus');
- status.textContent='Form validation complete. Secure document upload, database application save and Admin approval require the service-provider backend migration.';
- alert('Registration details validate అయ్యాయి. Backend integration తర్వాత application submit మరియు document upload పూర్తవుతాయి.');
+ try{
+  if(!currentUser)throw Error('ముందుగా మీ FRIEND RIDE accountలో login చేయండి.');
+  const val=id=>(document.getElementById(id)?.value||'').trim();
+  const phone=val('spPhone').replace(/\\D/g,'');
+  const emergencyPhone=val('spEmergencyPhone').replace(/\\D/g,'');
+  if(!val('spName')||!val('spAddress')||!val('spEmergencyName'))throw Error('పేరు, పూర్తి చిరునామా, Emergency Contact Name తప్పనిసరి.');
+  if(!/^[6-9]\\d{9}$/.test(phone)||!/^[6-9]\\d{9}$/.test(emergencyPhone))throw Error('సరైన 10 digit mobile numbers ఇవ్వండి.');
+  const photo=document.getElementById('spPhoto').files[0], idFile=document.getElementById('spAadhaarFile').files[0];
+  if(!photo||!['image/jpeg','image/png','image/webp'].includes(photo.type)||photo.size>3*1024*1024)throw Error('Passport photo JPG/PNG/WEBPలో 3 MB లోపు తప్పనిసరి.');
+  if(!idFile||!['image/jpeg','image/png','image/webp','application/pdf'].includes(idFile.type)||idFile.size>5*1024*1024)throw Error('Identity document JPG/PNG/WEBP/PDFలో 5 MB లోపు తప్పనిసరి.');
+  if(!document.getElementById('spTerms').checked)throw Error('Verification, Terms & Privacy Policy అంగీకరించండి.');
+  if(status)status.textContent='Secure documents upload చేస్తున్నాం…';
+  const uid=currentUser.id, stamp=Date.now();
+  const ext=file=>file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g,'')||'bin';
+  const photoPath=uid+'/tasko-profile-'+stamp+'.'+ext(photo);
+  const idPath=uid+'/tasko-id-'+stamp+'.'+ext(idFile);
+  const bucket=sb.storage.from('fr-service-provider-kyc');
+  const up1=await bucket.upload(photoPath,photo,{upsert:false,contentType:photo.type});
+  if(up1.error)throw up1.error;
+  const up2=await bucket.upload(idPath,idFile,{upsert:false,contentType:idFile.type});
+  if(up2.error){await bucket.remove([photoPath]);throw up2.error;}
+  const {data,error}=await sb.from('fr_service_provider_applications').insert({
+   provider_id:uid,service_category:val('spCategory'),full_name:val('spName'),phone,
+   business_name:val('spBusinessName')||null,full_address:val('spAddress'),
+   profile_photo_path:photoPath,identity_document_path:idPath,
+   identity_document_type:'masked_government_id',
+   emergency_contact_name:val('spEmergencyName'),emergency_contact_phone:emergencyPhone,
+   experience_years:Math.max(0,Math.min(60,Number(val('spExperience')||0))),
+   service_details:val('spDetails')||null,upi_id:val('spUPI')||null,status:'pending'
+  }).select('id').single();
+  if(error)throw error;
+  if(status)status.textContent='Application Adminకు విజయవంతంగా పంపబడింది. Reference: '+data.id.slice(0,8)+'. Approval వచ్చే వరకు work requests అందవు.';
+  alert('Gigger / Service Provider application విజయవంతంగా submit అయింది. Admin approval కోసం వేచి ఉండండి.');
+ }catch(e){if(status)status.textContent='Registration failed: '+(e.message||e);else alert(e.message||e);}
 }
+function frTaskoPricePreview(){
+ const h=Number(document.getElementById('taskoHours')?.value||6),el=document.getElementById('taskoPricePreview');
+ if(!el)return;
+ el.textContent=h<=6?'Estimated rate: ₹150–₹400 for '+h+' hours. Admin confirms the final quote.':'Estimated rate: ₹'+(400+(h-6)*50)+' ('+h+' hours: ₹400 for first 6 hours + ₹50 per extra hour).';
+}
+async function frSubmitTaskoBooking(){
+ const status=document.getElementById('taskoBookingStatus');
+ try{
+  if(!currentUser||currentProfile?.role!=='customer')throw Error('TASKO booking కోసం Customer login అవసరం.');
+  const v=id=>(document.getElementById(id)?.value||'').trim();
+  const hours=Number(v('taskoHours')),date=v('taskoDate'),time=v('taskoTime'),address=v('taskoAddress'),notes=v('taskoNotes'),category=v('taskoCategory');
+  if(!category||!date||!time||address.length<8||notes.length<5)throw Error('Category, date, time, పూర్తి address మరియు work details నమోదు చేయండి.');
+  if(new Date(date+'T'+time)<new Date())throw Error('గత తేదీ / సమయం ఎంచుకోకండి.');
+  const rateNote=hours<=6?'Estimated ₹150–₹400; final quote by Admin.':'Estimated ₹'+(400+(hours-6)*50)+' = ₹400 for first 6 hours + ₹50 per extra hour.';
+  const {data,error}=await sb.from('fr_service_bookings').insert({
+   customer_id:currentUser.id,service_type:'tasko',category,subcategory:'TASKO / GIGGER',
+   preferred_helper_gender:v('taskoGender')||'no_preference',service_date:date,service_time:time,
+   pickup_address:address,notes:'Required hours: '+hours+'. '+rateNote+' Work: '+notes,status:'pending'
+  }).select('id').single();
+  if(error)throw error;
+  if(status)status.textContent='TASKO request submitted. Booking ID: '+data.id+'. Admin will review and assign an approved Gigger.';
+  ['taskoAddress','taskoNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+ }catch(e){if(status)status.textContent='Booking failed: '+(e.message||e);else alert(e.message||e);}
+}
+let frTaskoApprovedGiggers=[];
+async function frLoadMyTaskoBookings(){
+ const box=document.getElementById('taskoMyBookings');if(!box)return;
+ if(!currentUser){box.textContent='Login అవసరం.';return;}
+ box.textContent='మీ TASKO పనులు loading…';
+ try{
+  const {data:myApp,error:appError}=await sb.from('fr_service_provider_applications').select('id').eq('provider_id',currentUser.id).eq('service_category','TASKO / QUICKMATE Assistant').eq('status','approved').limit(1).maybeSingle();
+  if(appError)throw appError;
+  const isProvider=!!myApp;
+  const q=sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,service_time,status,quoted_amount,final_amount,actual_hours,payment_status,payment_reference,notes').eq('service_type','tasko').order('created_at',{ascending:false}).limit(30);
+  const {data,error}=await (isProvider?q.eq('assigned_provider_id',currentUser.id):q.eq('customer_id',currentUser.id));
+  if(error)throw error;
+  box.innerHTML='<h3>My TASKO Bookings / Work</h3>'+((data||[]).map(x=>{
+   let actions='';
+   if(isProvider&&['assigned','accepted','in_progress'].includes(x.status)){
+    actions='<div class="track-actions">'+(x.status==='assigned'?'<button onclick="frTaskoProviderAction(\''+x.id+'\',\'accept\')">Accept Work</button>':'')+(x.status==='accepted'?'<button onclick="frTaskoProviderAction(\''+x.id+'\',\'start\')">Start Work</button>':'')+(x.status==='in_progress'?'<button onclick="frTaskoProviderAction(\''+x.id+'\',\'complete\')">Complete Work</button>':'')+'</div>';
+   }
+   if(!isProvider&&x.status==='completed'&&['pending','rejected'].includes(x.payment_status)){
+    actions='<div class="field"><label>UPI / Bank Transaction Reference</label><input id="taskoPayRef_'+x.id+'" maxlength="40" placeholder="Enter transaction reference"></div><button class="btn purple" onclick="frTaskoSubmitPayment(\''+x.id+'\')">Submit Payment Reference</button>';
+   }
+   return '<article class="listrow"><div class="grow"><b>'+safe(x.category)+'</b><small>'+safe(x.service_date)+' '+safe(x.service_time)+' • '+safe(x.status)+'</small><small>'+(x.final_amount?'Final ₹'+Number(x.final_amount).toFixed(2):x.quoted_amount?'Quote ₹'+Number(x.quoted_amount).toFixed(2):'Quote pending')+' • Payment: '+safe(x.payment_status||'not_due')+'</small>'+actions+'</div></article>';
+  }).join('')||'<p>No TASKO bookings yet.</p>');
+ }catch(e){box.textContent='Load failed: '+(e.message||e);}
+}
+async function frTaskoProviderAction(id,action){
+ try{
+  if(!currentUser)throw Error('Login అవసరం.');
+  let actual=null;
+  if(action==='complete'){actual=Number(prompt('Actual work hours completed (e.g. 6.5):','6'));if(!Number.isFinite(actual)||actual<=0||actual>24)throw Error('Valid work hours ఇవ్వండి.');}
+  const {data,error}=await sb.rpc('fr_tasko_provider_transition',{p_booking_id:id,p_action:action,p_actual_hours:actual});
+  if(error)throw error;
+  alert('TASKO work status updated: '+action);
+  await frLoadMyTaskoBookings();
+ }catch(e){alert('Work update failed: '+(e.message||e));}
+}
+async function frTaskoSubmitPayment(id){
+ try{
+  const ref=(document.getElementById('taskoPayRef_'+id)?.value||'').trim();
+  const {error}=await sb.rpc('fr_tasko_submit_payment',{p_booking_id:id,p_payment_reference:ref});
+  if(error)throw error;
+  alert('Payment reference submitted. Admin verification pending.');
+  await frLoadMyTaskoBookings();
+ }catch(e){alert('Payment submission failed: '+(e.message||e));}
+}
+async function frAdminLoadTasko(){
+ if(currentProfile?.role!=='admin'||selectedRole!=='admin')return alert('Admin access అవసరం.');
+ const apps=document.getElementById('taskoAdminApplications'),bookings=document.getElementById('taskoAdminBookings');
+ if(apps)apps.textContent='Gigger applications loading…';if(bookings)bookings.textContent='TASKO bookings loading…';
+ try{
+  const [a,b]=await Promise.all([
+   sb.from('fr_service_provider_applications').select('id,provider_id,full_name,phone,service_category,full_address,status,experience_years,created_at').eq('service_category','TASKO / QUICKMATE Assistant').order('created_at',{ascending:false}).limit(100),
+   sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,service_time,pickup_address,notes,status,quoted_amount,final_amount,payment_status,payment_reference,created_at').eq('service_type','tasko').order('created_at',{ascending:false}).limit(100)
+  ]);
+  if(a.error)throw a.error;if(b.error)throw b.error;
+  frTaskoApprovedGiggers=(a.data||[]).filter(x=>x.status==='approved');
+  if(apps)apps.innerHTML='<h3>Gigger Applications</h3>'+((a.data||[]).map(x=>'<article class="listrow"><div class="grow"><b>'+safe(x.full_name)+'</b><small>'+safe(x.phone)+' • '+safe(x.full_address)+' • '+safe(x.status)+'</small></div>'+(x.status==='pending'||x.status==='under_review'?'<button class="btn light" onclick="frAdminReviewTaskoApplication(\''+x.id+'\',\'approved\')">Approve</button><button class="btn red" onclick="frAdminReviewTaskoApplication(\''+x.id+'\',\'rejected\')">Reject</button>':'')+'</article>').join('')||'<p>No applications.</p>');
+  if(bookings)bookings.innerHTML='<h3>Customer Requests & Payment Verification</h3>'+((b.data||[]).map(x=>{
+   const opts='<option value="">Select approved Gigger</option>'+frTaskoApprovedGiggers.map(g=>'<option value="'+safe(g.provider_id)+'" '+(x.assigned_provider_id===g.provider_id?'selected':'')+'>'+safe(g.full_name)+' • '+safe(g.phone)+'</option>').join('');
+   const assign='<div class="field"><label>Assign Gigger</label><select id="taskoGigger_'+x.id+'">'+opts+'</select><label>Base quote (₹150–₹400 for first 6 hours)</label><input id="taskoQuote_'+x.id+'" type="number" min="150" max="400" value="'+(x.quoted_amount||150)+'"></div><button class="btn light" onclick="frAdminAssignTasko(\''+x.id+'\')">Assign / Update Quote</button>';
+   const payment=x.payment_status==='submitted'?'<button class="btn green" onclick="frAdminVerifyTaskoPayment(\''+x.id+'\',\'verified\')">Verify Payment</button><button class="btn red" onclick="frAdminVerifyTaskoPayment(\''+x.id+'\',\'rejected\')">Reject Payment</button>':'';
+   return '<article class="card"><b>'+safe(x.category)+'</b><small> • '+safe(x.service_date)+' '+safe(x.service_time)+' • '+safe(x.status)+'</small><p>'+safe(x.pickup_address)+'</p><small>Booking '+safe(x.id.slice(0,8))+' • Quote '+(x.quoted_amount?'₹'+Number(x.quoted_amount).toFixed(2):'pending')+' • Final '+(x.final_amount?'₹'+Number(x.final_amount).toFixed(2):'pending')+' • Payment '+safe(x.payment_status||'not_due')+'</small>'+(['pending','assigned'].includes(x.status)?assign:'')+payment+'</article>';
+  }).join('')||'<p>No TASKO requests.</p>');
+ }catch(e){if(apps)apps.textContent='Admin load failed: '+(e.message||e);}
+}
+async function frAdminAssignTasko(id){
+ try{
+  if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+  const provider=document.getElementById('taskoGigger_'+id)?.value;
+  const quote=Number(document.getElementById('taskoQuote_'+id)?.value);
+  if(!provider)throw Error('Approved Gigger select చేయండి.');
+  if(!Number.isFinite(quote)||quote<150||quote>400)throw Error('Base quote ₹150–₹400 మధ్య ఉండాలి.');
+  const {error}=await sb.from('fr_service_bookings').update({assigned_provider_id:provider,quoted_amount:quote,status:'assigned',updated_at:new Date().toISOString()}).eq('id',id);
+  if(error)throw error;await frAdminLoadTasko();
+ }catch(e){alert('Gigger assignment failed: '+(e.message||e));}
+}
+async function frAdminVerifyTaskoPayment(id,decision){
+ try{
+  if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+  const {error}=await sb.rpc('fr_tasko_admin_verify_payment',{p_booking_id:id,p_decision:decision});
+  if(error)throw error;await frAdminLoadTasko();
+ }catch(e){alert('Payment verification failed: '+(e.message||e));}
+}
+async function frAdminReviewTaskoApplication(id,status){
+ try{if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+ const {error}=await sb.from('fr_service_provider_applications').update({status,reviewed_by:currentUser.id,reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);
+ if(error)throw error;await frAdminLoadTasko();}catch(e){alert('Application update failed: '+e.message);}
+}
+async function frAdminSetTaskoStatus(id,status){
+ try{if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+ if(!['assigned','in_progress','completed','cancelled','rejected'].includes(status))throw Error('Invalid status.');
+ const {error}=await sb.from('fr_service_bookings').update({status,updated_at:new Date().toISOString()}).eq('id',id);
+ if(error)throw error;await frAdminLoadTasko();}catch(e){alert('Booking update failed: '+e.message);}
+}
+
 function frSelectBankService(name){
  const el=document.getElementById('bankServiceSelected');if(el)el.value=name;
 }

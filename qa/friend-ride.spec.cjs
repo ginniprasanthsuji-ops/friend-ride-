@@ -425,3 +425,64 @@ test('Driver KYC form loads the private upload handler and persists profile/docu
   expect(handler).toContain('verification_status');
   expect(errors).toEqual([]);
 });
+
+
+test('TASKO booking form exposes helper categories, hours, date, time, address and work instructions', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#taskoGiggerLaunch')).toBeAttached();
+  await expect(page.locator('#taskoCategory option')).toHaveCount(8);
+  await expect(page.locator('#taskoHours')).toBeAttached();
+  await expect(page.locator('#taskoDate')).toHaveAttribute('type', 'date');
+  await expect(page.locator('#taskoTime')).toHaveAttribute('type', 'time');
+  await expect(page.locator('#taskoAddress')).toBeAttached();
+  await expect(page.locator('#taskoNotes')).toBeAttached();
+  await expect(page.locator('#taskoGiggerLaunch')).toContainText('₹150–₹400');
+  await expect(page.locator('#taskoGiggerLaunch')).toContainText('₹50');
+});
+
+test('TASKO hourly price preview applies ₹400 for first six hours and ₹50 per extra hour', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const preview = await page.evaluate(() => {
+    const hours = document.querySelector('#taskoHours');
+    const output = document.querySelector('#taskoPricePreview');
+    if (!hours || !output || typeof window.frTaskoPricePreview !== 'function') throw new Error('TASKO price preview is not wired');
+    const values = [];
+    for (const value of ['6', '7', '10']) {
+      hours.value = value;
+      window.frTaskoPricePreview();
+      values.push(output.textContent);
+    }
+    return values;
+  });
+  expect(preview[0]).toContain('₹150–₹400');
+  expect(preview[1]).toContain('₹450');
+  expect(preview[1]).toContain('₹50 per extra hour');
+  expect(preview[2]).toContain('₹600');
+});
+
+test('TASKO Gigger registration requires emergency contact and uses private KYC upload flow', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#spEmergencyName')).toBeAttached();
+  await expect(page.locator('#spEmergencyPhone')).toHaveAttribute('maxlength', '10');
+  const handler = await page.evaluate(() => window.validateServiceProviderRegistration.toString());
+  expect(handler).toContain('fr-service-provider-kyc');
+  expect(handler).toContain('emergency_contact_name');
+  expect(handler).toContain('status:\'pending\'');
+  expect(handler).toContain('identity_document_path');
+});
+
+test('TASKO Admin approval, assignment and payment verification are guarded by Admin role checks', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const handlers = await page.evaluate(() => ({
+    review: window.frAdminReviewTaskoApplication.toString(),
+    assign: window.frAdminAssignTasko.toString(),
+    verify: window.frAdminVerifyTaskoPayment.toString(),
+    provider: window.frTaskoProviderAction.toString(),
+    payment: window.frTaskoSubmitPayment.toString()
+  }));
+  expect(handlers.review).toContain("currentProfile?.role!=='admin'");
+  expect(handlers.assign).toContain("currentProfile?.role!=='admin'");
+  expect(handlers.verify).toContain("currentProfile?.role!=='admin'");
+  expect(handlers.provider).toContain("fr_tasko_provider_transition");
+  expect(handlers.payment).toContain("fr_tasko_submit_payment");
+});
