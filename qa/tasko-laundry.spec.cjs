@@ -17,6 +17,7 @@ test('TASKO helper pricing and customer/partner/admin workflow remain intact',as
 });
 test('Laundry has per KG/per piece booking, pickup, partner registration and admin panel',async({page})=>{
  await page.goto('./',{waitUntil:'domcontentloaded'});
+ await page.evaluate(()=>window.showPage('laundryServices'));
  const p=page.locator('#laundryServices');
  await expect(p).toContainText('Washing');
  await expect(p).toContainText('Ironing / Steam Iron');
