@@ -486,3 +486,88 @@ test('TASKO Admin approval, assignment and payment verification are guarded by A
   expect(handlers.provider).toContain("fr_tasko_provider_transition");
   expect(handlers.payment).toContain("fr_tasko_submit_payment");
 });
+
+
+test('Home screen exposes separate TASKO / GIGGER and Laundry service tiles and promo banners', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.showPage('home'));
+  const tasko = page.locator('.home-pro-services .home-pro-service').filter({ hasText: 'TASKO / GIGGER' });
+  const laundry = page.locator('.home-pro-services .home-pro-service').filter({ hasText: 'LAUNDRY SERVICES' });
+  await expect(tasko).toHaveCount(1);
+  await expect(laundry).toHaveCount(1);
+  await expect(page.locator('.fr-poster-rail')).toContainText('TASKO / GIGGER');
+  await expect(page.locator('.fr-poster-rail')).toContainText('FRIEND RIDE LAUNDRY');
+  expect(errors, 'Home page JavaScript errors').toEqual([]);
+});
+
+test('TASKO / GIGGER booking UI, helper registration and hourly pricing are wired', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.showPage('homeServices'));
+  await expect(page.locator('#taskoGiggerLaunch')).toBeAttached();
+  await expect(page.locator('#taskoCategory')).toBeAttached();
+  await expect(page.locator('#taskoHours')).toBeAttached();
+  await expect(page.locator('#taskoDate')).toBeAttached();
+  await expect(page.locator('#taskoAddress')).toBeAttached();
+  await expect(page.locator('#taskoNotes')).toBeAttached();
+  await expect(page.locator('#taskoBookingStatus')).toBeAttached();
+  await expect(page.locator('#taskoGiggerLaunch')).toContainText('Register as TASKO Gigger');
+  await page.locator('#taskoHours').selectOption('8');
+  await expect(page.locator('#taskoPricePreview')).toContainText('₹500');
+  const functions = await page.evaluate(() => ({
+    submit: typeof window.frSubmitTaskoBooking,
+    myBookings: typeof window.frLoadMyTaskoBookings,
+    adminLoad: typeof window.frAdminLoadTasko,
+    assign: typeof window.frAdminAssignTasko,
+    providerAction: typeof window.frTaskoProviderAction
+  }));
+  expect(functions).toEqual({
+    submit: 'function', myBookings: 'function', adminLoad: 'function',
+    assign: 'function', providerAction: 'function'
+  });
+});
+
+test('Laundry booking exposes Washing per KG, Ironing per Piece, Dry Cleaning per Piece and pickup', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.showPage('laundryServices'));
+  await expect(page.locator('#laundryServiceLaunch')).toBeAttached();
+  await expect(page.locator('#laundryType')).toBeAttached();
+  await expect(page.locator('#laundryQty')).toBeAttached();
+  await expect(page.locator('#laundryUnit')).toBeAttached();
+  await expect(page.locator('#laundryDate')).toBeAttached();
+  await expect(page.locator('#laundryAddress')).toBeAttached();
+  await expect(page.locator('#laundryServiceLaunch')).toContainText('Pickup & Delivery');
+  await page.locator('#laundryType').selectOption('Washing');
+  await expect(page.locator('#laundryUnit')).toHaveValue('kg');
+  await expect(page.locator('#laundryUnit')).toBeDisabled();
+  await page.locator('#laundryType').selectOption('Ironing / Steam Iron');
+  await expect(page.locator('#laundryUnit')).toHaveValue('piece');
+  await page.locator('#laundryType').selectOption('Dry Cleaning');
+  await expect(page.locator('#laundryUnit')).toHaveValue('piece');
+  const functions = await page.evaluate(() => ({
+    submit: typeof window.frSubmitLaundryBooking,
+    myOrders: typeof window.frLoadMyLaundryBookings,
+    providerAction: typeof window.frLaundryProviderAction,
+    adminLoad: typeof window.frAdminLoadLaundry,
+    adminReview: typeof window.frAdminReviewLaundryApplication,
+    assignQuote: typeof window.frAdminAssignLaundry
+  }));
+  expect(functions).toEqual({
+    submit: 'function', myOrders: 'function', providerAction: 'function',
+    adminLoad: 'function', adminReview: 'function', assignQuote: 'function'
+  });
+});
+
+test('Laundry Partner registration uses the exact approved database category and Admin review controls', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.openServiceProviderRegister('Laundry Partner'));
+  await expect(page.locator('#serviceProviderRegister')).toHaveClass(/active/);
+  await expect(page.locator('#spCategory')).toHaveValue('Laundry Partner');
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain(".eq('service_category','Laundry Partner')");
+  expect(source).toContain("service_category:val('spCategory')");
+  expect(source).toContain("service_type:'laundry'");
+  expect(source).toContain('laundry_unit_price:unitPrice');
+});
+
