@@ -291,6 +291,12 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <button class="fr-poster fr-poster-safe" onclick="showPage('explore')">
   <span class="fr-poster-copy"><span class="fr-poster-kicker">ROAD SAFETY REMINDER</span><h3>ఫోన్ చూస్తూ డ్రైవ్ చేయవద్దు</h3><p>డ్రైవింగ్ సమయంలో మొబైల్ వాడకండి • మద్యం సేవించి వాహనం నడపకండి • అత్యవసర వాహనాలకు దారి ఇవ్వండి.</p><span class="fr-poster-cta">Safe Driving</span></span><span class="fr-poster-art">🚸</span>
  </button>
+ <button class="fr-poster fr-poster-home" onclick="requireLogin(()=>showPage('homeServices'))">
+  <span class="fr-poster-copy"><span class="fr-poster-kicker">TASKO / GIGGER</span><h3>రోజువారీ పనులకు సహాయకులు</h3><p>Verified Giggers • Flexible Hours • Admin Approved Booking.</p><span class="fr-poster-cta">Book a Gigger</span></span><span class="fr-poster-art">🧰</span>
+ </button>
+ <button class="fr-poster fr-poster-fast" onclick="requireLogin(()=>showPage('laundryServices'))">
+  <span class="fr-poster-copy"><span class="fr-poster-kicker">FRIEND RIDE LAUNDRY</span><h3>Wash • Iron • Dry Clean</h3><p>Per KG / Per Piece pricing with doorstep pickup & delivery.</p><span class="fr-poster-cta">Book Laundry Pickup</span></span><span class="fr-poster-art">🧺</span>
+ </button>
 </div>
 <div class="fr-poster-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 
@@ -317,6 +323,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <button class="home-pro-service" style="--svc-a:#d8f7d7;--svc-b:#69c981" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🧹</span><b>House Cleaning</b></button>
   <button class="home-pro-service" style="--svc-a:#ffd9e5;--svc-b:#f58aaa" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🖌️</span><b>Painting</b></button>
   <button class="home-pro-service" style="--svc-a:#d8c7ff;--svc-b:#7c3aed" onclick="requireLogin(()=>{showPage('homeServices');document.getElementById('taskoGiggerLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧰</span><b>TASKO / GIGGER</b><small>Daily Helper Booking</small></button>
+  <button class="home-pro-service" style="--svc-a:#c8f5ee;--svc-b:#159b86" onclick="requireLogin(()=>{showPage('laundryServices');document.getElementById('laundryServiceLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧺</span><b>LAUNDRY SERVICES</b><small>Wash • Iron • Dry Clean • Pickup</small></button>
  </div>
  <div class="home-pro-services">
   <button class="home-pro-service" style="--svc-a:#ffe7c2;--svc-b:#f59e0b" onclick="requireLogin(()=>openEventService('Catering Services'))"><span class="home-pro-art">🍽️</span><b>Catering Services</b></button>
@@ -378,10 +385,10 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <div class="card">
   <button class="btn light" style="width:auto" onclick="showPage('home')">← Back</button>
   <h2>FRIEND RIDE – Service Provider Registration</h2>
-  <p class="muted">Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
+  <p class="muted">TASKO / GIGGER, Laundry, Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
   <div class="field"><label>Service Category *</label>
    <select id="spCategory">
-    <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Home Services">Home Services</option>
+    <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Laundry Partner">Laundry Services</option><option value="Home Services">Home Services</option>
     <option value="Catering Services">Catering Services</option>
     <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
     <option value="Beauty Makeover">Beauty Makeover</option>
@@ -496,6 +503,32 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
   <button class="btn purple" onclick="openServiceProviderRegister('Home Services')">Register as Home Service Provider</button></div></section>
 
+<section id="laundryServices" class="page">
+ <div class="card" id="laundryServiceLaunch">
+  <button class="btn light" style="width:auto" onclick="showPage('home')">← Back to Home</button>
+  <div class="eyebrow" style="color:#159b86">FRIEND RIDE • LAUNDRY SERVICES</div>
+  <h2>🧺 Laundry – Pickup & Delivery</h2>
+  <p class="muted">మీ బట్టలను ఇంటి దగ్గర నుంచి తీసుకెళ్లి శుభ్రంగా ఉతికి, ఇస్త్రీ చేసి తిరిగి అందిస్తాం.</p>
+  <div class="grid">
+   <div class="tile">🫧<b>Washing</b><small>Per KG</small></div>
+   <div class="tile">👔<b>Ironing / Steam Iron</b><small>Per Piece</small></div>
+   <div class="tile">✨<b>Dry Cleaning</b><small>Per Piece</small></div>
+   <div class="tile">🛵<b>Pickup & Delivery</b><small>At your doorstep</small></div>
+  </div>
+  <div class="notice"><b>ధరలు:</b> ప్రతి Laundry Partner తన Per KG / Per Piece ధరను అందిస్తారు. బట్టల సంఖ్య / బరువు పరిశీలించిన తర్వాత Partner లేదా Admin final quote ఇస్తారు. మీ ఆమోదం లేకుండా ధర ఖరారు కాదు.</div>
+  <div class="field"><label>Service Type *</label><select id="laundryType"><option value="Washing">Washing – Per KG</option><option value="Ironing / Steam Iron">Ironing / Steam Iron – Per Piece</option><option value="Dry Cleaning">Dry Cleaning – Per Piece</option></select></div>
+  <div class="row"><div class="field"><label>Quantity *</label><input id="laundryQty" type="number" min="1" max="200" step="0.5" value="1"></div><div class="field"><label>Unit</label><select id="laundryUnit"><option value="kg">KG</option><option value="piece">Piece</option></select></div></div>
+  <div class="field"><label>Pickup Date *</label><input id="laundryDate" type="date"></div>
+  <div class="field"><label>Pickup Address *</label><textarea id="laundryAddress" placeholder="House / street / area / PIN code"></textarea></div>
+  <div class="field"><label>Special Instructions</label><textarea id="laundryNotes" maxlength="1000" placeholder="Fabric type, stains, delicate clothes, preferred delivery time…"></textarea></div>
+  <button class="btn purple" onclick="frSubmitLaundryBooking()">Book Laundry Pickup</button>
+  <div id="laundryBookingStatus" class="notice">Booking request Adminకు వెళ్తుంది. Approved Partner assignment మరియు price confirmation తర్వాత status చూపిస్తాం.</div>
+  <div class="card"><h3>My Laundry Orders</h3><button class="btn light" onclick="requireLogin(frLoadMyLaundryBookings)">Refresh My Orders</button><div id="laundryMyBookings"></div></div>
+  <hr><h3>Are you a Laundry Service Partner?</h3><p class="muted">Laundry shop / service providerగా చేరండి. మీ Per KG / Per Piece ధరలు మరియు service area నమోదు చేయండి. Admin approval తర్వాత మాత్రమే customer orders అందుతాయి.</p>
+  <button class="btn light" onclick="requireLogin(()=>openServiceProviderRegister('Laundry Partner'))">Register as Laundry Partner</button>
+  <div id="laundryAdminPanel" class="hide"><hr><h3>Admin – Laundry Control Centre</h3><button class="btn light" onclick="frAdminLoadLaundry()">Refresh Laundry Applications & Orders</button><div id="laundryAdminApplications"></div><div id="laundryAdminBookings"></div></div>
+ </div>
+</section>
 <section id="storeBrowse" class="page">
  <div class="card">
   <div class="market-heading"><h2>🏪 Friend Mart – Local Stores</h2><span class="pill">Shop by store</span></div>
@@ -876,7 +909,7 @@ async function reviewDriverApplication(driverId,decision){
   await loadDriverApprovals();
  }catch(e){const el=$('driverApprovalMessage');if(el)el.textContent='Approval update failed: '+e.message;alert('Driver approval update failed: '+e.message);}
 }
-function showPage(id){if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
+function showPage(id){if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}if(id==='laundryServices'&&currentProfile?.role==='admin'){const p=document.getElementById('laundryAdminPanel');if(p)p.classList.remove('hide');}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){
  const allowed=['customer','driver','partner','admin'];
@@ -4287,6 +4320,89 @@ document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();
     return results;
   };
 })();
+</script>
+<script id="fr-laundry-services-workflow">
+function frLaundryUnitSync(){
+ const type=document.getElementById('laundryType')?.value,unit=document.getElementById('laundryUnit');
+ if(unit){unit.value=type==='Washing'?'kg':'piece';unit.disabled=true;}
+}
+document.getElementById('laundryType')?.addEventListener('change',frLaundryUnitSync);
+function frLaundrySafe(v){return typeof safe==='function'?safe(v):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function frSubmitLaundryBooking(){
+ const box=document.getElementById('laundryBookingStatus');
+ try{
+  if(!currentUser||currentProfile?.role!=='customer')throw Error('Laundry booking కోసం Customer login అవసరం.');
+  const type=document.getElementById('laundryType').value,qty=Number(document.getElementById('laundryQty').value),unit=type==='Washing'?'kg':'piece';
+  const date=document.getElementById('laundryDate').value,address=document.getElementById('laundryAddress').value.trim(),notes=document.getElementById('laundryNotes').value.trim();
+  if(!Number.isFinite(qty)||qty<=0||qty>200||!date||address.length<8)throw Error('సరైన quantity, pickup date మరియు పూర్తి address నమోదు చేయండి.');
+  if(new Date(date+'T23:59:59')<new Date())throw Error('గత తేదీ ఎంచుకోకండి.');
+  const {data,error}=await sb.from('fr_service_bookings').insert({customer_id:currentUser.id,service_type:'laundry',category:type,subcategory:'Laundry Services',service_date:date,service_time:'10:00',pickup_address:address,notes:(notes||'No special instructions')+' | Quantity: '+qty+' '+unit,status:'pending',laundry_unit:unit,laundry_quantity:qty}).select('id').single();
+  if(error)throw error;
+  box.textContent='Laundry pickup request submitted. Booking ID: '+data.id+'. Admin approval / Partner assignment మరియు final price quote కోసం వేచి ఉండండి.';
+  await frLoadMyLaundryBookings();
+ }catch(e){box.textContent='Booking failed: '+(e.message||e);}
+}
+async function frLoadMyLaundryBookings(){
+ const box=document.getElementById('laundryMyBookings');if(!box)return;
+ if(!currentUser){box.textContent='Login అవసరం.';return;}
+ box.textContent='Laundry orders loading…';
+ try{
+  const {data:application,error:appError}=await sb.from('fr_service_provider_applications').select('id').eq('provider_id',currentUser.id).eq('service_category','Laundry Partner').eq('status','approved').limit(1).maybeSingle();
+  if(appError)throw appError;
+  const isProvider=!!application;
+  const base=sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,status,quoted_amount,laundry_unit,laundry_quantity,laundry_unit_price,pickup_address').eq('service_type','laundry').order('created_at',{ascending:false}).limit(50);
+  const {data,error}=await (isProvider?base.eq('assigned_provider_id',currentUser.id):base.eq('customer_id',currentUser.id));
+  if(error)throw error;
+  box.innerHTML=(data||[]).map(x=>{
+   const action=isProvider&&['assigned','accepted','in_progress'].includes(x.status)?'<div class="track-actions">'+(x.status==='assigned'?'<button onclick="frLaundryProviderAction(\''+x.id+'\',\'accept\')">Accept Pickup</button>':'')+(x.status==='accepted'?'<button onclick="frLaundryProviderAction(\''+x.id+'\',\'start\')">Start Service</button>':'')+(x.status==='in_progress'?'<button onclick="frLaundryProviderAction(\''+x.id+'\',\'complete\')">Complete Order</button>':'')+'</div>':'';
+   return '<article class="listrow"><div class="grow"><b>'+frLaundrySafe(x.category)+'</b><small>'+frLaundrySafe(x.laundry_quantity)+' '+frLaundrySafe(x.laundry_unit)+' • '+frLaundrySafe(x.service_date)+' • '+frLaundrySafe(x.status)+'</small><small>'+(x.quoted_amount?'Quote ₹'+Number(x.quoted_amount).toFixed(2):'Price quote pending')+(x.laundry_unit_price?' • ₹'+Number(x.laundry_unit_price).toFixed(2)+' / '+frLaundrySafe(x.laundry_unit):'')+'</small>'+action+'</div></article>';
+  }).join('')||'No Laundry orders / assigned work yet.';
+ }catch(e){box.textContent='Load failed: '+(e.message||e);}
+}
+async function frLaundryProviderAction(id,action){
+ try{if(!currentUser)throw Error('Login అవసరం.');
+ const {error}=await sb.rpc('fr_laundry_provider_transition',{p_booking_id:id,p_action:action});
+ if(error)throw error;await frLoadMyLaundryBookings();alert('Laundry order status updated: '+action);
+ }catch(e){alert('Laundry status update failed: '+(e.message||e));}
+}
+async function frAdminLoadLaundry(){
+ if(currentProfile?.role!=='admin'||selectedRole!=='admin')return alert('Admin access అవసరం.');
+ const apps=document.getElementById('laundryAdminApplications'),orders=document.getElementById('laundryAdminBookings');
+ if(apps)apps.textContent='Applications loading…';if(orders)orders.textContent='Orders loading…';
+ try{
+  const [a,b]=await Promise.all([
+   sb.from('fr_service_provider_applications').select('id,provider_id,full_name,phone,full_address,status,service_details').eq('service_category','Laundry Partner').order('created_at',{ascending:false}).limit(100),
+   sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,pickup_address,notes,status,quoted_amount,laundry_unit,laundry_quantity,laundry_unit_price').eq('service_type','laundry').order('created_at',{ascending:false}).limit(100)
+  ]);
+  if(a.error)throw a.error;if(b.error)throw b.error;
+  const approved=(a.data||[]).filter(x=>x.status==='approved');
+  if(apps)apps.innerHTML='<h3>Laundry Partner Applications</h3>'+((a.data||[]).map(x=>'<article class="listrow"><div class="grow"><b>'+frLaundrySafe(x.full_name)+'</b><small>'+frLaundrySafe(x.phone)+' • '+frLaundrySafe(x.full_address)+'</small><small>'+frLaundrySafe(x.service_details||'')+'</small><span class="pill">'+frLaundrySafe(x.status)+'</span></div>'+(x.status==='pending'||x.status==='under_review'?'<button class="btn light" onclick="frAdminReviewLaundryApplication(\''+x.id+'\',\'approved\')">Approve</button><button class="btn red" onclick="frAdminReviewLaundryApplication(\''+x.id+'\',\'rejected\')">Reject</button>':'')+'</article>').join('')||'No applications.');
+  if(orders)orders.innerHTML='<h3>Customer Laundry Requests</h3>'+((b.data||[]).map(x=>{
+   const opts='<option value="">Select approved Laundry Partner</option>'+approved.map(p=>'<option value="'+frLaundrySafe(p.provider_id)+'" '+(x.assigned_provider_id===p.provider_id?'selected':'')+'>'+frLaundrySafe(p.full_name)+' • '+frLaundrySafe(p.phone)+'</option>').join('');
+   const quote='<div class="field"><label>Partner</label><select id="laundryPartner_'+x.id+'">'+opts+'</select><label>Price per '+frLaundrySafe(x.laundry_unit)+'</label><input id="laundryUnitPrice_'+x.id+'" type="number" min="0" step="0.01" placeholder="Partner rate"></div><button class="btn light" onclick="frAdminAssignLaundry(\''+x.id+'\')">Assign Partner & Set Quote</button>';
+   return '<article class="card"><b>'+frLaundrySafe(x.category)+'</b><small>'+frLaundrySafe(x.laundry_quantity)+' '+frLaundrySafe(x.laundry_unit)+' • '+frLaundrySafe(x.service_date)+' • '+frLaundrySafe(x.status)+'</small><p>'+frLaundrySafe(x.pickup_address)+'</p><small>Booking '+frLaundrySafe(x.id.slice(0,8))+' • Quote '+(x.quoted_amount?'₹'+Number(x.quoted_amount).toFixed(2):'pending')+'</small>'+(['pending','assigned'].includes(x.status)?quote:'')+'</article>';
+  }).join('')||'No Laundry requests.');
+ }catch(e){if(apps)apps.textContent='Admin load failed: '+(e.message||e);}
+}
+async function frAdminReviewLaundryApplication(id,status){
+ try{if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+ const {error}=await sb.from('fr_service_provider_applications').update({status,reviewed_by:currentUser.id,reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id).eq('service_category','Laundry Services');
+ if(error)throw error;await frAdminLoadLaundry();
+ }catch(e){alert('Application update failed: '+(e.message||e));}
+}
+async function frAdminAssignLaundry(id){
+ try{
+  if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+  const provider=document.getElementById('laundryPartner_'+id)?.value,unitPrice=Number(document.getElementById('laundryUnitPrice_'+id)?.value);
+  if(!provider)throw Error('Approved Laundry Partner select చేయండి.');
+  if(!Number.isFinite(unitPrice)||unitPrice<=0)throw Error('Valid per-unit price నమోదు చేయండి.');
+  const {data,error}=await sb.from('fr_service_bookings').select('laundry_quantity').eq('id',id).eq('service_type','laundry').single();
+  if(error)throw error;
+  const total=Math.round(unitPrice*Number(data.laundry_quantity)*100)/100;
+  const {error:updateError}=await sb.from('fr_service_bookings').update({assigned_provider_id:provider,laundry_unit_price:unitPrice,quoted_amount:total,status:'assigned',updated_at:new Date().toISOString()}).eq('id',id).eq('service_type','laundry');
+  if(updateError)throw updateError;await frAdminLoadLaundry();
+ }catch(e){alert('Laundry assignment failed: '+(e.message||e));}
+}
 </script>
 </body>
 </html>
