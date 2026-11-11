@@ -272,7 +272,27 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <style id="fr-v8-notebook-updates">
 </style>
-</head>
+<style>
+.fr-service-promo-stack{display:grid;gap:12px;margin:4px 0 18px}
+.fr-service-promo{position:relative;display:block;width:100%;padding:0;border:0;border-radius:20px;overflow:hidden;background:#123e72;box-shadow:0 9px 22px #172b4526;text-align:left}
+.fr-service-promo img{display:block;width:100%;height:auto;aspect-ratio:16/7;object-fit:cover}
+.fr-service-promo .fr-promo-cta{position:absolute;right:12px;bottom:10px;background:#fff;color:#173f77;border-radius:22px;padding:7px 12px;font-size:11px;font-weight:950;box-shadow:0 3px 9px #0002}
+.fr-tasko-promo .fr-promo-cta{color:#087b54}
+.fr-service-page-hero{position:relative;overflow:hidden;border-radius:22px;padding:22px 18px;margin:0 0 14px;color:#fff;min-height:185px}
+.fr-service-page-hero h1{font-size:25px;line-height:1.25;max-width:80%;margin:12px 0 6px}
+.fr-service-page-hero p{max-width:78%;font-size:13px;margin:0;color:#f1f8ff}
+.fr-laundry-page-hero{background:radial-gradient(circle at 88% 22%,#83d8ff 0,transparent 30%),linear-gradient(120deg,#083c78,#148fd0)}
+.fr-tasko-page-hero{background:radial-gradient(circle at 88% 22%,#b1f6c6 0,transparent 30%),linear-gradient(120deg,#07583e,#0c9c70)}
+.fr-super-back{border:0;border-radius:12px;background:#ffffff25;color:#fff;padding:8px 12px;font-weight:800}
+.fr-super-kicker{display:block;margin-top:12px;font-size:10px;font-weight:900;letter-spacing:1px;color:#e8fff5}
+.fr-service-category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.fr-service-choice{border:1px solid #e4eaf0;border-radius:15px;padding:12px 8px;background:linear-gradient(145deg,#fff,#f4faff);text-align:center;color:#193b5c;min-height:116px}
+.fr-service-choice span{display:block;font-size:28px;margin-bottom:5px}.fr-service-choice b{display:block;font-size:12px}.fr-service-choice small{display:block;color:#718095;font-size:10px;margin-top:4px}
+.fr-helper-gender{display:grid;grid-template-columns:1fr;gap:8px}
+.fr-helper-gender label{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid #dfe9e2;border-radius:12px;background:#f8fcf9;font-weight:750}
+.fr-helper-gender input{width:18px;height:18px;accent-color:#13875b}
+@media(min-width:620px){.fr-service-promo-stack{grid-template-columns:1fr 1fr}.fr-service-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.fr-helper-gender{grid-template-columns:repeat(3,1fr)}}
+</style></head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
@@ -298,6 +318,16 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="fr-home-brand-row"><div><span class="fr-home-eyebrow">YOUR LOCAL SUPER APP</span><h1>FRIEND RIDE</h1><p>మీ ఊరి ప్రతి అవసరం… ఒకే యాప్‌లో!</p></div><button class="fr-home-profile" onclick="showPage('profile')" aria-label="My Profile">👤</button></div>
   <div class="fr-home-search"><span>⌕</span><input id="frHomeSearchInput" type="search" placeholder="Search rides, food, stores, services..." autocomplete="off" oninput="frHomeSearch(this.value)" onkeydown="if(event.key==='Enter')frHomeSearchGo()"><button onclick="frHomeSearchGo()">Search</button></div>
   <div id="frHomeSearchResults" class="fr-home-search-results" hidden></div>
+ </div>
+ <div class="fr-service-promo-stack" aria-label="Featured FRIEND RIDE services">
+  <button class="fr-service-promo fr-laundry-promo" onclick="requireLogin(()=>showPage('laundryService'))" aria-label="Laundry Services booking">
+   <img src="./assets/laundry-services-poster.svg" alt="ఫ్రెండ్ రైడ్ లాండ్రీ సేవల పోస్టర్">
+   <span class="fr-promo-cta">ఇప్పుడే బుక్ చేయండి ↗</span>
+  </button>
+  <button class="fr-service-promo fr-tasko-promo" onclick="requireLogin(()=>showPage('taskoServices'))" aria-label="TASKO / GIGGER Services booking">
+   <img src="./assets/tasko-quickmate-poster.svg" alt="ఫ్రెండ్ రైడ్ TASKO / GIGGER సేవల పోస్టర్">
+   <span class="fr-promo-cta">సహాయకుడిని బుక్ చేయండి ↗</span>
+  </button>
  </div>
  <div class="fr-home-section-head"><div><span class="fr-home-eyebrow dark">EXPLORE</span><h2>What do you need today?</h2></div><button onclick="showPage('explore')">All services ↗</button></div>
  <div class="fr-home-service-grid">
@@ -424,10 +454,11 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <div class="card">
   <button class="btn light" style="width:auto" onclick="showPage('home')">← Back</button>
   <h2>FRIEND RIDE – Service Provider Registration</h2>
-  <p class="muted">Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
+  <p class="muted">TASKO / GIGGER సహాయకులు, Laundry భాగస్వాములు మరియు ఇతర సేవా ప్రదాతల కోసం KYC దరఖాస్తు. ఇప్పటికే ఉన్న FRIEND RIDE ఖాతాతోనే నమోదు చేసుకోవచ్చు.</p>
   <div class="field"><label>Service Category *</label>
    <select id="spCategory">
-    <option value="Home Services">Home Services</option>
+    <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER Assistant</option>
+    <option value="Laundry Partner">Laundry Partner</option>\n    <option value="Home Services">Home Services</option>
     <option value="Catering Services">Catering Services</option>
     <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
     <option value="Beauty Makeover">Beauty Makeover</option>
@@ -435,15 +466,23 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   </div>
   <div class="field"><label>Owner / Provider Full Name *</label><input id="spName" placeholder="Enter full name"></div>
   <div class="field"><label>Mobile Number *</label><input id="spPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"></div>
+  <div class="field"><label>Provider Gender (TASKO helper matching)</label><select id="spGender"><option value="">Select (optional for non-TASKO)</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other / Prefer not to say</option></select></div>
   <div class="field"><label>Business / Service Name</label><input id="spBusinessName" placeholder="Business or service name"></div>
-  <div class="field"><label>Complete Address *</label><textarea id="spAddress" placeholder="House, street, village, mandal, district, PIN"></textarea></div>
+  <div class="field"><label>Complete Residential Address *</label><textarea id="spAddress" placeholder="House number, street, village/town, mandal, district, state, PIN"></textarea></div>
+  <div class="field"><label>Emergency Contact – Friend / Family Name *</label><input id="spEmergencyName" placeholder="Name of trusted emergency contact"></div>
+  <div class="field"><label>Emergency Contact Mobile *</label><input id="spEmergencyPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"></div>
+  <div class="field"><label>Reference Friend Name (Optional)</label><input id="spReferenceName" placeholder="Friend who can confirm your identity"></div>
+  <div class="field"><label>Reference Friend Mobile (Optional)</label><input id="spReferencePhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"></div>
+  <label class="tiny"><input id="spReferenceConsent" type="checkbox" style="width:auto"> I confirm that my reference friend has agreed to be contacted by FRIEND RIDE for verification if needed.</label>
   <div class="field"><label>Profile Photo / Passport-size Photo * Required</label><input id="spPhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="user"></div>
-  <div class="field"><label>Aadhaar Card Document * Required (JPG / PNG / PDF)</label><input id="spAadhaarFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"></div>
+  <div class="field"><label>Masked Aadhaar / Government ID Document * (JPG / PNG / PDF)</label><input id="spAadhaarFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"></div>
+  <div class="notice">భద్రత కోసం Aadhaar నంబర్‌లో మొదటి 8 అంకెలను తప్పనిసరిగా మాస్క్ చేసి (XXXX-XXXX-1234) ఉన్న పత్రాన్ని మాత్రమే అప్‌లోడ్ చేయండి. OTP, పూర్తి Aadhaar నంబర్ లేదా బ్యాంక్ వివరాలు ఇవ్వవద్దు.</div>
+  <label class="tiny"><input id="spMaskedIdConfirm" type="checkbox" style="width:auto"> I confirm the uploaded identity document has the Aadhaar number masked (if Aadhaar is used). *</label>
   <div class="field"><label>Work Experience (Years)</label><input id="spExperience" type="number" min="0" placeholder="Years of experience"></div>
   <div class="field"><label>Service Details / Skills</label><textarea id="spDetails" placeholder="Describe your services, equipment, menu, packages or skills"></textarea></div>
   <div class="field"><label>UPI ID / Payment Contact (Optional)</label><input id="spUPI" placeholder="name@upi"></div>
-  <label class="tiny"><input id="spTerms" type="checkbox" style="width:auto"> I agree to verification, Terms &amp; Privacy Policy *</label>
-  <div class="notice">Photo and Aadhaar document are for verification only. Keep documents in a private Supabase Storage bucket with restricted Admin access; do not make Aadhaar files public. Registration will remain Pending until Admin verification and approval.</div>
+  <label class="tiny"><input id="spTerms" type="checkbox" style="width:auto"> I consent to FRIEND RIDE verifying my identity and securely processing the submitted KYC documents for provider onboarding. *</label>
+  <div class="notice">Photo and masked ID document are stored in a private, access-controlled bucket. Only authorised verification admins may review them. Emergency and reference contacts are used only for safety / verification; reference contact details are collected only with that person’s permission. Registration remains Pending until Admin approval.</div>
   <button class="btn purple" onclick="validateServiceProviderRegistration()">Submit Provider Application</button>
   <div id="spRegStatus" class="notice">Application details will be checked before submission.</div>
  </div>
@@ -451,26 +490,64 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 
 <section id="laundryService" class="page">
- <div class="fr-super-hero laundry"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • LAUNDRY</span><h1>Fresh Clothes. More Time.</h1><p>మీ బట్టలు మీ ఇంటి దగ్గర నుంచే Pickup &amp; Delivery.</p><div class="fr-super-hero-icon">👕</div></div>
- <div class="fr-super-section"><h2>Choose Laundry Service</h2><p class="muted">మీకు కావాల్సిన సేవను ఎంచుకోండి.</p><div class="fr-super-options">
-  <button onclick="frLaundrySelect('Normal Wash')"><span>🫧</span><b>Normal Wash</b><small>Per KG</small></button>
-  <button onclick="frLaundrySelect('Wash & Iron')"><span>👔</span><b>Wash &amp; Iron</b><small>Per KG</small></button>
-  <button onclick="frLaundrySelect('Iron Only')"><span>♨️</span><b>Iron Only</b><small>Per Piece</small></button>
-  <button onclick="frLaundrySelect('Dry Cleaning')"><span>✨</span><b>Dry Cleaning</b><small>Per Piece</small></button>
-  <button onclick="frLaundrySelect('Blanket & Bedsheet')"><span>🛏️</span><b>Blanket &amp; Bedsheet</b><small>Per Piece</small></button>
-  <button onclick="frLaundrySelect('Shoe Cleaning')"><span>👟</span><b>Shoe Cleaning</b><small>Per Pair</small></button>
-  <button onclick="frLaundrySelect('Premium Laundry')"><span>🧺</span><b>Premium Laundry</b><small>Per KG / Piece</small></button>
-  <button onclick="frLaundrySelect('Express Laundry')"><span>⚡</span><b>Express Laundry</b><small>Priority Service</small></button>
- </div></div>
- <div class="card fr-super-booking"><h2>Schedule Pickup &amp; Delivery</h2>
-  <div class="field"><label>Selected Service</label><input id="frLaundrySelected" readonly placeholder="Choose a laundry service above"></div>
-  <div class="row"><div class="field"><label>Pickup Date</label><input id="frLaundryDate" type="date"></div><div class="field"><label>Pickup Time</label><input id="frLaundryTime" type="time"></div></div>
-  <div class="field"><label>Pickup Address</label><textarea id="frLaundryAddress" placeholder="Enter house number, street and area"></textarea></div>
-  <div class="field"><label>Special Instructions (Optional)</label><input id="frLaundryNotes" placeholder="E.g. separate white clothes"></div>
-  <div class="notice">Final price depends on partner shop rates and actual weight / item count. Partner availability and serviceable area will be confirmed before order acceptance.</div>
-  <button class="btn purple" onclick="frSuperServiceNotice('Laundry')">Find Laundry Partners</button>
- </div><div class="notice">Laundry UI preview. Live partner catalogue, order creation and pickup assignment require backend integration.</div>
+ <div class="fr-service-page-hero fr-laundry-page-hero"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • LAUNDRY SERVICES</span><h1>మీ దుస్తులకు నాణ్యమైన సంరక్షణ</h1><p>ఇంటి వద్ద పికప్ నుంచి శుభ్రమైన బట్టల డెలివరీ వరకు — ఒకే చోట బుకింగ్.</p></div>
+ <div class="card"><h2>లాండ్రీ సర్వీస్ ఎంచుకోండి</h2><p class="muted">మీ అవసరానికి సరిపోయే ఉతకడం, ఇస్త్రీ లేదా ప్రత్యేక సంరక్షణ సేవను ఎంచుకోండి.</p>
+  <div class="fr-service-category-grid">
+   <button class="fr-service-choice" onclick="frChooseLaundry('Regular Washing','వాషింగ్')"><span>🫧</span><b>Regular Washing</b><small>సాధారణ బట్టల వాషింగ్</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Wash & Iron','వాష్ & ఇస్త్రీ')"><span>👔</span><b>Wash & Iron</b><small>ఉతకడం + ఇస్త్రీ</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Dry Cleaning','డ్రై క్లీనింగ్')"><span>✨</span><b>Dry Cleaning</b><small>ప్రత్యేక బట్టల డ్రై క్లీనింగ్</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Iron Only','ఇస్త్రీ మాత్రమే')"><span>♨️</span><b>Iron Only</b><small>బట్టలకు ఇస్త్రీ</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Steam Press','స్టీమ్ ప్రెస్')"><span>💨</span><b>Steam Press</b><small>ఆవిరితో ప్రెస్</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Blanket & Bedsheet','బ్లాంకెట్ / బెడ్‌షీట్')"><span>🛏️</span><b>Blanket & Bedsheet</b><small>దుప్పట్లు, బెడ్‌షీట్లు</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Shoe & Bag Cleaning','షూ / బ్యాగ్ క్లీనింగ్')"><span>👟</span><b>Shoe & Bag Care</b><small>షూస్, బ్యాగుల శుభ్రత</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Premium Fabric Care','ప్రీమియం ఫ్యాబ్రిక్ కేర్')"><span>🧥</span><b>Premium Fabric Care</b><small>సున్నితమైన / ఖరీదైన బట్టలు</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Express Laundry','ఎక్స్‌ప్రెస్ లాండ్రీ')"><span>⚡</span><b>Express Laundry</b><small>అందుబాటును బట్టి వేగవంతమైన సేవ</small></button>
+  </div>
+ </div>
+ <div class="card"><h2>పికప్ & డెలివరీ వివరాలు</h2>
+  <div class="field"><label>ఎంచుకున్న సర్వీస్</label><input id="frLaundrySelected" readonly placeholder="పై కేటగిరీని ఎంచుకోండి"></div>
+  <div class="row"><div class="field"><label>పికప్ తేదీ</label><input id="frLaundryDate" type="date"></div><div class="field"><label>సమయం</label><input id="frLaundryTime" type="time"></div></div>
+  <div class="field"><label>పికప్ చిరునామా</label><textarea id="frLaundryAddress" placeholder="ఇంటి నంబర్, వీధి, ప్రాంతం"></textarea></div>
+  <div class="field"><label>బట్టల వివరాలు / ప్రత్యేక సూచనలు</label><textarea id="frLaundryNotes" placeholder="ఉదా: 5 షర్ట్లు, 2 ప్యాంట్లు; తెల్ల బట్టలు విడిగా ఉతకాలి"></textarea></div>
+  <div class="notice">ధర భాగస్వామి లాండ్రీ రేట్లు, బట్టల బరువు / సంఖ్య ఆధారంగా నిర్ధారించబడుతుంది. బుకింగ్‌ను భాగస్వామి అంగీకరించిన తర్వాతే కన్ఫర్మ్ అవుతుంది.</div>
+  <button class="btn purple" onclick="frSubmitServiceBooking('laundry')">పికప్ బుకింగ్ అభ్యర్థించండి</button>
+  <button class="btn light" onclick="requireLogin(()=>openServiceProviderRegister('Laundry Partner'))">లాండ్రీ భాగస్వామిగా నమోదు చేసుకోండి</button><p id="frLaundryStatus" class="notice" aria-live="polite">ధర, పికప్ సమయం భాగస్వామి నిర్ధారణ తర్వాత తెలియజేస్తాం.</p>
+ </div>
 </section>
+
+<section id="taskoServices" class="page">
+ <div class="fr-service-page-hero fr-tasko-page-hero"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • TASKO / GIGGER SERVICES</span><h1>మీ రోజువారీ పనులకు నమ్మకమైన తోడు</h1><p>ఆన్‌లైన్ ఫారమ్‌లు, ప్రభుత్వ సేవల దరఖాస్తులు, బిల్లుల సహాయం, కార్యాలయాలకు తోడుగా వెళ్లడం — మీ అవసరానికి తగిన సేవ ఒకేచోట.</p></div>
+ <div class="card"><h2>TASKO / GIGGER ఎందుకు?</h2><p>చదవడం, ఆన్‌లైన్‌లో అప్లై చేయడం కష్టంగా ఉన్నవారు, వృద్ధులు, దివ్యాంగులు లేదా సమయం లేని వారు ధృవీకరించిన సహాయకుడిని బుక్ చేసుకుని తమ పనులు సులభంగా పూర్తి చేసుకోవచ్చు. సహాయకుడు మీ తరఫున వివరాలు అర్థం చేసుకోవడం, ఫారమ్ నింపడంలో సహాయం, అపాయింట్‌మెంట్ బుకింగ్, కార్యాలయానికి తోడుగా రావడం వంటి సేవలు అందిస్తారు.</p><div class="notice">గమనిక: TASKO సహాయకులు మార్గదర్శనం, ఫారమ్ నింపడం, తోడుగా వెళ్లడం వంటి సహాయం మాత్రమే అందిస్తారు. ప్రభుత్వ అధికారి స్థానంలో వ్యవహరించరు; తప్పుడు పత్రాలు లేదా చట్టవిరుద్ధ పనులు చేయరు. OTP, PIN, పాస్‌వర్డ్ ఎవరికీ చెప్పవద్దు.</div></div>
+ <div class="card"><h2>మీకు కావాల్సిన సేవను ఎంచుకోండి</h2>
+  <div class="field"><label for="frTaskoCategory">సేవ కేటగిరీ</label><select id="frTaskoCategory" onchange="frTaskoCategoryChanged()">
+   <option value="">కేటగిరీ ఎంచుకోండి</option>
+   <option value="Government Forms & Applications">ప్రభుత్వ ఫారమ్‌లు / అప్లికేషన్లు</option>
+   <option value="Pension & Senior Citizen Support">పెన్షన్ / వృద్ధుల సహాయం</option>
+   <option value="Aadhaar / PAN Guidance">ఆధార్ / PAN సంబంధిత మార్గదర్శనం</option>
+   <option value="Bank Visit Assistance">బ్యాంక్‌కు తోడుగా వెళ్లడం</option>
+   <option value="Bill Payments & Recharges">బిల్లులు / రీఛార్జ్ సహాయం</option>
+   <option value="Hospital & Appointment Assistance">హాస్పిటల్ / అపాయింట్‌మెంట్ సహాయం</option>
+   <option value="Document Print / Scan / Xerox">ప్రింట్ / స్కాన్ / జిరాక్స్</option>
+   <option value="Office Visit Companion">ప్రభుత్వ / ఇతర కార్యాలయాలకు తోడుగా రావడం</option>
+   <option value="Online Form Filling">ఆన్‌లైన్ ఫారమ్ నింపడం</option>
+   <option value="Shopping / Errand Assistance">షాపింగ్ / రోజువారీ చిన్న పనులు</option>
+   <option value="Other Personal Assistance">ఇతర వ్యక్తిగత సహాయం</option>
+  </select></div>
+  <div class="field"><label for="frTaskoSubcategory">ఉప-సేవ</label><select id="frTaskoSubcategory"><option value="">ముందుగా కేటగిరీ ఎంచుకోండి</option></select></div>
+  <div class="field"><label>సహాయకుడి ఎంపిక</label><div class="fr-helper-gender"><label><input type="radio" name="frHelperGender" value="no_preference" checked> ఎవరైనా సరే</label><label><input type="radio" name="frHelperGender" value="female"> మహిళా సహాయకురాలు</label><label><input type="radio" name="frHelperGender" value="male"> పురుష సహాయకుడు</label></div><small class="muted">మీ ఎంపికకు సరిపోయే ధృవీకరించిన సహాయకుడు అందుబాటులో ఉంటేనే బుకింగ్ కేటాయించబడుతుంది.</small></div>
+  <div class="field"><label for="frTaskoDate">కావాల్సిన తేదీ</label><input id="frTaskoDate" type="date"></div>
+  <div class="field"><label for="frTaskoTime">కావాల్సిన సమయం</label><input id="frTaskoTime" type="time"></div>
+  <div class="field"><label for="frTaskoDuration">అంచనా పని సమయం</label><input id="frTaskoDuration" type="number" min="1" max="24" step="1" inputmode="numeric" placeholder="గంటల్లో నమోదు చేయండి (1–24)" oninput="frTaskoUpdateFee()"><p id="frTaskoFeePreview" class="notice" aria-live="polite">అంచనా TASKO ఛార్జీ ఇక్కడ కనిపిస్తుంది.</p><small class="muted">8 గంటల వరకు నిర్ణీత ధర. 8 గంటలు దాటిన తర్వాత ప్రతి అదనపు గంటకు ₹50. గంటలను పూర్తి సంఖ్యలో నమోదు చేయాలి; గరిష్ఠం 24 గంటలు.</small></div>
+  <div class="notice"><b>TASKO సేవా నియమాలు — బుకింగ్‌కు ముందు తప్పనిసరిగా చదవండి</b><ol><li>మీరు ఎంచుకున్న కేటగిరీ మరియు ఉప-సేవకు సంబంధించిన పనులనే సహాయకుడు చేయాలి.</li><li>ఎంచుకోని ఇతర పనులు చేయమని సహాయకుడిని అడగకూడదు. అదనపు పని కావాలంటే కొత్త సేవా అభ్యర్థన లేదా Admin అనుమతి అవసరం.</li><li>1–2 గంటలకు ₹150, 2–4 గంటలకు ₹250, 4–6 గంటలకు ₹350, 6–8 గంటలకు ₹400. 8 గంటలు దాటిన తర్వాత ప్రతి అదనపు గంటకు ₹50 అదనంగా చెల్లించాలి.</li><li>4 గంటలకు మించిన పని సమయంలో కస్టమర్ తాగునీరు అందించాలి. అందించలేని పరిస్థితిలో Admin‌కు కాల్ చేసి FRIEND RIDE ద్వారా వాటర్ బాటిల్ లేదా అవసరమైన సహాయాన్ని అభ్యర్థించవచ్చు. అందుబాటు/ధర ముందుగా నిర్ధారించబడుతుంది.</li><li>ప్రభుత్వ ఫీజులు, టికెట్లు, ప్రయాణం, వస్తువుల కొనుగోలు ఖర్చులు సేవా ఛార్జీలో కలవవు; ముందస్తు అనుమతి తప్పనిసరి.</li><li>OTP, UPI PIN, ATM PIN, పాస్‌వర్డ్ లేదా బ్యాంక్ రహస్య వివరాలు సహాయకుడికి ఇవ్వకూడదు.</li><li>సహాయకుడితో గౌరవంగా, సురక్షితంగా వ్యవహరించాలి. పని పరిధి లేదా భద్రతపై సమస్య ఉంటే వెంటనే Admin‌ను సంప్రదించాలి.</li></ol><label style="display:flex;gap:8px;align-items:flex-start"><input id="frTaskoTerms" type="checkbox" style="width:auto;margin-top:4px"> పై నియమాలు చదివి అంగీకరిస్తున్నాను. నేను ఎంచుకున్న సేవ మాత్రమే చేయించుకుంటాను.</label></div>
+  <div class="field"><label for="frTaskoAddress">సేవ అందించాల్సిన చిరునామా / కలవాల్సిన ప్రదేశం</label><textarea id="frTaskoAddress" placeholder="ఇంటి చిరునామా లేదా కార్యాలయం పేరు, ప్రాంతం"></textarea></div>
+  <div class="field"><label for="frTaskoNotes">మీ పని గురించి వివరించండి</label><textarea id="frTaskoNotes" placeholder="మీకు ఏ పని చేయించుకోవాలో సులభంగా వివరించండి"></textarea></div>
+  <div class="notice">ధృవీకరణ పూర్తైన TASKO సహాయకులకే బుకింగ్ కేటాయించాలి. ప్రభుత్వ ఫీజులు, ప్రయాణ ఖర్చులు, సేవా ఛార్జీలు వేరుగా ఉంటే ముందుగానే చూపించాలి.</div>
+  <button class="btn purple" onclick="frSubmitServiceBooking('tasko')">సహాయకుడిని బుక్ చేయండి</button>
+  <button class="btn light" onclick="requireLogin(()=>openServiceProviderRegister('TASKO / QUICKMATE Assistant'))">TASKO సహాయకుడిగా నమోదు చేసుకోండి</button><p id="frTaskoStatus" class="notice" aria-live="polite">మీ అభ్యర్థన నమోదు అయిన తర్వాత అందుబాటు, ఛార్జీలు నిర్ధారించబడతాయి.</p>
+ </div>
+ <div class="card"><h3>సేవా నాణ్యత & భద్రత</h3><p class="muted">సహాయకుల KYC, ఫోటో, మొబైల్ ధృవీకరణ, పోలీస్ వెరిఫికేషన్ విధానం, సేవా రేటింగ్, బుకింగ్ ట్రాకింగ్, ఫిర్యాదు సదుపాయం అమలు చేసిన తర్వాతే పూర్తి స్థాయి లాంచ్ చేయాలి.</p></div>
+</section>
+
 <section id="billPayments" class="page">
  <div class="fr-super-hero bills"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • PAYMENTS HUB</span><h1>Recharges &amp; All Bill Payments</h1><p>మీ రోజువారీ రీఛార్జ్‌లు, బిల్లులు ఒకేచోట.</p><div class="fr-super-hero-icon">💳</div></div>
  <div class="fr-super-section"><h2>Select a Payment Category</h2><div class="fr-super-options bills-grid">
@@ -638,7 +715,7 @@ async function frSuperServiceNotice(service){
   <button class="btn purple" onclick="showPage('marketCart')">🛒 View Cart & Checkout</button>
  </div>
 </section>
-<section id="shops" class="page"><div class="card"><h2>Local Stores</h2><div class="field"><label>Store Category</label><select id="shopCategory" onchange="loadApprovedStores()"><option value="all">All Approved Stores</option><option value="local_store">Grocery & Kirana</option><option value="medical">Medical</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery</option><option value="other">Other</option><option value="chicken_shop">Chicken Shop</option><option value="electrical_store">Electrical Store</option><option value="hardware_store">Hardware Shop</option><option value="home_appliances">Home Appliances</option></select></div><div class="field"><label>Delivery Address</label><textarea id="shopAddress" placeholder="Enter delivery address"></textarea></div><div class="field"><label>Select Store</label><select id="shopSelectedStore" onchange="if(this.value)openFriendStore(this.value)"><option value="">Loading approved stores…</option></select><small id="approvedStoreStatus" class="muted">Approved stores are loading from FRIEND RIDE.</small></div><div class="notice">ఇకపై వస్తువుల పేర్లు చేతితో టైప్ చేయాల్సిన అవసరం లేదు. షాప్ ఎంచుకున్న తర్వాత ఫోటోలు, పేర్లు, కేటగిరీలు ఉన్న Digital Catalogue ఓపెన్ అవుతుంది. కావాల్సిన వస్తువులను ఎంచుకుని Quantityతో Cartలో చేర్చండి.</div><button class="btn purple" type="button" onclick="if(document.getElementById('shopSelectedStore').value)openFriendStore(document.getElementById('shopSelectedStore').value);else alert('ముందుగా Approved Store ఎంచుకోండి.')">🛍️ Open Digital Catalogue</button><button class="btn light" type="button" onclick="showPage('storeBrowse')">Browse Stores & GPS</button></div></section>
+<section id="shops" class="page"><div class="card"><h2>Local Stores</h2><div class="field"><label>Store Category</label><select id="shopCategory" onchange="frHandleShopCategoryChange()"><option value="all">All Approved Stores</option><option value="tasko_service">TASKO / GIGGER Services</option><option value="laundry_service">Laundry Services</option><option value="local_store">Grocery & Kirana</option><option value="medical">Medical</option><option value="vegetables">Vegetables & Fruits</option><option value="bakery">Bakery & Sweets</option><option value="stationery">Stationery</option><option value="other">Other</option><option value="chicken_shop">Chicken Shop</option><option value="electrical_store">Electrical Store</option><option value="hardware_store">Hardware Shop</option><option value="home_appliances">Home Appliances</option></select></div><div class="field"><label>Delivery Address</label><textarea id="shopAddress" placeholder="Enter delivery address"></textarea></div><div class="field"><label>Select Store</label><select id="shopSelectedStore" onchange="if(this.value)openFriendStore(this.value)"><option value="">Loading approved stores…</option></select><small id="approvedStoreStatus" class="muted">Approved stores are loading from FRIEND RIDE.</small></div><div class="notice">ఇకపై వస్తువుల పేర్లు చేతితో టైప్ చేయాల్సిన అవసరం లేదు. షాప్ ఎంచుకున్న తర్వాత ఫోటోలు, పేర్లు, కేటగిరీలు ఉన్న Digital Catalogue ఓపెన్ అవుతుంది. కావాల్సిన వస్తువులను ఎంచుకుని Quantityతో Cartలో చేర్చండి.</div><button class="btn purple" type="button" onclick="if(document.getElementById('shopSelectedStore').value)openFriendStore(document.getElementById('shopSelectedStore').value);else alert('ముందుగా Approved Store ఎంచుకోండి.')">🛍️ Open Digital Catalogue</button><button class="btn light" type="button" onclick="showPage('storeBrowse')">Browse Stores & GPS</button></div></section>
 
 <section id="shopping" class="page"><div class="card"><h2>Shopping</h2><div class="field"><label>What do you need?</label><textarea id="shoppingItems" placeholder="List your items"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="shoppingAddress"></textarea></div><button class="btn purple" onclick="simpleRequest('Shopping request','shoppingAddress','shoppingItems')">Submit Shopping Request</button></div></section>
 
@@ -733,7 +810,13 @@ async function frSuperServiceNotice(service){
 <section id="subscription" class="page"><div class="card"><h2>Partner Subscription</h2><p class="muted">Choose a plan for your business.</p><div class="feature-grid"><div class="feature-box"><span class="tag">STARTER</span><h3>Basic</h3><div class="offer-price">₹299<small>/month</small></div><p class="tiny">Catalogue listing, basic order panel</p><button class="btn light" onclick="choosePlan('Basic',299)">Choose Basic</button></div><div class="feature-box"><span class="tag">POPULAR</span><h3>Growth</h3><div class="offer-price">₹599<small>/month</small></div><p class="tiny">Orders, offers, reports</p><button class="btn purple" onclick="choosePlan('Growth',599)">Choose Growth</button></div><div class="feature-box"><span class="tag">PRO</span><h3>Premium</h3><div class="offer-price">₹999<small>/month</small></div><p class="tiny">Advanced reports and promotions</p><button class="btn light" onclick="choosePlan('Premium',999)">Choose Premium</button></div></div><div id="subscriptionStatus" class="notice">No active subscription loaded.</div><div class="notice">Sample UI prices only. Live billing requires server-created Cashfree orders and payment verification.</div></div></section>
 <section id="referrals" class="page"><div class="card"><h2>Partner Referral Program</h2><div class="kpi-grid"><div class="kpi"><strong id="referralCode">FR-PARTNER</strong><span>Referral Code</span></div><div class="kpi"><strong>0</strong><span>Joined Partners</span></div><div class="kpi"><strong>₹0</strong><span>Rewards</span></div><div class="kpi"><strong>0</strong><span>Pending</span></div></div><button class="btn purple" onclick="sharePartnerReferral()">Share Referral</button><div class="notice">Reward eligibility and payouts require server-side validation.</div></div></section>
 <section id="partnerReports" class="page"><div class="card"><h2>Partner Reports</h2><div class="kpi-grid"><div class="kpi"><strong>₹0</strong><span>Gross Sales</span></div><div class="kpi"><strong>₹0</strong><span>Commission</span></div><div class="kpi"><strong>₹0</strong><span>Net Settlement</span></div><div class="kpi"><strong>0</strong><span>Completed Orders</span></div></div><div class="notice">Sales and settlement reports load from verified order/payment records after schema mapping.</div></div></section>
-<section id="adminDashboard" class="page"><div class="card hero"><div class="eyebrow">SUPER CONTROL PANEL</div><h1>Admin Dashboard</h1><p>Authorised platform administration</p></div><div class="stats"><div class="stat"><small>Total Users</small><b>—</b></div><div class="stat"><small>Drivers</small><b>—</b></div><div class="stat"><small>Partners</small><b>—</b></div><div class="stat"><small>Today Revenue</small><b>—</b></div></div><div class="card"><h3>Admin Controls</h3><div class="grid"><button class="tile" onclick="showPage('users')">👥<b>User Management</b></button><button class="tile" onclick="menuGo('crmDashboard')">📈<b>CRM Dashboard</b><small>Customers • Leads • Follow-ups • Insights</small></button><button class="tile" onclick="showPage('driverApprovals')">🛡️<b>Driver Approvals</b></button><button class="tile" onclick="showPage('driverDocumentReviews')">📄<b>Driver KYC Documents</b><small>Aadhaar • Licence • RC</small></button><button class="tile" onclick="showPage('partnerApprovals')">🏪<b>Partner Management</b></button><button class="tile" onclick="showPage('adminOrders')">🧾<b>All Orders</b></button><button class="tile" onclick="showPage('adminServiceRequests');frAdminLoadServiceRequests()">🧺<b>Laundry &amp; Bill Requests</b><small>Customer service enquiries</small></button><button class="tile" onclick="showPage('referralApprovals')">🎁<b>Referral Approvals</b></button><button class="tile" onclick="showPage('cashRewardApprovals')">💰<b>Customer Cash Reward Approvals</b></button><button class="tile" onclick="showPage('paymentApprovals')">💳<b>Payment Approvals</b></button><button class="tile" onclick="showPage('reports')">📊<b>Reports & Analytics</b></button><button class="tile" onclick="showPage('settings')">⚙️<b>System Settings</b></button></div></div><div class="card"><h3>APITXT SMS API Test</h3><div class="field"><label>Test Mobile Number</label><input id="adminApiTestPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><button class="btn purple" onclick="adminTestApitxtSms()">Send Test SMS OTP</button><div id="adminApiTestStatus" class="notice">Admin-only API connectivity test.</div></div><div class="notice">Admin access is verified against `admin_users`. Counts and management actions are not live until the corresponding tables and policies are mapped.</div></section>
+<section id="adminDashboard" class="page"><div class="card hero"><div class="eyebrow">SUPER CONTROL PANEL</div><h1>Admin Dashboard</h1><p>Authorised platform administration</p></div><div class="stats"><div class="stat"><small>Total Users</small><b>—</b></div><div class="stat"><small>Drivers</small><b>—</b></div><div class="stat"><small>Partners</small><b>—</b></div><div class="stat"><small>Today Revenue</small><b>—</b></div></div><div class="card"><h3>Admin Controls</h3><div class="grid"><button class="tile" onclick="showPage('users')">👥<b>User Management</b></button><button class="tile" onclick="menuGo('crmDashboard')">📈<b>CRM Dashboard</b><small>Customers • Leads • Follow-ups • Insights</small></button><button class="tile" onclick="showPage('driverApprovals')">🛡️<b>Driver Approvals</b></button><button class="tile" onclick="showPage('driverDocumentReviews')">📄<b>Driver KYC Documents</b><small>Aadhaar • Licence • RC</small></button><button class="tile" onclick="showPage('partnerApprovals')">🏪<b>Partner Management</b></button><button class="tile" onclick="showPage('adminOrders')">🧾<b>All Orders</b></button><button class="tile" onclick="showPage('adminServiceRequests');frAdminLoadServiceRequests()">🧺<b>Laundry &amp; Bill Requests</b><small>Customer service enquiries</small></button><button class="tile" onclick="showPage('adminTaskoLaundryBookings');frAdminLoadTaskoLaundryBookings()">🧺<b>TASKO &amp; Laundry Bookings</b><small>Assign approved partners • manage status</small></button><button class="tile" onclick="showPage('adminProviderKyc');frAdminLoadProviderKyc()">🪪<b>Service Provider KYC</b><small>TASKO • Laundry • verify documents & approve</small></button><button class="tile" onclick="showPage('referralApprovals')">🎁<b>Referral Approvals</b></button><button class="tile" onclick="showPage('cashRewardApprovals')">💰<b>Customer Cash Reward Approvals</b></button><button class="tile" onclick="showPage('paymentApprovals')">💳<b>Payment Approvals</b></button><button class="tile" onclick="showPage('reports')">📊<b>Reports & Analytics</b></button><button class="tile" onclick="showPage('settings')">⚙️<b>System Settings</b></button></div></div><div class="card"><h3>APITXT SMS API Test</h3><div class="field"><label>Test Mobile Number</label><input id="adminApiTestPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><button class="btn purple" onclick="adminTestApitxtSms()">Send Test SMS OTP</button><div id="adminApiTestStatus" class="notice">Admin-only API connectivity test.</div></div><div class="notice">Admin access is verified against `admin_users`. Counts and management actions are not live until the corresponding tables and policies are mapped.</div></section>
+<section id="adminTaskoLaundryBookings" class="page">
+ <div class="card"><h2>TASKO &amp; Laundry – Booking Management</h2><p class="muted">Customer booking requests. Assign only approved Partner accounts; confirm price and availability before acceptance.</p><button class="btn purple" onclick="frAdminLoadTaskoLaundryBookings()">↻ Refresh Bookings</button><div id="frAdminTaskoLaundryList" class="notice">Refresh to load bookings.</div></div>
+</section>
+<section id="adminProviderKyc" class="page">
+ <div class="card"><h2>Service Provider KYC Review</h2><p class="muted">TASKO / QUICKMATE, Laundry మరియు ఇతర service provider applications. KYC పత్రాలు Admin మాత్రమే తాత్కాలిక secure links ద్వారా చూడగలరు.</p><button class="btn purple" onclick="frAdminLoadProviderKyc()">↻ Refresh Applications</button><div id="frAdminProviderKycList" class="notice">Applications load చేయడానికి Refresh నొక్కండి.</div></div>
+</section>
 <section id="adminServiceRequests" class="page">
  <div class="card"><h2>Laundry &amp; Bill Payment Requests</h2><p class="muted">Customer requests submitted from Laundry and Recharges &amp; Bills screens.</p><button class="btn purple" onclick="frAdminLoadServiceRequests()">Refresh Requests</button><div id="frAdminServiceRequestsList" class="notice">Load requests to view current status.</div></div>
 </section>
@@ -1263,6 +1346,13 @@ sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser
 
 // FRIEND RIDE marketplace: show only Admin-approved Partner records from Supabase.
 let frApprovedStores=[];
+function frHandleShopCategoryChange(){
+ const select=document.getElementById('shopCategory');
+ const category=select?.value||'all';
+ if(category==='tasko_service'){select.value='all';requireLogin(()=>showPage('taskoServices'));return;}
+ if(category==='laundry_service'){select.value='all';requireLogin(()=>showPage('laundryService'));return;}
+ loadApprovedStores();
+}
 async function loadApprovedStores(){
  const status=$('approvedStoreStatus'),select=$('shopSelectedStore');
  if(status)status.textContent='Approved stores loading…';
@@ -2446,25 +2536,45 @@ function openServiceProviderRegister(category){
  if(el && category) el.value=category;
  showPage('serviceProviderRegister');
 }
-function validateServiceProviderRegistration(){
- const required=['spName','spPhone','spAddress'];
- if(required.some(id=>!document.getElementById(id)?.value.trim())){
-  alert('పేరు, మొబైల్ నంబర్ మరియు పూర్తి చిరునామా నమోదు చేయండి.');return;
+async function validateServiceProviderRegistration(){
+ const get=id=>document.getElementById(id)?.value?.trim()||'';
+ const phone=get('spPhone').replace(/\D/g,'');
+ const emergencyPhone=get('spEmergencyPhone').replace(/\D/g,'');
+ const referencePhone=get('spReferencePhone').replace(/\D/g,'');
+ const required=['spName','spPhone','spAddress','spEmergencyName','spEmergencyPhone'];
+ if(required.some(id=>!get(id))){alert('పేరు, మొబైల్, పూర్తి చిరునామా, అత్యవసర సంప్రదింపు పేరు మరియు నంబర్ నమోదు చేయండి.');return;}
+ if(phone.length!==10||emergencyPhone.length!==10){alert('సరైన 10 అంకెల మొబైల్ నంబర్లు ఇవ్వండి.');return;}
+ if(get('spReferenceName')||get('spReferencePhone')){
+  if(!get('spReferenceName')||referencePhone.length!==10||!document.getElementById('spReferenceConsent')?.checked){alert('రిఫరెన్స్ ఫ్రెండ్ వివరాలకు పేరు, సరైన నంబర్ మరియు వారి సమ్మతి తప్పనిసరి.');return;}
  }
- const phone=document.getElementById('spPhone').value.replace(/\D/g,'');
- if(phone.length!==10){alert('సరైన 10 digit mobile number ఇవ్వండి.');return;}
- const photo=document.getElementById('spPhoto').files[0];
- const aadhaar=document.getElementById('spAadhaarFile').files[0];
- if(!photo || !['image/jpeg','image/png','image/webp'].includes(photo.type) || photo.size>3*1024*1024){
-  alert('Passport-size photo JPG/PNG/WEBP formatలో 3 MB లోపు తప్పనిసరి.');return;
- }
- if(!aadhaar || !(['image/jpeg','image/png','image/webp','application/pdf'].includes(aadhaar.type)) || aadhaar.size>5*1024*1024){
-  alert('Aadhaar document JPG/PNG/WEBP/PDF formatలో 5 MB లోపు తప్పనిసరి.');return;
- }
- if(!document.getElementById('spTerms').checked){alert('Terms & Privacy Policy అంగీకరించండి.');return;}
+ const photo=document.getElementById('spPhoto')?.files?.[0];
+ const identity=document.getElementById('spAadhaarFile')?.files?.[0];
+ if(!photo||!['image/jpeg','image/png','image/webp'].includes(photo.type)||photo.size>3*1024*1024){alert('Passport-size photo JPG/PNG/WEBPలో 3 MB లోపు తప్పనిసరి.');return;}
+ if(!identity||!['image/jpeg','image/png','image/webp','application/pdf'].includes(identity.type)||identity.size>5*1024*1024){alert('Masked Aadhaar / Government ID JPG/PNG/WEBP/PDFలో 5 MB లోపు తప్పనిసరి.');return;}
+ if(!document.getElementById('spMaskedIdConfirm')?.checked){alert('దయచేసి Aadhaar నంబర్ మాస్క్ చేసిన పత్రాన్నే అప్‌లోడ్ చేశానని నిర్ధారించండి.');return;}
+ if(!document.getElementById('spTerms')?.checked){alert('KYC మరియు Privacy consent అంగీకరించండి.');return;}
+ if(!currentUser||!sb){alert('ముందుగా మీ FRIEND RIDE ఖాతాలో Login చేయండి.');return;}
  const status=document.getElementById('spRegStatus');
- status.textContent='Form validation complete. Secure document upload, database application save and Admin approval require the service-provider backend migration.';
- alert('Registration details validate అయ్యాయి. Backend integration తర్వాత application submit మరియు document upload పూర్తవుతాయి.');
+ const btn=document.querySelector('#serviceProviderRegister button[onclick*="validateServiceProviderRegistration"]');
+ if(btn)btn.disabled=true;
+ if(status)status.textContent='మీ KYC పత్రాలను భద్రంగా అప్‌లోడ్ చేస్తున్నాం…';
+ try{
+  const uid=currentUser.id;
+  const safeName=file=>String(file.name||'document').replace(/[^a-zA-Z0-9._-]/g,'_');
+  const photoPath=uid+'/'+crypto.randomUUID()+'-'+safeName(photo);
+  const idPath=uid+'/'+crypto.randomUUID()+'-'+safeName(identity);
+  const bucket='fr-provider-kyc';
+  const up1=await sb.storage.from(bucket).upload(photoPath,photo,{upsert:false,contentType:photo.type});
+  if(up1.error)throw up1.error;
+  const up2=await sb.storage.from(bucket).upload(idPath,identity,{upsert:false,contentType:identity.type});
+  if(up2.error){await sb.storage.from(bucket).remove([photoPath]);throw up2.error;}
+  const payload={provider_id:uid,service_category:get('spCategory'),full_name:get('spName'),phone,provider_gender:get('spGender')||null,business_name:get('spBusinessName')||null,full_address:get('spAddress'),profile_photo_path:photoPath,identity_document_path:idPath,identity_document_type:'masked_government_id',emergency_contact_name:get('spEmergencyName'),emergency_contact_phone:emergencyPhone,reference_friend_name:get('spReferenceName')||null,reference_friend_phone:referencePhone||null,reference_friend_consent:!!(get('spReferenceName')&&referencePhone.length===10&&document.getElementById('spReferenceConsent')?.checked),experience_years:get('spExperience')===''?null:Number(get('spExperience')),service_details:get('spDetails')||null,upi_id:get('spUPI')||null,status:'pending'};
+  const {error}=await sb.from('fr_service_provider_applications').insert(payload);
+  if(error){await sb.storage.from(bucket).remove([photoPath,idPath]);throw error;}
+  if(status)status.textContent='మీ దరఖాస్తు విజయవంతంగా సమర్పించబడింది. Admin KYC పరిశీలన పూర్తయ్యే వరకు Pendingలో ఉంటుంది. Application ID మీ ఖాతాకు అనుసంధానించబడింది.';
+  alert('Provider Registration సమర్పించబడింది. Admin ఆమోదం వచ్చిన తర్వాత మాత్రమే సేవలు అందించగలరు.');
+ }catch(e){console.error('Provider registration failed',e);if(status)status.textContent='దరఖాస్తు సమర్పించలేకపోయాం: '+(e.message||e)+'. Supabase migration మరియు private storage bucket అమలయ్యాయో తనిఖీ చేయండి.';}
+ finally{if(btn)btn.disabled=false;}
 }
 function frSelectBankService(name){
  const el=document.getElementById('bankServiceSelected');if(el)el.value=name;
@@ -2820,7 +2930,127 @@ function frAddPartnerCatalogueItem(index){
 })();
 </script>
 
-</body>
+<script id="fr-tasko-laundry-bookings">
+const frTaskoSubservices={
+ "Government Forms & Applications":["ఆదాయ / కుల / నివాస ధృవీకరణ పత్రాల అప్లికేషన్ సహాయం","ప్రభుత్వ పథకాల అప్లికేషన్","సర్టిఫికెట్ అప్లికేషన్ స్థితి తెలుసుకోవడం"],
+ "Pension & Senior Citizen Support":["పెన్షన్ అప్లికేషన్ సహాయం","లైఫ్ సర్టిఫికెట్ ప్రక్రియలో సహాయం","వృద్ధుల సంక్షేమ సేవల సమాచారం"],
+ "Aadhaar / PAN Guidance":["ఆధార్ అప్డేట్ అపాయింట్‌మెంట్ సహాయం","PAN అప్లికేషన్ / సవరణ సహాయం","డాక్యుమెంట్ చెక్‌లిస్ట్ సహాయం"],
+ "Bank Visit Assistance":["బ్యాంక్‌లో ఫారమ్ నింపడం","బ్యాంక్ అపాయింట్‌మెంట్ / క్యూ సహాయం","పాస్‌బుక్ / స్టేట్‌మెంట్ అభ్యర్థనలో సహాయం"],
+ "Bill Payments & Recharges":["విద్యుత్ / నీటి బిల్లు","మొబైల్ / DTH రీఛార్జ్","గ్యాస్ బుకింగ్ సహాయం"],
+ "Hospital & Appointment Assistance":["హాస్పిటల్ అపాయింట్‌మెంట్","రిజిస్ట్రేషన్ / క్యూ సహాయం","వృద్ధులకు హాస్పిటల్ తోడ్పాటు"],
+ "Document Print / Scan / Xerox":["డాక్యుమెంట్ ప్రింట్","స్కాన్ / ఇమెయిల్ పంపడం","జిరాక్స్ / ఫోటోకాపీ"],
+ "Office Visit Companion":["ప్రభుత్వ కార్యాలయానికి తోడుగా రావడం","ప్రైవేట్ కార్యాలయానికి తోడుగా రావడం","అపాయింట్‌మెంట్ వద్ద సహాయం"],
+ "Online Form Filling":["ఉద్యోగ / విద్య అప్లికేషన్","ఆన్‌లైన్ రిజిస్ట్రేషన్","డాక్యుమెంట్ అప్‌లోడ్ సహాయం"],
+ "Shopping / Errand Assistance":["మందులు / నిత్యావసరాలు తీసుకురావడం","పోస్టాఫీస్ / కొరియర్ పని","చిన్న రోజువారీ పనులు"],
+ "Other Personal Assistance":["వ్యక్తిగత పని","డాక్యుమెంట్ కలెక్షన్","ఇతర సహాయం"]
+};
+function frTaskoCategoryChanged(){
+ const cat=document.getElementById('frTaskoCategory')?.value,sub=document.getElementById('frTaskoSubcategory');if(!sub)return;
+ sub.innerHTML='<option value="">ఉప-సేవ ఎంచుకోండి</option>'+(frTaskoSubservices[cat]||[]).map(x=>'<option value="'+safe(x)+'">'+safe(x)+'</option>').join('');
+}
+function frChooseLaundry(value,label){const el=document.getElementById('frLaundrySelected');if(el)el.value=value;document.querySelectorAll('.fr-service-choice').forEach(b=>b.classList.toggle('active',b.textContent.includes(value)));}
+function frTaskoCalculateFee(hours){return hours<=2?150:hours<=4?250:hours<=6?350:400+Math.max(0,hours-8)*50;}
+function frTaskoUpdateFee(){
+ const el=document.getElementById('frTaskoDuration'),out=document.getElementById('frTaskoFeePreview');
+ const hours=Number(el?.value||0);
+ if(!out)return;
+ if(!Number.isInteger(hours)||hours<1||hours>24){out.textContent='1 నుంచి 24 గంటల మధ్య పూర్తి గంటలను నమోదు చేయండి.';return;}
+ out.textContent='ఎంచుకున్న '+hours+' గంటలకు అంచనా TASKO సేవా ఛార్జీ: ₹'+frTaskoCalculateFee(hours);
+}
+async function frSubmitServiceBooking(kind){
+ const isTasko=kind==='tasko',prefix=isTasko?'frTasko':'frLaundry',status=document.getElementById(isTasko?'frTaskoStatus':'frLaundryStatus');
+ const get=id=>document.getElementById(id)?.value?.trim()||'';
+ const category=isTasko?get('frTaskoCategory'):get('frLaundrySelected');
+ const subcategory=isTasko?get('frTaskoSubcategory'):'';
+ const address=get(isTasko?'frTaskoAddress':'frLaundryAddress');
+ const date=get(isTasko?'frTaskoDate':'frLaundryDate'),time=get(isTasko?'frTaskoTime':'frLaundryTime');
+ const duration=isTasko?Number(get('frTaskoDuration')||0):0;
+ const termsAccepted=isTasko?!!document.getElementById('frTaskoTerms')?.checked:false;
+ const notes=get(isTasko?'frTaskoNotes':'frLaundryNotes');
+ const gender=isTasko?(document.querySelector('input[name="frHelperGender"]:checked')?.value||'no_preference'):'not_applicable';
+ if(!currentUser){requireLogin(()=>frSubmitServiceBooking(kind));return;}
+ if(!category||!address||!date||!time){if(status)status.textContent='దయచేసి కేటగిరీ, తేదీ, సమయం మరియు చిరునామా నమోదు చేయండి.';return;}
+ if(isTasko&&!subcategory){if(status)status.textContent='దయచేసి ఉప-సేవను కూడా ఎంచుకోండి.';return;}
+ if(isTasko&&(!Number.isInteger(duration)||duration<1||duration>24||!termsAccepted)){if(status)status.textContent='పని సమయం ఎంచుకుని TASKO నియమాలను అంగీకరించండి.';return;}
+ if(status)status.textContent='మీ బుకింగ్ అభ్యర్థనను నమోదు చేస్తున్నాం…';
+ try{
+  const taskoFee=isTasko?frTaskoCalculateFee(duration):null;
+  const payload={customer_id:currentUser.id,service_type:kind,category,subcategory:subcategory||null,preferred_helper_gender:gender,service_date:date,service_time:time,pickup_address:address,notes:notes||null,status:'pending',...(isTasko?{service_duration_hours:duration,terms_accepted:true,quoted_amount:taskoFee}: {})};
+  const {error}=await sb.from('fr_service_bookings').insert(payload);
+  if(error)throw error;
+  if(status)status.textContent=isTasko?('మీ TASKO అభ్యర్థన నమోదైంది. అంచనా సేవా ఛార్జీ ₹'+taskoFee+'; సహాయకుడి అందుబాటు, తుది ఛార్జీ Admin నిర్ధారించిన తర్వాతే బుకింగ్ ఖరారు అవుతుంది.'):'మీ అభ్యర్థన విజయవంతంగా నమోదు అయింది. భాగస్వామి అందుబాటు, ఛార్జీలు నిర్ధారించిన తర్వాత మీకు సమాచారం అందుతుంది.';
+  if(isTasko){document.getElementById('frTaskoNotes').value='';}else{document.getElementById('frLaundryNotes').value='';}
+ }catch(err){console.error('FR service booking failed',err);if(status)status.textContent='బుకింగ్ నమోదు కాలేదు. Backend SQL migration అమలు అయిందో, ఇంటర్నెట్ కనెక్షన్ ఉందో తనిఖీ చేయండి. '+(err?.message||'');}
+}
+
+// TASKO / Laundry admin operations. Access is verified against admin_users.
+async function frAdminLoadTaskoLaundryBookings(){
+ const box=document.getElementById('frAdminTaskoLaundryList');if(!box)return;box.textContent='Loading bookings…';
+ try{
+  if(!currentUser)throw Error('Admin login అవసరం.');
+  const {data:admin,error:adminErr}=await sb.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+  if(adminErr)throw adminErr;if(!admin)throw Error('Admin access మాత్రమే.');
+  const [{data:rows,error},{data:providers,error:providerErr}]=await Promise.all([
+   sb.from('fr_service_bookings').select('id,customer_id,service_type,category,subcategory,preferred_helper_gender,service_date,service_time,pickup_address,notes,status,assigned_provider_id,quoted_amount,created_at').order('created_at',{ascending:false}).limit(150),
+   sb.from('fr_service_provider_applications').select('provider_id,full_name,phone,service_category,provider_gender,status').eq('status','approved').order('full_name')
+  ]);
+  if(error)throw error;if(providerErr)throw providerErr;
+  if(!rows?.length){box.textContent='ఇంకా TASKO / Laundry bookings లేవు.';return;}
+  const providerOptionsFor=r=>'<option value="">— Approved Service Provider ఎంచుకోండి —</option>'+(providers||[]).filter(p=>(r.service_type==='tasko'?p.service_category==='TASKO / QUICKMATE Assistant':p.service_category==='Laundry Partner')&&(r.service_type!=='tasko'||r.preferred_helper_gender==='no_preference'||r.preferred_helper_gender==='not_applicable'||p.provider_gender===r.preferred_helper_gender)).map(p=>'<option value="'+frEscapeHtml(p.provider_id)+'">'+frEscapeHtml(p.full_name||p.phone||p.provider_id)+'</option>').join('');
+  box.innerHTML=rows.map(r=>{
+   const selected=(providers||[]).some(p=>p.provider_id===r.assigned_provider_id)?r.assigned_provider_id:'';
+   return '<article class="card" style="margin:10px 0"><b>'+frEscapeHtml(r.service_type.toUpperCase())+' • '+frEscapeHtml(r.category)+'</b><p>'+frEscapeHtml(r.subcategory||'')+'<br><small>'+frEscapeHtml(r.service_date)+' • '+frEscapeHtml(r.service_time)+' • Helper: '+frEscapeHtml(r.preferred_helper_gender)+'</small></p><p><b>Address:</b> '+frEscapeHtml(r.pickup_address)+'<br><b>Notes:</b> '+frEscapeHtml(r.notes||'—')+'<br><b>Customer ID:</b> '+frEscapeHtml(r.customer_id)+'</p><div class="field"><label>Approved Partner Assignment</label><select id="frSvcProvider_'+frEscapeHtml(r.id)+'">'+providerOptionsFor(r)+'</select></div><div class="field"><label>Quoted amount (₹)</label><input id="frSvcQuote_'+frEscapeHtml(r.id)+'" type="number" min="0" step="0.01" value="'+(r.quoted_amount==null?'':Number(r.quoted_amount))+'" placeholder="Enter confirmed quote"></div><div class="field"><label>Booking status</label><select id="frSvcStatus_'+frEscapeHtml(r.id)+'"><option value="pending">Pending</option><option value="accepted">Accepted</option><option value="assigned">Assigned</option><option value="in_progress">In Progress</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option><option value="rejected">Rejected</option></select></div><button class="btn purple" onclick="frAdminSaveTaskoLaundryBooking(\''+frEscapeHtml(r.id)+'\')">Save Assignment &amp; Status</button><small class="muted">Created: '+frEscapeHtml(r.created_at)+'</small></article>';
+  }).join('');
+  rows.forEach(r=>{const p=document.getElementById('frSvcProvider_'+r.id);const st=document.getElementById('frSvcStatus_'+r.id);if(p)p.value=(providers||[]).some(x=>x.provider_id===r.assigned_provider_id)?r.assigned_provider_id:'';if(st)st.value=r.status;});
+ }catch(e){box.textContent='Bookings load కాలేదు: '+(e.message||e);}
+}
+
+async function frAdminLoadProviderKyc(){
+ const box=document.getElementById('frAdminProviderKycList');if(!box)return;box.textContent='KYC applications loading…';
+ try{
+  if(!currentUser)throw Error('Admin login అవసరం.');
+  const {data:admin,error:ae}=await sb.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+  if(ae)throw ae;if(!admin)throw Error('Admin access మాత్రమే.');
+  const {data:rows,error}=await sb.from('fr_service_provider_applications').select('id,provider_id,service_category,full_name,phone,business_name,full_address,profile_photo_path,identity_document_path,emergency_contact_name,emergency_contact_phone,reference_friend_name,reference_friend_phone,reference_friend_consent,experience_years,service_details,status,created_at').order('created_at',{ascending:false}).limit(100);
+  if(error)throw error;if(!rows?.length){box.textContent='ఇంకా provider applications లేవు.';return;}
+  box.innerHTML=rows.map(r=>'<article class="card"><b>'+frEscapeHtml(r.full_name)+' • '+frEscapeHtml(r.service_category)+'</b><p>Phone: '+frEscapeHtml(r.phone)+'<br>Business: '+frEscapeHtml(r.business_name||'—')+'<br>Address: '+frEscapeHtml(r.full_address)+'<br>Emergency: '+frEscapeHtml(r.emergency_contact_name)+' / '+frEscapeHtml(r.emergency_contact_phone)+'<br>Reference: '+frEscapeHtml(r.reference_friend_name||'Not provided')+' / '+frEscapeHtml(r.reference_friend_phone||'—')+'<br>Experience: '+frEscapeHtml(r.experience_years??'—')+' years<br>Skills: '+frEscapeHtml(r.service_details||'—')+'<br>Status: <b>'+frEscapeHtml(r.status)+'</b></p><div id="frKycDocs_'+frEscapeHtml(r.id)+'" class="notice">Secure documents loading…</div><div class="field"><label>Admin review note</label><input id="frKycNote_'+frEscapeHtml(r.id)+'" placeholder="Optional review note"></div><div class="row"><button class="btn green" onclick="frAdminReviewProviderKyc(\''+frEscapeHtml(r.id)+'\',\'approved\')">Approve</button><button class="btn red" onclick="frAdminReviewProviderKyc(\''+frEscapeHtml(r.id)+'\',\'rejected\')">Reject</button></div></article>').join('');
+  for(const r of rows){
+   const [photo,idDoc]=await Promise.all([sb.storage.from('fr-provider-kyc').createSignedUrl(r.profile_photo_path,300),sb.storage.from('fr-provider-kyc').createSignedUrl(r.identity_document_path,300)]);
+   const el=document.getElementById('frKycDocs_'+r.id);
+   if(el)el.innerHTML=(photo.data?.signedUrl?'<a target="_blank" rel="noopener" href="'+frEscapeHtml(photo.data.signedUrl)+'">View Profile Photo</a>':'Photo link unavailable')+' • '+(idDoc.data?.signedUrl?'<a target="_blank" rel="noopener" href="'+frEscapeHtml(idDoc.data.signedUrl)+'">View Masked ID Document</a>':'ID document link unavailable')+'<br><small>Links expire in 5 minutes.</small>';
+  }
+ }catch(e){box.textContent='KYC load కాలేదు: '+(e.message||e);}
+}
+async function frAdminReviewProviderKyc(id,status){
+ try{
+  if(!currentUser)throw Error('Admin login అవసరం.');
+  const {data:admin,error:ae}=await sb.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+  if(ae)throw ae;if(!admin)throw Error('Admin access మాత్రమే.');
+  const note=document.getElementById('frKycNote_'+id)?.value?.trim()||null;
+  const {error}=await sb.from('fr_service_provider_applications').update({status,admin_notes:note,reviewed_by:currentUser.id,reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);
+  if(error)throw error;
+  alert('KYC application '+status+'.');await frAdminLoadProviderKyc();
+ }catch(e){alert('KYC review కాలేదు: '+(e.message||e));}
+}
+async function frAdminSaveTaskoLaundryBooking(id){
+ try{
+  if(!currentUser)throw Error('Admin login అవసరం.');
+  const {data:admin,error:adminErr}=await sb.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+  if(adminErr)throw adminErr;if(!admin)throw Error('Admin access మాత్రమే.');
+  const provider=document.getElementById('frSvcProvider_'+id)?.value||null;
+  const rawQuote=document.getElementById('frSvcQuote_'+id)?.value;
+  const quote=rawQuote===''?null:Number(rawQuote);
+  const status=document.getElementById('frSvcStatus_'+id)?.value;
+  if(rawQuote!==''&&(!Number.isFinite(quote)||quote<0))throw Error('Valid quote amount ఇవ్వండి.');
+  if(status==='assigned'&&!provider)throw Error('Assigned status కోసం approved partner ఎంచుకోండి.');
+  if(provider&&status==='pending')throw Error('Partner assign చేస్తే status ను Assigned గా మార్చండి.');
+  const patch={assigned_provider_id:provider,quoted_amount:quote,status,updated_at:new Date().toISOString()};
+  const {error}=await sb.from('fr_service_bookings').update(patch).eq('id',id);
+  if(error)throw error;
+  alert('Booking update అయింది.');await frAdminLoadTaskoLaundryBookings();
+ }catch(e){alert('Booking update కాలేదు: '+(e.message||e));}
+}
+</script></body>
 </html>
 <style>
 @media(hover:hover){.tile:hover{transform:translateY(-2px);box-shadow:0 10px 22px #32105e16;border-color:#d7c4f0}.btn:hover{filter:brightness(1.025)}}

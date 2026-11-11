@@ -1,0 +1,60 @@
+name: TASKO and Laundry Regression
+on:
+  push:
+    branches:
+      - feature/tasko-laundry-services
+  pull_request:
+    branches:
+      - yf-test-1-to-15
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check inline JavaScript syntax
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const html = fs.readFileSync('index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+          let checked = 0;
+          for (let i = 0; i < scripts.length; i++) {
+            const attrs = scripts[i][1] || '';
+            const body = scripts[i][2] || '';
+            if (/\bsrc\s*=/.test(attrs) || !body.trim()) continue;
+            try { new vm.Script(body, { filename: `inline-script-${i + 1}.js` }); checked++; }
+            catch (e) { console.error(e.stack); process.exitCode = 1; }
+          }
+          console.log(`Parsed ${checked} inline JavaScript blocks.`);
+          if (!checked) process.exit(1);
+          NODE
+      - name: Check service and KYC integration hooks
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const html = fs.readFileSync('index.html', 'utf8');
+          const sql = fs.readFileSync('sql/fr-tasko-laundry-bookings.sql', 'utf8');
+          const kyc = fs.readFileSync('sql/fr-provider-kyc-onboarding.sql', 'utf8');
+          const checks = {
+            'Laundry customer booking': html.includes("frSubmitServiceBooking('laundry')"),
+            'TASKO customer booking': html.includes("frSubmitServiceBooking('tasko')"),
+            'Existing authenticated customer flow': html.includes('if(!currentUser){requireLogin(()=>frSubmitServiceBooking(kind));return;}'),
+            'Provider KYC submission': html.includes("from('fr_service_provider_applications').insert(payload)"),
+            'Private KYC storage': html.includes("bucket='fr-provider-kyc'"),
+            'TASKO/Laundry booking table migration': sql.includes('create table if not exists public.fr_service_bookings'),
+            'Provider KYC table migration': kyc.includes('create table if not exists public.fr_service_provider_applications'),
+            'KYC private bucket policy': kyc.includes("values ('fr-provider-kyc','fr-provider-kyc',false"),
+            'Admin KYC review screen': html.includes('id="adminProviderKyc"') && html.includes('frAdminReviewProviderKyc'),
+            'Approved TASKO/Laundry provider assignment': html.includes('providerOptionsFor(r)') && html.includes("p.provider_gender===r.preferred_helper_gender"),
+            'Masked ID confirmation': html.includes('spMaskedIdConfirm')
+          };
+          for (const [name, ok] of Object.entries(checks)) console.log(`${ok ? 'PASS' : 'FAIL'} ${name}`);
+          if (Object.values(checks).some(x => !x)) process.exit(1);
+          NODE
