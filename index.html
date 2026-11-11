@@ -272,7 +272,27 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <style id="fr-v8-notebook-updates">
 </style>
-</head>
+<style>
+.fr-service-promo-stack{display:grid;gap:12px;margin:4px 0 18px}
+.fr-service-promo{position:relative;display:block;width:100%;padding:0;border:0;border-radius:20px;overflow:hidden;background:#123e72;box-shadow:0 9px 22px #172b4526;text-align:left}
+.fr-service-promo img{display:block;width:100%;height:auto;aspect-ratio:16/7;object-fit:cover}
+.fr-service-promo .fr-promo-cta{position:absolute;right:12px;bottom:10px;background:#fff;color:#173f77;border-radius:22px;padding:7px 12px;font-size:11px;font-weight:950;box-shadow:0 3px 9px #0002}
+.fr-tasko-promo .fr-promo-cta{color:#087b54}
+.fr-service-page-hero{position:relative;overflow:hidden;border-radius:22px;padding:22px 18px;margin:0 0 14px;color:#fff;min-height:185px}
+.fr-service-page-hero h1{font-size:25px;line-height:1.25;max-width:80%;margin:12px 0 6px}
+.fr-service-page-hero p{max-width:78%;font-size:13px;margin:0;color:#f1f8ff}
+.fr-laundry-page-hero{background:radial-gradient(circle at 88% 22%,#83d8ff 0,transparent 30%),linear-gradient(120deg,#083c78,#148fd0)}
+.fr-tasko-page-hero{background:radial-gradient(circle at 88% 22%,#b1f6c6 0,transparent 30%),linear-gradient(120deg,#07583e,#0c9c70)}
+.fr-super-back{border:0;border-radius:12px;background:#ffffff25;color:#fff;padding:8px 12px;font-weight:800}
+.fr-super-kicker{display:block;margin-top:12px;font-size:10px;font-weight:900;letter-spacing:1px;color:#e8fff5}
+.fr-service-category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.fr-service-choice{border:1px solid #e4eaf0;border-radius:15px;padding:12px 8px;background:linear-gradient(145deg,#fff,#f4faff);text-align:center;color:#193b5c;min-height:116px}
+.fr-service-choice span{display:block;font-size:28px;margin-bottom:5px}.fr-service-choice b{display:block;font-size:12px}.fr-service-choice small{display:block;color:#718095;font-size:10px;margin-top:4px}
+.fr-helper-gender{display:grid;grid-template-columns:1fr;gap:8px}
+.fr-helper-gender label{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid #dfe9e2;border-radius:12px;background:#f8fcf9;font-weight:750}
+.fr-helper-gender input{width:18px;height:18px;accent-color:#13875b}
+@media(min-width:620px){.fr-service-promo-stack{grid-template-columns:1fr 1fr}.fr-service-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.fr-helper-gender{grid-template-columns:repeat(3,1fr)}}
+</style></head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
@@ -298,6 +318,16 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="fr-home-brand-row"><div><span class="fr-home-eyebrow">YOUR LOCAL SUPER APP</span><h1>FRIEND RIDE</h1><p>మీ ఊరి ప్రతి అవసరం… ఒకే యాప్‌లో!</p></div><button class="fr-home-profile" onclick="showPage('profile')" aria-label="My Profile">👤</button></div>
   <div class="fr-home-search"><span>⌕</span><input id="frHomeSearchInput" type="search" placeholder="Search rides, food, stores, services..." autocomplete="off" oninput="frHomeSearch(this.value)" onkeydown="if(event.key==='Enter')frHomeSearchGo()"><button onclick="frHomeSearchGo()">Search</button></div>
   <div id="frHomeSearchResults" class="fr-home-search-results" hidden></div>
+ </div>
+ <div class="fr-service-promo-stack" aria-label="Featured FRIEND RIDE services">
+  <button class="fr-service-promo fr-laundry-promo" onclick="requireLogin(()=>showPage('laundryService'))" aria-label="Laundry Services booking">
+   <img src="./assets/laundry-services-poster.svg" alt="FRIEND RIDE Laundry Services poster">
+   <span class="fr-promo-cta">ఇప్పుడే బుక్ చేయండి ↗</span>
+  </button>
+  <button class="fr-service-promo fr-tasko-promo" onclick="requireLogin(()=>showPage('taskoServices'))" aria-label="TASKO QUICKMATE Services booking">
+   <img src="./assets/tasko-quickmate-poster.svg" alt="FRIEND RIDE TASKO QUICKMATE Services poster">
+   <span class="fr-promo-cta">సహాయకుడిని బుక్ చేయండి ↗</span>
+  </button>
  </div>
  <div class="fr-home-section-head"><div><span class="fr-home-eyebrow dark">EXPLORE</span><h2>What do you need today?</h2></div><button onclick="showPage('explore')">All services ↗</button></div>
  <div class="fr-home-service-grid">
@@ -451,26 +481,60 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 
 <section id="laundryService" class="page">
- <div class="fr-super-hero laundry"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • LAUNDRY</span><h1>Fresh Clothes. More Time.</h1><p>మీ బట్టలు మీ ఇంటి దగ్గర నుంచే Pickup &amp; Delivery.</p><div class="fr-super-hero-icon">👕</div></div>
- <div class="fr-super-section"><h2>Choose Laundry Service</h2><p class="muted">మీకు కావాల్సిన సేవను ఎంచుకోండి.</p><div class="fr-super-options">
-  <button onclick="frLaundrySelect('Normal Wash')"><span>🫧</span><b>Normal Wash</b><small>Per KG</small></button>
-  <button onclick="frLaundrySelect('Wash & Iron')"><span>👔</span><b>Wash &amp; Iron</b><small>Per KG</small></button>
-  <button onclick="frLaundrySelect('Iron Only')"><span>♨️</span><b>Iron Only</b><small>Per Piece</small></button>
-  <button onclick="frLaundrySelect('Dry Cleaning')"><span>✨</span><b>Dry Cleaning</b><small>Per Piece</small></button>
-  <button onclick="frLaundrySelect('Blanket & Bedsheet')"><span>🛏️</span><b>Blanket &amp; Bedsheet</b><small>Per Piece</small></button>
-  <button onclick="frLaundrySelect('Shoe Cleaning')"><span>👟</span><b>Shoe Cleaning</b><small>Per Pair</small></button>
-  <button onclick="frLaundrySelect('Premium Laundry')"><span>🧺</span><b>Premium Laundry</b><small>Per KG / Piece</small></button>
-  <button onclick="frLaundrySelect('Express Laundry')"><span>⚡</span><b>Express Laundry</b><small>Priority Service</small></button>
- </div></div>
- <div class="card fr-super-booking"><h2>Schedule Pickup &amp; Delivery</h2>
-  <div class="field"><label>Selected Service</label><input id="frLaundrySelected" readonly placeholder="Choose a laundry service above"></div>
-  <div class="row"><div class="field"><label>Pickup Date</label><input id="frLaundryDate" type="date"></div><div class="field"><label>Pickup Time</label><input id="frLaundryTime" type="time"></div></div>
-  <div class="field"><label>Pickup Address</label><textarea id="frLaundryAddress" placeholder="Enter house number, street and area"></textarea></div>
-  <div class="field"><label>Special Instructions (Optional)</label><input id="frLaundryNotes" placeholder="E.g. separate white clothes"></div>
-  <div class="notice">Final price depends on partner shop rates and actual weight / item count. Partner availability and serviceable area will be confirmed before order acceptance.</div>
-  <button class="btn purple" onclick="frSuperServiceNotice('Laundry')">Find Laundry Partners</button>
- </div><div class="notice">Laundry UI preview. Live partner catalogue, order creation and pickup assignment require backend integration.</div>
+ <div class="fr-service-page-hero fr-laundry-page-hero"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • LAUNDRY SERVICES</span><h1>మీ బట్టలకు పూర్తి సంరక్షణ</h1><p>ఇంటి వద్ద పికప్ నుంచి శుభ్రమైన బట్టల డెలివరీ వరకు — ఒకే చోట బుకింగ్.</p></div>
+ <div class="card"><h2>లాండ్రీ సర్వీస్ ఎంచుకోండి</h2><p class="muted">మీ అవసరానికి సరిపోయే వాషింగ్ లేదా కేర్ సర్వీస్‌ను ఎంచుకోండి.</p>
+  <div class="fr-service-category-grid">
+   <button class="fr-service-choice" onclick="frChooseLaundry('Regular Washing','వాషింగ్')"><span>🫧</span><b>Regular Washing</b><small>సాధారణ బట్టల వాషింగ్</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Wash & Iron','వాష్ & ఇస్త్రీ')"><span>👔</span><b>Wash & Iron</b><small>ఉతకడం + ఇస్త్రీ</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Dry Cleaning','డ్రై క్లీనింగ్')"><span>✨</span><b>Dry Cleaning</b><small>ప్రత్యేక బట్టల డ్రై క్లీనింగ్</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Iron Only','ఇస్త్రీ మాత్రమే')"><span>♨️</span><b>Iron Only</b><small>బట్టలకు ఇస్త్రీ</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Steam Press','స్టీమ్ ప్రెస్')"><span>💨</span><b>Steam Press</b><small>ఆవిరితో ప్రెస్</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Blanket & Bedsheet','బ్లాంకెట్ / బెడ్‌షీట్')"><span>🛏️</span><b>Blanket & Bedsheet</b><small>దుప్పట్లు, బెడ్‌షీట్లు</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Shoe & Bag Cleaning','షూ / బ్యాగ్ క్లీనింగ్')"><span>👟</span><b>Shoe & Bag Care</b><small>షూస్, బ్యాగుల శుభ్రత</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Premium Fabric Care','ప్రీమియం ఫ్యాబ్రిక్ కేర్')"><span>🧥</span><b>Premium Fabric Care</b><small>సున్నితమైన / ఖరీదైన బట్టలు</small></button>
+   <button class="fr-service-choice" onclick="frChooseLaundry('Express Laundry','ఎక్స్‌ప్రెస్ లాండ్రీ')"><span>⚡</span><b>Express Laundry</b><small>అందుబాటును బట్టి వేగవంతమైన సేవ</small></button>
+  </div>
+ </div>
+ <div class="card"><h2>పికప్ & డెలివరీ వివరాలు</h2>
+  <div class="field"><label>ఎంచుకున్న సర్వీస్</label><input id="frLaundrySelected" readonly placeholder="పై కేటగిరీని ఎంచుకోండి"></div>
+  <div class="row"><div class="field"><label>పికప్ తేదీ</label><input id="frLaundryDate" type="date"></div><div class="field"><label>సమయం</label><input id="frLaundryTime" type="time"></div></div>
+  <div class="field"><label>పికప్ చిరునామా</label><textarea id="frLaundryAddress" placeholder="ఇంటి నంబర్, వీధి, ప్రాంతం"></textarea></div>
+  <div class="field"><label>బట్టల వివరాలు / ప్రత్యేక సూచనలు</label><textarea id="frLaundryNotes" placeholder="ఉదా: 5 షర్ట్లు, 2 ప్యాంట్లు; తెల్ల బట్టలు విడిగా ఉతకాలి"></textarea></div>
+  <div class="notice">ధర భాగస్వామి లాండ్రీ రేట్లు, బట్టల బరువు / సంఖ్య ఆధారంగా నిర్ధారించబడుతుంది. బుకింగ్‌ను భాగస్వామి అంగీకరించిన తర్వాతే కన్ఫర్మ్ అవుతుంది.</div>
+  <button class="btn purple" onclick="frSubmitServiceBooking('laundry')">పికప్ బుకింగ్ అభ్యర్థించండి</button><p id="frLaundryStatus" class="notice" aria-live="polite">ధర, పికప్ సమయం భాగస్వామి నిర్ధారణ తర్వాత తెలియజేస్తాం.</p>
+ </div>
 </section>
+
+<section id="taskoServices" class="page">
+ <div class="fr-service-page-hero fr-tasko-page-hero"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • TASKO / QUICKMATE SERVICES</span><h1>మీ రోజువారీ పనులకు నమ్మకమైన సహాయకుడు</h1><p>ఆన్‌లైన్ ఫారమ్‌ల నుంచి ప్రభుత్వ కార్యాలయాల పనుల వరకు — మీ అవసరానికి తగిన సహాయం.</p></div>
+ <div class="card"><h2>TASKO / QUICKMATE ఎందుకు?</h2><p>చదవడం, ఆన్‌లైన్‌లో అప్లై చేయడం కష్టంగా ఉన్నవారు, వృద్ధులు, దివ్యాంగులు లేదా సమయం లేని వారు ధృవీకరించిన సహాయకుడిని బుక్ చేసుకుని తమ పనులు సులభంగా పూర్తి చేసుకోవచ్చు. సహాయకుడు మీ తరఫున వివరాలు అర్థం చేసుకోవడం, ఫారమ్ నింపడంలో సహాయం, అపాయింట్‌మెంట్ బుకింగ్, కార్యాలయానికి తోడుగా రావడం వంటి సేవలు అందిస్తారు.</p><div class="notice">గమనిక: TASKO సహాయకులు మార్గదర్శనం, ఫారమ్ నింపడం, తోడుగా వెళ్లడం వంటి సహాయం మాత్రమే అందిస్తారు. ప్రభుత్వ అధికారి స్థానంలో వ్యవహరించరు; తప్పుడు పత్రాలు లేదా చట్టవిరుద్ధ పనులు చేయరు. OTP, PIN, పాస్‌వర్డ్ ఎవరికీ చెప్పవద్దు.</div></div>
+ <div class="card"><h2>మీకు కావాల్సిన సేవను ఎంచుకోండి</h2>
+  <div class="field"><label for="frTaskoCategory">సేవ కేటగిరీ</label><select id="frTaskoCategory" onchange="frTaskoCategoryChanged()">
+   <option value="">కేటగిరీ ఎంచుకోండి</option>
+   <option value="Government Forms & Applications">ప్రభుత్వ ఫారమ్‌లు / అప్లికేషన్లు</option>
+   <option value="Pension & Senior Citizen Support">పెన్షన్ / వృద్ధుల సహాయం</option>
+   <option value="Aadhaar / PAN Guidance">ఆధార్ / PAN సంబంధిత మార్గదర్శనం</option>
+   <option value="Bank Visit Assistance">బ్యాంక్‌కు తోడుగా వెళ్లడం</option>
+   <option value="Bill Payments & Recharges">బిల్లులు / రీఛార్జ్ సహాయం</option>
+   <option value="Hospital & Appointment Assistance">హాస్పిటల్ / అపాయింట్‌మెంట్ సహాయం</option>
+   <option value="Document Print / Scan / Xerox">ప్రింట్ / స్కాన్ / జిరాక్స్</option>
+   <option value="Office Visit Companion">ప్రభుత్వ / ఇతర కార్యాలయాలకు తోడుగా రావడం</option>
+   <option value="Online Form Filling">ఆన్‌లైన్ ఫారమ్ నింపడం</option>
+   <option value="Shopping / Errand Assistance">షాపింగ్ / రోజువారీ చిన్న పనులు</option>
+   <option value="Other Personal Assistance">ఇతర వ్యక్తిగత సహాయం</option>
+  </select></div>
+  <div class="field"><label for="frTaskoSubcategory">ఉప-సేవ</label><select id="frTaskoSubcategory"><option value="">ముందుగా కేటగిరీ ఎంచుకోండి</option></select></div>
+  <div class="field"><label>సహాయకుడి ఎంపిక</label><div class="fr-helper-gender"><label><input type="radio" name="frHelperGender" value="no_preference" checked> ఎవరైనా సరే</label><label><input type="radio" name="frHelperGender" value="female"> మహిళా సహాయకురాలు</label><label><input type="radio" name="frHelperGender" value="male"> పురుష సహాయకుడు</label></div><small class="muted">మీ ఎంపికకు సరిపోయే ధృవీకరించిన సహాయకుడు అందుబాటులో ఉంటేనే బుకింగ్ కేటాయించబడుతుంది.</small></div>
+  <div class="field"><label for="frTaskoDate">కావాల్సిన తేదీ</label><input id="frTaskoDate" type="date"></div>
+  <div class="field"><label for="frTaskoTime">కావాల్సిన సమయం</label><input id="frTaskoTime" type="time"></div>
+  <div class="field"><label for="frTaskoAddress">సేవ అందించాల్సిన చిరునామా / కలవాల్సిన ప్రదేశం</label><textarea id="frTaskoAddress" placeholder="ఇంటి చిరునామా లేదా కార్యాలయం పేరు, ప్రాంతం"></textarea></div>
+  <div class="field"><label for="frTaskoNotes">మీ పని గురించి వివరించండి</label><textarea id="frTaskoNotes" placeholder="మీకు ఏ పని చేయించుకోవాలో సులభంగా వివరించండి"></textarea></div>
+  <div class="notice">ధృవీకరణ పూర్తైన TASKO సహాయకులకే బుకింగ్ కేటాయించాలి. ప్రభుత్వ ఫీజులు, ప్రయాణ ఖర్చులు, సేవా ఛార్జీలు వేరుగా ఉంటే ముందుగానే చూపించాలి.</div>
+  <button class="btn purple" onclick="frSubmitServiceBooking('tasko')">సహాయకుడిని బుక్ చేయండి</button><p id="frTaskoStatus" class="notice" aria-live="polite">మీ అభ్యర్థన నమోదు అయిన తర్వాత అందుబాటు, ఛార్జీలు నిర్ధారించబడతాయి.</p>
+ </div>
+ <div class="card"><h3>సేవా నాణ్యత & భద్రత</h3><p class="muted">సహాయకుల KYC, ఫోటో, మొబైల్ ధృవీకరణ, పోలీస్ వెరిఫికేషన్ విధానం, సేవా రేటింగ్, బుకింగ్ ట్రాకింగ్, ఫిర్యాదు సదుపాయం అమలు చేసిన తర్వాతే పూర్తి స్థాయి లాంచ్ చేయాలి.</p></div>
+</section>
+
 <section id="billPayments" class="page">
  <div class="fr-super-hero bills"><button class="fr-super-back" onclick="showPage('home')">← Home</button><span class="fr-super-kicker">FRIEND RIDE • PAYMENTS HUB</span><h1>Recharges &amp; All Bill Payments</h1><p>మీ రోజువారీ రీఛార్జ్‌లు, బిల్లులు ఒకేచోట.</p><div class="fr-super-hero-icon">💳</div></div>
  <div class="fr-super-section"><h2>Select a Payment Category</h2><div class="fr-super-options bills-grid">
@@ -2820,7 +2884,47 @@ function frAddPartnerCatalogueItem(index){
 })();
 </script>
 
-</body>
+<script id="fr-tasko-laundry-bookings">
+const frTaskoSubservices={
+ "Government Forms & Applications":["ఆదాయ / కుల / నివాస ధృవీకరణ పత్రాల అప్లికేషన్ సహాయం","ప్రభుత్వ పథకాల అప్లికేషన్","సర్టిఫికెట్ అప్లికేషన్ స్థితి తెలుసుకోవడం"],
+ "Pension & Senior Citizen Support":["పెన్షన్ అప్లికేషన్ సహాయం","లైఫ్ సర్టిఫికెట్ ప్రక్రియలో సహాయం","వృద్ధుల సంక్షేమ సేవల సమాచారం"],
+ "Aadhaar / PAN Guidance":["ఆధార్ అప్డేట్ అపాయింట్‌మెంట్ సహాయం","PAN అప్లికేషన్ / సవరణ సహాయం","డాక్యుమెంట్ చెక్‌లిస్ట్ సహాయం"],
+ "Bank Visit Assistance":["బ్యాంక్‌లో ఫారమ్ నింపడం","బ్యాంక్ అపాయింట్‌మెంట్ / క్యూ సహాయం","పాస్‌బుక్ / స్టేట్‌మెంట్ అభ్యర్థనలో సహాయం"],
+ "Bill Payments & Recharges":["విద్యుత్ / నీటి బిల్లు","మొబైల్ / DTH రీఛార్జ్","గ్యాస్ బుకింగ్ సహాయం"],
+ "Hospital & Appointment Assistance":["హాస్పిటల్ అపాయింట్‌మెంట్","రిజిస్ట్రేషన్ / క్యూ సహాయం","వృద్ధులకు హాస్పిటల్ తోడ్పాటు"],
+ "Document Print / Scan / Xerox":["డాక్యుమెంట్ ప్రింట్","స్కాన్ / ఇమెయిల్ పంపడం","జిరాక్స్ / ఫోటోకాపీ"],
+ "Office Visit Companion":["ప్రభుత్వ కార్యాలయానికి తోడుగా రావడం","ప్రైవేట్ కార్యాలయానికి తోడుగా రావడం","అపాయింట్‌మెంట్ వద్ద సహాయం"],
+ "Online Form Filling":["ఉద్యోగ / విద్య అప్లికేషన్","ఆన్‌లైన్ రిజిస్ట్రేషన్","డాక్యుమెంట్ అప్‌లోడ్ సహాయం"],
+ "Shopping / Errand Assistance":["మందులు / నిత్యావసరాలు తీసుకురావడం","పోస్టాఫీస్ / కొరియర్ పని","చిన్న రోజువారీ పనులు"],
+ "Other Personal Assistance":["వ్యక్తిగత పని","డాక్యుమెంట్ కలెక్షన్","ఇతర సహాయం"]
+};
+function frTaskoCategoryChanged(){
+ const cat=document.getElementById('frTaskoCategory')?.value,sub=document.getElementById('frTaskoSubcategory');if(!sub)return;
+ sub.innerHTML='<option value="">ఉప-సేవ ఎంచుకోండి</option>'+(frTaskoSubservices[cat]||[]).map(x=>'<option value="'+safe(x)+'">'+safe(x)+'</option>').join('');
+}
+function frChooseLaundry(value,label){const el=document.getElementById('frLaundrySelected');if(el)el.value=value;document.querySelectorAll('.fr-service-choice').forEach(b=>b.classList.toggle('active',b.textContent.includes(value)));}
+async function frSubmitServiceBooking(kind){
+ const isTasko=kind==='tasko',prefix=isTasko?'frTasko':'frLaundry',status=document.getElementById(isTasko?'frTaskoStatus':'frLaundryStatus');
+ const get=id=>document.getElementById(id)?.value?.trim()||'';
+ const category=isTasko?get('frTaskoCategory'):get('frLaundrySelected');
+ const subcategory=isTasko?get('frTaskoSubcategory'):'';
+ const address=get(isTasko?'frTaskoAddress':'frLaundryAddress');
+ const date=get(isTasko?'frTaskoDate':'frLaundryDate'),time=get(isTasko?'frTaskoTime':'frLaundryTime');
+ const notes=get(isTasko?'frTaskoNotes':'frLaundryNotes');
+ const gender=isTasko?(document.querySelector('input[name="frHelperGender"]:checked')?.value||'no_preference'):'not_applicable';
+ if(!currentUser){requireLogin(()=>frSubmitServiceBooking(kind));return;}
+ if(!category||!address||!date||!time){if(status)status.textContent='దయచేసి కేటగిరీ, తేదీ, సమయం మరియు చిరునామా నమోదు చేయండి.';return;}
+ if(isTasko&&!subcategory){if(status)status.textContent='దయచేసి ఉప-సేవను కూడా ఎంచుకోండి.';return;}
+ if(status)status.textContent='మీ బుకింగ్ అభ్యర్థనను నమోదు చేస్తున్నాం…';
+ try{
+  const payload={customer_id:currentUser.id,service_type:kind,category,subcategory:subcategory||null,preferred_helper_gender:gender,service_date:date,service_time:time,pickup_address:address,notes:notes||null,status:'pending'};
+  const {error}=await sb.from('fr_service_bookings').insert(payload);
+  if(error)throw error;
+  if(status)status.textContent='మీ అభ్యర్థన విజయవంతంగా నమోదు అయింది. భాగస్వామి అందుబాటు, ఛార్జీలు నిర్ధారించిన తర్వాత మీకు సమాచారం అందుతుంది.';
+  if(isTasko){document.getElementById('frTaskoNotes').value='';}else{document.getElementById('frLaundryNotes').value='';}
+ }catch(err){console.error('FR service booking failed',err);if(status)status.textContent='బుకింగ్ నమోదు కాలేదు. Backend SQL migration అమలు అయిందో, ఇంటర్నెట్ కనెక్షన్ ఉందో తనిఖీ చేయండి. '+(err?.message||'');}
+}
+</script></body>
 </html>
 <style>
 @media(hover:hover){.tile:hover{transform:translateY(-2px);box-shadow:0 10px 22px #32105e16;border-color:#d7c4f0}.btn:hover{filter:brightness(1.025)}}
