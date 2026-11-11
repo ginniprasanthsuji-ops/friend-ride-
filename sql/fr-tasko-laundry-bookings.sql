@@ -16,6 +16,8 @@ create table if not exists public.fr_service_bookings (
     check (status in ('pending','accepted','assigned','in_progress','completed','cancelled','rejected')),
   assigned_provider_id uuid references auth.users(id) on delete set null,
   quoted_amount numeric(10,2),
+  service_duration_hours numeric(4,1),
+  terms_accepted boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -58,3 +60,8 @@ create policy "Admins update service bookings"
   ));
 
 grant update on public.fr_service_bookings to authenticated;
+
+-- Safe upgrades for existing installations.
+alter table public.fr_service_bookings
+  add column if not exists service_duration_hours numeric(4,1),
+  add column if not exists terms_accepted boolean not null default false;
