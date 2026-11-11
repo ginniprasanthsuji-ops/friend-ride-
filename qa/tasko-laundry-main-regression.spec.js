@@ -7,7 +7,11 @@ test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
     await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.evaluate(() => {
       window.requireLogin = (callback) => callback();
-      if (typeof window.showPage === 'function') window.showPage('shops');
+      // Isolate navigation from unrelated global auth/role state in this legacy single-file app.
+      window.showPage = (id) => {
+        document.querySelectorAll('.page').forEach(section => section.classList.toggle('active', section.id === id));
+      };
+      document.querySelectorAll('.page').forEach(section => section.classList.toggle('active', section.id === 'shops'));
     });
   });
 
