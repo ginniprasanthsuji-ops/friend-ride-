@@ -1974,10 +1974,23 @@ async function frLoadMyLaundryBookings(){
  if(!currentUser){box.textContent='Login అవసరం.';return;}
  box.textContent='Laundry orders loading…';
  try{
-  const {data,error}=await sb.from('fr_service_bookings').select('id,category,service_date,status,quoted_amount,laundry_unit,laundry_quantity,laundry_unit_price,pickup_address').eq('service_type','laundry').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
+  const {data:application,error:appError}=await sb.from('fr_service_provider_applications').select('id').eq('provider_id',currentUser.id).eq('service_category','Laundry Services').eq('status','approved').limit(1).maybeSingle();
+  if(appError)throw appError;
+  const isProvider=!!application;
+  const base=sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,status,quoted_amount,laundry_unit,laundry_quantity,laundry_unit_price,pickup_address').eq('service_type','laundry').order('created_at',{ascending:false}).limit(50);
+  const {data,error}=await (isProvider?base.eq('assigned_provider_id',currentUser.id):base.eq('customer_id',currentUser.id));
   if(error)throw error;
-  box.innerHTML=(data||[]).map(x=>'<article class="listrow"><div class="grow"><b>'+frLaundrySafe(x.category)+'</b><small>'+frLaundrySafe(x.laundry_quantity)+' '+frLaundrySafe(x.laundry_unit)+' • '+frLaundrySafe(x.service_date)+' • '+frLaundrySafe(x.status)+'</small><small>'+(x.quoted_amount?'Quote ₹'+Number(x.quoted_amount).toFixed(2):'Price quote pending')+(x.laundry_unit_price?' • ₹'+Number(x.laundry_unit_price).toFixed(2)+' / '+frLaundrySafe(x.laundry_unit):'')+'</small></div></article>').join('')||'No Laundry orders yet.';
+  box.innerHTML=(data||[]).map(x=>{
+   const action=isProvider&&['assigned','accepted','in_progress'].includes(x.status)?'<div class="track-actions">'+(x.status==='assigned'?'<button onclick="frLaundryProviderAction(\''+x.id+'\',\'accept\')">Accept Pickup</button>':'')+(x.status==='accepted'?'<button onclick="frLaundryProviderAction(\''+x.id+'\',\'start\')">Start Service</button>':'')+(x.status==='in_progress'?'<button onclick="frLaundryProviderAction(\''+x.id+'\',\'complete\')">Complete Order</button>':'')+'</div>':'';
+   return '<article class="listrow"><div class="grow"><b>'+frLaundrySafe(x.category)+'</b><small>'+frLaundrySafe(x.laundry_quantity)+' '+frLaundrySafe(x.laundry_unit)+' • '+frLaundrySafe(x.service_date)+' • '+frLaundrySafe(x.status)+'</small><small>'+(x.quoted_amount?'Quote ₹'+Number(x.quoted_amount).toFixed(2):'Price quote pending')+(x.laundry_unit_price?' • ₹'+Number(x.laundry_unit_price).toFixed(2)+' / '+frLaundrySafe(x.laundry_unit):'')+'</small>'+action+'</div></article>';
+  }).join('')||'No Laundry orders / assigned work yet.';
  }catch(e){box.textContent='Load failed: '+(e.message||e);}
+}
+async function frLaundryProviderAction(id,action){
+ try{if(!currentUser)throw Error('Login అవసరం.');
+ const {error}=await sb.rpc('fr_laundry_provider_transition',{p_booking_id:id,p_action:action});
+ if(error)throw error;await frLoadMyLaundryBookings();alert('Laundry order status updated: '+action);
+ }catch(e){alert('Laundry status update failed: '+(e.message||e));}
 }
 async function frAdminLoadLaundry(){
  if(currentProfile?.role!=='admin'||selectedRole!=='admin')return alert('Admin access అవసరం.');
