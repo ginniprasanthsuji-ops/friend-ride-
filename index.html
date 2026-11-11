@@ -317,6 +317,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <button class="home-pro-service" style="--svc-a:#d8f7d7;--svc-b:#69c981" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🧹</span><b>House Cleaning</b></button>
   <button class="home-pro-service" style="--svc-a:#ffd9e5;--svc-b:#f58aaa" onclick="requireLogin(()=>showPage('homeServices'))"><span class="home-pro-art">🖌️</span><b>Painting</b></button>
   <button class="home-pro-service" style="--svc-a:#d8c7ff;--svc-b:#7c3aed" onclick="requireLogin(()=>{showPage('homeServices');document.getElementById('taskoGiggerLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧰</span><b>TASKO / GIGGER</b><small>Daily Helper Booking</small></button>
+  <button class="home-pro-service" style="--svc-a:#c8f5ee;--svc-b:#159b86" onclick="requireLogin(()=>{showPage('laundryServices');document.getElementById('laundryServiceLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧺</span><b>LAUNDRY SERVICES</b><small>Wash • Iron • Dry Clean • Pickup</small></button>
  </div>
  <div class="home-pro-services">
   <button class="home-pro-service" style="--svc-a:#ffe7c2;--svc-b:#f59e0b" onclick="requireLogin(()=>openEventService('Catering Services'))"><span class="home-pro-art">🍽️</span><b>Catering Services</b></button>
@@ -381,7 +382,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <p class="muted">Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
   <div class="field"><label>Service Category *</label>
    <select id="spCategory">
-    <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Home Services">Home Services</option>
+    <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Laundry Services">Laundry Services</option><option value="Home Services">Home Services</option>
     <option value="Catering Services">Catering Services</option>
     <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
     <option value="Beauty Makeover">Beauty Makeover</option>
@@ -496,6 +497,32 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
   <button class="btn purple" onclick="openServiceProviderRegister('Home Services')">Register as Home Service Provider</button></div></section>
 
+<section id="laundryServices" class="page">
+ <div class="card" id="laundryServiceLaunch">
+  <button class="btn light" style="width:auto" onclick="showPage('home')">← Back to Home</button>
+  <div class="eyebrow" style="color:#159b86">FRIEND RIDE • LAUNDRY SERVICES</div>
+  <h2>🧺 Laundry – Pickup & Delivery</h2>
+  <p class="muted">మీ బట్టలను ఇంటి దగ్గర నుంచి తీసుకెళ్లి శుభ్రంగా ఉతికి, ఇస్త్రీ చేసి తిరిగి అందిస్తాం.</p>
+  <div class="grid">
+   <div class="tile">🫧<b>Washing</b><small>Per KG</small></div>
+   <div class="tile">👔<b>Ironing / Steam Iron</b><small>Per Piece</small></div>
+   <div class="tile">✨<b>Dry Cleaning</b><small>Per Piece</small></div>
+   <div class="tile">🛵<b>Pickup & Delivery</b><small>At your doorstep</small></div>
+  </div>
+  <div class="notice"><b>ధరలు:</b> ప్రతి Laundry Partner తన Per KG / Per Piece ధరను అందిస్తారు. బట్టల సంఖ్య / బరువు పరిశీలించిన తర్వాత Partner లేదా Admin final quote ఇస్తారు. మీ ఆమోదం లేకుండా ధర ఖరారు కాదు.</div>
+  <div class="field"><label>Service Type *</label><select id="laundryType"><option value="Washing">Washing – Per KG</option><option value="Ironing / Steam Iron">Ironing / Steam Iron – Per Piece</option><option value="Dry Cleaning">Dry Cleaning – Per Piece</option></select></div>
+  <div class="row"><div class="field"><label>Quantity *</label><input id="laundryQty" type="number" min="1" max="200" step="0.5" value="1"></div><div class="field"><label>Unit</label><select id="laundryUnit"><option value="kg">KG</option><option value="piece">Piece</option></select></div></div>
+  <div class="field"><label>Pickup Date *</label><input id="laundryDate" type="date"></div>
+  <div class="field"><label>Pickup Address *</label><textarea id="laundryAddress" placeholder="House / street / area / PIN code"></textarea></div>
+  <div class="field"><label>Special Instructions</label><textarea id="laundryNotes" maxlength="1000" placeholder="Fabric type, stains, delicate clothes, preferred delivery time…"></textarea></div>
+  <button class="btn purple" onclick="frSubmitLaundryBooking()">Book Laundry Pickup</button>
+  <div id="laundryBookingStatus" class="notice">Booking request Adminకు వెళ్తుంది. Approved Partner assignment మరియు price confirmation తర్వాత status చూపిస్తాం.</div>
+  <div class="card"><h3>My Laundry Orders</h3><button class="btn light" onclick="requireLogin(frLoadMyLaundryBookings)">Refresh My Orders</button><div id="laundryMyBookings"></div></div>
+  <hr><h3>Are you a Laundry Service Partner?</h3><p class="muted">Laundry shop / service providerగా చేరండి. మీ Per KG / Per Piece ధరలు మరియు service area నమోదు చేయండి. Admin approval తర్వాత మాత్రమే customer orders అందుతాయి.</p>
+  <button class="btn light" onclick="requireLogin(()=>openServiceProviderRegister('Laundry Services'))">Register as Laundry Partner</button>
+  <div id="laundryAdminPanel" class="hide"><hr><h3>Admin – Laundry Control Centre</h3><button class="btn light" onclick="frAdminLoadLaundry()">Refresh Laundry Applications & Orders</button><div id="laundryAdminApplications"></div><div id="laundryAdminBookings"></div></div>
+ </div>
+</section>
 <section id="storeBrowse" class="page">
  <div class="card">
   <div class="market-heading"><h2>🏪 Friend Mart – Local Stores</h2><span class="pill">Shop by store</span></div>
@@ -1921,7 +1948,78 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body></html>';
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button><script id="fr-laundry-services-workflow">
+function frLaundryUnitSync(){
+ const type=document.getElementById('laundryType')?.value,unit=document.getElementById('laundryUnit');
+ if(unit){unit.value=type==='Washing'?'kg':'piece';unit.disabled=true;}
+}
+document.getElementById('laundryType')?.addEventListener('change',frLaundryUnitSync);
+function frLaundrySafe(v){return typeof safe==='function'?safe(v):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function frSubmitLaundryBooking(){
+ const box=document.getElementById('laundryBookingStatus');
+ try{
+  if(!currentUser||currentProfile?.role!=='customer')throw Error('Laundry booking కోసం Customer login అవసరం.');
+  const type=document.getElementById('laundryType').value,qty=Number(document.getElementById('laundryQty').value),unit=type==='Washing'?'kg':'piece';
+  const date=document.getElementById('laundryDate').value,address=document.getElementById('laundryAddress').value.trim(),notes=document.getElementById('laundryNotes').value.trim();
+  if(!Number.isFinite(qty)||qty<=0||qty>200||!date||address.length<8)throw Error('సరైన quantity, pickup date మరియు పూర్తి address నమోదు చేయండి.');
+  if(new Date(date+'T23:59:59')<new Date())throw Error('గత తేదీ ఎంచుకోకండి.');
+  const {data,error}=await sb.from('fr_service_bookings').insert({customer_id:currentUser.id,service_type:'laundry',category:type,subcategory:'Laundry Services',service_date:date,service_time:'10:00',pickup_address:address,notes:(notes||'No special instructions')+' | Quantity: '+qty+' '+unit,status:'pending',laundry_unit:unit,laundry_quantity:qty}).select('id').single();
+  if(error)throw error;
+  box.textContent='Laundry pickup request submitted. Booking ID: '+data.id+'. Admin approval / Partner assignment మరియు final price quote కోసం వేచి ఉండండి.';
+  await frLoadMyLaundryBookings();
+ }catch(e){box.textContent='Booking failed: '+(e.message||e);}
+}
+async function frLoadMyLaundryBookings(){
+ const box=document.getElementById('laundryMyBookings');if(!box)return;
+ if(!currentUser){box.textContent='Login అవసరం.';return;}
+ box.textContent='Laundry orders loading…';
+ try{
+  const {data,error}=await sb.from('fr_service_bookings').select('id,category,service_date,status,quoted_amount,laundry_unit,laundry_quantity,laundry_unit_price,pickup_address').eq('service_type','laundry').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
+  if(error)throw error;
+  box.innerHTML=(data||[]).map(x=>'<article class="listrow"><div class="grow"><b>'+frLaundrySafe(x.category)+'</b><small>'+frLaundrySafe(x.laundry_quantity)+' '+frLaundrySafe(x.laundry_unit)+' • '+frLaundrySafe(x.service_date)+' • '+frLaundrySafe(x.status)+'</small><small>'+(x.quoted_amount?'Quote ₹'+Number(x.quoted_amount).toFixed(2):'Price quote pending')+(x.laundry_unit_price?' • ₹'+Number(x.laundry_unit_price).toFixed(2)+' / '+frLaundrySafe(x.laundry_unit):'')+'</small></div></article>').join('')||'No Laundry orders yet.';
+ }catch(e){box.textContent='Load failed: '+(e.message||e);}
+}
+async function frAdminLoadLaundry(){
+ if(currentProfile?.role!=='admin'||selectedRole!=='admin')return alert('Admin access అవసరం.');
+ const apps=document.getElementById('laundryAdminApplications'),orders=document.getElementById('laundryAdminBookings');
+ if(apps)apps.textContent='Applications loading…';if(orders)orders.textContent='Orders loading…';
+ try{
+  const [a,b]=await Promise.all([
+   sb.from('fr_service_provider_applications').select('id,provider_id,full_name,phone,full_address,status,service_details').eq('service_category','Laundry Services').order('created_at',{ascending:false}).limit(100),
+   sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,pickup_address,notes,status,quoted_amount,laundry_unit,laundry_quantity,laundry_unit_price').eq('service_type','laundry').order('created_at',{ascending:false}).limit(100)
+  ]);
+  if(a.error)throw a.error;if(b.error)throw b.error;
+  const approved=(a.data||[]).filter(x=>x.status==='approved');
+  if(apps)apps.innerHTML='<h3>Laundry Partner Applications</h3>'+((a.data||[]).map(x=>'<article class="listrow"><div class="grow"><b>'+frLaundrySafe(x.full_name)+'</b><small>'+frLaundrySafe(x.phone)+' • '+frLaundrySafe(x.full_address)+'</small><small>'+frLaundrySafe(x.service_details||'')+'</small><span class="pill">'+frLaundrySafe(x.status)+'</span></div>'+(x.status==='pending'||x.status==='under_review'?'<button class="btn light" onclick="frAdminReviewLaundryApplication(\''+x.id+'\',\'approved\')">Approve</button><button class="btn red" onclick="frAdminReviewLaundryApplication(\''+x.id+'\',\'rejected\')">Reject</button>':'')+'</article>').join('')||'No applications.');
+  if(orders)orders.innerHTML='<h3>Customer Laundry Requests</h3>'+((b.data||[]).map(x=>{
+   const opts='<option value="">Select approved Laundry Partner</option>'+approved.map(p=>'<option value="'+frLaundrySafe(p.provider_id)+'" '+(x.assigned_provider_id===p.provider_id?'selected':'')+'>'+frLaundrySafe(p.full_name)+' • '+frLaundrySafe(p.phone)+'</option>').join('');
+   const quote='<div class="field"><label>Partner</label><select id="laundryPartner_'+x.id+'">'+opts+'</select><label>Price per '+frLaundrySafe(x.laundry_unit)+'</label><input id="laundryUnitPrice_'+x.id+'" type="number" min="0" step="0.01" placeholder="Partner rate"></div><button class="btn light" onclick="frAdminAssignLaundry(\''+x.id+'\')">Assign Partner & Set Quote</button>';
+   return '<article class="card"><b>'+frLaundrySafe(x.category)+'</b><small>'+frLaundrySafe(x.laundry_quantity)+' '+frLaundrySafe(x.laundry_unit)+' • '+frLaundrySafe(x.service_date)+' • '+frLaundrySafe(x.status)+'</small><p>'+frLaundrySafe(x.pickup_address)+'</p><small>Booking '+frLaundrySafe(x.id.slice(0,8))+' • Quote '+(x.quoted_amount?'₹'+Number(x.quoted_amount).toFixed(2):'pending')+'</small>'+(['pending','assigned'].includes(x.status)?quote:'')+'</article>';
+  }).join('')||'No Laundry requests.');
+ }catch(e){if(apps)apps.textContent='Admin load failed: '+(e.message||e);}
+}
+async function frAdminReviewLaundryApplication(id,status){
+ try{if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+ const {error}=await sb.from('fr_service_provider_applications').update({status,reviewed_by:currentUser.id,reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id).eq('service_category','Laundry Services');
+ if(error)throw error;await frAdminLoadLaundry();
+ }catch(e){alert('Application update failed: '+(e.message||e));}
+}
+async function frAdminAssignLaundry(id){
+ try{
+  if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+  const provider=document.getElementById('laundryPartner_'+id)?.value,unitPrice=Number(document.getElementById('laundryUnitPrice_'+id)?.value);
+  if(!provider)throw Error('Approved Laundry Partner select చేయండి.');
+  if(!Number.isFinite(unitPrice)||unitPrice<=0)throw Error('Valid per-unit price నమోదు చేయండి.');
+  const {data,error}=await sb.from('fr_service_bookings').select('laundry_quantity').eq('id',id).eq('service_type','laundry').single();
+  if(error)throw error;
+  const total=Math.round(unitPrice*Number(data.laundry_quantity)*100)/100;
+  const {error:updateError}=await sb.from('fr_service_bookings').update({assigned_provider_id:provider,laundry_unit_price:unitPrice,quoted_amount:total,status:'assigned',updated_at:new Date().toISOString()}).eq('id',id).eq('service_type','laundry');
+  if(updateError)throw updateError;await frAdminLoadLaundry();
+ }catch(e){alert('Laundry assignment failed: '+(e.message||e));}
+}
+</script>
+
+</body></html>';
   w.document.open();w.document.write(html);w.document.close();
  }catch(e){w.close();alert('Invoice: '+e.message);}
 }
