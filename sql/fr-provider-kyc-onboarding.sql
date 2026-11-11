@@ -37,6 +37,10 @@ create table if not exists public.fr_service_provider_applications (
   )
 );
 
+alter table public.fr_service_provider_applications
+  add column if not exists provider_gender text
+  check (provider_gender is null or provider_gender in ('male','female','other'));
+
 create index if not exists fr_provider_applications_owner_idx
   on public.fr_service_provider_applications(provider_id, created_at desc);
 create index if not exists fr_provider_applications_review_idx
