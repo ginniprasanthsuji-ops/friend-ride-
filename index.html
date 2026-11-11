@@ -454,10 +454,10 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <div class="card">
   <button class="btn light" style="width:auto" onclick="showPage('home')">← Back</button>
   <h2>FRIEND RIDE – Service Provider Registration</h2>
-  <p class="muted">Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
+  <p class="muted">TASKO / QUICKMATE సహాయకులు, Laundry భాగస్వాములు మరియు ఇతర సేవా ప్రదాతల కోసం KYC దరఖాస్తు. ఇప్పటికే ఉన్న FRIEND RIDE ఖాతాతోనే నమోదు చేసుకోవచ్చు.</p>
   <div class="field"><label>Service Category *</label>
    <select id="spCategory">
-    <option value="Home Services">Home Services</option>
+    <option value="TASKO / QUICKMATE Assistant">TASKO / QUICKMATE Assistant</option>\n    <option value="Laundry Partner">Laundry Partner</option>\n    <option value="Home Services">Home Services</option>
     <option value="Catering Services">Catering Services</option>
     <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
     <option value="Beauty Makeover">Beauty Makeover</option>
@@ -466,14 +466,20 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div class="field"><label>Owner / Provider Full Name *</label><input id="spName" placeholder="Enter full name"></div>
   <div class="field"><label>Mobile Number *</label><input id="spPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"></div>
   <div class="field"><label>Business / Service Name</label><input id="spBusinessName" placeholder="Business or service name"></div>
-  <div class="field"><label>Complete Address *</label><textarea id="spAddress" placeholder="House, street, village, mandal, district, PIN"></textarea></div>
+  <div class="field"><label>Complete Residential Address *</label><textarea id="spAddress" placeholder="House number, street, village/town, mandal, district, state, PIN"></textarea></div>
+  <div class="field"><label>Emergency Contact – Friend / Family Name *</label><input id="spEmergencyName" placeholder="Name of trusted emergency contact"></div>
+  <div class="field"><label>Emergency Contact Mobile *</label><input id="spEmergencyPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"></div>
+  <div class="field"><label>Reference Friend Name (Optional)</label><input id="spReferenceName" placeholder="Friend who can confirm your identity"></div>
+  <div class="field"><label>Reference Friend Mobile (Optional)</label><input id="spReferencePhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"></div>
+  <label class="tiny"><input id="spReferenceConsent" type="checkbox" style="width:auto"> I confirm that my reference friend has agreed to be contacted by FRIEND RIDE for verification if needed.</label>
   <div class="field"><label>Profile Photo / Passport-size Photo * Required</label><input id="spPhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="user"></div>
-  <div class="field"><label>Aadhaar Card Document * Required (JPG / PNG / PDF)</label><input id="spAadhaarFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"></div>
+  <div class="field"><label>Masked Aadhaar / Government ID Document * (JPG / PNG / PDF)</label><input id="spAadhaarFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"></div>
+  <div class="notice">భద్రత కోసం Aadhaar నంబర్‌లో మొదటి 8 అంకెలను తప్పనిసరిగా మాస్క్ చేసి (XXXX-XXXX-1234) ఉన్న పత్రాన్ని మాత్రమే అప్‌లోడ్ చేయండి. OTP, పూర్తి Aadhaar నంబర్ లేదా బ్యాంక్ వివరాలు ఇవ్వవద్దు.</div>
   <div class="field"><label>Work Experience (Years)</label><input id="spExperience" type="number" min="0" placeholder="Years of experience"></div>
   <div class="field"><label>Service Details / Skills</label><textarea id="spDetails" placeholder="Describe your services, equipment, menu, packages or skills"></textarea></div>
   <div class="field"><label>UPI ID / Payment Contact (Optional)</label><input id="spUPI" placeholder="name@upi"></div>
-  <label class="tiny"><input id="spTerms" type="checkbox" style="width:auto"> I agree to verification, Terms &amp; Privacy Policy *</label>
-  <div class="notice">Photo and Aadhaar document are for verification only. Keep documents in a private Supabase Storage bucket with restricted Admin access; do not make Aadhaar files public. Registration will remain Pending until Admin verification and approval.</div>
+  <label class="tiny"><input id="spTerms" type="checkbox" style="width:auto"> I consent to FRIEND RIDE verifying my identity and securely processing the submitted KYC documents for provider onboarding. *</label>
+  <div class="notice">Photo and masked ID document are stored in a private, access-controlled bucket. Only authorised verification admins may review them. Emergency and reference contacts are used only for safety / verification; reference contact details are collected only with that person’s permission. Registration remains Pending until Admin approval.</div>
   <button class="btn purple" onclick="validateServiceProviderRegistration()">Submit Provider Application</button>
   <div id="spRegStatus" class="notice">Application details will be checked before submission.</div>
  </div>
@@ -2513,25 +2519,44 @@ function openServiceProviderRegister(category){
  if(el && category) el.value=category;
  showPage('serviceProviderRegister');
 }
-function validateServiceProviderRegistration(){
- const required=['spName','spPhone','spAddress'];
- if(required.some(id=>!document.getElementById(id)?.value.trim())){
-  alert('పేరు, మొబైల్ నంబర్ మరియు పూర్తి చిరునామా నమోదు చేయండి.');return;
+async function validateServiceProviderRegistration(){
+ const get=id=>document.getElementById(id)?.value?.trim()||'';
+ const phone=get('spPhone').replace(/\D/g,'');
+ const emergencyPhone=get('spEmergencyPhone').replace(/\D/g,'');
+ const referencePhone=get('spReferencePhone').replace(/\D/g,'');
+ const required=['spName','spPhone','spAddress','spEmergencyName','spEmergencyPhone'];
+ if(required.some(id=>!get(id))){alert('పేరు, మొబైల్, పూర్తి చిరునామా, అత్యవసర సంప్రదింపు పేరు మరియు నంబర్ నమోదు చేయండి.');return;}
+ if(phone.length!==10||emergencyPhone.length!==10){alert('సరైన 10 అంకెల మొబైల్ నంబర్లు ఇవ్వండి.');return;}
+ if(get('spReferenceName')||get('spReferencePhone')){
+  if(!get('spReferenceName')||referencePhone.length!==10||!document.getElementById('spReferenceConsent')?.checked){alert('రిఫరెన్స్ ఫ్రెండ్ వివరాలకు పేరు, సరైన నంబర్ మరియు వారి సమ్మతి తప్పనిసరి.');return;}
  }
- const phone=document.getElementById('spPhone').value.replace(/\D/g,'');
- if(phone.length!==10){alert('సరైన 10 digit mobile number ఇవ్వండి.');return;}
- const photo=document.getElementById('spPhoto').files[0];
- const aadhaar=document.getElementById('spAadhaarFile').files[0];
- if(!photo || !['image/jpeg','image/png','image/webp'].includes(photo.type) || photo.size>3*1024*1024){
-  alert('Passport-size photo JPG/PNG/WEBP formatలో 3 MB లోపు తప్పనిసరి.');return;
- }
- if(!aadhaar || !(['image/jpeg','image/png','image/webp','application/pdf'].includes(aadhaar.type)) || aadhaar.size>5*1024*1024){
-  alert('Aadhaar document JPG/PNG/WEBP/PDF formatలో 5 MB లోపు తప్పనిసరి.');return;
- }
- if(!document.getElementById('spTerms').checked){alert('Terms & Privacy Policy అంగీకరించండి.');return;}
+ const photo=document.getElementById('spPhoto')?.files?.[0];
+ const identity=document.getElementById('spAadhaarFile')?.files?.[0];
+ if(!photo||!['image/jpeg','image/png','image/webp'].includes(photo.type)||photo.size>3*1024*1024){alert('Passport-size photo JPG/PNG/WEBPలో 3 MB లోపు తప్పనిసరి.');return;}
+ if(!identity||!['image/jpeg','image/png','image/webp','application/pdf'].includes(identity.type)||identity.size>5*1024*1024){alert('Masked Aadhaar / Government ID JPG/PNG/WEBP/PDFలో 5 MB లోపు తప్పనిసరి.');return;}
+ if(!document.getElementById('spTerms')?.checked){alert('KYC మరియు Privacy consent అంగీకరించండి.');return;}
+ if(!currentUser||!sb){alert('ముందుగా మీ FRIEND RIDE ఖాతాలో Login చేయండి.');return;}
  const status=document.getElementById('spRegStatus');
- status.textContent='Form validation complete. Secure document upload, database application save and Admin approval require the service-provider backend migration.';
- alert('Registration details validate అయ్యాయి. Backend integration తర్వాత application submit మరియు document upload పూర్తవుతాయి.');
+ const btn=document.querySelector('#serviceProviderRegister button[onclick*="validateServiceProviderRegistration"]');
+ if(btn)btn.disabled=true;
+ if(status)status.textContent='మీ KYC పత్రాలను భద్రంగా అప్‌లోడ్ చేస్తున్నాం…';
+ try{
+  const uid=currentUser.id;
+  const safeName=file=>String(file.name||'document').replace(/[^a-zA-Z0-9._-]/g,'_');
+  const photoPath=uid+'/'+crypto.randomUUID()+'-'+safeName(photo);
+  const idPath=uid+'/'+crypto.randomUUID()+'-'+safeName(identity);
+  const bucket='fr-provider-kyc';
+  const up1=await sb.storage.from(bucket).upload(photoPath,photo,{upsert:false,contentType:photo.type});
+  if(up1.error)throw up1.error;
+  const up2=await sb.storage.from(bucket).upload(idPath,identity,{upsert:false,contentType:identity.type});
+  if(up2.error){await sb.storage.from(bucket).remove([photoPath]);throw up2.error;}
+  const payload={provider_id:uid,service_category:get('spCategory'),full_name:get('spName'),phone, business_name:get('spBusinessName')||null,full_address:get('spAddress'),profile_photo_path:photoPath,identity_document_path:idPath,identity_document_type:'masked_government_id',emergency_contact_name:get('spEmergencyName'),emergency_contact_phone:emergencyPhone,reference_friend_name:get('spReferenceName')||null,reference_friend_phone:referencePhone||null,reference_friend_consent:!!document.getElementById('spReferenceConsent')?.checked,experience_years:get('spExperience')===''?null:Number(get('spExperience')),service_details:get('spDetails')||null,upi_id:get('spUPI')||null,status:'pending'};
+  const {error}=await sb.from('fr_service_provider_applications').insert(payload);
+  if(error){await sb.storage.from(bucket).remove([photoPath,idPath]);throw error;}
+  if(status)status.textContent='మీ దరఖాస్తు విజయవంతంగా సమర్పించబడింది. Admin KYC పరిశీలన పూర్తయ్యే వరకు Pendingలో ఉంటుంది. Application ID మీ ఖాతాకు అనుసంధానించబడింది.';
+  alert('Provider Registration సమర్పించబడింది. Admin ఆమోదం వచ్చిన తర్వాత మాత్రమే సేవలు అందించగలరు.');
+ }catch(e){console.error('Provider registration failed',e);if(status)status.textContent='దరఖాస్తు సమర్పించలేకపోయాం: '+(e.message||e)+'. Supabase migration మరియు private storage bucket అమలయ్యాయో తనిఖీ చేయండి.';}
+ finally{if(btn)btn.disabled=false;}
 }
 function frSelectBankService(name){
  const el=document.getElementById('bankServiceSelected');if(el)el.value=name;
