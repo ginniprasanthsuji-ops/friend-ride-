@@ -385,10 +385,10 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <div class="card">
   <button class="btn light" style="width:auto" onclick="showPage('home')">← Back</button>
   <h2>FRIEND RIDE – Service Provider Registration</h2>
-  <p class="muted">Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
+  <p class="muted">TASKO / GIGGER, Laundry, Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
   <div class="field"><label>Service Category *</label>
    <select id="spCategory">
-    <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Laundry Services">Laundry Services</option><option value="Home Services">Home Services</option>
+    <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Laundry Partner">Laundry Services</option><option value="Home Services">Home Services</option>
     <option value="Catering Services">Catering Services</option>
     <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
     <option value="Beauty Makeover">Beauty Makeover</option>
@@ -525,7 +525,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <div id="laundryBookingStatus" class="notice">Booking request Adminకు వెళ్తుంది. Approved Partner assignment మరియు price confirmation తర్వాత status చూపిస్తాం.</div>
   <div class="card"><h3>My Laundry Orders</h3><button class="btn light" onclick="requireLogin(frLoadMyLaundryBookings)">Refresh My Orders</button><div id="laundryMyBookings"></div></div>
   <hr><h3>Are you a Laundry Service Partner?</h3><p class="muted">Laundry shop / service providerగా చేరండి. మీ Per KG / Per Piece ధరలు మరియు service area నమోదు చేయండి. Admin approval తర్వాత మాత్రమే customer orders అందుతాయి.</p>
-  <button class="btn light" onclick="requireLogin(()=>openServiceProviderRegister('Laundry Services'))">Register as Laundry Partner</button>
+  <button class="btn light" onclick="requireLogin(()=>openServiceProviderRegister('Laundry Partner'))">Register as Laundry Partner</button>
   <div id="laundryAdminPanel" class="hide"><hr><h3>Admin – Laundry Control Centre</h3><button class="btn light" onclick="frAdminLoadLaundry()">Refresh Laundry Applications & Orders</button><div id="laundryAdminApplications"></div><div id="laundryAdminBookings"></div></div>
  </div>
 </section>
@@ -4347,7 +4347,7 @@ async function frLoadMyLaundryBookings(){
  if(!currentUser){box.textContent='Login అవసరం.';return;}
  box.textContent='Laundry orders loading…';
  try{
-  const {data:application,error:appError}=await sb.from('fr_service_provider_applications').select('id').eq('provider_id',currentUser.id).eq('service_category','Laundry Services').eq('status','approved').limit(1).maybeSingle();
+  const {data:application,error:appError}=await sb.from('fr_service_provider_applications').select('id').eq('provider_id',currentUser.id).eq('service_category','Laundry Partner').eq('status','approved').limit(1).maybeSingle();
   if(appError)throw appError;
   const isProvider=!!application;
   const base=sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,status,quoted_amount,laundry_unit,laundry_quantity,laundry_unit_price,pickup_address').eq('service_type','laundry').order('created_at',{ascending:false}).limit(50);
@@ -4371,7 +4371,7 @@ async function frAdminLoadLaundry(){
  if(apps)apps.textContent='Applications loading…';if(orders)orders.textContent='Orders loading…';
  try{
   const [a,b]=await Promise.all([
-   sb.from('fr_service_provider_applications').select('id,provider_id,full_name,phone,full_address,status,service_details').eq('service_category','Laundry Services').order('created_at',{ascending:false}).limit(100),
+   sb.from('fr_service_provider_applications').select('id,provider_id,full_name,phone,full_address,status,service_details').eq('service_category','Laundry Partner').order('created_at',{ascending:false}).limit(100),
    sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,pickup_address,notes,status,quoted_amount,laundry_unit,laundry_quantity,laundry_unit_price').eq('service_type','laundry').order('created_at',{ascending:false}).limit(100)
   ]);
   if(a.error)throw a.error;if(b.error)throw b.error;
