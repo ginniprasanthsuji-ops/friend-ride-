@@ -2810,7 +2810,7 @@ async function frLoadMyTaskoBookings(){
  if(!currentUser){box.textContent='Login అవసరం.';return;}
  box.textContent='మీ TASKO పనులు loading…';
  try{
-  const {data:myApp,error:appError}=await sb.from('fr_service_provider_applications').select('id').eq('provider_id',currentUser.id).eq('service_category','TASKO / QUICKMATE Assistant').eq('status','approved').maybeSingle();
+  const {data:myApp,error:appError}=await sb.from('fr_service_provider_applications').select('id').eq('provider_id',currentUser.id).eq('service_category','TASKO / QUICKMATE Assistant').eq('status','approved').limit(1).maybeSingle();
   if(appError)throw appError;
   const isProvider=!!myApp;
   const q=sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,service_time,status,quoted_amount,final_amount,actual_hours,payment_status,payment_reference,notes').eq('service_type','tasko').order('created_at',{ascending:false}).limit(30);
