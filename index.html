@@ -2804,15 +2804,47 @@ async function frSubmitTaskoBooking(){
   ['taskoAddress','taskoNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
  }catch(e){if(status)status.textContent='Booking failed: '+(e.message||e);else alert(e.message||e);}
 }
+let frTaskoApprovedGiggers=[];
 async function frLoadMyTaskoBookings(){
  const box=document.getElementById('taskoMyBookings');if(!box)return;
  if(!currentUser){box.textContent='Login అవసరం.';return;}
  box.textContent='మీ TASKO పనులు loading…';
  try{
-  const {data,error}=await sb.from('fr_service_bookings').select('id,category,service_date,service_time,status,quoted_amount,notes').eq('service_type','tasko').or('customer_id.eq.'+currentUser.id+',assigned_provider_id.eq.'+currentUser.id).order('created_at',{ascending:false}).limit(30);
+  const isProvider=currentProfile?.role==='provider'||currentProfile?.role==='service_provider';
+  const q=sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,service_time,status,quoted_amount,final_amount,actual_hours,payment_status,payment_reference,notes').eq('service_type','tasko').order('created_at',{ascending:false}).limit(30);
+  const {data,error}=await (isProvider?q.eq('assigned_provider_id',currentUser.id):q.eq('customer_id',currentUser.id));
   if(error)throw error;
-  box.innerHTML='<h3>My TASKO Bookings / Work</h3>'+(data||[]).map(x=>'<div class="listrow"><div class="grow"><b>'+safe(x.category)+'</b><small>'+safe(x.service_date)+' '+safe(x.service_time)+' • '+safe(x.status)+'</small></div><span class="pill">'+(x.quoted_amount?'₹'+Number(x.quoted_amount).toFixed(0):'Quote pending')+'</span></div>').join('')||'No TASKO bookings yet.';
+  box.innerHTML='<h3>My TASKO Bookings / Work</h3>'+((data||[]).map(x=>{
+   let actions='';
+   if(isProvider&&['assigned','accepted','in_progress'].includes(x.status)){
+    actions='<div class="track-actions">'+(x.status==='assigned'?'<button onclick="frTaskoProviderAction(\''+x.id+'\',\'accept\')">Accept Work</button>':'')+(x.status==='accepted'?'<button onclick="frTaskoProviderAction(\''+x.id+'\',\'start\')">Start Work</button>':'')+(x.status==='in_progress'?'<button onclick="frTaskoProviderAction(\''+x.id+'\',\'complete\')">Complete Work</button>':'')+'</div>';
+   }
+   if(!isProvider&&x.status==='completed'&&['pending','rejected'].includes(x.payment_status)){
+    actions='<div class="field"><label>UPI / Bank Transaction Reference</label><input id="taskoPayRef_'+x.id+'" maxlength="40" placeholder="Enter transaction reference"></div><button class="btn purple" onclick="frTaskoSubmitPayment(\''+x.id+'\')">Submit Payment Reference</button>';
+   }
+   return '<article class="listrow"><div class="grow"><b>'+safe(x.category)+'</b><small>'+safe(x.service_date)+' '+safe(x.service_time)+' • '+safe(x.status)+'</small><small>'+(x.final_amount?'Final ₹'+Number(x.final_amount).toFixed(2):x.quoted_amount?'Quote ₹'+Number(x.quoted_amount).toFixed(2):'Quote pending')+' • Payment: '+safe(x.payment_status||'not_due')+'</small>'+actions+'</div></article>';
+  }).join('')||'<p>No TASKO bookings yet.</p>');
  }catch(e){box.textContent='Load failed: '+(e.message||e);}
+}
+async function frTaskoProviderAction(id,action){
+ try{
+  if(!currentUser)throw Error('Login అవసరం.');
+  let actual=null;
+  if(action==='complete'){actual=Number(prompt('Actual work hours completed (e.g. 6.5):','6'));if(!Number.isFinite(actual)||actual<=0||actual>24)throw Error('Valid work hours ఇవ్వండి.');}
+  const {data,error}=await sb.rpc('fr_tasko_provider_transition',{p_booking_id:id,p_action:action,p_actual_hours:actual});
+  if(error)throw error;
+  alert('TASKO work status updated: '+action);
+  await frLoadMyTaskoBookings();
+ }catch(e){alert('Work update failed: '+(e.message||e));}
+}
+async function frTaskoSubmitPayment(id){
+ try{
+  const ref=(document.getElementById('taskoPayRef_'+id)?.value||'').trim();
+  const {error}=await sb.rpc('fr_tasko_submit_payment',{p_booking_id:id,p_payment_reference:ref});
+  if(error)throw error;
+  alert('Payment reference submitted. Admin verification pending.');
+  await frLoadMyTaskoBookings();
+ }catch(e){alert('Payment submission failed: '+(e.message||e));}
 }
 async function frAdminLoadTasko(){
  if(currentProfile?.role!=='admin'||selectedRole!=='admin')return alert('Admin access అవసరం.');
@@ -2821,12 +2853,36 @@ async function frAdminLoadTasko(){
  try{
   const [a,b]=await Promise.all([
    sb.from('fr_service_provider_applications').select('id,provider_id,full_name,phone,service_category,full_address,status,experience_years,created_at').eq('service_category','TASKO / QUICKMATE Assistant').order('created_at',{ascending:false}).limit(100),
-   sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,service_time,pickup_address,notes,status,quoted_amount,created_at').eq('service_type','tasko').order('created_at',{ascending:false}).limit(100)
+   sb.from('fr_service_bookings').select('id,customer_id,assigned_provider_id,category,service_date,service_time,pickup_address,notes,status,quoted_amount,final_amount,payment_status,payment_reference,created_at').eq('service_type','tasko').order('created_at',{ascending:false}).limit(100)
   ]);
   if(a.error)throw a.error;if(b.error)throw b.error;
-  if(apps)apps.innerHTML='<h3>Gigger Applications</h3>'+((a.data||[]).map(x=>'<article class="listrow"><div class="grow"><b>'+safe(x.full_name)+'</b><small>'+safe(x.phone)+' • '+safe(x.full_address)+' • '+safe(x.status)+'</small></div><button class="btn light" onclick="frAdminReviewTaskoApplication(\''+x.id+'\',\'approved\')">Approve</button><button class="btn red" onclick="frAdminReviewTaskoApplication(\''+x.id+'\',\'rejected\')">Reject</button></article>').join('')||'<p>No applications.</p>');
-  if(bookings)bookings.innerHTML='<h3>Customer Requests</h3>'+((b.data||[]).map(x=>'<article class="listrow"><div class="grow"><b>'+safe(x.category)+'</b><small>'+safe(x.service_date)+' '+safe(x.service_time)+' • '+safe(x.status)+' • '+safe(x.pickup_address)+'</small><small>Booking '+safe(x.id.slice(0,8))+'</small></div><button class="btn light" onclick="frAdminSetTaskoStatus(\''+x.id+'\',\'assigned\')">Assign</button><button class="btn purple" onclick="frAdminSetTaskoStatus(\''+x.id+'\',\'in_progress\')">Start</button><button class="btn green" onclick="frAdminSetTaskoStatus(\''+x.id+'\',\'completed\')">Complete</button></article>').join('')||'<p>No TASKO requests.</p>');
+  frTaskoApprovedGiggers=(a.data||[]).filter(x=>x.status==='approved');
+  if(apps)apps.innerHTML='<h3>Gigger Applications</h3>'+((a.data||[]).map(x=>'<article class="listrow"><div class="grow"><b>'+safe(x.full_name)+'</b><small>'+safe(x.phone)+' • '+safe(x.full_address)+' • '+safe(x.status)+'</small></div>'+(x.status==='pending'||x.status==='under_review'?'<button class="btn light" onclick="frAdminReviewTaskoApplication(\''+x.id+'\',\'approved\')">Approve</button><button class="btn red" onclick="frAdminReviewTaskoApplication(\''+x.id+'\',\'rejected\')">Reject</button>':'')+'</article>').join('')||'<p>No applications.</p>');
+  if(bookings)bookings.innerHTML='<h3>Customer Requests & Payment Verification</h3>'+((b.data||[]).map(x=>{
+   const opts='<option value="">Select approved Gigger</option>'+frTaskoApprovedGiggers.map(g=>'<option value="'+safe(g.provider_id)+'" '+(x.assigned_provider_id===g.provider_id?'selected':'')+'>'+safe(g.full_name)+' • '+safe(g.phone)+'</option>').join('');
+   const assign='<div class="field"><label>Assign Gigger</label><select id="taskoGigger_'+x.id+'">'+opts+'</select><label>Base quote (₹150–₹400 for first 6 hours)</label><input id="taskoQuote_'+x.id+'" type="number" min="150" max="400" value="'+(x.quoted_amount||150)+'"></div><button class="btn light" onclick="frAdminAssignTasko(\''+x.id+'\')">Assign / Update Quote</button>';
+   const payment=x.payment_status==='submitted'?'<button class="btn green" onclick="frAdminVerifyTaskoPayment(\''+x.id+'\',\'verified\')">Verify Payment</button><button class="btn red" onclick="frAdminVerifyTaskoPayment(\''+x.id+'\',\'rejected\')">Reject Payment</button>':'';
+   return '<article class="card"><b>'+safe(x.category)+'</b><small> • '+safe(x.service_date)+' '+safe(x.service_time)+' • '+safe(x.status)+'</small><p>'+safe(x.pickup_address)+'</p><small>Booking '+safe(x.id.slice(0,8))+' • Quote '+(x.quoted_amount?'₹'+Number(x.quoted_amount).toFixed(2):'pending')+' • Final '+(x.final_amount?'₹'+Number(x.final_amount).toFixed(2):'pending')+' • Payment '+safe(x.payment_status||'not_due')+'</small>'+(['pending','assigned'].includes(x.status)?assign:'')+payment+'</article>';
+  }).join('')||'<p>No TASKO requests.</p>');
  }catch(e){if(apps)apps.textContent='Admin load failed: '+(e.message||e);}
+}
+async function frAdminAssignTasko(id){
+ try{
+  if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+  const provider=document.getElementById('taskoGigger_'+id)?.value;
+  const quote=Number(document.getElementById('taskoQuote_'+id)?.value);
+  if(!provider)throw Error('Approved Gigger select చేయండి.');
+  if(!Number.isFinite(quote)||quote<150||quote>400)throw Error('Base quote ₹150–₹400 మధ్య ఉండాలి.');
+  const {error}=await sb.from('fr_service_bookings').update({assigned_provider_id:provider,quoted_amount:quote,status:'assigned',updated_at:new Date().toISOString()}).eq('id',id);
+  if(error)throw error;await frAdminLoadTasko();
+ }catch(e){alert('Gigger assignment failed: '+(e.message||e));}
+}
+async function frAdminVerifyTaskoPayment(id,decision){
+ try{
+  if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
+  const {error}=await sb.rpc('fr_tasko_admin_verify_payment',{p_booking_id:id,p_decision:decision});
+  if(error)throw error;await frAdminLoadTasko();
+ }catch(e){alert('Payment verification failed: '+(e.message||e));}
 }
 async function frAdminReviewTaskoApplication(id,status){
  try{if(currentProfile?.role!=='admin'||selectedRole!=='admin')throw Error('Admin access అవసరం.');
