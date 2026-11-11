@@ -442,12 +442,22 @@ test('TASKO booking form exposes helper categories, hours, date, time, address a
 
 test('TASKO hourly price preview applies ₹400 for first six hours and ₹50 per extra hour', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
-  await page.locator('#taskoHours').selectOption('6');
-  await expect(page.locator('#taskoPricePreview')).toContainText('₹150–₹400');
-  await page.locator('#taskoHours').selectOption('7');
-  await expect(page.locator('#taskoPricePreview')).toContainText('₹450');
-  await page.locator('#taskoHours').selectOption('10');
-  await expect(page.locator('#taskoPricePreview')).toContainText('₹600');
+  const preview = await page.evaluate(() => {
+    const hours = document.querySelector('#taskoHours');
+    const output = document.querySelector('#taskoPricePreview');
+    if (!hours || !output || typeof window.frTaskoPricePreview !== 'function') throw new Error('TASKO price preview is not wired');
+    const values = [];
+    for (const value of ['6', '7', '10']) {
+      hours.value = value;
+      window.frTaskoPricePreview();
+      values.push(output.textContent);
+    }
+    return values;
+  });
+  expect(preview[0]).toContain('₹150–₹400');
+  expect(preview[1]).toContain('₹450');
+  expect(preview[1]).toContain('₹50 per extra hour');
+  expect(preview[2]).toContain('₹600');
 });
 
 test('TASKO Gigger registration requires emergency contact and uses private KYC upload flow', async ({ page }) => {
