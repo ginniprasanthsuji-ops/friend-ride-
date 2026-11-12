@@ -1,0 +1,41 @@
+name: FRIEND RIDE Invoice QA
+on:
+  push:
+    branches: [invoice-ui-qa]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  invoice-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Validate inline JavaScript
+        run: node scripts/check-inline-js.mjs
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start app
+        run: |
+          npx --yes http-server@14.1.1 . -p 4173 -s > /tmp/friend-ride-server.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:4173/ >/dev/null && exit 0; sleep 1; done
+          cat /tmp/friend-ride-server.log
+          exit 1
+      - name: Playwright regression
+        env:
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
+        run: npm test
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: invoice-qa-playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
