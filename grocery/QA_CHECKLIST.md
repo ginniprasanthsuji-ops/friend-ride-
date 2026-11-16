@@ -34,3 +34,15 @@
 - No production payment action is enabled.
 - Purchase-linked promotional draw needs written legal review; the module must stay disabled until approval.
 - This branch is a prototype/schema draft, not a live feature. Do not merge to main or deploy to production yet.
+
+
+## SMART GROCERY EMI safety additions (QA only)
+- [ ] Admin-configured FD secured-card and new-credit-card URLs can be changed only through a server-verified Admin Edge Function.
+- [ ] No browser client can directly select/insert/update/delete `fr_grocery_admin_links`.
+- [ ] Suggested Grocery limit bands: 750–799 ₹5,000; 800–849 ₹6,000; 850–900 ₹7,000; below 750 ineligible under the proposed rule.
+- [ ] Final Grocery limit and Congratulations state appear only after FRIEND RIDE Admin operational approval; this is not a bank credit approval.
+- [ ] Bank alone approves FD, card issuance, credit limit, EMI conversion and repayments.
+- [ ] CIBIL lookup is disabled until explicit consent and an authorized CIC/provider integration exist; do not store raw reports.
+- [ ] Existing card checkout stays hosted/tokenized; no PAN/CVV/PIN is stored.
+- [ ] No direct browser writes to application review, spending limits, bank plans, payments, ledger, webhook events or admin links.
+- [ ] Root `index.html` and production Supabase have not been changed by this QA-only extension.
