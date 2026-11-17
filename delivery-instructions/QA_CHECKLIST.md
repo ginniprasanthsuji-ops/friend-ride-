@@ -19,11 +19,14 @@ Five integrated delivery capabilities:
 - [x] Ride customer capture UI is mounted after a ride is created.
 - [x] Parcel customer capture UI is mounted after the parcel-create RPC returns an order ID.
 - [ ] Food order creation is not wired to `fr_food_orders` in the current UI; implement the real customer order-create flow before mounting instructions.
-- [ ] Shop checkout creates `fr_market_orders`, while current delivery authorization checks `shop_orders`; reconcile the order/driver-assignment model before enabling customer + assigned-driver access.
+- [x] Shop/Market delivery uses the existing `fr_market_orders.id` and `customer_id`; legacy `shop_orders` and `shop_delivery_assignments` are not modified.
+- [x] Added a separate `fr_market_order_delivery_assignments` mapping table for assigned drivers, with Partner/Admin assignment RPCs and a Driver-only assigned-order listing RPC.
+- [x] Added Customer delivery-instructions widget to existing FR Market order cards and an assigned-Market-deliveries panel to Driver Dashboard.
+- [ ] Apply and verify additive migration `202611170003_friendride_market_delivery_mapping.sql` in the QA database, then test Partner assignment and Driver-only access.
 - [ ] Upload photo/audio and persist paths from the customer flow.
 - [x] Ride assigned-driver instruction card loads through the existing active-ride renderer.
 - [x] Parcel assigned-driver instruction widget is mounted after successful driver acceptance.
-- [ ] Food and Shop assigned-driver instruction cards remain blocked by the missing/mismatched order-flow mappings.
+- [ ] Food assigned-driver instruction cards remain blocked by the missing Food order-create flow. Shop driver widget is mounted from the new FR Market assignment list after a driver is assigned.
 - [ ] Add driver arrival photo upload flow.
 - [x] Confirm the separate `friendride-delivery-otp` Edge Function is ACTIVE in Supabase; it reuses existing `APITXT_AUTHKEY` / `APITXT_TEMPLATE_ID` secrets. Registration `Sms-otp` function is separate and must remain untouched.
 - [ ] Add source-controlled Edge Function parity and automated tests for issue/verify, 5-minute expiry, 60-second resend cooldown, and five-attempt limit; never expose plaintext OTP or hash to the client.
@@ -37,4 +40,4 @@ Five integrated delivery capabilities:
 - [ ] Merge to Main only after every test passes.
 
 ## Current status
-This is a database foundation, not a completed end-to-end feature. UI integration across all order types, assigned-driver arrival-photo write path verification, and automated browser/security tests remain release blockers. The separate delivery OTP Edge Function is already ACTIVE; no registration OTP function or secrets were changed. Main branch has not been modified or merged.
+This is an incremental integration. Ride and Parcel are mounted; Shop uses the existing FR Market order model with an additive driver-assignment map and does not change legacy Shop checkout/quotation/payment logic. Food order creation, applying/testing the additive mapping migration, assigned-driver media security, and full browser/backend regression remain release blockers. The separate delivery OTP Edge Function is already ACTIVE; no registration OTP function or secrets were changed. Main branch has not been modified or merged.
