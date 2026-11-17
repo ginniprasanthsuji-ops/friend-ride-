@@ -150,3 +150,24 @@ end;
 $$;
 revoke all on function public.fr_assign_market_order_delivery_driver(uuid,uuid) from public;
 grant execute on function public.fr_assign_market_order_delivery_driver(uuid,uuid) to authenticated;
+
+create or replace function public.fr_driver_list_assigned_market_orders()
+returns table(order_id uuid, order_number text, order_status text, delivery_address text, assigned_at timestamptz)
+language plpgsql security definer set search_path = ''
+as $$
+begin
+  if auth.uid() is null or not exists(
+    select 1 from public.profiles p where p.id=auth.uid()
+      and lower(coalesce(p.role,''))='driver'
+      and lower(coalesce(p.driver_approval_status,''))='approved'
+  ) then raise exception 'Approved Driver login required' using errcode='42501'; end if;
+  return query
+    select o.id,o.order_number,o.status,o.delivery_address,a.assigned_at
+    from public.fr_market_order_delivery_assignments a
+    join public.fr_market_orders o on o.id=a.order_id
+    where a.driver_id=auth.uid() and a.status in ('assigned','picked_up')
+    order by a.assigned_at desc;
+end;
+$$;
+revoke all on function public.fr_driver_list_assigned_market_orders() from public;
+grant execute on function public.fr_driver_list_assigned_market_orders() to authenticated;
