@@ -36,7 +36,7 @@ Five integrated delivery capabilities:
 - [x] Add Playwright checks for four order-type widget rendering and Parcel customer/driver mount hooks.
 - [x] Quality Gate run #206: full browser regression 50/50 passed; typecheck and unit-test job passed.
 - [x] Workflow source-regression run #75 passed, including all 24 inline scripts.
-- [ ] Dedicated delivery QA Playwright run #45 is still running; verify final result after completion.
+- [x] Dedicated delivery QA Playwright run #45 passed: 50/50 tests.
 - [ ] Run authenticated backend/device regression with real test accounts; static/browser UI checks do not prove live SMS, Storage, RLS or payment behavior.
 - [x] Add a GitHub Actions Playwright workflow and local static preview server configuration.
 - [ ] Review Supabase Security Advisor and RLS policy tests.
