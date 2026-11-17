@@ -133,6 +133,10 @@ begin
   if p_order_id is null or p_driver_id is null then raise exception 'Order and driver are required'; end if;
   select lower(coalesce(role,'')) into v_role from public.profiles where id=v_uid;
   if v_role not in ('admin','partner') then raise exception 'Admin or owning Partner required' using errcode='42501'; end if;
+  if v_role='partner' and not exists(select 1 from public.profiles p where p.id=v_uid
+    and lower(coalesce(p.partner_approval_status,''))='approved') then
+    raise exception 'Approved Partner account required' using errcode='42501';
+  end if;
   select status,partner_id into v_status,v_partner from public.fr_market_orders where id=p_order_id for update;
   if not found then raise exception 'FR Market order not found' using errcode='P0002'; end if;
   if v_role='partner' and v_partner<>v_uid then raise exception 'Only the owning Partner can assign delivery' using errcode='42501'; end if;
