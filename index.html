@@ -1152,11 +1152,14 @@ async function loadPartnerOrders(status='all'){
   const dbStatus=status==='new'?'quote_requested':(status==='all'?null:status);
   const {data,error}=await sb.rpc('fr_partner_list_market_orders',{p_status:dbStatus});if(error)throw error;
   if(!data||!data.length){el.innerHTML='<div class="empty-state">ఇంకా Orders రాలేదు.</div>';return;}
+  let approvedDrivers=[];
+  if(data.some(o=>o.status==='ready')){const dr=await sb.rpc('fr_partner_list_approved_delivery_drivers');if(!dr.error)approvedDrivers=dr.data||[];}
   el.innerHTML=data.map(o=>{
    const items=Array.isArray(o.items)?o.items:[];
    const lines=items.map(i=>'<div class="listrow"><span>'+safe(i.item_name)+' × '+safe(i.quantity)+'</span><b>'+(i.unit_price_paise==null?'Price pending':'₹'+(Number(i.unit_price_paise)*Number(i.quantity)/100).toFixed(2))+'</b></div>').join('');
    const actions=o.status==='quote_requested'?'<div class="row"><button class="btn purple" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'accepted\')">Accept Order</button><button class="btn light" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'rejected\')">Reject</button></div>':(o.status==='accepted'?'<button class="btn purple" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'preparing\')">Start Preparing</button>':(o.status==='preparing'?'<button class="btn purple" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'ready\')">Mark Ready</button>':(o.status==='ready'?'<button class="btn purple" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'completed\')">Complete Order</button>':'')));
-   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+safe(o.order_number)+'</b><span class="pill">'+safe(o.status)+'</span></div><p>Customer: '+safe(o.customer_name||'Customer')+'</p><p>Address: '+safe(o.delivery_address)+'</p>'+lines+'<p><small>'+safe(o.created_at)+'</small></p>'+actions+'</div>';
+   const assign=o.status==='ready'?'<div class="notice" style="margin-top:10px"><b>Assign delivery driver</b><div class="row"><select id="frMarketDriver_'+o.order_id+'"><option value="">Select approved Driver</option>'+approvedDrivers.map(d=>'<option value="'+safe(d.driver_id)+'">'+safe(d.driver_name)+'</option>').join('')+'</select><button class="btn light" type="button" onclick="frPartnerAssignMarketDriver(\\''+o.order_id+'\\')">Assign</button></div></div>':'';
+   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+safe(o.order_number)+'</b><span class="pill">'+safe(o.status)+'</span></div><p>Customer: '+safe(o.customer_name||'Customer')+'</p><p>Address: '+safe(o.delivery_address)+'</p>'+lines+'<p><small>'+safe(o.created_at)+'</small></p>'+actions+assign+'</div>';
   }).join('');
  }catch(e){el.innerHTML='<div class="notice">Orders load కాలేదు: '+safe(e.message||e)+'</div>';}
 }
