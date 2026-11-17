@@ -171,3 +171,26 @@ end;
 $$;
 revoke all on function public.fr_driver_list_assigned_market_orders() from public;
 grant execute on function public.fr_driver_list_assigned_market_orders() to authenticated;
+
+create or replace function public.fr_partner_list_approved_delivery_drivers()
+returns table(driver_id uuid, driver_name text)
+language plpgsql stable security definer set search_path = ''
+as $$
+declare v_role text;
+begin
+  if auth.uid() is null then raise exception 'Login required' using errcode='28000'; end if;
+  select lower(coalesce(role,'')) into v_role from public.profiles where id=auth.uid();
+  if v_role not in ('admin','partner') then raise exception 'Admin or Partner login required' using errcode='42501'; end if;
+  if v_role='partner' and not exists(select 1 from public.profiles p where p.id=auth.uid()
+    and lower(coalesce(p.partner_approval_status,''))='approved') then
+    raise exception 'Approved Partner account required' using errcode='42501';
+  end if;
+  return query select p.id,coalesce(nullif(p.full_name,''),'Approved Driver')
+    from public.profiles p
+    where lower(coalesce(p.role,''))='driver'
+      and lower(coalesce(p.driver_approval_status,''))='approved'
+    order by coalesce(p.full_name,'');
+end;
+$$;
+revoke all on function public.fr_partner_list_approved_delivery_drivers() from public;
+grant execute on function public.fr_partner_list_approved_delivery_drivers() to authenticated;
