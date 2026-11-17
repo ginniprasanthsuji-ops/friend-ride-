@@ -16,16 +16,23 @@ Five integrated delivery capabilities:
 - Access function checks Customer or assigned Driver for Ride, Parcel, Food, and Shop orders.
 
 ## Required before release
-- [ ] Add customer capture UI to each supported order form.
+- [x] Ride customer capture UI is mounted after a ride is created.
+- [x] Parcel customer capture UI is mounted after the parcel-create RPC returns an order ID.
+- [ ] Food order creation is not wired to `fr_food_orders` in the current UI; implement the real customer order-create flow before mounting instructions.
+- [ ] Shop checkout creates `fr_market_orders`, while current delivery authorization checks `shop_orders`; reconcile the order/driver-assignment model before enabling customer + assigned-driver access.
 - [ ] Upload photo/audio and persist paths from the customer flow.
-- [ ] Add assigned-driver instruction card and signed/private media access.
+- [x] Ride assigned-driver instruction card loads through the existing active-ride renderer.
+- [x] Parcel assigned-driver instruction widget is mounted after successful driver acceptance.
+- [ ] Food and Shop assigned-driver instruction cards remain blocked by the missing/mismatched order-flow mappings.
 - [ ] Add driver arrival photo upload flow.
 - [x] Confirm the separate `friendride-delivery-otp` Edge Function is ACTIVE in Supabase; it reuses existing `APITXT_AUTHKEY` / `APITXT_TEMPLATE_ID` secrets. Registration `Sms-otp` function is separate and must remain untouched.
 - [ ] Add source-controlled Edge Function parity and automated tests for issue/verify, 5-minute expiry, 60-second resend cooldown, and five-attempt limit; never expose plaintext OTP or hash to the client.
-- [ ] Add landmark pin selection and persist coordinates.
+- [ ] Add landmark pin selection and persist coordinates (current UI captures GPS coordinates, but no map pin picker).
 - [ ] Ensure Driver can update arrival evidence only through a narrow server-side RPC; do not grant broad table UPDATE.
-- [ ] Add Playwright coverage for Customer/Driver ownership, unauthorized user denial, media upload/read, and OTP expiry/attempt limits.
-- [ ] Run existing full regression suite and verify existing ride/order flows.
+- [ ] Add backend integration tests for Customer/Driver ownership, unauthorized user denial, media upload/read, and OTP expiry/attempt limits.
+- [x] Add Playwright checks for four order-type widget rendering and Parcel customer/driver mount hooks.
+- [ ] Run full Playwright regression and verify all existing ride/order flows. The repository currently has a small delivery-specific Playwright suite; this is not yet a complete application regression suite.
+- [x] Add a GitHub Actions Playwright workflow and local static preview server configuration.
 - [ ] Review Supabase Security Advisor and RLS policy tests.
 - [ ] Merge to Main only after every test passes.
 
