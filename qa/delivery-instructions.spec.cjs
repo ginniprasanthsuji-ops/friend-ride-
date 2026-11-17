@@ -28,7 +28,7 @@ test.describe('FRIEND RIDE delivery instructions module', () => {
   });
 
   test('renders landmark, GPS, media and driver proof/OTP controls', async ({ page }) => {
-    await page.setContent('<main><div id="deliveryHost"></div></main>');
+    await page.evaluate(() => { document.body.insertAdjacentHTML('beforeend', '<main><div id="deliveryHost"></div></main>'); });
     await page.evaluate(() => window.FriendRideDelivery.mount('deliveryHost','ride','00000000-0000-4000-8000-000000000001','driver'));
     await expect(page.getByText('Landmark / Nearby place')).toBeVisible();
     await expect(page.locator('#frDiLat')).toBeVisible();
@@ -39,7 +39,7 @@ test.describe('FRIEND RIDE delivery instructions module', () => {
   });
 
   test('shows customer OTP issue action and hides driver-only controls', async ({ page }) => {
-    await page.setContent('<main><div id="deliveryHost"></div></main>');
+    await page.evaluate(() => { document.body.insertAdjacentHTML('beforeend', '<main><div id="deliveryHost"></div></main>'); });
     await page.evaluate(() => window.FriendRideDelivery.mount('deliveryHost','ride','00000000-0000-4000-8000-000000000001','customer'));
     await expect(page.getByRole('button', { name: 'Send OTP to Customer' })).toBeVisible();
     await expect(page.locator('#frDiArrival')).toHaveCount(0);
@@ -47,7 +47,7 @@ test.describe('FRIEND RIDE delivery instructions module', () => {
   });
 
   test('does not expose customer OTP issue action in driver mode', async ({ page }) => {
-    await page.setContent('<main><div id="deliveryHost"></div></main>');
+    await page.evaluate(() => { document.body.insertAdjacentHTML('beforeend', '<main><div id="deliveryHost"></div></main>'); });
     await page.evaluate(() => window.FriendRideDelivery.mount('deliveryHost','parcel','00000000-0000-4000-8000-000000000001','driver'));
     await expect(page.getByRole('button', { name: 'Send OTP to Customer' })).toBeHidden();
   });
