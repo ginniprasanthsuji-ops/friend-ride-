@@ -3938,6 +3938,18 @@ async function frLoadCustomerMarketOrders(){
    const phone=(o.partner_phone||'').replace(/[^0-9+]/g,'');
    return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p>Shop: '+frMarketEsc(o.partner_name)+'</p><p>Shop Phone: '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p>Delivery: '+frMarketEsc(o.delivery_address)+'</p>'+lines+actions+'</div>';
   }).join('');
+  // Add delivery-instruction capture to existing FR Market order cards only.
+  // Checkout, quotations, payment and order status handlers remain unchanged.
+  for(const o of data){
+   const hostId='frMarketDelivery_'+o.order_id;
+   const card=[...el.querySelectorAll('.card')].find(c=>c.innerHTML.includes(o.order_id));
+   if(!card||document.getElementById(hostId))continue;
+   const host=document.createElement('div');host.id=hostId;host.style.marginTop='12px';card.appendChild(host);
+   try{
+    const widget=FriendRideDelivery.mount(hostId,'shop',o.order_id,'customer');
+    await widget.refresh();
+   }catch(widgetError){console.warn('FR Market delivery instructions unavailable',widgetError);}
+  }
  }catch(e){el.innerHTML='<div class="notice">Shop Orders load కాలేదు: '+frMarketEsc(e.message||e)+'</div>';}
 }
 async function frCustomerAcceptQuote(id){
