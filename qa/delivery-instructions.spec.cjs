@@ -51,4 +51,36 @@ test.describe('FRIEND RIDE delivery instructions module', () => {
     await page.evaluate(() => window.FriendRideDelivery.mount('deliveryHost','parcel','00000000-0000-4000-8000-000000000001','driver'));
     await expect(page.locator('#frDiCustomerOtp')).toBeHidden();
   });
+  test('supports all four delivery order types without changing their IDs', async ({ page }) => {
+    const results = await page.evaluate(() => {
+      const types = ['ride', 'parcel', 'food', 'shop'];
+      return types.map((type, index) => {
+        const host = document.createElement('div');
+        host.id = 'deliveryHost_' + index;
+        document.body.appendChild(host);
+        const widget = window.FriendRideDelivery.mount(
+          host.id, type, '00000000-0000-4000-8000-00000000000' + (index + 1), 'customer'
+        );
+        return { type, hostRendered: !!host.querySelector('[data-fr-delivery-widget]'), hasRefresh: typeof widget.refresh === 'function' };
+      });
+    });
+    expect(results).toEqual([
+      { type: 'ride', hostRendered: true, hasRefresh: true },
+      { type: 'parcel', hostRendered: true, hasRefresh: true },
+      { type: 'food', hostRendered: true, hasRefresh: true },
+      { type: 'shop', hostRendered: true, hasRefresh: true }
+    ]);
+  });
+
+  test('parcel booking and driver acceptance are wired to the delivery widget', async ({ page }) => {
+    const wired = await page.evaluate(() => {
+      const html = document.documentElement.innerHTML;
+      return {
+        customer: html.includes("FriendRideDelivery.mount('frParcelDeliveryInstructions','parcel'"),
+        driver: html.includes("FriendRideDelivery.mount('frParcelDriverDeliveryInstructions','parcel'")
+      };
+    });
+    expect(wired).toEqual({ customer: true, driver: true });
+  });
+
 });
