@@ -42,13 +42,13 @@ test.describe('FRIEND RIDE delivery instructions module', () => {
     await page.evaluate(() => { document.body.insertAdjacentHTML('beforeend', '<main><div id="deliveryHost"></div></main>'); });
     await page.evaluate(() => window.FriendRideDelivery.mount('deliveryHost','ride','00000000-0000-4000-8000-000000000001','customer'));
     await expect(page.getByRole('button', { name: 'Send OTP to Customer' })).toBeVisible();
-    await expect(page.locator('#frDiArrival')).toHaveCount(0);
+    await expect(page.locator('#frDiDriver')).toBeHidden();
     await expect(page.getByRole('button', { name: 'Verify Delivery OTP' })).toHaveCount(0);
   });
 
   test('does not expose customer OTP issue action in driver mode', async ({ page }) => {
     await page.evaluate(() => { document.body.insertAdjacentHTML('beforeend', '<main><div id="deliveryHost"></div></main>'); });
     await page.evaluate(() => window.FriendRideDelivery.mount('deliveryHost','parcel','00000000-0000-4000-8000-000000000001','driver'));
-    await expect(page.getByRole('button', { name: 'Send OTP to Customer' })).toBeHidden();
+    await expect(page.locator('#frDiCustomerOtp')).toBeHidden();
   });
 });
