@@ -3903,7 +3903,7 @@ async function loadPartnerOrders(status='all'){
    else if(o.status==='preparing')action='<button class="btn green" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'ready\')">Mark Ready</button>';
    else if(o.status==='ready')action='<div class="notice">Ready for Driver Pickup.</div>';
    const phone=(o.customer_phone||'').replace(/[^0-9+]/g,'');
-   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p><b>Customer:</b> '+frMarketEsc(o.customer_name||'Customer')+'</p><p><b>Mobile:</b> '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p><b>Delivery:</b> '+frMarketEsc(o.delivery_address)+'</p>'+lines+action+'</div>';
+   return '<div class="card" data-fr-market-order-id="'+frMarketEsc(o.order_id)+'" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p><b>Customer:</b> '+frMarketEsc(o.customer_name||'Customer')+'</p><p><b>Mobile:</b> '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p><b>Delivery:</b> '+frMarketEsc(o.delivery_address)+'</p>'+lines+action+'</div>';
   }).join('');
  }catch(e){el.innerHTML='<div class="notice">Orders load కాలేదు: '+frMarketEsc(e.message||e)+'</div>';}
 }
@@ -3942,7 +3942,7 @@ async function frLoadCustomerMarketOrders(){
   // Checkout, quotations, payment and order status handlers remain unchanged.
   for(const o of data){
    const hostId='frMarketDelivery_'+o.order_id;
-   const card=[...el.querySelectorAll('.card')].find(c=>c.innerHTML.includes(o.order_id));
+   const card=el.querySelector('.card[data-fr-market-order-id="'+o.order_id+'"]');
    if(!card||document.getElementById(hostId))continue;
    const host=document.createElement('div');host.id=hostId;host.style.marginTop='12px';card.appendChild(host);
    try{
