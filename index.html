@@ -3612,7 +3612,7 @@ async function renderDriverActiveRide(){
       (ride.pickup||'—')+' → '+(ride.drop||'—')+
       ' | Fare ₹'+(ride.agreed_fare??ride.fare_offer??'—');
     panel.append(details);
-    const deliveryHost=document.createElement('div');deliveryHost.id='frDriverDeliveryInstructions';panel.append(deliveryHost);try{FriendRideDelivery.mount('frDriverDeliveryInstructions','ride',ride.id,'driver');FriendRideDelivery.get('ride',ride.id).then(d=>{if(d){const box=deliveryHost.querySelector('#frDiExisting');if(box){box.hidden=false;const p=document.createElement('p');p.textContent='Landmark: '+(d.landmark_text||'Not provided')+' | GPS: '+(d.landmark_lat??'—')+', '+(d.landmark_lng??'—');box.prepend(p);}}}).catch(e=>console.warn('Delivery instructions load:',e));}catch(deliveryUiError){console.warn('Driver delivery UI:',deliveryUiError);}
+    const deliveryHost=document.createElement('div');deliveryHost.id='frDriverDeliveryInstructions';panel.append(deliveryHost);try{const deliveryWidget=FriendRideDelivery.mount('frDriverDeliveryInstructions','ride',ride.id,'driver');deliveryWidget.refresh().catch(e=>console.warn('Delivery instructions load:',e));}catch(deliveryUiError){console.warn('Driver delivery UI:',deliveryUiError);}
 
     const p=await rideContact(
       'get_ride_customer_details_v2',ride.id
