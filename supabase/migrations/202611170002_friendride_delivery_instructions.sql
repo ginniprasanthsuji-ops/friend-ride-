@@ -134,3 +134,38 @@ $$;
 
 revoke all on function public.fr_driver_set_delivery_arrival_photo(uuid, text) from public;
 grant execute on function public.fr_driver_set_delivery_arrival_photo(uuid, text) to authenticated;
+
+
+-- Only the actual customer may create the instruction row; drivers cannot
+-- smuggle arrival proof or OTP state through INSERT.
+create or replace function public.fr_is_delivery_order_customer(p_order_type text, p_order_id uuid)
+returns boolean language plpgsql stable security definer set search_path = '' as $$
+declare v_uid uuid := auth.uid();
+begin
+  if v_uid is null or p_order_id is null then return false; end if;
+  if p_order_type = 'ride' then
+    return exists(select 1 from public.rides r where r.id=p_order_id and r.customer_id=v_uid);
+  elsif p_order_type = 'parcel' then
+    return exists(select 1 from public.fr_parcel_orders p where p.id=p_order_id and p.customer_id=v_uid);
+  elsif p_order_type = 'food' then
+    return exists(select 1 from public.fr_food_orders o where o.id=p_order_id and o.customer_id=v_uid);
+  elsif p_order_type = 'shop' then
+    return exists(select 1 from public.shop_orders o where o.id=p_order_id and o.customer_id=v_uid);
+  end if;
+  return false;
+end;
+$$;
+revoke all on function public.fr_is_delivery_order_customer(text,uuid) from public;
+grant execute on function public.fr_is_delivery_order_customer(text,uuid) to authenticated;
+
+drop policy if exists fr_delivery_instructions_insert_customer on public.fr_delivery_instructions;
+create policy fr_delivery_instructions_insert_customer
+on public.fr_delivery_instructions for insert to authenticated
+with check (
+  created_by = auth.uid()
+  and public.fr_is_delivery_order_customer(order_type, order_id)
+  and arrival_photo_path is null
+  and delivery_otp_hash is null
+  and delivery_otp_expires_at is null
+  and delivery_otp_verified_at is null
+);
