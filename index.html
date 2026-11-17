@@ -454,7 +454,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="goods" class="page"><div class="card"><h2>Goods Delivery</h2><div class="field"><label>Pickup Address</label><textarea id="goodsPickup"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="goodsDrop"></textarea></div><div class="field"><label>Goods Description</label><input id="goodsDescription" placeholder="What do you want to transport?"></div><div class="field"><label>Approx. Weight (kg)</label><input id="goodsWeight" type="number" min=".1" step=".1"></div><button class="btn purple" onclick="validateGoods()">Request Goods Delivery</button></div></section>
 
-<section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><div class="field"><label>Sender Name</label><input id="parcelSender"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription"></div><div class="field"><label>Weight (kg)</label><input id="parcelWeight" type="number" min=".1" step=".1"></div><div class="notice">Payment is collected at delivery. Recipient OTP is issued only after verified payment. Driver confirms payment in app before parcel release.</div><button class="btn purple" onclick="submitParcelRequest()">Request Parcel Delivery</button><button class="btn light" onclick="showPage('parcelRelease')">Driver Parcel Release Screen</button></div></section>
+<section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><div class="field"><label>Sender Name</label><input id="parcelSender"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription"></div><div class="field"><label>Weight (kg)</label><input id="parcelWeight" type="number" min=".1" step=".1"></div><div class="notice">Payment is collected at delivery. Recipient OTP is issued only after verified payment. Driver confirms payment in app before parcel release.</div><div id="frParcelDeliveryInstructions" style="margin-top:12px"></div><button class="btn purple" onclick="submitParcelRequest()">Request Parcel Delivery</button><button class="btn light" onclick="showPage('parcelRelease')">Driver Parcel Release Screen</button></div></section>
 
 <section id="food" class="page">
  <div class="card">
@@ -3071,6 +3071,11 @@ async function frAdminUpdateBankEnquiry(id,status){
    const r=Array.isArray(data)?data[0]:data;
    if(!r?.parcel_id||!r?.tracking_id)throw Error('Backend parcel confirmation incomplete.');
    window.frLastParcelId=r.parcel_id;window.frLastParcelTracking=r.tracking_id;
+   const parcelHost=$('frParcelDeliveryInstructions');
+   if(parcelHost&&window.FriendRideDelivery){
+    window.frParcelCustomerDeliveryWidget=FriendRideDelivery.mount('frParcelDeliveryInstructions','parcel',r.parcel_id,'customer');
+    await window.frParcelCustomerDeliveryWidget.refresh();
+   }
    if($('parcelTrackingId'))$('parcelTrackingId').value=r.tracking_id;
    alert('Parcel request saved. Tracking ID: '+r.tracking_id+'\nPayment: Cash on Delivery. Driver acceptance తర్వాత status update అవుతుంది.');
    ['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription','parcelWeight'].forEach(id=>{if($(id))$(id).value='';});
@@ -3085,6 +3090,13 @@ async function frAdminUpdateBankEnquiry(id,status){
    if(row.status!=='requested')throw Error('ఈ Parcel ఇప్పటికే '+row.status+' statusలో ఉంది.');
    const {data:ok,error:ae}=await sb.rpc('fr_driver_accept_parcel',{p_parcel_id:row.parcel_id});if(ae)throw ae;
    if(!ok)throw Error('Server rejected parcel acceptance.');
+   const parcelPanel=$('parcelRelease')?.querySelector('.card');
+   if(parcelPanel&&window.FriendRideDelivery){
+    let deliveryHost=$('frParcelDriverDeliveryInstructions');
+    if(!deliveryHost){deliveryHost=document.createElement('div');deliveryHost.id='frParcelDriverDeliveryInstructions';parcelPanel.appendChild(deliveryHost);}
+    window.frParcelDriverDeliveryWidget=FriendRideDelivery.mount('frParcelDriverDeliveryInstructions','parcel',row.parcel_id,'driver');
+    await window.frParcelDriverDeliveryWidget.refresh();
+   }
    alert('Parcel accepted. Pickup, delivery details ఇప్పుడు మీ Driver accountకు assign అయ్యాయి.');
   }catch(e){fail('Parcel accept కాలేదు',e);}
  };
