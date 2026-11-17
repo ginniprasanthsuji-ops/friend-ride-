@@ -169,3 +169,11 @@ with check (
   and delivery_otp_expires_at is null
   and delivery_otp_verified_at is null
 );
+
+
+-- Delivery OTP state used only by friendride-delivery-otp.
+-- Idempotent so the migration remains safe when the production schema already has these fields.
+alter table public.fr_delivery_instructions
+  add column if not exists delivery_otp_attempts integer not null default 0
+    check (delivery_otp_attempts between 0 and 5),
+  add column if not exists delivery_otp_issued_at timestamptz;
