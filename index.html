@@ -304,6 +304,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
   <button class="fr-home-service fr-hs-green" onclick="requireLogin(()=>showPage('ride'))"><span>🚕</span><b>Ride</b><small>Bike • Auto • Car</small></button>
   <button class="fr-home-service fr-hs-orange" onclick="requireLogin(()=>showPage('food'))"><span>🍱</span><b>Food</b><small>Meals & restaurants</small></button>
   <button class="fr-home-service fr-hs-yellow" onclick="requireLogin(()=>showPage('shops'))"><span>🛒</span><b>Friend Mart</b><small>Local stores</small></button>
+  <button class="fr-home-service fr-hs-violet" onclick="showPage('smartGroceryEmi')"><span>💳</span><b>SMART GROCERY EMI</b><small>Grocery membership</small></button>
   <button class="fr-home-service fr-hs-blue" onclick="requireLogin(()=>showPage('parcel'))"><span>📦</span><b>Parcel</b><small>Send anything</small></button>
   <button class="fr-home-service fr-hs-lime" onclick="requireLogin(()=>showPage('goods'))"><span>🚚</span><b>Goods</b><small>Move your goods</small></button>
   <button class="fr-home-service fr-hs-pink" onclick="requireLogin(()=>showPage('homeServices'))"><span>🧰</span><b>Home Services</b><small>Experts at home</small></button>
@@ -377,6 +378,8 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <div class="home-more-grid"><button onclick="requireLogin(()=>showPage('parcel'))">📦<b>Parcel</b></button><button onclick="requireLogin(()=>showPage('goods'))">🚚<b>Goods</b></button><button onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b></button><button onclick="requireLogin(()=>showPage('scheduled'))">🗓️<b>Schedule</b></button></div>
  <div class="card join-card"><h2>Join FRIEND RIDE</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')"><span class="emoji">👤</span><b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')"><span class="emoji">🚗</span><b>Driver Registration</b></button><button class="tile" onclick="openAuth('register','partner')"><span class="emoji">🏪</span><b>Partner Registration</b></button></div></div>
 </section>
+
+<section id="smartGroceryEmi" class="page"><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2>💳 SMART GROCERY EMI</h2><p class="muted">FRIEND RIDE Grocery membership preview</p></div><button class="btn" onclick="showPage('home')">← Home</button></div><div class="notice" style="margin:12px 0">QA Preview మాత్రమే. ఈ పేజీలో PAN, OTP, card లేదా bank వివరాలు నమోదు చేయవద్దు. ప్రస్తుతం ఇది live application/payment కాదు.</div><iframe title="SMART GROCERY EMI QA Preview" src="./grocery/" loading="lazy" style="display:block;width:100%;height:1100px;min-height:80vh;border:0;border-radius:14px;background:#f4f6fa" referrerpolicy="strict-origin-when-cross-origin"></iframe></div></section>
 
 <section id="explore" class="page"><div class="card"><h2>Explore FRIEND RIDE Services</h2><p class="muted">మీకు కావాల్సిన సేవను ఎంచుకోండి.</p><div class="grid">
 <button class="tile" onclick="showPage('ride')">🛵<b>Ride Booking</b><small>Bike / Auto / Car</small></button>
