@@ -83,4 +83,30 @@ test.describe('FRIEND RIDE delivery instructions module', () => {
     expect(wired).toEqual({ customer: true, driver: true });
   });
 
+  test('Shop delivery uses FR Market orders and a separate driver mapping', async ({ page }) => {
+    const result = await page.evaluate(async () => {
+      const migrationResponse = await fetch('/supabase/migrations/202611170003_friendride_market_delivery_mapping.sql');
+      const migration = await migrationResponse.text();
+      const html = document.documentElement.innerHTML;
+      return {
+        migrationLoaded: migrationResponse.ok,
+        usesMarketOrders: migration.includes('public.fr_market_orders'),
+        hasSeparateAssignmentMap: migration.includes('fr_market_order_delivery_assignments'),
+        avoidsLegacyShopOrderMutation: !migration.includes('public.shop_orders') && !migration.includes('public.shop_delivery_assignments'),
+        customerWidget: html.includes("FriendRideDelivery.mount(hostId,'shop',o.order_id,'customer')"),
+        driverWidget: html.includes("FriendRideDelivery.mount(host.id,'shop',order.order_id,'driver')"),
+        partnerAssignment: html.includes('frPartnerAssignMarketDriver')
+      };
+    });
+    expect(result).toEqual({
+      migrationLoaded: true,
+      usesMarketOrders: true,
+      hasSeparateAssignmentMap: true,
+      avoidsLegacyShopOrderMutation: true,
+      customerWidget: true,
+      driverWidget: true,
+      partnerAssignment: true
+    });
+  });
+
 });
