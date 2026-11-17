@@ -67,3 +67,70 @@ create policy fr_delivery_instruction_storage_select on storage.objects for sele
 drop policy if exists fr_delivery_instruction_storage_insert on storage.objects;
 create policy fr_delivery_instruction_storage_insert on storage.objects for insert to authenticated
  with check(bucket_id='fr-delivery-instructions' and (storage.foldername(name))[1]=auth.uid()::text);
+
+
+-- RLS correction: Drivers must not directly UPDATE customer-created rows.
+-- Assigned drivers use this narrow RPC to attach only their arrival proof.
+drop policy if exists fr_delivery_instructions_update_access on public.fr_delivery_instructions;
+
+create or replace function public.fr_driver_set_delivery_arrival_photo(
+  p_instruction_id uuid,
+  p_storage_path text
+) returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := auth.uid();
+  v_instruction public.fr_delivery_instructions%rowtype;
+  v_assigned boolean := false;
+begin
+  if v_uid is null then
+    raise exception 'Authentication required' using errcode = '28000';
+  end if;
+  if p_instruction_id is null or p_storage_path is null
+     or split_part(p_storage_path, '/', 1) <> v_uid::text then
+    raise exception 'Invalid arrival photo path' using errcode = '42501';
+  end if;
+  if not exists (select 1 from public.profiles p
+    where p.id = v_uid and lower(coalesce(p.role, '')) = 'driver') then
+    raise exception 'Driver account required' using errcode = '42501';
+  end if;
+
+  select * into v_instruction from public.fr_delivery_instructions
+  where id = p_instruction_id for update;
+  if not found then
+    raise exception 'Delivery instruction not found' using errcode = 'P0002';
+  end if;
+
+  if v_instruction.order_type = 'ride' then
+    select exists(select 1 from public.rides r
+      where r.id = v_instruction.order_id and r.driver_id = v_uid) into v_assigned;
+  elsif v_instruction.order_type = 'parcel' then
+    select exists(select 1 from public.fr_parcel_orders p
+      where p.id = v_instruction.order_id and p.driver_id = v_uid) into v_assigned;
+  elsif v_instruction.order_type = 'food' then
+    select exists(select 1 from public.fr_food_deliveries d
+      where d.order_id = v_instruction.order_id and d.delivery_partner_id = v_uid) into v_assigned;
+  elsif v_instruction.order_type = 'shop' then
+    select exists(select 1 from public.shop_delivery_assignments a
+      where a.order_id = v_instruction.order_id and a.driver_id = v_uid) into v_assigned;
+  end if;
+  if not v_assigned then
+    raise exception 'Only the assigned driver can add arrival proof' using errcode = '42501';
+  end if;
+
+  if not exists (select 1 from storage.objects o
+    where o.bucket_id = 'fr-delivery-instructions' and o.name = p_storage_path) then
+    raise exception 'Arrival photo must be uploaded to the private delivery bucket first';
+  end if;
+
+  update public.fr_delivery_instructions
+  set arrival_photo_path = p_storage_path, updated_at = pg_catalog.now()
+  where id = p_instruction_id;
+end;
+$$;
+
+revoke all on function public.fr_driver_set_delivery_arrival_photo(uuid, text) from public;
+grant execute on function public.fr_driver_set_delivery_arrival_photo(uuid, text) to authenticated;
