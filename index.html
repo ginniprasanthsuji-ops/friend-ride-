@@ -3051,12 +3051,13 @@ async function frAdminUpdateBankEnquiry(id,status){
 
 <script id="FR_RUNTIME_DIAGNOSTICS_V1">
 (()=>{'use strict';
- const KEY='fr_runtime_diagnostics_v1',MAX=25;
+ const KEY='fr_runtime_diagnostics_v1',SESSION_KEY='fr_runtime_session_errors_v1',MAX=25;
+ try{sessionStorage.setItem(SESSION_KEY,'0')}catch(_){}
  const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(_){return []}};
  const write=items=>{try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)))}catch(_){}};
  const isIssue=x=>['JavaScript','Promise'].includes(String(x?.kind||''));
- const issueCount=()=>read().filter(isIssue).length;
- const record=(kind,message,source='')=>{const items=read();items.push({at:new Date().toISOString(),kind,message:String(message||'Unknown error').slice(0,500),source:String(source||'').slice(0,240),online:navigator.onLine});write(items);render();refresh()};
+ const issueCount=()=>{try{return Number(sessionStorage.getItem(SESSION_KEY)||0)}catch(_){return 0}};
+ const record=(kind,message,source='')=>{if(isIssue({kind})){try{sessionStorage.setItem(SESSION_KEY,String(issueCount()+1))}catch(_){}}const items=read();items.push({at:new Date().toISOString(),kind,message:String(message||'Unknown error').slice(0,500),source:String(source||'').slice(0,240),online:navigator.onLine});write(items);render();refresh()};
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  window.addEventListener('error',e=>record('JavaScript',e.message||'Script error',((e.filename||'')+':'+(e.lineno||''))));
  window.addEventListener('unhandledrejection',e=>record('Promise',e.reason?.message||e.reason||'Unhandled promise rejection'));
