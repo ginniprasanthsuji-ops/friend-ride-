@@ -159,3 +159,16 @@ Before major runtime integration changes:
 - Staging now requires and copies `icons/icon-192.png` and `icons/icon-512.png` into `www/icons/`.
 - Staging test updated to verify both icon files are copied and original source files remain unchanged.
 - Local fixture staging tests: **2/2 passed**. This is a fixture test; a full repository npm test and device build are still pending.
+
+## External host inventory (static source scan)
+
+The current `index.html` contains external runtime URLs for:
+- `unpkg.com` — Leaflet CSS/JS
+- `cdn.jsdelivr.net` — Supabase JS v2
+- `fglyplxcczdjtfwobtzh.supabase.co` — Supabase backend endpoint
+- `nominatim.openstreetmap.org` — reverse-geocoding/search requests
+- `tile.openstreetmap.org` — map tiles
+- `fineducation.space` and `fineducationinstitute.online` — external service links
+- `wa.me` — WhatsApp contact links
+
+Release/device gates: network connectivity, provider limits/policies, WebView external-link handling, geolocation permissions, map tile loading, and payment redirect return behavior. This inventory is static and does not prove that every request is invoked at runtime.
