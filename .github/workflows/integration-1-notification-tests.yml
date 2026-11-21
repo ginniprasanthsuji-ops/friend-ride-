@@ -16,11 +16,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Check notification modules and tests
+      - name: Syntax check notification modules and regression tests
         run: |
           node --check integrations/notifications/notification-provider.js
           node --check integrations/notifications/notification-events.js
           node --check tests/notification-provider.test.cjs
           node --check tests/notification-events.test.cjs
-      - name: Run notification unit tests
-        run: node --test tests/notification-provider.test.cjs tests/notification-events.test.cjs
+          node --check tests/notification-preservation.test.cjs
+      - name: Run notification unit and preservation tests
+        run: node --test tests/notification-provider.test.cjs tests/notification-events.test.cjs tests/notification-preservation.test.cjs
