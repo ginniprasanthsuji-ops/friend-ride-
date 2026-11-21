@@ -56,3 +56,18 @@ test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
     expect(handlers.laundry).toBe(true);
   });
 });
+
+
+test.describe('FRIEND RIDE native screen navigation', () => {
+  test('sub-page transition shows back control and returns to previous screen', async ({ page }) => {
+    page.setDefaultTimeout(15000);
+    await page.route('https://**/*', route => route.abort());
+    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.evaluate(() => { window.showPage('profile'); });
+    await expect(page.locator('#profile')).toHaveClass(/active/);
+    const back = page.locator('.fr-native-back');
+    await expect(back).toBeVisible();
+    await back.click();
+    await expect(page.locator('#home')).toHaveClass(/active/);
+  });
+});
