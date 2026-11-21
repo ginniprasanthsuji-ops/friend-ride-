@@ -117,3 +117,10 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Production is not modified. QA project/schema reconciliation remains a blocker: establish a separate QA backend matching production Learn & Teach schema or update frontend/migrations to use QA `fr_learn_*` schema after explicit architecture review.
 - [ ] Notification foundation migration's admin membership check currently targets QA `admin_users`; production schema/policies must be separately verified before use.
 - [x] Browser regression CI run #241 succeeded at SHA `efec33f69a214b59f9eac7967ab929edc056b06`; this verifies frontend browser suite only.
+
+
+## 12. Production Learn & Teach policy audit — read-only (2026-11-21)
+- [x] Read-only production RLS policy inventory for the five `learn_teach_*` tables reviewed. Student self-read, provider request access, course publication restrictions, own notification settings, notification admin insert and user read/update policies are present in the current policy inventory.
+- [x] Read-only function definition confirms production `fr_learn_teach_is_admin()` checks `public.profiles(id,role='admin')`; do not reuse the QA `admin_users` policy expression for production without adaptation.
+- [ ] Policies are not runtime authorization tests; test with student, approved provider, pending provider, and admin accounts in isolated QA before release.
+- [ ] Notification foundation migration is not applied to production or QA.
