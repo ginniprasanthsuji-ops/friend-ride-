@@ -1,0 +1,34 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const { spawnSync } = require("node:child_process");
+
+test("WebView audit detects required files and browser APIs", () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "fr-webview-audit-"));
+  const www = path.join(temp, "www");
+  fs.mkdirSync(www, { recursive: true });
+  fs.writeFileSync(path.join(www, "index.html"), "<script>navigator.geolocation; Notification; window.open('x');</script> https://example.supabase.co cashfree");
+  fs.writeFileSync(path.join(www, "manifest.webmanifest"), JSON.stringify({ icons: [{ src: "./icons/icon-192.png" }] }));
+  fs.writeFileSync(path.join(www, "service-worker.js"), "worker fixture");
+  const audit = path.resolve(__dirname, "../scripts/android-webview-audit.cjs");
+  const run = spawnSync(process.execPath, [audit, temp], { encoding: "utf8" });
+  assert.equal(run.status, 0, run.stderr || run.stdout);
+  assert.match(run.stdout, /Geolocation API/);
+  assert.match(run.stdout, /Notification APIs/);
+  assert.match(run.stdout, /External navigation/);
+  assert.match(run.stdout, /Manifest icon .*WARN/);
+  assert.match(run.stdout, /Service worker registration file .*PASS/);
+  fs.rmSync(temp, { recursive: true, force: true });
+});
+
+test("WebView audit fails when staged app and worker are missing", () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "fr-webview-missing-"));
+  const audit = path.resolve(__dirname, "../scripts/android-webview-audit.cjs");
+  const run = spawnSync(process.execPath, [audit, temp], { encoding: "utf8" });
+  assert.notEqual(run.status, 0);
+  assert.match(run.stdout, /Staged index.html .*FAIL/);
+  assert.match(run.stdout, /Service worker registration file .*FAIL/);
+  fs.rmSync(temp, { recursive: true, force: true });
+});
