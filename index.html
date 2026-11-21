@@ -4427,6 +4427,69 @@ async function frAdminAssignLaundry(id){
 <style id="fr-v11.1-pro-learning-routing-style">
 .fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
 </style>
+<!-- FRIEND RIDE LIVE NATIVE UI: screenshot-inspired premium home and role dashboards -->
+<style id="fr-native-ui-live">
+:root{--fr-live-bg:#060b17;--fr-live-panel:#101a2c;--fr-live-line:#2a3a55}
+body{background:linear-gradient(180deg,#060b17,#091326 55%,#050a14)!important;color:#f6f8fc!important}
+main .page{padding:10px 10px 96px!important;max-width:720px;margin:0 auto}
+main .page .card{background:linear-gradient(145deg,#142139,#0b1322)!important;border:1px solid #2b3b56!important;border-radius:22px!important;box-shadow:0 8px 24px #0004,inset 0 1px #ffffff10!important}
+main .page .tile{border:1px solid #34445e!important;border-radius:20px!important;background:linear-gradient(145deg,#19263c,#0d1423)!important;color:#f7f9ff!important;min-height:90px!important;box-shadow:inset 0 1px #ffffff10,0 5px 15px #0003!important;transition:transform .18s,filter .18s!important}
+main .page .tile:active,main .page button:active{transform:scale(.97);filter:brightness(1.15)}
+main .page input,main .page select,main .page textarea{border-radius:13px!important;background:#0b1525!important;color:#f5f7fb!important;border:1px solid #34445d!important}
+.frHomeNative{padding:4px 0 14px}
+.frHomeLocation{display:flex;align-items:center;gap:8px;padding:8px 4px 14px;font-size:15px;color:#dce6f7}.frHomeLocation span{margin-left:auto}
+.frHomeHero{overflow:hidden;position:relative;border:1px solid #29476f;border-radius:24px;min-height:160px;padding:18px 16px;background:radial-gradient(ellipse at 85% 0%,#39648e 0,transparent 45%),linear-gradient(125deg,#11254a,#091426 65%,#19263d);display:flex;align-items:center;margin-bottom:12px}
+.frHomeHeroCopy{position:relative;z-index:2;max-width:62%}.frHomeHero h2{font-size:clamp(19px,5.4vw,24px);line-height:1.2;margin:0}.frHomeHero p{margin:8px 0 0;font-size:17px}.frHomeHero p strong{color:#ff9e31}
+.frHomeHeroArt{position:absolute;right:6px;bottom:13px;font-size:clamp(24px,7vw,36px);filter:drop-shadow(0 5px 8px #0006);white-space:nowrap}
+.frHomeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0}
+.frHomeService{min-height:116px;border-radius:21px;border:1px solid #34445f;background:linear-gradient(145deg,#17243a,#0b1424);color:#f7f9ff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;padding:9px 5px;box-shadow:inset 0 1px #ffffff10,0 6px 15px #0003;transition:transform .2s,filter .2s}
+.frHomeService>span{font-size:30px;line-height:1.1}.frHomeService b{font-size:14px}.frHomeService small{font-size:11px;color:#c2cde0}
+.frHomeService.purple{background:linear-gradient(145deg,#34205e,#10182a);border-color:#6247a2}.frHomeService.orange{background:linear-gradient(145deg,#4a2b13,#151b28);border-color:#87501e}.frHomeService.green{background:linear-gradient(145deg,#073b2a,#101a28);border-color:#1c7147}.frHomeService.red{background:linear-gradient(145deg,#4b1e2c,#12182a);border-color:#82394e}.frHomeService.blue{background:linear-gradient(145deg,#0c3456,#111a2a);border-color:#28668c}.frHomeService.amber{background:linear-gradient(145deg,#492b15,#131b29);border-color:#8a5425}
+.frHomeEmi{position:relative;width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;overflow:hidden;border:1px solid #7041a5;border-radius:23px;padding:15px;background:linear-gradient(110deg,#24134b,#57127a 60%,#161b36);color:white;margin:10px 0 13px;min-height:135px}
+.frHomeEmi h2{font-size:22px;line-height:1.1;margin:5px 0}.frHomeEmi h2 strong{color:#ffb23c}.frHomeEmi p{font-size:13px;margin:4px 0}.frHomeEmi small{color:#d8c7f5;letter-spacing:.7px}.frHomeEmiArt{font-size:28px;max-width:38%;filter:drop-shadow(0 4px 8px #0005)}.frHomeEmi i{font-style:normal;font-size:30px;border-radius:50%;background:#091226aa;padding:0 10px}
+.frHomeQuick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:10px 0}.frHomeQuick .frHomeService{min-height:95px;border-radius:18px}.frHomeQuick .frHomeService>span{font-size:24px}.frHomeQuick .frHomeService b{font-size:12px}
+#adminDashboard .stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}#adminDashboard .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}#adminDashboard .tile{min-height:88px!important;font-size:11px!important;text-align:center!important}
+#driverDashboard .stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}#driverDashboard .stat{border-radius:18px!important}#driverDashboard #driverLiveMap{border-radius:22px!important;overflow:hidden;border:1px solid #34445d}#driverDashboard #driverRequestsList{border-radius:18px;background:linear-gradient(145deg,#20172c,#10192a);border:1px solid #7251a4;padding:12px}
+.bottom{background:linear-gradient(180deg,#101a2c,#07101e)!important;border:1px solid #293b55!important;border-radius:24px!important;box-shadow:0 8px 28px #0006!important}.bottom button{border-radius:17px!important;transition:transform .18s,background .18s,color .18s!important}.bottom button.active{background:linear-gradient(145deg,#3b205d,#171e35)!important;color:#e6b4ff!important}
+main .page.fr-screen-enter{animation:frNativeFade .28s cubic-bezier(.2,.75,.25,1) both}
+main .page.fr-screen-enter.fr-transition-ride{animation:frNativeRide .34s cubic-bezier(.18,.8,.2,1) both}
+main .page.fr-screen-enter.fr-transition-dashboard{animation:frNativeDash .32s cubic-bezier(.2,.7,.2,1) both}
+main .page.fr-screen-enter.fr-transition-admin{animation:frNativeAdmin .36s cubic-bezier(.15,.75,.2,1) both}
+main .page.fr-screen-enter.fr-transition-orders{animation:frNativeOrders .3s cubic-bezier(.2,.75,.25,1) both}
+@keyframes frNativeFade{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:none}}
+@keyframes frNativeRide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes frNativeDash{from{opacity:0;transform:translateY(17px)}to{opacity:1;transform:none}}
+@keyframes frNativeAdmin{from{opacity:0;transform:scale(.985);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+@keyframes frNativeOrders{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@media(max-width:430px){.frHomeService{min-height:105px}.frHomeHero{min-height:148px}.frHomeQuick .frHomeService{min-height:84px}#adminDashboard .grid{gap:6px!important}#adminDashboard .tile{min-height:80px!important;padding:5px!important;font-size:10px!important}#driverDashboard .stats{gap:5px}#driverDashboard .stat{padding:8px 4px}}
+@media(prefers-reduced-motion:reduce){main .page.fr-screen-enter{animation:none!important}.frHomeService,.frHomeEmi{transition:none}}
+</style>
+<script id="fr-native-ui-live-boot">
+(function(){
+'use strict';
+const tile=(emoji,title,subtitle,route,cls)=>'<button class="frHomeService '+cls+'" data-fr-route="'+route+'"><span>'+emoji+'</span><b>'+title+'</b><small>'+subtitle+'</small></button>';
+function makeHome(){
+ const home=document.getElementById('home');if(!home||home.querySelector('.frHomeNative'))return;
+ const native=document.createElement('section');native.className='frHomeNative';
+ native.innerHTML='<div class="frHomeLocation">📍 <b>Tekkali, Srikakulam, AP</b><span>⌄</span></div><div class="frHomeHero"><div class="frHomeHeroCopy"><h2>Book Rides, Order &amp;<br>Get Local Services</h2><p>in <strong>Your City</strong></p></div><div class="frHomeHeroArt">🚘　🛺　🏍️</div></div><div class="frHomeGrid">'+tile('🚘','Book a Ride','Bike • Auto • Car','ride','purple')+tile('📦','Delivery','Parcel • Goods','goods','orange')+tile('🛒','Friend Mart','Grocery • Daily Needs','shopping','green')+tile('🍔','Food','Order &amp; Deliver','food','red')+tile('🛠️','Services','Home • Repair • More','homeServices','blue')+tile('👷','TASKO','Hire Manpower','homeServices','amber')+'</div><button class="frHomeEmi" data-fr-route="shopping"><div><small>BUY NOW • PAY LATER</small><h2>Smart Grocery<br><strong>EMI Plan</strong></h2><p>Buy now • Pay in 2 installments</p></div><span class="frHomeEmiArt">🛍️🥬🍎</span><i>›</i></button><div class="frHomeQuick">'+tile('🧺','Laundry','Pickup & Delivery','laundryServices','blue')+tile('🏠','Home Services','Experts at home','homeServices','amber')+tile('🏪','Local Stores','Shop nearby','shops','green')+tile('🎓','Learning','Learn & Teach','learnTeach','purple')+'</div>';
+ native.addEventListener('click',e=>{const b=e.target.closest('[data-fr-route]');if(b){e.preventDefault();if(typeof window.showPage==='function')window.showPage(b.dataset.frRoute)}});
+ home.insertBefore(native,home.firstChild);
+ const legacyBanner=home.querySelector('.home-banner-wrap');if(legacyBanner)legacyBanner.style.display='none';
+ const legacyJoin=home.querySelector('.join-card');if(legacyJoin)legacyJoin.style.display='none';
+}
+function enhanceRole(){const a=document.getElementById('adminDashboard');if(a)a.classList.add('frAdminNative');const d=document.getElementById('driverDashboard');if(d)d.classList.add('frDriverNative')}
+function routeGuard(){
+ const original=window.showPage;if(typeof original!=='function'||original.__frNativeGuard)return;
+ const adminRoutes=new Set(['adminDashboard','users','referralApprovals','cashRewardApprovals','paymentApprovals','partnerPaymentSettings','platformBusinessSettings','driverApprovals','partnerApprovals','adminOrders','reports','settings','driverDocumentReviews','crmDashboard','partnerReports']);
+ function role(){return String(window.currentProfile?.role||'').toLowerCase()}
+ function clsFor(id){if(id==='ride'||id==='tracking')return 'fr-transition-ride';if(adminRoutes.has(id))return 'fr-transition-admin';if(id==='orders'||id==='partnerOrders')return 'fr-transition-orders';return 'fr-transition-dashboard'}
+ window.showPage=function(id){if(adminRoutes.has(String(id))&&role()!=='admin'){console.warn('[FR Access] admin route blocked',id);id='home'}const out=original.apply(this,[id]);const p=document.getElementById(id);if(p){p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders');void p.offsetWidth;p.classList.add('fr-screen-enter',clsFor(id));setTimeout(()=>p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders'),420)}return out};
+ window.showPage.__frNativeGuard=true;
+}
+function boot(){makeHome();enhanceRole();routeGuard()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
 </body>
 <!-- FRIEND RIDE FCM Web Push integration -->
 <script src="./fcm-web-push.js"></script>
