@@ -78,3 +78,14 @@ Approval only after all blockers are closed, full regression passes, physical-de
 ## Current evidence
 - Browser CI run #228: SUCCESS at commit `88b6489f295511dc32ad70f488b06c12aa8017f1`.
 - This CI result is browser automation only. It does **not** certify live backend workflows, Android real-device behavior, production push/payment delivery, or release readiness.
+
+
+## 8. Notification source audit — QA branch (2026-11-21)
+- [x] Confirmed the frontend has a Web Push subscription flow using `fr_push_subscriptions` and a public VAPID key; private key must stay in server secrets.
+- [x] Confirmed service worker handles push display and notification click navigation.
+- [x] Confirmed realtime notification feed reads `fr_ride_notifications` and `fr_app_notifications`.
+- [ ] Found two `frEnableDeviceAlerts()` definitions in `index.html`; the later VAPID-backed definition overrides the earlier legacy permission-only function. Remove legacy duplicate after regression-safe review.
+- [ ] Repository tree has no `supabase/functions` Edge Function directory; no sender/scheduler implementation is present in this QA branch tree. Server-side campaign and homework reminder delivery therefore remains unimplemented/unverified.
+- [ ] `fr_push_subscriptions` upsert and policy/schema compatibility not verified against the FRIEND RIDE Supabase project.
+- [ ] Background push sender, retry/expiry, campaign queue, homework schedule queue, delivery receipts, unsubscribe/preferences, quiet hours and duplicate suppression remain blockers.
+- [ ] Do not claim push delivery success: physical Android device and closed-app tests are still required.
