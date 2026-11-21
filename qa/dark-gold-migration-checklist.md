@@ -130,3 +130,10 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Confirmed the native home location element is synchronized from the legacy live-location text through a `MutationObserver`; the GPS reverse-geocoding function updates that legacy text. This supports the location-mirror test structurally, but browser permission/GPS behavior is still not executed.
 - Current source contains 25 style blocks. Identified legacy color values in context: some belong to promotional poster gradients and product-art accents; others occur in older KPI/feature-card CSS. Do not blanket-remove these values without visual regression evidence because some are intentional marketing artwork and some legacy screens still use those selectors.
 - `showPage()` route activation triggers route-specific loaders/maps and admin-specific panels. The added route test exercises the full activation function, but actual browser execution remains pending.
+
+
+## Browser E2E gate result and fix — 2026-11-21
+- Latest Quality Gate run #304 completed **FAIL** in the browser-e2e job: 47 passed, 9 failed.
+- Failure diagnosis from runner logs: Dark + Gold test `beforeEach` blocked all HTTPS requests, including the required Supabase JS CDN library. This prevented app initialization (`supabase.createClient` undefined; `sb` and app state globals unavailable), so the new route/auth UI tests were exercising a broken harness rather than a valid initialized app.
+- Fixed test harness to allow the required Supabase JS and Leaflet CDN library requests while continuing to block external API/map calls. Fix commit: `2abe334ad5fc36d1d4ab4163c8f62017cd24f5b6`.
+- A fresh CI run is required before merge. PR #26 remains draft/unmerged. User requested merge/deploy, but the browser suite currently has a verified failure; do not merge until the corrected run is green.
