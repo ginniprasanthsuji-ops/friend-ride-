@@ -110,3 +110,10 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Added Playwright checks for Customer login modal: Customer title, Customer OTP label, registration visible, role grid hidden.
 - These tests are committed but **not yet confirmed executed/PASS**. GitHub status/workflow query returned no status records and the wrapper does not expose push-triggered runs.
 - Source audit confirmed the Dark + Gold design-system and native UI markers are present, but legacy styles remain: 27 style blocks and visible legacy purple/light color declarations were found. No destructive CSS cleanup was performed without route visual regression evidence.
+
+
+## Source access restored — route regression expansion — 2026-11-21
+- Corrected earlier stale note: full `index.html` source was retrieved via blob API in this continuation and inspected (source SHA `32f219925d99b285cec0cff7957ed7d97f772041`).
+- Added a Playwright test iterating the route inventory and attempting to activate each existing destination screen under Admin context; it asserts no route IDs are missing and each target becomes active. Test commit: `3e63466b011ec1f9e6935f90e8c6642b480d448e`.
+- This remains test coverage added, not test execution. No CI status or workflow runs are available from the current GitHub tool results; therefore no PASS is asserted.
+- Source audit: 27 style blocks; legacy purple/light declarations remain. Cleanup is deferred until route and visual regressions can run, to avoid breaking existing screens.
