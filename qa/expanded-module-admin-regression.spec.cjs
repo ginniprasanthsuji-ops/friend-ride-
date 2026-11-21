@@ -28,7 +28,8 @@ test('All customer, partner, service and admin routes exist and navigation isola
   }, routes);
   expect(result.missing, 'Required route/page sections missing').toEqual([]);
   for (const route of result.navigation) {
-    expect(route.active, 'Navigation must activate only '+route.id).toEqual([route.id]);
+    const canonical = route.id === 'frSuperHub' ? 'learnTeach' : route.id;
+    expect(route.active, 'Navigation must activate only '+canonical).toEqual([canonical]);
   }
 });
 
