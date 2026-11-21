@@ -661,4 +661,9 @@ test('VidyaSetu Teacher, Student and Coaching Center cards open dashboards and r
     await dashboard.locator('button').filter({ hasText: 'విద్యా సేతు Roles' }).click();
     await expect(roles).toBeVisible();
   }
+  const marketplace = page.locator('#learnTeachRoot .fr-v11-marketplace-link');
+  await expect(marketplace).toBeVisible();
+  await marketplace.click();
+  await expect(page.locator('#learnTeachRoot')).toContainText('Choose your role');
+  await expect(page.locator('#learnTeachRoot .lt-role')).toHaveCount(3);
 });
