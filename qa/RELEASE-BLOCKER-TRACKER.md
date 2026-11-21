@@ -101,3 +101,11 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [x] Read-only QA Supabase schema audit: QA project uses `admin_users(user_id)`, not `profiles(role)`; homework source table `fr_learn_homework` exists with teacher/student IDs, date, checklist, and completion/approval fields.
 - [x] Notification migration admin RLS checks updated to QA project's `admin_users` membership (QA branch commit only).
 - [ ] Migration still not applied; verify SQL in isolated QA DB before applying. Homework reminder integration with existing homework rows remains pending.
+
+
+## 10. Learn & Teach backend mapping audit — QA (2026-11-21)
+- [x] Inspected `learn-teach.js`: frontend currently queries `learn_teach_accounts`, `learn_teach_courses`, `learn_teach_requests`, `learn_teach_notification_settings`, and `learn_teach_notifications`; it contains no homework UI/source query.
+- [x] Read-only QA Supabase table inventory: current QA database contains only `fr_learn_*` education tables plus `admin_users`; the frontend's `learn_teach_*` tables are absent from the current QA project inventory.
+- [ ] Critical backend/frontend schema mismatch: Learn & Teach frontend is not aligned with current QA database. Do not apply notification or homework migration or claim those features are live until correct project/schema is reconciled.
+- [ ] The Learn & Teach migration draft also references `profiles` for admin helper, while current QA project uses `admin_users`; migration compatibility review required.
+- [ ] Student homework reminder UI, source mapping, recipient consent, and secure server-side scheduler remain not implemented/verified.
