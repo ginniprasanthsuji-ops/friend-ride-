@@ -299,7 +299,46 @@ a{color:#f0c66b}
 @media(max-width:350px){.grid{grid-template-columns:1fr!important}.bottom button{font-size:12px!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
-</head>
+<style id="fr-dark-gold-home-hotfix">
+:root{--bg:#080d18;--ink:#f1f5f9;--muted:#a8b3c7;--line:#26324d;--white:#121b2e;--purple:#f5b83d;--purple2:#f5b83d;--gold:#f5b83d}
+body{background:#080d18!important;color:#f1f5f9!important;padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+body[data-fr-theme="dark"]{background:#080d18!important;color:#f1f5f9!important}
+body[data-fr-theme="dark"] .card,body[data-fr-theme="dark"] .page .panel,body[data-fr-theme="dark"] .modal-content{background:#121b2e!important;color:#f1f5f9!important;border-color:#26324d!important}
+body[data-fr-theme="dark"] .fr-native-home,body[data-fr-theme="dark"] .fr-native-service,body[data-fr-theme="dark"] .fr-native-quick .fr-native-service{color:#f1f5f9!important}
+body[data-fr-theme="dark"] .fr-native-service{background:linear-gradient(145deg,#17243a,#101827)!important;border-color:#263a57!important}
+body[data-fr-theme="dark"] .fr-native-service.gold,body[data-fr-theme="dark"] .fr-native-service.orange{background:linear-gradient(145deg,#352a17,#151c2a)!important;border-color:#80622d!important}
+body[data-fr-theme="dark"] .fr-native-service small{color:#c2cee0!important}
+body[data-fr-theme="dark"] .fr-native-emi{background:linear-gradient(135deg,#211b12,#151c2a)!important;border-color:#80622d!important;color:#f1f5f9!important}
+body[data-fr-theme="dark"] .fr-poster{border:1px solid #263a57!important;box-shadow:0 8px 20px #0005}
+body[data-fr-theme="dark"] .fr-native-location{background:#121b2e!important;color:#f1f5f9!important;border:1px solid #26324d!important}
+body[data-fr-theme="dark"] .fr-native-location b{color:#f1f5f9!important}
+body[data-fr-theme="dark"] .fr-native-location span{color:#a8b3c7!important}
+.home-topbar{background:#0b1220!important;color:#f1f5f9!important;border-bottom:1px solid #26324d!important}
+.home-topbar .location-head b{color:#f1f5f9!important}.home-topbar .location-head span{color:#a8b3c7!important}
+.home-topbar .fr-home-profile-btn{background:#121b2e!important;border:1px solid #26324d!important}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{background:linear-gradient(145deg,#233754,#121b2e)!important;border-radius:50%!important;overflow:hidden}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar:empty:before{content:"👤";font-size:26px;filter:drop-shadow(0 3px 3px #0005)}
+.fr-notify-bell{background:#121b2e!important;border:1px solid #26324d!important;color:#f5b83d!important;width:44px;height:44px;border-radius:50%!important;display:grid;place-items:center;font-size:0!important}
+.fr-notify-bell:before{content:"";width:22px;height:22px;display:block;background:currentColor;mask:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9%22/%3E%3Cpath d=%22M10 21h4%22/%3E%3C/svg%3E') center/contain no-repeat}
+.fr-notify-bell i{display:none!important}
+.fr-ride-unread-badge{font-size:10px!important}
+.premium-bottom{grid-template-columns:repeat(5,minmax(0,1fr))!important;background:rgba(8,13,24,.94)!important;border:1px solid #26324d!important;border-radius:20px 20px 0 0!important;backdrop-filter:blur(18px);padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
+.premium-bottom button{color:#a8b3c7!important;font-size:11px!important}
+.premium-bottom button.active{color:#f5b83d!important;background:transparent!important}
+.premium-bottom button.active span{background:#1a2540!important;color:#f5b83d!important}
+.premium-bottom .cart-tab{margin-top:-12px!important}
+.premium-bottom .cart-tab span{background:linear-gradient(145deg,#f5b83d,#d99a20)!important;color:#1a1203!important;border:4px solid #080d18!important;width:54px!important;height:54px!important}
+.premium-bottom .fr-bottom-cart-count{display:none!important}
+.premium-bottom .fr-bottom-cart-count[data-count]:not([data-count="0"]){display:inline-flex!important}
+.fr-native-home .fr-native-service{min-width:0}
+.fr-native-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.fr-native-quick .fr-native-service{min-height:96px!important}
+.fr-native-home .fr-native-hero h1{font-size:clamp(22px,6vw,30px)!important;line-height:1.15!important;max-width:95%}
+.fr-native-home .fr-native-hero{background:radial-gradient(circle at 85% 12%,#24476b 0,transparent 28%),linear-gradient(130deg,#101b2e,#0b1220)!important;border:1px solid #263a57!important}
+body[data-fr-theme="dark"] .fr-native-home .fr-native-hero p strong{color:#f5b83d!important}
+.fr-native-home .fr-native-emi{border-radius:20px!important}
+@media(max-width:430px){.fr-native-service-grid{gap:8px!important}.fr-native-service{min-height:100px!important}.fr-native-quick{gap:8px!important}}
+</style></head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
@@ -4606,6 +4645,15 @@ const routeMap={ride:'ride',delivery:'goods',mart:'shopping',food:'food',service
 function service(icon,title,sub,route,theme){return '<button type="button" class="fr-native-service '+theme+'" data-fr-native-route="'+route+'"><span class="fr-icon">'+icon+'</span><b>'+title+'</b><small>'+sub+'</small></button>'}
 function rebuildHome(){
  const home=document.getElementById('home');if(!home||home.dataset.frNativeBuilt)return;
+ // Move orphaned legacy Home sections back into the Home page before replacing it.
+ // The old markup was rendered outside #home, so it remained visible below the new native UI.
+ let sibling=home.nextElementSibling;
+ while(sibling && !(sibling.matches('section.page'))){
+   const next=sibling.nextElementSibling;
+   home.appendChild(sibling);
+   sibling=next;
+ }
+
  home.dataset.frNativeBuilt='1';
  const posterRail=document.querySelector('.fr-poster-rail');
  const native=document.createElement('div');native.className='fr-native-home';
