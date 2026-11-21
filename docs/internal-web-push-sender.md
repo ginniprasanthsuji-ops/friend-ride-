@@ -22,7 +22,7 @@ This is an internal-only sender implementation. It is **not deployed** to the pr
 - `FR_VAPID_PUBLIC_KEY`
 - `FR_VAPID_PRIVATE_KEY`
 - `FR_VAPID_SUBJECT` (optional; defaults to support mailto)
-- Supabase default secret key is provided by Edge Function environment as `SUPABASE_SECRET_KEYS`.
+- Supabase service-role credential is read from Edge Function environment as `SUPABASE_SERVICE_ROLE_KEY`.
 
 ### Request shape
 ```json
