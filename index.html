@@ -231,6 +231,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 .fr-catalogue-category-tile .market-product-art{font-size:24px}
 @media(max-width:360px){.fr-catalogue-category-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+<link rel="stylesheet" href="./learn-teach.css">
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -654,6 +655,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
    <div id="frSupportSubmitStatus" class="notice">మీ వివరాలు Admin Dashboardకు పంపబడతాయి.</div>
   </div>
  </section>
+<section id="learnTeach" class="page"><div class="card lt-shell"><div class="lt-row"><button class="lt-btn alt" onclick="showPage('home')">← FRIEND RIDE</button><button class="lt-btn alt" onclick="frLearnTeachAdmin()">Admin Approvals</button></div><div id="learnTeachRoot"></div></div></section>
 </main>
 
 <nav class="bottom premium-bottom">
@@ -662,6 +664,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <button data-page="food" onclick="showPage('food')"><span>🍱</span>Food<br>Delivery</button>
  <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span><small>My Cart</small><b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
  <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Categories</button>
+ <button data-page="learnTeach" onclick="frLearnTeachOpen()"><span>🎓</span>Learn</button>
  <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>🧾</span>Orders</button>
  <button data-page="menu" onclick="openDrawer()"><span>☰</span>Menu</button>
 </nav>
@@ -4558,3 +4561,5 @@ window.frRefreshHomeProfileAvatar=async function(){
   if(select) select.onchange=routeCategory;
 })();
 </script>
+<script src="./learn-teach.js"></script>
+
