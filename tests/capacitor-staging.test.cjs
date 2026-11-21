@@ -5,17 +5,23 @@ const os = require("node:os");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 
-test("Capacitor staging copies only required static entry files and preserves sources", () => {
+test("Capacitor staging copies app entry, UI modules, and required assets while preserving sources", () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), "friendride-cap-stage-"));
   const root = path.join(temp, "repo");
   fs.mkdirSync(path.join(root, "scripts"), { recursive: true });
   const files = {
     "index.html": "<html>test</html>",
     "manifest.webmanifest": "{\"name\":\"test\"}",
-    "sw.js": "self.addEventListener('install',()=>{});"
+    "sw.js": "self.addEventListener('install',()=>{});",
+    "learn-teach.css": "/* css fixture */",
+    "learn-teach.js": "/* js fixture */",
+    "assets/ride-contact.js": "/* contact fixture */",
+    "assets/driver-kyc-upload.js": "/* upload fixture */"
   };
   for (const [name, content] of Object.entries(files)) {
-    fs.writeFileSync(path.join(root, name), content);
+    const file = path.join(root, name);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, content);
   }
   const script = path.resolve(__dirname, "../scripts/stage-capacitor-web.cjs");
   const result = spawnSync(process.execPath, [script, root], { encoding: "utf8" });
@@ -24,7 +30,8 @@ test("Capacitor staging copies only required static entry files and preserves so
     assert.equal(fs.readFileSync(path.join(root, name), "utf8"), content, "source remains unchanged");
     assert.equal(fs.readFileSync(path.join(root, "www", name), "utf8"), content, "staged copy matches");
   }
-  assert.deepEqual(fs.readdirSync(path.join(root, "www")).sort(), Object.keys(files).sort());
+  assert.deepEqual(fs.readdirSync(path.join(root, "www")).sort(), ["assets", "index.html", "learn-teach.css", "learn-teach.js", "manifest.webmanifest", "sw.js"].sort());
+  assert.deepEqual(fs.readdirSync(path.join(root, "www", "assets")).sort(), ["driver-kyc-upload.js", "ride-contact.js"].sort());
   fs.rmSync(temp, { recursive: true, force: true });
 });
 
