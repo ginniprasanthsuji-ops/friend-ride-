@@ -4588,18 +4588,13 @@ async function frAdminAssignLaundry(id){
    if(typeof window.showPage==='function')window.showPage('learnTeach');
    const root=document.getElementById('learnTeachRoot');
    if(root){
-    root.innerHTML=`<div class="fr-v11-learning-head"><span>🎓 విద్యా సేతు</span><h2>Learning & Education</h2><p>Teacher, Student మరియు Coaching Center కోసం ప్రత్యేక dashboards.</p></div><div class="fr-v11-learning-grid">${roleNames.map(r=>`<button class="fr-v11-learning-card" data-learning-role="${r.key}" onclick="frV11OpenLearningRole('${r.key}')"><span>${r.emoji}</span><b>${r.title}</b><small>${r.desc}</small><i>Open dashboard →</i></button>`).join('')}</div><button class="fr-v11-back" onclick="showPage('home')">← Homeకి తిరిగి వెళ్ళండి</button>`;
-   }
-   if(typeof window.frLearnTeachOpen==='function'){
-     try{window.frLearnTeachOpen();}catch(e){console.warn('Learning module open:',e);}
-     // Restore the standalone role-selection landing if the linked module does not render it.
-     setTimeout(()=>{const r=document.getElementById('learnTeachRoot');if(r&&!r.querySelector('.fr-v11-learning-grid'))window.frOpenLearningCategory();},500);
+    root.innerHTML=`<div class="fr-v11-learning-head"><span>🎓 విద్యా సేతు</span><h2>Learning & Education</h2><p>Teacher, Student మరియు Coaching Center కోసం ప్రత్యేక dashboards.</p></div><div class="fr-v11-learning-grid">${roleNames.map(r=>`<button class="fr-v11-learning-card" data-learning-role="${r.key}" onclick="frV11OpenLearningRole('${r.key}')"><span>${r.emoji}</span><b>${r.title}</b><small>${r.desc}</small><i>Open dashboard →</i></button>`).join('')}</div><button class="fr-v11-back fr-v11-marketplace-link" onclick="window.frLearnTeachOpen()">📚 Open Learning Marketplace / Registration</button><button class="fr-v11-back" onclick="showPage('home')">← Homeకి తిరిగి వెళ్ళండి</button>`;
    }
  };
  window.frV11OpenLearningRole=function(role){
    const item=roleNames.find(x=>x.key===role);if(!item)return;
    const root=document.getElementById('learnTeachRoot');if(!root)return;
-   root.innerHTML=`<div class="fr-v11-learning-head"><span>🎓 విద్యా సేతు</span><h2>${item.title}</h2><p>${item.desc}</p></div><div class="fr-v11-role-dashboard"><div class="fr-v11-role-icon">${item.emoji}</div><h3>${item.title} Dashboard</h3><p>ఈ roleకు సంబంధించిన dashboard తెరవబడింది. Learning module backend / dashboard scripts అందుబాటులో ఉన్నప్పుడు live data మరియు role-specific actions ఇక్కడ render అవుతాయి.</p><button onclick="frOpenLearningCategory()">← విద్యా సేతు Roles</button><button onclick="showPage('home')">Home</button></div>`;
+   root.innerHTML=`<div class="fr-v11-learning-head"><span>🎓 విద్యా సేతు</span><h2>${item.title}</h2><p>${item.desc}</p></div><div class="fr-v11-role-dashboard"><div class="fr-v11-role-icon">${item.emoji}</div><h3>${item.title} Dashboard</h3><p>ఈ డాష్‌బోర్డ్ ప్రారంభ దశలో ఉంది. తరగతులు, కోర్సులు మరియు అభ్యాస వివరాలు సిద్ధమైనప్పుడు ఇక్కడ కనిపిస్తాయి.</p><button onclick="frOpenLearningCategory()">← విద్యా సేతు Roles</button><button onclick="showPage('home')">Home</button></div>`;
  };
  // Bottom navigation and category/service buttons route to their own page, never Home as a fallback.
  const bottom=document.querySelector('.premium-bottom');
