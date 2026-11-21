@@ -4448,7 +4448,7 @@ main .page.fr-screen-enter.fr-transition-orders{animation:frOrdersSlide .3s cubi
  const adminPages=new Set(['adminDashboard','users','referralApprovals','cashRewardApprovals','paymentApprovals','partnerPaymentSettings','platformBusinessSettings','driverApprovals','partnerApprovals','adminOrders','reports','settings','driverDocumentReviews','crmDashboard','partnerReports']);
  const original=window.showPage;
  let lastRoute=document.querySelector('main .page.active')?.id||'home';
- function role(){return String(window.currentProfile?.role||'').toLowerCase();}
+ function role(){return String((typeof currentProfile!=='undefined'&&currentProfile?.role)||'').toLowerCase();}
  function animationFor(id){if(id==='ride'||id==='tracking')return 'fr-transition-ride';if(id==='adminDashboard'||adminPages.has(id))return 'fr-transition-admin';if(id==='orders'||id==='partnerOrders')return 'fr-transition-orders';return 'fr-transition-dashboard';}
  function animate(id){const p=document.getElementById(id);if(!p)return;p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders');void p.offsetWidth;p.classList.add('fr-screen-enter',animationFor(id));setTimeout(()=>p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders'),420);}
  window.showPage=function(id){
