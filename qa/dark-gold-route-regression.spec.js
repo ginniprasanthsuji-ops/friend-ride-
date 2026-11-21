@@ -21,7 +21,7 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
       designSystem: !!document.getElementById('fr-dark-gold-design-system'),
       themeMeta: document.querySelector('meta[name="theme-color"]')?.content,
       bodyBackground: getComputedStyle(document.body).backgroundImage,
-      pageCount: document.querySelectorAll('main .page').length
+      pageCount: document.querySelectorAll('.page').length
     }), allPageIds);
     expect(result.missing).toEqual([]);
     expect(result.designSystem).toBe(true);
@@ -39,6 +39,7 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
   });
 
   test('native home preserves customer, driver and partner registration entry points', async ({ page }) => {
+    await page.evaluate(() => window.showPage('home'));
     const registrations = page.locator('#home .fr-native-register-grid button[data-fr-native-register]');
     await expect(registrations).toHaveCount(3);
     for (const role of ['customer', 'driver', 'partner']) {
