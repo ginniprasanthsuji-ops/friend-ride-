@@ -4591,3 +4591,81 @@ window.frRefreshHomeProfileAvatar=async function(){
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
+
+<!-- FINAL NAVIGATION ISOLATION PATCH: central route authority -->
+<script id="fr-final-central-navigation-isolation">
+(function(){
+  'use strict';
+  const pageIds=new Set(Array.from(document.querySelectorAll('main .page')).map(p=>p.id));
+  let routeLock=false;
+  function activateOnly(id){
+    id=String(id||'');
+    if(!pageIds.has(id)){console.warn('[FR Nav] Unknown route:',id);return false;}
+    document.querySelectorAll('main .page').forEach(p=>{
+      const active=p.id===id;
+      p.classList.toggle('active',active);
+      p.setAttribute('aria-hidden',active?'false':'true');
+      if('inert' in p)p.inert=!active;
+    });
+    document.querySelectorAll('.premium-bottom button[data-page], .bottom button[data-page]').forEach(b=>{
+      b.classList.toggle('active',b.dataset.page===id);
+      if(b.dataset.page===id)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    });
+    window.scrollTo({top:0,behavior:'instant'});
+    return true;
+  }
+  const previous=window.showPage;
+  window.showPage=function(id){
+    if(routeLock)return activateOnly(id);
+    routeLock=true;
+    try{
+      if(typeof previous==='function'&&pageIds.has(String(id)))previous.apply(this,arguments);
+      return activateOnly(id);
+    }finally{routeLock=false;}
+  };
+  // Capture bottom-tab clicks before stale inline handlers can route elsewhere.
+  document.addEventListener('click',function(e){
+    const btn=e.target.closest('.premium-bottom button[data-page], .bottom button[data-page]');
+    if(!btn)return;
+    e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+    const id=btn.dataset.page;
+    if(id==='learnTeach'){
+      if(typeof window.frOpenLearningCategory==='function')window.frOpenLearningCategory();
+      else activateOnly('learnTeach');
+      return;
+    }
+    if(id==='orders'&&typeof window.requireLogin==='function'){
+      window.requireLogin(()=>window.showPage('orders'));
+      return;
+    }
+    window.showPage(id);
+  },true);
+  // Route common category/service buttons by their explicit route attributes.
+  document.addEventListener('click',function(e){
+    const btn=e.target.closest('[data-route-page],[data-category-page]');
+    if(!btn)return;
+    const id=btn.dataset.routePage||btn.dataset.categoryPage;
+    if(!id||!pageIds.has(id))return;
+    e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+    window.showPage(id);
+  },true);
+  // Initial state and repair guard: only one page may ever remain active.
+  const initial=document.querySelector('main .page.active')?.id||'home';
+  activateOnly(initial);
+  const main=document.querySelector('main');
+  if(main){
+    const obs=new MutationObserver(()=>{
+      const active=document.querySelectorAll('main .page.active');
+      if(active.length!==1){
+        const selected=document.querySelector('.premium-bottom button.active[data-page]')?.dataset.page;
+        activateOnly(selected&&pageIds.has(selected)?selected:(active[0]?.id||'home'));
+      }
+    });
+    obs.observe(main,{subtree:true,attributes:true,attributeFilter:['class']});
+  }
+  window.frNavigationAudit=function(){
+    return {pages:[...pageIds],active:[...document.querySelectorAll('main .page.active')].map(p=>p.id),
+      tabs:[...document.querySelectorAll('.premium-bottom button[data-page]')].map(b=>({label:b.textContent.trim(),route:b.dataset.page,hasTarget:pageIds.has(b.dataset.page)}))};
+  };
+})();
+</script>
