@@ -181,3 +181,13 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Next actionable code/test phase requires a locally or CI-executed test run against the QA branch; browser CI can be triggered only through available repository workflow mechanisms, not from this connector.
 - [ ] Review security role flows and test design before modifying application authorization. Real account/RLS/private-media tests require isolated QA credentials and backend setup.
 - [ ] No production deployment, main merge, migration, merchant setup, or live-payment integration occurred.
+
+
+## 20. QA continuation — role-navigation and admin-guard source review (2026-11-21)
+- [x] Reviewed QA-branch `index.html` navigation/auth source and expanded module regression spec.
+- [x] `showPage(id)` switches page visibility and triggers selected loaders; it is a client-side navigation function and is not itself an authorization boundary.
+- [x] `requireLogin(fn)` checks only presence of `currentUser`; role-specific access must be enforced by role checks in handlers and Supabase RLS/RPC/storage policy.
+- [x] Driver KYC review handler includes explicit current-user/admin role check in source before calling admin RPC; signed URL duration is 300 seconds in the reviewed handler.
+- [ ] Staging account matrix needed: unauthenticated, customer, driver, partner, admin. Attempt direct page navigation and sensitive handler calls, then confirm backend rejects unauthorized data/actions.
+- [ ] Supabase RLS/RPC/storage policies must be tested with isolated QA identities; source-only review is not proof of backend security.
+- [x] No production, main-branch, or database changes made.
