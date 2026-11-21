@@ -40,15 +40,19 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
   });
 
   test('native home preserves customer, driver and partner registration entry points', async ({ page }) => {
-    await page.evaluate(() => window.showPage('home'));
     const registrations = page.locator('#home .fr-native-register-grid button[data-fr-native-register]');
     await expect(registrations).toHaveCount(3);
-    await expect(registrations.first()).toBeVisible();
     for (const role of ['customer', 'driver', 'partner']) {
-      await page.locator('#home [data-fr-native-register="' + role + '"]').click();
+      // Re-activate Home after closing the previous role's auth modal and wait for its transition.
+      await page.evaluate(() => window.showPage('home'));
+      const entry = page.locator('#home [data-fr-native-register="' + role + '"]');
+      await expect(page.locator('#home')).toHaveClass(/active/);
+      await expect(entry).toBeVisible({ timeout: 10000 });
+      await entry.click();
       await expect(page.locator('#authModal')).toHaveClass(/show/);
       await expect(page.locator('#authModal')).toHaveAttribute('data-active-role', role);
       await page.locator('#authModal .close').click();
+      await expect(page.locator('#authModal')).not.toHaveClass(/show/);
     }
   });
 
