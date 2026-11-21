@@ -78,8 +78,8 @@ test('Zoom classroom UI appears for student and teacher roles', async ({ page })
  await expect(page.locator('#frLearnZoomSessions')).toContainText('90-minute sessions');
  await page.getByRole('button',{name:/Teacher \/ Teach/}).click();
  await expect(page.locator('#frLearnZoomSchedule')).toBeVisible();
- await expect(page.locator('#frZoomStudentId')).toBeVisible();
- await expect(page.locator('#frZoomCourseId')).toBeVisible();
+ await expect(page.locator('#frZoomEnrollment')).toBeVisible();
+ await expect(page.locator('#frZoomEnrollment')).toHaveAttribute('id','frZoomEnrollment');
  await expect(page.locator('#frZoomStart')).toBeVisible();
 });
 
@@ -93,8 +93,13 @@ test('Zoom session migration enforces participant RLS and server-only meeting cr
  expect(sql).toContain('duration_minutes int not null default 90 check(duration_minutes=90)');
  expect(hard).toContain('drop policy if exists learn_sessions_participant_update');
  expect(hard).toContain('learn_sessions_admin_update');
+ const classroom=await readFile(base+'/supabase/migrations/20261121160000_reusable_zoom_classrooms.sql','utf8');
+ expect(classroom).toContain('unique(teacher_id, student_id, course_id)');
+ expect(classroom).toContain('drop column if exists zoom_start_url');
  expect(fn).toContain('ZOOM_CLIENT_SECRET');
  expect(fn).toContain('waiting_room:true');
+ expect(fn).toContain('type:3');
+ expect(fn).toContain('ZOOM_HOST_USER');
  expect(fn).toContain('Active student enrollment required');
  expect(fn).toContain('Approved teacher required');
 });
