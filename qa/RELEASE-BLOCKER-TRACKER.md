@@ -97,3 +97,7 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Edge Function sender/scheduler, cron, delivery retries/receipts, consent enforcement, frequency/quiet-hour policy enforcement and device testing still NOT implemented.
 - [ ] Parent/student recipient mapping must be validated with the education account data model; migration currently supports optional parent user ID but does not prove relationship authorization.
 - [ ] CI run for current branch head is not available through connected status/run lookup.
+
+- [x] Read-only QA Supabase schema audit: QA project uses `admin_users(user_id)`, not `profiles(role)`; homework source table `fr_learn_homework` exists with teacher/student IDs, date, checklist, and completion/approval fields.
+- [x] Notification migration admin RLS checks updated to QA project's `admin_users` membership (QA branch commit only).
+- [ ] Migration still not applied; verify SQL in isolated QA DB before applying. Homework reminder integration with existing homework rows remains pending.
