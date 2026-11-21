@@ -9,15 +9,26 @@ function loadEvents() {
   return w.FRNotificationEvents;
 }
 
-test("event catalog maps core ride/order/delivery roles", () => {
+test("catalog retains core ride/order/delivery roles", () => {
   const events = loadEvents();
   assert.equal(events.getRoles("ride.accepted").join(","), "customer");
   assert.equal(events.getRoles("ride.requested").join(","), "driver");
   assert.equal(events.getRoles("order.received").join(","), "customer,partner");
+  assert.equal(events.getRoles("delivery.completed").join(","), "customer,driver");
   assert.equal(events.getRoles("admin.complaint").join(","), "admin");
 });
 
-test("build returns stable Telugu template and allows safe context override", () => {
+test("catalog includes Home, Work/Task and Market/local-store notifications", () => {
+  const events = loadEvents();
+  assert.equal(events.getRoles("home.service.requested").join(","), "customer,partner");
+  assert.equal(events.getRoles("home.service.assigned").join(","), "customer,partner");
+  assert.equal(events.getRoles("work.task.assigned").join(","), "customer,partner");
+  assert.equal(events.getRoles("work.task.completed").join(","), "customer,partner");
+  assert.equal(events.getRoles("market.order.received").join(","), "customer,partner");
+  assert.equal(events.getRoles("market.order.status").join(","), "customer");
+});
+
+test("build returns Telugu template and permits safe contextual fields", () => {
   const events = loadEvents();
   const base = events.build("ride.completed");
   assert.equal(base.title, "రైడ్ పూర్తయింది");
