@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#24105f">
-<meta name="application-version" content="10.2-feedback-hotfix">
+<meta name="application-version" content="10.3-menu-learning-feedback-layout">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>FRIEND RIDE – Friend Mart | Version 10.1</title>
+<title>FRIEND RIDE – Friend Mart | Version 10.3</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--purple:#5420b8;--purple2:#7b35df;--navy:#211044;--orange:#ff8a24;--bg:#f6f4fb;--ink:#201936;--muted:#77718a;--line:#e9e3f2;--green:#13875b;--red:#c83c4c;--white:#fff;--gold:#ffc65a}
@@ -231,6 +231,16 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 .fr-catalogue-category-tile .market-product-art{font-size:24px}
 @media(max-width:360px){.fr-catalogue-category-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+
+<style id="fr-bottom-menu-removal-and-layout">
+/* Menu/drawer removed; keep seven bottom navigation items compact. */
+.home-topbar .menu-open,#drawerBackdrop,.drawer-backdrop{display:none!important}
+.premium-bottom{grid-template-columns:repeat(7,minmax(0,1fr))!important}
+.premium-bottom button[data-page="learnTeach"]{font-size:9px;color:#6a43a7;font-weight:900}
+#home #frHomeRatings{margin-bottom:12px}
+#home #frSupportHomeEntry{margin:12px 16px 28px!important;position:relative}
+body{padding-bottom:105px}
+</style>
 <link rel="stylesheet" href="./learn-teach.css">
 </head>
 <body>
@@ -248,7 +258,6 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  </div>
 </div>
 <header class="topbar home-topbar">
- <button class="iconbtn menu-open" aria-label="Open side menu" onclick="openDrawer()">☰</button>
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
  <button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
 </header>
@@ -326,14 +335,14 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  </div>
  <div class="cycle-delivery-home-card" onclick="requireLogin(()=>showPage('cycleDelivery'))" role="button" tabindex="0" aria-label="Cycle Delivery"><div class="cycle-delivery-photo"><span class="cycle-delivery-fallback">🚲</span></div><div class="cycle-delivery-home-copy"><b>🚲 Cycle Delivery</b><small>Eco-friendly local delivery • No bike required</small><span class="cycle-delivery-rate">₹25–₹40 • Distance-based</span></div></div><div class="home-section-title"><h2>More Services</h2><button onclick="showPage('explore')">View All →</button></div>
  <div class="home-more-grid"><button onclick="requireLogin(()=>showPage('parcel'))">📦<b>Parcel</b></button><button onclick="requireLogin(()=>showPage('goods'))">🚚<b>Goods</b></button><button onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b></button><button onclick="requireLogin(()=>showPage('scheduled'))">🗓️<b>Schedule</b></button></div>
- <div class="card fr-support-home-entry" id="frSupportHomeEntry"><h2>💬 Help & Support</h2><p class="muted">మీకు ఏదైనా సమస్య ఉందా? Complaint నమోదు చేయండి లేదా మీ Feedback & Rating ఇవ్వండి.</p><button type="button" class="btn purple" onclick="frOpenSupportPage()">✍️ Complaint / Feedback ఇవ్వండి</button></div>
  <section id="frHomeRatings" class="card" aria-label="Customer Ratings">
   <div class="home-section-title"><h2>⭐ Customer Ratings</h2><button type="button" onclick="frLoadHomepageRatings()">Refresh</button></div>
   <p class="muted">Our customers share their FRIEND RIDE experience.</p>
   <div id="frHomepageRatingsList"><p class="muted">Ratings loading…</p></div>
   <button class="btn light" onclick="frOpenSupportPage()">Give Your Rating</button>
  </section>
-</section>
+ <div class="card fr-support-home-entry" id="frSupportHomeEntry"><h2>💬 Help & Support</h2><p class="muted">మీకు ఏదైనా సమస్య ఉందా? Complaint నమోదు చేయండి లేదా మీ Feedback & Rating ఇవ్వండి.</p><button type="button" class="btn purple" onclick="frOpenSupportPage()">✍️ Complaint / Feedback ఇవ్వండి</button></div>
+ </section>
 
 <section id="cycleDelivery" class="page"><div class="card cycle-delivery-hero"><div class="cycle-delivery-photo large"><span class="cycle-delivery-fallback">🚲</span></div><h2>🚲 FRIEND RIDE Cycle Delivery</h2><p>Eco-friendly local delivery by bicycle. No motorbike required. Grocery, food, parcel and local-store orders within suitable distance and load limits.</p></div><div class="card"><h2>Cycle Delivery Charges</h2><div class="cycle-price-table"><div><span>0–1 KM</span><b>₹25</b></div><div><span>1–2 KM</span><b>₹30</b></div><div><span>2–3 KM</span><b>₹35</b></div><div><span>Above 3 KM</span><b>₹40</b></div></div><div class="field"><label for="cycleDistanceInput">Delivery distance (KM)</label><input id="cycleDistanceInput" type="number" min="0.1" step="0.1" placeholder="Enter distance in km" oninput="frCycleCalculatePrice()"></div><div id="cyclePriceResult" class="notice">Distance enter చేస్తే delivery charge చూపిస్తుంది.</div><button class="btn purple" onclick="requireLogin(()=>showPage('shops'))">🛒 Shop / Place Order</button><button class="btn light" onclick="requireLogin(()=>menuGo('driverDashboard'))">🚲 Delivery Partner Login</button></div><div class="card"><h3>Available for</h3><div class="grid"><div class="tile"><span class="emoji">🛒</span><b>Grocery</b><small>Daily essentials</small></div><div class="tile"><span class="emoji">🍔</span><b>Food</b><small>Nearby restaurants</small></div><div class="tile"><span class="emoji">📦</span><b>Parcel</b><small>Small parcels</small></div><div class="tile"><span class="emoji">🏪</span><b>Local Stores</b><small>Small orders</small></div></div><div class="notice">Cycle delivery assignment must consider distance, partner availability, order size/weight and safety. Orders unsuitable for cycle will use another eligible delivery vehicle.</div></div><button class="btn light" onclick="showPage('home')">← Back to Home</button></section><section id="explore" class="page"><div class="card"><h2>Explore FRIEND RIDE Services</h2><p class="muted">మీకు కావాల్సిన సేవను ఎంచుకోండి.</p><div class="grid">
 <button class="tile" onclick="showPage('ride')">🛵<b>Ride Booking</b><small>Bike / Auto / Car</small></button>
@@ -656,50 +665,11 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <button data-page="food" onclick="showPage('food')"><span>🍱</span>Food<br>Delivery</button>
  <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span><small>My Cart</small><b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
  <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Categories</button>
- <button data-page="learnTeach" onclick="frLearnTeachOpen()"><span>🎓</span>Learn</button>
+ <button data-page="learnTeach" onclick="frLearnTeachOpen()"><span>🎓</span>విజ్ఞా సేతు</button>
  <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>🧾</span>Orders</button>
- <button data-page="menu" onclick="openDrawer()"><span>☰</span>Menu</button>
 </nav>
 
-<div id="drawerBackdrop" class="drawer-backdrop" onclick="if(event.target===this)closeDrawer()"><aside class="drawer">
- <div class="drawer-head"><button class="close" style="float:right" onclick="closeDrawer()">✕</button><div class="logo">FR</div><b>FRIEND RIDE ULTIMATE</b><br><small id="drawerUser">One app. Every local need.</small></div>
- <button class="menu-item" onclick="menuGo('home')"><span class="mi">🏠</span>Home</button>
- <div class="menu-label">Dashboards</div>
- <button class="menu-item" onclick="menuGo('customerDashboard')"><span class="mi">👤</span>Customer Dashboard</button>
- <button class="menu-item" onclick="menuGo('driverDashboard')"><span class="mi">🚗</span>Driver Dashboard</button>
- <button class="menu-item" onclick="menuGo('partnerDashboard')"><span class="mi">🏪</span>Partner Dashboard</button>
- <div class="menu-label">Services</div>
- <button class="menu-item" onclick="menuGo('ride')"><span class="mi">🛵</span>Ride Booking</button>
- <button class="menu-item" onclick="menuGo('goods')"><span class="mi">🚚</span>Goods Delivery</button>
- <button class="menu-item" onclick="menuGo('parcel')"><span class="mi">📦</span>Parcel Delivery</button>
- <button class="menu-item" onclick="menuGo('food')"><span class="mi">🍱</span>Food Delivery</button>
- <button class="menu-item" onclick="menuGo('homeServices')"><span class="mi">🧰</span>Home Services</button>
- <button class="menu-item" onclick="menuGo('shops')"><span class="mi">🏪</span>Local Stores</button>
- <button class="menu-item" onclick="menuGo('shopping')"><span class="mi">🛍️</span>Shopping</button>
- <button class="menu-item" onclick="menuGo('scheduled')"><span class="mi">🗓️</span>Scheduled Booking</button>
- <div class="menu-label">My Account</div>
- <button class="menu-item" onclick="menuGo('orders')"><span class="mi">🧾</span>My Orders & Bookings</button>
- <button class="menu-item" onclick="menuGo('tracking')"><span class="mi">📍</span>Live Tracking</button>
- <button class="menu-item" onclick="menuGo('wallet')"><span class="mi">💳</span>Wallet & Payments</button>
- <button class="menu-item" onclick="menuGo('offers')"><span class="mi">🎁</span>Offers & Rewards</button>
- <button class="menu-item" onclick="menuGo('notifications')"><span class="mi">🔔</span>Notifications</button>
- <div class="menu-label">Business & Admin</div>
- <button class="menu-item" onclick="menuGo('partnerOrders')"><span class="mi">🛒</span>Partner Orders</button>
- <button class="menu-item" onclick="menuGo('catalogue')"><span class="mi">🍽️</span>Restaurant Menu / Catalogue</button><button class="menu-item" onclick="menuGo('subscription')"><span class="mi">💎</span>Partner Subscription</button><button class="menu-item" onclick="menuGo('referrals')"><span class="mi">🎁</span>Partner Referrals</button><button class="menu-item" onclick="menuGo('partnerReports')"><span class="mi">📊</span>Partner Reports</button><button class="menu-item" onclick="menuGo('products')"><span class="mi">📦</span>Products & Stock</button>
- <button class="menu-item" onclick="menuGo('inventory')"><span class="mi">⚠️</span>Inventory / Low Stock</button>
- <button class="menu-item" onclick="menuGo('gst')"><span class="mi">🧾</span>GST Bills & Invoices</button>
- <button class="menu-item" onclick="menuGo('users')"><span class="mi">👥</span>User Management</button>
- <button class="menu-item" onclick="menuGo('driverApprovals')"><span class="mi">🪪</span>Driver Approvals</button>
- <button class="menu-item" onclick="menuGo('partnerApprovals')"><span class="mi">🏬</span>Partner Management</button><button class="menu-item" onclick="menuGo('referralApprovals')"><span class="mi">🎁</span>Referral Approvals</button><button class="menu-item" onclick="menuGo('cashRewardApprovals')"><span class="mi">💰</span>Customer Cash Reward Approvals</button>
- <button class="menu-item" onclick="menuGo('adminOrders')"><span class="mi">📋</span>All Orders</button>
- <button class="menu-item" onclick="menuGo('reports')"><span class="mi">📊</span>Reports & Analytics</button>
- <button class="menu-item" onclick="menuGo('paymentApprovals')"><span class="mi">💰</span>Payment & Approval Queue</button><button class="menu-item" onclick="menuGo('platformBusinessSettings')"><span class="mi">☎️</span>Toll-Free / GST Details</button><button class="menu-item" onclick="menuGo('settings')"><span class="mi">⚙️</span>System Settings</button>
- <div class="menu-label">More</div>
- <button class="menu-item" id="frSupportMenu" onclick="frOpenSupportPage()"><span class="mi">💬</span>Complaints & Feedback</button>
- <button class="menu-item" onclick="menuGo('adminDashboard')"><span class="mi">🛡️</span>Admin Dashboard</button>
- <button class="menu-item" onclick="menuGo('about')"><span class="mi">ℹ️</span>About Us</button>
- <button class="menu-item" onclick="logout()"><span class="mi">🚪</span>Logout</button>
-</aside></div>
+
 
 <div id="authModal" class="modal"><div class="modalbox">
  <div class="modalhead"><h2 id="authTitle">Login to FRIEND RIDE</h2><button class="close" onclick="closeAuth()">✕</button></div>
@@ -4471,3 +4441,48 @@ window.frRefreshHomeProfileAvatar=async function(){
 })();
 </script>
 <script src="./learn-teach.js"></script>
+
+<script id="fr-single-dashboard-navigation-isolation">
+(function(){
+  // Enforce one visible page/dashboard at a time across all navigation routes.
+  const originalShowPage=window.showPage;
+  function isolatePage(id){
+    const pages=[...document.querySelectorAll('main .page')];
+    pages.forEach(page=>{
+      const isActive=page.id===String(id);
+      page.classList.toggle('active',isActive);
+      page.setAttribute('aria-hidden',isActive?'false':'true');
+      if('inert' in page) page.inert=!isActive;
+    });
+    document.querySelectorAll('.bottom button[data-page]').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===String(id)));
+  }
+  if(typeof originalShowPage==='function'){
+    window.showPage=function(id){
+      const result=originalShowPage.apply(this,arguments);
+      isolatePage(id);
+      return result;
+    };
+  }
+  // Learning tab must open only its Learning screen, not leave another dashboard active.
+  const learnTab=document.querySelector('.premium-bottom button[data-page="learnTeach"]');
+  if(learnTab){
+    learnTab.onclick=function(){
+      if(typeof window.frLearnTeachOpen==='function') window.frLearnTeachOpen();
+      else window.showPage('learnTeach');
+      isolatePage('learnTeach');
+    };
+  }
+  // Ensure initial state is also isolated and Home remains the default page.
+  const active=document.querySelector('main .page.active');
+  isolatePage(active&&active.id?active.id:'home');
+  // Repair any later script that accidentally marks more than one page active.
+  const observer=new MutationObserver(()=>{
+    const activePages=[...document.querySelectorAll('main .page.active')];
+    if(activePages.length>1){
+      const preferred=activePages.find(p=>p.id===document.querySelector('.bottom button.active')?.dataset.page)||activePages[0];
+      isolatePage(preferred.id);
+    }
+  });
+  observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+})();
+</script>
