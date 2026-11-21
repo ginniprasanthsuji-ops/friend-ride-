@@ -121,5 +121,4 @@ test('Classroom workflow uses simple external link, no Zoom OAuth secrets', asyn
  expect(js).toContain('create-external-classroom-session');
  expect(js).toContain('Join Online Classroom');
  expect(js).not.toContain('create-zoom-meeting');
- const fn=await (await page.request.get('/supabase/functions/create-external-classroom-session/index.ts')).text().catch(()=>'' );
 });
