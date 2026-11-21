@@ -4646,3 +4646,29 @@ main .page.active{animation:frAppPageEnter .28s cubic-bezier(.2,.7,.2,1) both;wi
  });
 })();
 </script>
+
+<!-- FRIEND RIDE native navigation v2: directional screen transitions + app back history -->
+<style id="fr-native-navigation-v2">
+main .page.active{animation:frScreenForward .26s cubic-bezier(.22,.72,.2,1) both;will-change:transform,opacity}
+main .page.active.fr-screen-back{animation:frScreenBack .24s cubic-bezier(.22,.72,.2,1) both}
+@keyframes frScreenForward{from{opacity:0;transform:translateX(22px) scale(.99)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes frScreenBack{from{opacity:0;transform:translateX(-18px) scale(.99)}to{opacity:1;transform:translateX(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){main .page.active{animation:none!important;will-change:auto}}
+</style>
+<script id="fr-native-navigation-controller-v2">
+(function(){
+ if(window.__frNativeNavigationV2)return;window.__frNativeNavigationV2=true;
+ const original=window.showPage;if(typeof original!=='function')return;
+ const roots=new Set([...document.querySelectorAll('.bottom button[data-page],.premium-bottom button[data-page]')].map(b=>b.dataset.page).filter(Boolean));
+ let current=document.querySelector('main .page.active')?.id||'home';let popMode=false;const stack=[];
+ function animate(id,back){const p=document.getElementById(id);if(!p)return;p.classList.remove('fr-screen-back');if(back)p.classList.add('fr-screen-back');void p.offsetWidth;}
+ window.showPage=function(id){id=String(id||'');if(!id||id===current)return original.apply(this,arguments);
+  if(!popMode&&!roots.has(id)){stack.push(current);try{history.pushState({frPage:id},'',location.pathname+location.search+location.hash);}catch(e){}}
+  const back=popMode;const result=original.apply(this,arguments);current=id;animate(id,back);return result;
+ };
+ window.frAppBack=function(){if(stack.length){history.back();return true;}if(current!=='home'){popMode=true;window.showPage('home');popMode=false;return true;}return false;};
+ window.addEventListener('popstate',function(){if(stack.length){const prev=stack.pop();popMode=true;window.showPage(prev);popMode=false;}else if(current!=='home'){popMode=true;window.showPage('home');popMode=false;}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&window.frAppBack())e.preventDefault();});
+ document.addEventListener('animationend',e=>{if(e.animationName==='frScreenBack')e.target.classList.remove('fr-screen-back');});
+})();
+</script>
