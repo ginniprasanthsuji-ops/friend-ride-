@@ -64,4 +64,7 @@ test('Learn & Teach SQL migrations include RLS and owner-update transition guard
   expect(hardening).toContain('Student may only cancel an open tuition request');
   expect(hardening).toContain('Request owner may only accept or reject a pending application');
   expect(hardening).toContain("auth.role() = 'service_role'");
+  expect(hardening).toContain('fr_learn_teacher_profiles_teaching_range_check');
+  expect(hardening).toContain("eligibility_level = '10th' and teach_up_to = '6'");
+  expect(hardening).toContain("eligibility_level = 'bed' and teach_up_to = 'subject'");
 });
