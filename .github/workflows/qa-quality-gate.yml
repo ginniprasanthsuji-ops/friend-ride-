@@ -1,0 +1,29 @@
+name: FRIEND RIDE QA Backend and Core Quality Gate
+on:
+  push:
+    branches: [qa/navigation-isolation-fix-2026-11-21]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - name: Typecheck ride-contact
+        run: npm run typecheck
+      - name: Typecheck core
+        run: npm run typecheck:core
+      - name: Build runtime bundle
+        run: npm run build:runtime
+      - name: Run Node unit tests
+        run: npm run test:unit
+      - name: Run Vitest core suite
+        run: npm run test:core
+      - name: Validate inline JavaScript and integrations
+        run: node scripts/check-inline-js.mjs
