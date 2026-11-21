@@ -2821,6 +2821,49 @@ function frAddPartnerCatalogueItem(index){
 </script>
 
 <script src="./learn-teach.js"></script>
+<script id="fr-learn-hourly-telugu-work-reminder">
+(function(){
+ 'use strict';
+ const KEY='frLearnHourlyWorkReminderEnabled';
+ let timer=null,lastHourKey='';
+ const msgForRole=()=>{
+   const role=String(window.currentProfile?.role||'student').toLowerCase();
+   if(role==='teacher') return 'గురువుగారు, మీ బోధనా పనులను సమీక్షించండి. విద్యార్థుల హోంవర్క్ పరిశీలించండి, తరగతి షెడ్యూల్ చూడండి, తదుపరి పాఠానికి సిద్ధం అవండి.';
+   if(role==='admin') return 'అడ్మిన్ గారు, విద్యా సేతు పనుల పెండింగ్ సమీక్షను పరిశీలించండి.';
+   return 'విద్యార్థి, చదువు సమయం. మీ హోంవర్క్ చెక్‌లిస్ట్ పూర్తి చేయండి, పాఠాలను చదవండి, సందేహాలను నోట్ చేసుకోండి.';
+ };
+ const speakAndNotify=()=>{
+   const msg=msgForRole();
+   if('Notification' in window && Notification.permission==='granted'){
+     try{new Notification('FRIEND RIDE • పని గుర్తుచూపు',{body:msg,tag:'fr-learn-hourly-work',renotify:false,icon:'./friendride-icon.svg'});}catch(_){}
+   }
+   if('speechSynthesis' in window){
+     try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(msg);u.lang='te-IN';u.rate=0.9;u.pitch=1;window.speechSynthesis.speak(u);}catch(_){}
+   }
+ };
+ const checkHour=()=>{
+   if(!window.frLearnHourlyReminderActive || document.visibilityState!=='visible')return;
+   const d=new Date(),key=d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()+'-'+d.getHours();
+   if(d.getMinutes()===0 && key!==lastHourKey){lastHourKey=key;speakAndNotify();}
+ };
+ const start=()=>{if(timer)clearInterval(timer);timer=setInterval(checkHour,15000);};
+ window.frLearnEnableHourlyReminder=async function(){
+   try{
+     if(!('Notification' in window)){const el=document.getElementById('frLearnReminderStatus');if(el)el.textContent='ఈ browserలో notifications support లేదు. App foregroundలో Telugu voice reminders మాత్రమే అందుబాటులో ఉండవచ్చు.';}
+     else if(Notification.permission==='default'){const p=await Notification.requestPermission();if(p!=='granted')throw Error('Notification permission ఇవ్వలేదు.');}
+     if('Notification' in window && Notification.permission!=='granted')throw Error('Notifications permission అనుమతించాలి.');
+     window.frLearnHourlyReminderActive=true;localStorage.setItem(KEY,'1');lastHourKey='';
+     start();
+     const el=document.getElementById('frLearnReminderStatus');if(el)el.textContent='గంటకు ఒకసారి తెలుగులో పని/చదువు reminder enabled. తదుపరి reminder గంట ప్రారంభంలో వస్తుంది. App తెరిచి ఉండాలి; Voice foregroundలో మాత్రమే వినిపిస్తుంది.';
+   }catch(e){const el=document.getElementById('frLearnReminderStatus');if(el)el.textContent='Reminder enable కాలేదు: '+(e.message||e);}
+ };
+ window.frLearnDisableHourlyReminder=function(){window.frLearnHourlyReminderActive=false;localStorage.removeItem(KEY);if(timer)clearInterval(timer);timer=null;const el=document.getElementById('frLearnReminderStatus');if(el)el.textContent='Hourly reminder నిలిపివేయబడింది.';};
+ window.frLearnHourlyReminderActive=localStorage.getItem(KEY)==='1';
+ if(window.frLearnHourlyReminderActive)start();
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkHour();});
+})();
+</script>
+
 </body>
 </html>
 <style>
