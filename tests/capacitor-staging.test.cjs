@@ -16,7 +16,9 @@ test("Capacitor staging copies app entry, UI modules, and required assets while 
     "learn-teach.css": "/* css fixture */",
     "learn-teach.js": "/* js fixture */",
     "assets/ride-contact.js": "/* contact fixture */",
-    "assets/driver-kyc-upload.js": "/* upload fixture */"
+    "assets/driver-kyc-upload.js": "/* upload fixture */",
+    "icons/icon-192.png": "binary-icon-192-fixture",
+    "icons/icon-512.png": "binary-icon-512-fixture""
   };
   for (const [name, content] of Object.entries(files)) {
     const file = path.join(root, name);
@@ -30,9 +32,10 @@ test("Capacitor staging copies app entry, UI modules, and required assets while 
     assert.equal(fs.readFileSync(path.join(root, name), "utf8"), content, "source remains unchanged");
     assert.equal(fs.readFileSync(path.join(root, "www", name), "utf8"), content, "staged copy matches");
   }
-  assert.deepEqual(fs.readdirSync(path.join(root, "www")).sort(), ["assets", "index.html", "learn-teach.css", "learn-teach.js", "manifest.webmanifest", "service-worker.js", "sw.js"].sort());
+  assert.deepEqual(fs.readdirSync(path.join(root, "www")).sort(), ["assets", "icons", "index.html", "learn-teach.css", "learn-teach.js", "manifest.webmanifest", "service-worker.js", "sw.js"].sort());
   assert.equal(fs.readFileSync(path.join(root, "www", "service-worker.js"), "utf8"), files["sw.js"], "registered worker alias matches source");
   assert.deepEqual(fs.readdirSync(path.join(root, "www", "assets")).sort(), ["driver-kyc-upload.js", "ride-contact.js"].sort());
+  assert.deepEqual(fs.readdirSync(path.join(root, "www", "icons")).sort(), ["icon-192.png", "icon-512.png"].sort());
   fs.rmSync(temp, { recursive: true, force: true });
 });
 
