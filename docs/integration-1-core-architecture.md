@@ -80,8 +80,8 @@ FRIEND RIDE UI
 - [x] Identify security and migration risks
 - [x] Create isolated working branch
 - [x] Document architecture and future removal plan
-- [ ] Add provider adapter/config scaffold
-- [ ] Wire scaffold to the application (only after isolated tests)
+- [x] Add provider adapter/config scaffold
+- [ ] Wire scaffold to the application (deferred; no production behavior change)
 - [ ] Regression tests and review
 - [ ] Merge/deploy (not authorized/attempted in this phase)
 
@@ -95,4 +95,4 @@ FRIEND RIDE UI
 
 ## Phase decision
 
-**Integration 1 is currently at Audit + Architecture Design.** The next implementation step is a non-breaking adapter/config scaffold in this branch, followed by static checks and regression review before any production deployment.
+**Integration 1 is currently at Audit + Architecture Design + Config Scaffold.** The scaffold has been syntax-checked but is not wired into runtime yet. Next step: integrate it safely, then static checks and regression review before any production deployment.
