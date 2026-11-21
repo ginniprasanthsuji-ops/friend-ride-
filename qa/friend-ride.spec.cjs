@@ -619,3 +619,29 @@ test('Home notification bell SVG and default profile avatar fallback are visible
   await expect(defaultAvatar).toBeVisible();
   await expect(defaultAvatar).toHaveAttribute('aria-label', 'Default profile avatar');
 });
+
+
+test('Home current-location label uses GPS coordinates and reverse-geocoded city instead of a fixed default', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: {
+        getCurrentPosition(success) {
+          success({ coords: { latitude: 17.4065, longitude: 78.4772 }, timestamp: Date.now() });
+        }
+      }
+    });
+  });
+  await page.route(/nominatim\\.openstreetmap\\.org\\/reverse/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ address: { suburb: 'Banjara Hills', city: 'Hyderabad', state: 'Telangana', country: 'India' } })
+  }));
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.useHomeLocation());
+  await expect(page.locator('#homeLocationText')).toHaveText('Banjara Hills, Hyderabad, Telangana, India');
+  await expect(page.locator('#frNativeCityName')).toHaveText('Hyderabad');
+  const coordinates = await page.locator('#homeLocationText').evaluate(el => ({ latitude: el.dataset.latitude, longitude: el.dataset.longitude }));
+  expect(coordinates).toEqual({ latitude: '17.4065', longitude: '78.4772' });
+  await expect(page.locator('#homeLocationText')).not.toContainText('Tekkali');
+});
