@@ -42,3 +42,26 @@ test('Existing FRIEND RIDE page navigation smoke regression', async ({ page }) =
   await page.locator('.premium-bottom [data-page="menu"]').click();
   await expect(page.locator('#drawerBackdrop')).toHaveClass(/show/);
 });
+
+
+test('Learn & Teach SQL migrations include RLS and owner-update transition guards', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const base = process.cwd();
+  const core = await readFile(base + '/supabase/migrations/20261121090000_learn_teach_marketplace.sql', 'utf8');
+  const onePerson = await readFile(base + '/supabase/migrations/20261121110000_one_person_coaching_center.sql', 'utf8');
+  const eligibility = await readFile(base + '/supabase/migrations/20261121120000_teacher_eligibility_tiers.sql', 'utf8');
+  const hardening = await readFile(base + '/supabase/migrations/20261121130000_learn_teach_owner_update_hardening.sql', 'utf8');
+  expect(core).toContain('enable row level security');
+  expect(core).toContain("approval_status='approved'");
+  expect(core).toContain("status='pending_payment'");
+  expect(onePerson).toContain("center_type in ('multi_teacher','one_person')");
+  expect(onePerson).toContain('teacher_count = 1');
+  expect(onePerson).toContain('daily_hours between 4 and 5');
+  expect(eligibility).toContain("owner_eligibility='10th' and owner_teach_up_to in ('6')");
+  expect(eligibility).toContain("owner_eligibility='bed' and owner_teach_up_to='subject'");
+  expect(hardening).toContain('Enrollment identity, course, fee, and creation time are immutable');
+  expect(hardening).toContain('Student may only cancel a pending-payment enrollment');
+  expect(hardening).toContain('Student may only cancel an open tuition request');
+  expect(hardening).toContain('Request owner may only accept or reject a pending application');
+  expect(hardening).toContain("auth.role() = 'service_role'");
+});
