@@ -77,3 +77,18 @@
 - [ ] Verify unrelated user denied access to meeting link
 - [ ] Verify payment/active enrollment gate
 - [ ] Run full Playwright and regression suite before merge/deploy
+
+
+## Homework Checklist, Teacher Approval & Telugu Reminders
+- [x] QA homework table with session/student/teacher/checklist/approval fields
+- [x] Student checklist confirmation flow
+- [x] Teacher approval UI
+- [x] Join Classroom gated until teacher approval
+- [x] Secure join-link Edge Function checks teacher approval
+- [x] Hourly Telugu browser notification + spoken reminder while app is foregrounded
+- [ ] Authenticated student submit test
+- [ ] Teacher approval test using real test accounts
+- [ ] Join-link gate test before/after approval
+- [ ] Hourly voice/notification device test
+- [ ] Background notification test (requires push delivery setup; foreground timer alone does not guarantee background delivery)
+- [ ] Playwright run and full regression
