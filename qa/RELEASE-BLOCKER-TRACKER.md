@@ -109,3 +109,11 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Critical backend/frontend schema mismatch: Learn & Teach frontend is not aligned with current QA database. Do not apply notification or homework migration or claim those features are live until correct project/schema is reconciled.
 - [ ] The Learn & Teach migration draft also references `profiles` for admin helper, while current QA project uses `admin_users`; migration compatibility review required.
 - [ ] Student homework reminder UI, source mapping, recipient consent, and secure server-side scheduler remain not implemented/verified.
+
+
+## 11. Backend project reconciliation — read-only (2026-11-21)
+- [x] QA Supabase project `pqsangtvietawkfgpgfu` is Learn-Teach education schema with `fr_learn_*` tables; it does not contain frontend `learn_teach_*` tables.
+- [x] Production Supabase project `fglyplxcczdjtfwobtzh` does contain the five frontend tables `learn_teach_accounts`, `learn_teach_courses`, `learn_teach_requests`, `learn_teach_notification_settings`, `learn_teach_notifications` (read-only inventory only).
+- [ ] Production is not modified. QA project/schema reconciliation remains a blocker: establish a separate QA backend matching production Learn & Teach schema or update frontend/migrations to use QA `fr_learn_*` schema after explicit architecture review.
+- [ ] Notification foundation migration's admin membership check currently targets QA `admin_users`; production schema/policies must be separately verified before use.
+- [x] Browser regression CI run #241 succeeded at SHA `efec33f69a214b59f9eac7967ab929edc056b06`; this verifies frontend browser suite only.
