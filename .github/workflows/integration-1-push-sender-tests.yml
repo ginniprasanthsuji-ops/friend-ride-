@@ -1,0 +1,22 @@
+name: Integration 1 Push Sender Static Tests
+
+on:
+  push:
+    branches:
+      - integration/1-core-architecture
+  pull_request:
+    branches:
+      - integration/1-core-architecture
+
+jobs:
+  push-sender-static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install project dependencies
+        run: npm ci
+      - name: Run push sender static tests
+        run: node --test tests/notification-edge-function-syntax.test.cjs
