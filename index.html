@@ -344,6 +344,39 @@ body[data-fr-theme="dark"] .fr-native-home .fr-native-hero p strong{color:#f5b83
 .home-topbar .fr-home-profile-btn #frHomeProfileAvatar{width:100%!important;height:100%!important;border-radius:50%!important;background:linear-gradient(145deg,#233754,#121b2e)!important;overflow:hidden!important;display:grid!important;place-items:center!important}
 .home-topbar .fr-home-profile-btn #frHomeProfileAvatar:empty:before{content:"👤";font-size:25px;filter:drop-shadow(0 3px 3px #0005)}
 .home-topbar .fr-home-profile-btn #frHomeProfileAvatar img{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important}
+</style><style id="fr-dark-gold-final-balance">
+:root{--fr-gold:#f5b84c;--fr-gold-deep:#d99026;--fr-bg:#050b17;--fr-panel:#101a2c;--fr-panel-2:#14223a;--fr-text:#f6f8ff;--fr-muted:#aab9d0;--fr-border:#263b59;--fr-danger:#ff687d}
+body{background:radial-gradient(ellipse at 12% 0%,#1a2440 0,transparent 32%),linear-gradient(180deg,#050b17,#080d17)!important;color:var(--fr-text)!important}
+.home-topbar{background:linear-gradient(110deg,#101a2c,#07101e 65%,#18243a)!important;color:var(--fr-text)!important;border-bottom:1px solid var(--fr-border)!important;box-shadow:0 7px 24px #0005!important}
+.home-topbar .menu-open,.home-topbar .notify-btn{background:#18243a!important;color:var(--fr-gold)!important;border:1px solid #334966!important;border-radius:13px!important}
+.home-topbar .location-head b{color:var(--fr-text)!important}.home-topbar .location-head span{color:var(--fr-muted)!important}
+.home-topbar .notify-btn.fr-notify-bell{font-size:24px!important;display:grid;place-items:center}
+.home-topbar .notify-btn.fr-notify-bell i{background:var(--fr-danger)!important;border-color:#101a2c!important}
+.home-topbar .fr-home-profile-btn{background:#18243a!important;border:2px solid var(--fr-gold)!important}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{display:grid;place-items:center;background:linear-gradient(145deg,#263b59,#101a2c);border-radius:50%}
+.fr-default-avatar{font-size:25px;display:grid;place-items:center;width:100%;height:100%;color:#f6f8ff}
+main{background:transparent!important}
+.card,.stat,.tile,.feature-box,.offer-card,.store-card,.home-service,.cab-feature,.fr-cart-top,.fr-cart-line,.fr-payment-method,.fr-payment-panel,.fr-bank-platform,.fr-bank-service,.fr-bank-enquiry,.fr-feedback-card,.fr-notify-hero{background:linear-gradient(145deg,#14223a,#0b1423)!important;color:var(--fr-text)!important;border-color:var(--fr-border)!important;box-shadow:0 8px 22px #0003!important}
+.home-banner,.hero{background:radial-gradient(circle at 88% 12%,#39678e 0,transparent 27%),linear-gradient(118deg,#142b52,#091326)!important;color:#fff!important;border-color:#2d4c74!important}
+.home-banner p,.home-service small,.store-card small,.fr-cart-top small,.fr-bank-platform small,.fr-bank-service small,.fr-bank-enquiry p{color:var(--fr-muted)!important}
+.home-service,.cab-feature,.store-card,.home-more-grid button,.fr-bank-service{border-color:var(--fr-border)!important;color:var(--fr-text)!important}
+.home-service-grid .home-service{background:linear-gradient(145deg,#172640,#0c1525)!important}
+.home-service .service-art,.cab-art{background:linear-gradient(135deg,#14223a,#0c1525)!important}
+.home-more-grid button{background:#111e31!important;color:var(--fr-text)!important}
+.home-more-grid b,.fr-bank-platform b,.fr-bank-service b{color:var(--fr-text)!important}
+.fr-cart-top>strong,.fr-cart-heading-count{background:linear-gradient(135deg,var(--fr-gold),var(--fr-gold-deep))!important;color:#111827!important}
+.fr-cart-top b,.fr-cart-top-arrow{color:var(--fr-gold)!important}
+.fr-qty-control button{background:#332514!important;color:var(--fr-gold)!important}
+.fr-payment-method img{background:#fff!important}
+.premium-bottom{background:linear-gradient(180deg,#101a2c,#07101e)!important;border-top:1px solid var(--fr-border)!important}
+.premium-bottom button{color:var(--fr-muted)!important}.premium-bottom button.active{color:var(--fr-gold)!important}
+.premium-bottom button.active span{background:#332514!important}.premium-bottom .cart-tab span{background:linear-gradient(145deg,var(--fr-gold),var(--fr-gold-deep))!important;color:#111827!important;border-color:#101a2c!important}
+.btn,.btn.purple,.fr-pay-link,.top-action,.banner-cta{background:linear-gradient(105deg,var(--fr-gold),var(--fr-gold-deep))!important;color:#111827!important;border-color:var(--fr-gold)!important}
+.btn.light,.track-actions button,.menu-item,.field input,.field textarea,.field select,input,textarea,select{background:#0a1424!important;color:var(--fr-text)!important;border-color:#354a65!important}
+.notice,.stat small,.muted,.tiny{color:var(--fr-muted)!important}
+.status,.pill,.tag{background:#332514!important;color:var(--fr-gold)!important;border-color:#8c6125!important}
+.fr-role-launcher{background:radial-gradient(circle at 12% 8%,#5a431c 0,#1b2132 42%,#070d18 100%)!important}
+@media(max-width:560px){.home-topbar{gap:8px!important}.home-topbar .notify-btn{width:42px!important;height:42px!important}}
 </style></head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -4837,7 +4870,7 @@ window.frRefreshHomeProfileAvatar=async function(){
  fallback.hidden=false;
  const gender=String(profile.customer_avatar_gender||profile.avatar_gender||profile.gender||profile.driver_avatar_gender||profile.partner_avatar_gender||'male').toLowerCase()==='female'?'female':'male';
  const avatar=typeof frCustomerAvatarData==='function'?frCustomerAvatarData(gender):'';
- if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='3D profile avatar';fallback.append(img);}
+ if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='Default profile avatar';fallback.append(img);}else{fallback.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';}
 };
 (function(){
  const refresh=()=>window.frRefreshHomeProfileAvatar().catch(e=>console.warn(e));
