@@ -30,18 +30,14 @@ Deno.serve(async (req) => {
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const secretKeysRaw = Deno.env.get("SUPABASE_SECRET_KEYS");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const vapidPublic = Deno.env.get("FR_VAPID_PUBLIC_KEY");
   const vapidPrivate = Deno.env.get("FR_VAPID_PRIVATE_KEY");
   const vapidSubject = Deno.env.get("FR_VAPID_SUBJECT") || "mailto:support@friendride.in";
-  if (!supabaseUrl || !secretKeysRaw || !vapidPublic || !vapidPrivate) {
+  if (!supabaseUrl || !serviceKey || !vapidPublic || !vapidPrivate) {
     return json({ error: "server-configuration-incomplete" }, 503);
   }
 
-  let secretKeys: Record<string, string>;
-  try { secretKeys = JSON.parse(secretKeysRaw); } catch { return json({ error: "server-key-config-invalid" }, 503); }
-  const serviceKey = secretKeys.default;
-  if (!serviceKey) return json({ error: "server-key-missing" }, 503);
 
   let body: { user_ids?: unknown; notification?: unknown };
   try { body = await req.json(); } catch { return json({ error: "invalid-json" }, 400); }
