@@ -874,7 +874,7 @@ function menuGo(id){
  if(id==='driverDashboard'&&actualRole!=='driver'){alert('Driver account మాత్రమే ఈ విభాగాన్ని ఉపయోగించగలదు.');return;}
  showPage(id);
 }
-function useHomeLocation(){const el=document.getElementById('homeLocationText');if(!el)return;if(!navigator.geolocation){el.textContent='GPS location not supported';return;}el.textContent='Mapping your current GPS location…';navigator.geolocation.getCurrentPosition(async pos=>{const {latitude:lat,longitude:lon}=pos.coords;el.dataset.latitude=String(lat);el.dataset.longitude=String(lon);el.textContent='Current location mapped';try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lon));if(r.ok){const d=await r.json();const a=d.address||{};const parts=[a.suburb||a.neighbourhood||a.village||a.town||a.city||a.county,a.state,a.country].filter(Boolean);el.textContent=parts.join(', ')||d.display_name||'Current GPS location';}}catch(e){el.textContent='GPS: '+lat.toFixed(5)+', '+lon.toFixed(5)}},e=>{el.textContent=e.code===1?'Location permission denied':e.code===2?'GPS location unavailable':'GPS location timed out';},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
+function useHomeLocation(){const el=document.getElementById('homeLocationText'),native=document.getElementById('frNativeLocationLabel');const set=(v)=>{if(el)el.textContent=v;if(native)native.textContent=v};if(!el&&!native)return;if(!navigator.geolocation){set('GPS location not supported');return;}set('Mapping current GPS location…');navigator.geolocation.getCurrentPosition(async pos=>{const {latitude:lat,longitude:lon}=pos.coords;[el,native].filter(Boolean).forEach(x=>{x.dataset.latitude=String(lat);x.dataset.longitude=String(lon)});set('GPS mapped — loading city…');try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lon));if(r.ok){const d=await r.json(),a=d.address||{},city=a.city||a.town||a.municipality||a.county||a.state_district||a.village||a.suburb||'',state=a.state||'',country=a.country||'';const parts=[...new Set([city,state,country].filter(Boolean))];set(parts.join(', ')||'Current GPS location');}}catch(e){set('GPS location mapped');}},e=>set(e.code===1?'Location permission denied — tap to retry':e.code===2?'GPS unavailable — tap to retry':'GPS timed out — tap to retry'),{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
 async function loadDriverApprovals(){
  const box=$('driverApprovalList'),msg=$('driverApprovalMessage');
  if(!box)return;
@@ -2011,6 +2011,19 @@ body[data-fr-theme="light"] .fr-theme-switch{background:#fff;color:#17243a;borde
 @keyframes frPremiumScreenEnter{0%{opacity:.4;transform:translateX(16px) scale(.985);filter:blur(2px)}100%{opacity:1;transform:translateX(0) scale(1);filter:blur(0)}}
 .fr-screen-enter{animation:frPremiumScreenEnter .34s cubic-bezier(.2,.8,.2,1) both}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* QA UI integration: old white header merged into the new native dark home */
+body:has(.fr-native-home) .home-topbar{background:linear-gradient(135deg,#0b1424,#101b2c)!important;color:#eef4ff!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important;padding:calc(env(safe-area-inset-top,0px) + 9px) 12px 10px!important;gap:9px!important;min-height:76px!important}
+body:has(.fr-native-home) .home-topbar .menu-open{background:#15243a!important;color:#ff9b37!important;border:1px solid #263851!important;border-radius:16px!important}
+body:has(.fr-native-home) .home-topbar .location-head{background:transparent!important;color:#eef4ff!important;min-width:0!important;cursor:pointer}
+body:has(.fr-native-home) .home-topbar .location-head b{color:#eef4ff!important;font-size:15px!important}
+body:has(.fr-native-home) .home-topbar .location-head span{color:#a9b8ce!important;font-size:12px!important}
+body:has(.fr-native-home) .home-topbar .notify-btn{background:#15243a!important;color:#eef4ff!important;border:1px solid #263851!important;border-radius:15px!important}
+body:has(.fr-native-home) .home-topbar .notify-btn i{border-color:#15243a!important}
+body:has(.fr-native-home) .fr-native-home{margin-top:0!important}
+body:has(.fr-native-home) .fr-native-location{background:linear-gradient(135deg,#101c31,#0b1424)!important;border:1px solid #263851!important;color:#dbe7f8!important;border-radius:15px!important;animation:frLocationGlow 4s ease-in-out infinite}
+@keyframes frLocationGlow{0%,100%{box-shadow:0 0 0 #4b83c000}50%{box-shadow:0 0 14px #4b83c02b}}
+@media(prefers-reduced-motion:reduce){body:has(.fr-native-home) .fr-native-location{animation:none!important}}
 </style>
 <script id="fr-theme-auto-location-v2">
 (function(){
@@ -2025,8 +2038,7 @@ body[data-fr-theme="light"] .fr-theme-switch{background:#fff;color:#17243a;borde
  window.frThemeMode=()=>mode;window.frSetTheme=m=>{if(['auto','dark','light'].includes(m)){mode=m;try{localStorage.setItem(KEY,m)}catch(e){}apply()}};
 })();
 (function(){
- function autoLocation(){const top=document.getElementById('homeLocationText'),label=document.getElementById('frNativeLocationLabel');if(top)top.textContent='Detecting live location…';if(label)label.textContent='Detecting live location…';if(!navigator.geolocation){if(top)top.textContent='Tap to detect your location';if(label)label.textContent='Tap to detect location';return}
- navigator.geolocation.getCurrentPosition(async p=>{const lat=p.coords.latitude,lon=p.coords.longitude,coords=lat.toFixed(4)+', '+lon.toFixed(4);if(top)top.textContent=coords;if(label)label.textContent=coords;try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon);const d=await r.json();const name=d.display_name||coords;if(top)top.textContent=name;if(label)label.textContent=name}catch(e){}},()=>{if(top)top.textContent='Tap to detect your location';if(label)label.textContent='Tap to detect location'}, {enableHighAccuracy:true,timeout:12000,maximumAge:300000})}
+ function autoLocation(){useHomeLocation()}
  const run=()=>setTimeout(autoLocation,600);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
 </script></html>';
