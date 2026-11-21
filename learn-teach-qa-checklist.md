@@ -20,7 +20,7 @@
 - [x] SQL schema and RLS migration drafted
 
 ## Not yet live / blockers
-- [ ] Apply migration to a Supabase QA branch (project currently has no Supabase development branches)
+- [ ] Apply both Learn & Teach and One-Person Coaching Center migrations to a Supabase QA database (project currently has no Supabase development branches)
 - [ ] Cashfree course enrollment payment integration
 - [ ] Cashfree teacher ₹129 subscription payment integration
 - [ ] Live teacher/student notification delivery
@@ -47,3 +47,6 @@
 14. Student can browse approved institutes and send enquiry.
 15. RLS prevents another user reading private student/enrollment data or changing approvals.
 16. Class-duration UI consistently displays 90 minutes; time schedule is mutually agreed (calendar implementation still pending).
+17. One-person coaching center registration requires teacher_count=1, supports multiple subjects, and daily hours are 4 or 5 split into periods.
+18. One-person schedule validation rejects period totals below 4, above 5, or not matching the selected daily total.
+19. One-person center is shown with the correct label and subject/schedule details after admin approval.
