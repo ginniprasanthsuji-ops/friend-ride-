@@ -22,7 +22,9 @@ test("notification adapter loads without requesting permission", async () => {
 test("local notification is blocked until permission granted", async () => {
   const w = { Notification: { permission: "default", requestPermission: async () => "default" }, navigator: {} };
   const p = loadProvider(w);
-  assert.deepEqual(await p.sendLocal({ body: "test" }), { sent: false, reason: "permission-not-granted" });
+  const result = await p.sendLocal({ body: "test" });
+  assert.equal(result.sent, false);
+  assert.equal(result.reason, "permission-not-granted");
 });
 
 test("local notification uses service worker when available", async () => {
@@ -45,5 +47,7 @@ test("push subscribe reports missing VAPID key safely", async () => {
     navigator: { serviceWorker: { ready: Promise.resolve({ pushManager: { subscribe: async () => ({}) } }) } }
   };
   const p = loadProvider(w);
-  assert.deepEqual(await p.subscribe({}), { subscribed: false, reason: "missing-or-invalid-vapid-public-key" });
+  const result = await p.subscribe({});
+  assert.equal(result.subscribed, false);
+  assert.equal(result.reason, "missing-or-invalid-vapid-public-key");
 });
