@@ -571,3 +571,15 @@ test('Laundry Partner registration uses the exact approved database category and
   expect(source).toContain('laundry_unit_price:unitPrice');
 });
 
+
+test('native app navigation shows screen header, animated subpage and functional back navigation', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.showPage('profile'));
+  await expect(page.locator('.fr-native-back')).toHaveClass(/show/);
+  await expect(page.locator('.fr-native-screen-title')).toHaveClass(/show/);
+  await expect(page.locator('#profile')).toHaveClass(/active/);
+  const handled = await page.evaluate(() => window.frAppBack());
+  expect(handled).toBe(true);
+  await expect(page.locator('#home')).toHaveClass(/active/);
+  await expect(page.locator('.fr-native-back')).not.toHaveClass(/show/);
+});
