@@ -273,6 +273,7 @@ test('Admin Driver KYC document review page is wired to protected review RPCs', 
     review: typeof window.reviewDriverDocument
   }));
   expect(functions).toEqual({ load: 'function', review: 'function' });
+  await page.evaluate(() => { window.currentProfile = { role: 'admin' }; window.showPage('adminDashboard'); });
   await expect(page.locator('#adminDashboard')).toContainText('Driver KYC Documents');
 });
 
