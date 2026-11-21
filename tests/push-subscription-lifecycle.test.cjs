@@ -61,7 +61,7 @@ test("enable cleans up browser subscription if DB upsert fails", async () => {
 test("disable marks current endpoint inactive then unsubscribes browser", async () => {
   const lifecycle = loadLifecycle({ userAgent: "FR test", serviceWorker: { getRegistration: async () => ({ pushManager: { getSubscription: async () => ({ endpoint: "https://push.example/sub" }) } }) } });
   let updatePayload = null, filters = [];
-  const sb = { from: () => ({ update: (payload) => { updatePayload = payload; return { eq: async (key, value) => { filters.push([key, value]); return { eq: async (key2, value2) => { filters.push([key2, value2]); return { error: null }; } }; } }; } }) };
+  const sb = { from: () => ({ update: (payload) => { updatePayload = payload; const builder = { eq: (key, value) => { filters.push([key, value]); return builder; }, then: (resolve) => resolve({ error: null }) }; return builder; } }) };
   const provider = { unsubscribe: async () => ({ unsubscribed: true }) };
   const result = await lifecycle.disable({ sb, user: { id: "user-uuid" }, provider });
   assert.equal(result.disabled, true);
