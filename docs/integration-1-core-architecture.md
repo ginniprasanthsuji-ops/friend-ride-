@@ -172,3 +172,10 @@ The current `index.html` contains external runtime URLs for:
 - `wa.me` — WhatsApp contact links
 
 Release/device gates: network connectivity, provider limits/policies, WebView external-link handling, geolocation permissions, map tile loading, and payment redirect return behavior. This inventory is static and does not prove that every request is invoked at runtime.
+
+## CI fixture-test workflow
+
+- Added `.github/workflows/integration-1-scaffold-tests.yml`.
+- It syntax-checks the staging/audit scripts and their tests, then runs the two fixture test files on Node 20 for pushes and pull requests to the integration branch.
+- GitHub commit status queried after workflow creation currently returns no status entries; CI execution is **not yet verified**.
+- During review, malformed quote characters in two test fixtures were found and corrected before enabling CI.
