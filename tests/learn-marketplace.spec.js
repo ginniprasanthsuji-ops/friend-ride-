@@ -68,3 +68,33 @@ test('Learn & Teach SQL migrations include RLS and owner-update transition guard
   expect(hardening).toContain("eligibility_level = '10th' and teach_up_to = '6'");
   expect(hardening).toContain("eligibility_level = 'bed' and teach_up_to = 'subject'");
 });
+
+
+test('Zoom classroom UI appears for student and teacher roles', async ({ page }) => {
+ await page.goto('/',{waitUntil:'domcontentloaded'});
+ await expect(page.locator('.premium-bottom [data-page="learn"]')).toBeVisible({timeout:10000});
+ await page.locator('.premium-bottom [data-page="learn"]').click();
+ await expect(page.locator('#frLearnZoomSessions')).toBeVisible();
+ await expect(page.locator('#frLearnZoomSessions')).toContainText('90-minute sessions');
+ await page.getByRole('button',{name:/Teacher \/ Teach/}).click();
+ await expect(page.locator('#frLearnZoomSchedule')).toBeVisible();
+ await expect(page.locator('#frZoomStudentId')).toBeVisible();
+ await expect(page.locator('#frZoomCourseId')).toBeVisible();
+ await expect(page.locator('#frZoomStart')).toBeVisible();
+});
+
+test('Zoom session migration enforces participant RLS and server-only meeting creation', async () => {
+ const {readFile}=await import('node:fs/promises'); const base=process.cwd();
+ const sql=await readFile(base+'/supabase/migrations/20261121140000_zoom_class_sessions.sql','utf8');
+ const hard=await readFile(base+'/supabase/migrations/20261121150000_zoom_session_update_hardening.sql','utf8');
+ const fn=await readFile(base+'/supabase/functions/create-zoom-meeting/index.ts','utf8');
+ expect(sql).toContain('enable row level security');
+ expect(sql).toContain('learn_sessions_participant_select');
+ expect(sql).toContain('duration_minutes int not null default 90 check(duration_minutes=90)');
+ expect(hard).toContain('drop policy if exists learn_sessions_participant_update');
+ expect(hard).toContain('learn_sessions_admin_update');
+ expect(fn).toContain('ZOOM_CLIENT_SECRET');
+ expect(fn).toContain('waiting_room:true');
+ expect(fn).toContain('Active student enrollment required');
+ expect(fn).toContain('Approved teacher required');
+});
