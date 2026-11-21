@@ -1,5 +1,6 @@
 /* FRIEND RIDE — Notification event catalog and opt-in local dispatcher.
- * Business event mapping only. No event listeners or sending at module load.
+ * Existing app notification UI, sound/voice/vibration, and notification flow are preserved.
+ * This catalog is additive; it does not replace the existing realtime notification code.
  */
 (function (global) {
   "use strict";
@@ -16,6 +17,12 @@
     "order.accepted": { roles: ["customer"], title: "ఆర్డర్ అంగీకరించారు", body: "పార్ట్నర్ మీ ఆర్డర్‌ను అంగీకరించారు." },
     "order.ready": { roles: ["customer", "driver"], title: "ఆర్డర్ సిద్ధంగా ఉంది", body: "మీ ఆర్డర్ pickup/delivery కోసం సిద్ధంగా ఉంది." },
     "order.completed": { roles: ["customer", "partner"], title: "ఆర్డర్ పూర్తయింది", body: "ఆర్డర్ పూర్తి అయినట్లు నమోదు అయింది." },
+    "market.order.received": { roles: ["customer", "partner"], title: "Market ఆర్డర్ వచ్చింది", body: "మీ Market/Local Store ఆర్డర్ నమోదు అయింది." },
+    "market.order.status": { roles: ["customer"], title: "Market ఆర్డర్ అప్డేట్", body: "మీ Market ఆర్డర్ స్థితిలో మార్పు ఉంది." },
+    "home.service.requested": { roles: ["customer", "partner"], title: "Home Service అభ్యర్థన", body: "కొత్త Home Service అభ్యర్థన వచ్చింది." },
+    "home.service.assigned": { roles: ["customer", "partner"], title: "Home Service కేటాయింపు", body: "మీ Home Service‌కు provider కేటాయించారు." },
+    "work.task.assigned": { roles: ["customer", "partner"], title: "Work / Task కేటాయింపు", body: "మీ Work/Task అభ్యర్థన కేటాయించబడింది." },
+    "work.task.completed": { roles: ["customer", "partner"], title: "Work / Task పూర్తయింది", body: "మీ Work/Task పూర్తయింది." },
     "partner.approved": { roles: ["partner"], title: "పార్ట్నర్ ఆమోదం", body: "మీ పార్ట్నర్ రిజిస్ట్రేషన్ ఆమోదించబడింది." },
     "partner.rejected": { roles: ["partner"], title: "పార్ట్నర్ అప్డేట్", body: "మీ రిజిస్ట్రేషన్‌పై అప్డేట్ ఉంది. వివరాలు చూడండి." },
     "admin.new_registration": { roles: ["admin"], title: "కొత్త రిజిస్ట్రేషన్", body: "కొత్త డ్రైవర్/పార్ట్నర్ రిజిస్ట్రేషన్ సమీక్షకు వచ్చింది." },
