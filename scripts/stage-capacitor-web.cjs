@@ -16,7 +16,9 @@ const requiredFiles = [
   "learn-teach.css",
   "learn-teach.js",
   "assets/ride-contact.js",
-  "assets/driver-kyc-upload.js"
+  "assets/driver-kyc-upload.js",
+  "icons/icon-192.png",
+  "icons/icon-512.png"
 ];
 
 for (const name of requiredFiles) {
