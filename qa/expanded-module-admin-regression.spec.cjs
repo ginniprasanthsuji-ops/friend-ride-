@@ -18,7 +18,9 @@ test('All customer, partner, service and admin routes exist and navigation isola
   ];
   const result = await page.evaluate(routes => {
     const missing = routes.filter(id => !document.getElementById(id));
+    const adminRoutes = new Set(['adminDashboard','admin','users','referralApprovals','cashRewardApprovals','paymentApprovals','partnerPaymentSettings','platformBusinessSettings','driverApprovals','driverDocumentReviews','partnerApprovals','adminOrders','reports','settings','crmDashboard']);
     const navigation = routes.filter(id => document.getElementById(id)).map(id => {
+      window.currentProfile = { role: adminRoutes.has(id) ? 'admin' : 'customer' };
       window.showPage(id);
       const active = [...document.querySelectorAll('.page.active')].map(x => x.id);
       const target = document.getElementById(id);
@@ -47,6 +49,7 @@ test('Admin regression: all operational review panels and approval pages are pre
   ];
   const missing = await page.evaluate(ids => ids.filter(id => !document.getElementById(id)), ids);
   expect(missing, 'Admin operational panels missing').toEqual([]);
+  await page.evaluate(() => { window.currentProfile = { role: 'admin' }; window.showPage('adminDashboard'); });
   const adminText = await page.locator('#adminDashboard').innerText();
   expect(adminText).toMatch(/Driver KYC Documents/i);
   expect(adminText).toMatch(/Complaint|Feedback/i);
