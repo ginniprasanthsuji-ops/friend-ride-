@@ -123,3 +123,10 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Confirmed the Playwright route inventory contains exactly 58 route IDs.
 - Confirmed `.github/workflows/friend-ride-regression.yml` is configured to run on pushes to `main` and the Dark + Gold QA branch, manual dispatch, and daily schedule; it runs inline JS validation, installs dependencies/Chromium, starts a static server, and executes `npm test`.
 - No workflow run/status records are currently returned for the latest QA commit. Actual runner execution is not available from the connected GitHub actions interface, so route tests and integrations remain UNVERIFIED, not PASS.
+
+
+## Static source verification — 2026-11-21 continuation
+- Retrieved the current QA branch source and performed an exact route-ID comparison: **58 test inventory IDs vs 58 existing page elements; 0 missing and 0 extra**.
+- Confirmed the native home location element is synchronized from the legacy live-location text through a `MutationObserver`; the GPS reverse-geocoding function updates that legacy text. This supports the location-mirror test structurally, but browser permission/GPS behavior is still not executed.
+- Current source contains 25 style blocks. Identified legacy color values in context: some belong to promotional poster gradients and product-art accents; others occur in older KPI/feature-card CSS. Do not blanket-remove these values without visual regression evidence because some are intentional marketing artwork and some legacy screens still use those selectors.
+- `showPage()` route activation triggers route-specific loaders/maps and admin-specific panels. The added route test exercises the full activation function, but actual browser execution remains pending.
