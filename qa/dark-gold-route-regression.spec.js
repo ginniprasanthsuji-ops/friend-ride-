@@ -58,7 +58,7 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
 
   test('native home service cards navigate through real click handlers', async ({ page }) => {
     const routeButtons = page.locator('#home .fr-native-home [data-fr-native-route]');
-    const expectedRoutes = ['ride','goods','shopping','food','homeServices','shopping','laundryServices','homeServices','shops','learnTeach'];
+    const expectedRoutes = ['ride','goods','shopping','food','homeServices','homeServices','shopping','laundryServices','homeServices','shops','learnTeach'];
     await expect(routeButtons).toHaveCount(expectedRoutes.length);
     for (let i = 0; i < expectedRoutes.length; i++) {
       await page.evaluate(() => window.showPage('home'));
