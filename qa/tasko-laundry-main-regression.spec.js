@@ -12,7 +12,12 @@ test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
       // Isolate navigation from unrelated global auth/role state in this legacy single-file app.
       window.__frLastPage = null;
       window.showPage = (id) => { window.__frLastPage = id; };
-      document.querySelectorAll('.page').forEach(section => section.classList.toggle('active', section.id === 'shops'));
+      document.querySelectorAll('.page').forEach(section => {
+        const active = section.id === 'shops';
+        section.classList.toggle('active', active);
+        section.removeAttribute('inert');
+        section.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
     });
   });
 
