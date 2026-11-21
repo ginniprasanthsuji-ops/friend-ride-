@@ -642,7 +642,7 @@ body{padding-bottom:105px}
 <section id="settings" class="page"><div class="card"><h2>System Settings</h2><div class="notice">Platform-wide settings must be managed through protected admin APIs.</div></div></section>
 
 <section id="profile" class="page"><div class="card"><h2>My Profile</h2><div id="profileInfo" class="muted">Login చేయండి.</div><button class="btn red" onclick="logout()">Logout</button></div></section>
-<section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><div class="fr-alert-preview"><b>🔊 Alert Sound Preview</b><div class="fr-alert-preview-buttons"><button type="button" onclick="frPreviewAlertTone('order')">🛍️ Order arrived</button><button type="button" onclick="frPreviewAlertTone('ride')">🛵 New ride</button><button type="button" onclick="frPreviewAlertTone('customer')">🔔 Customer update</button></div></div><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div></section>
+<section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button type="button" class="fr-notify-enable" onclick="frEnableBackgroundPush()">📲 Enable Background Push</button><button type="button" class="fr-notify-enable" onclick="frDisableBackgroundPush()">Disable Background Push</button></div><small id="frPushLifecycleStatus" style="display:block;margin-top:8px;color:#e5d9f7">Background push setup status.</small><div class="fr-alert-preview"><b>🔊 Alert Sound Preview</b><div class="fr-alert-preview-buttons"><button type="button" onclick="frPreviewAlertTone('order')">🛍️ Order arrived</button><button type="button" onclick="frPreviewAlertTone('ride')">🛵 New ride</button><button type="button" onclick="frPreviewAlertTone('customer')">🔔 Customer update</button></div></div><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div></section>
 <section id="support" class="page"><div class="card"><h2>💬 Complaints & Feedback</h2><p class="muted">ఈ పాత Support లింక్ ఇప్పుడు కొత్త Complaint & Feedback ఫారమ్‌కు తీసుకెళ్తుంది.</p><button class="btn purple" onclick="frOpenSupportPage()">Open Complaints & Feedback</button></div></section>
 <section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
 <section id="cart" class="page"><div class="card"><h2>🛒 My Cart</h2><p class="muted">మీ Friend Mart / Food Delivery items ఇక్కడ కనిపిస్తాయి.</p><div class="notice">మీరు ఎంచుకున్న వస్తువులు ఇక్కడ కనిపిస్తాయి. షాపింగ్ కొనసాగించండి.</div><button class="btn purple" onclick="showPage('shops')">Explore Stores</button><div class="notice" style="margin-top:12px"><b>Charges Transparency</b><br>Platform charge: 2.5% (eligible order valueపై). Delivery charge: location, distance మరియు delivery partner quote ఆధారంగా checkout ముందు చూపబడుతుంది. Final payable amount paymentకి ముందు చూపించాలి.</div></div></section>
@@ -2274,6 +2274,29 @@ async function frEnableDeviceAlerts(){
  }catch(e){if(out)out.textContent='Notifications ప్రారంభించలేకపోయాం. మళ్లీ ప్రయత్నించండి.';}
 }
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}
+</script>
+<script src="./integrations/notifications/notification-provider.js"></script>
+<script src="./integrations/notifications/push-subscription-lifecycle.js"></script>
+<script id="fr-background-push-optin">
+/* Public VAPID key is intentionally blank until configured; private VAPID key stays in Supabase Edge secrets. */
+window.FR_PUSH_VAPID_PUBLIC_KEY = window.FR_PUSH_VAPID_PUBLIC_KEY || "";
+function frPushLifecycleStatus(message,error=false){const el=document.getElementById("frPushLifecycleStatus");if(el){el.textContent=message;el.style.color=error?"#ffd3d3":"#e5d9f7";}}
+async function frEnableBackgroundPush(){
+ try{
+  if(!window.FRNotificationProvider||!window.FRPushSubscriptionLifecycle){frPushLifecycleStatus("Push modules load కాలేదు. Page refresh చేసి మళ్లీ ప్రయత్నించండి.",true);return;}
+  if(!currentUser){frPushLifecycleStatus("Background push కోసం login అవసరం.",true);return;}
+  if(!window.FR_PUSH_VAPID_PUBLIC_KEY){frPushLifecycleStatus("Background Push key ఇంకా configure కాలేదు. Public VAPID key setup pending.",true);return;}
+  const result=await window.FRPushSubscriptionLifecycle.enable({sb,user:currentUser,provider:window.FRNotificationProvider,vapidPublicKey:window.FR_PUSH_VAPID_PUBLIC_KEY});
+  frPushLifecycleStatus(result.enabled?"Background Push enabled on this device.":("Enable failed: "+(result.reason||"unknown error")),!result.enabled);
+ }catch(e){frPushLifecycleStatus("Push enable error: "+String(e?.message||e),true);}
+}
+async function frDisableBackgroundPush(){
+ try{
+  if(!currentUser){frPushLifecycleStatus("Disable కోసం login అవసరం.",true);return;}
+  const result=await window.FRPushSubscriptionLifecycle.disable({sb,user:currentUser,provider:window.FRNotificationProvider});
+  frPushLifecycleStatus(result.disabled?"Background Push disabled on this device.":("Disable failed: "+(result.reason||"unknown error")),!result.disabled);
+ }catch(e){frPushLifecycleStatus("Push disable error: "+String(e?.message||e),true);}
+}
 </script>
 
 <style id="fr-crm-premium-style">
