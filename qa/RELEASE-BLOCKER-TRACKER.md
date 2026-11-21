@@ -240,3 +240,12 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Required safe remediation sequence: provision isolated FRIEND RIDE QA Supabase project/schema; migrate reviewed schema only into QA; define restrictive table policies/column grants and RPC authorization; review SECURITY DEFINER functions and storage policies; seed disposable Customer/Driver/Partner/Admin accounts; run cross-role negative tests and workflow regression; then physical-device verification.
 - [x] Audit performed read-only. **No production/QA SQL writes, migrations, function deployments, secret changes, main merge, or live deployment.** Payment gateway/GST work remains deferred by user instruction.
 - **Release decision unchanged:** browser CI PASS (53/53); backend/admin/security/device certification **BLOCKED**. Do not label app 100% Play Store ready.
+
+
+## 26. User-requested live test and disposable-account safety clarification — 2026-11-21
+- [x] Reviewed current regression workflow: Playwright runs against local static server at `http://127.0.0.1:4173/`; it is not configured to target the live app.
+- [x] Reviewed current specs: route isolation, Learn & Teach UI, TASKO/Laundry UI/admin handler presence. The tests do not create/delete production accounts or execute backend workflows.
+- [ ] Live Playwright target smoke test: blocked because the current workflow has no live-target configuration and this environment cannot reach the app via the available web browser tool.
+- [ ] Disposable live dummy-account test: not performed. No test-only phone/email, verified safe account-creation path, or reliable cleanup/delete API has been supplied/verified. Do not create real users or send SMS OTPs without safe test mechanism and credentials.
+- [ ] Once safe test account mechanism is available: create one account with `QA_TEST_` marker; run only approved non-payment tests; capture evidence; delete account and test data; verify deletion/cleanup; never run real ride/order/payment or send chargeable notifications.
+- **Status:** Existing browser regression remains PASS (53/53 at the previously verified commit). Live test and dummy account create/delete remain **NOT RUN**, not PASS. Production and QA backend unchanged.
