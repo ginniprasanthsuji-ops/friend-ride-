@@ -45,3 +45,11 @@ test("background push controls are additive and existing service-worker event ha
     assert.ok(pushSw.includes(marker), "existing PWA push marker missing: " + marker);
   }
 });
+
+test("first-launch permission request is independent of login and push subscription auto-registers after login", () => {
+  const html = fs.readFileSync("index.html", "utf8");
+  assert.ok(html.includes("async function frPushWelcomeAllow()"), "first launch permission handler missing");
+  assert.ok(html.includes("await Notification.requestPermission()"), "system permission request missing");
+  assert.ok(html.includes("async function frRideStartAfterLogin()"), "authenticated login push hook missing");
+  assert.ok(html.includes("window.Notification?.permission==='granted'"), "granted permission should auto-subscribe after login");
+});
