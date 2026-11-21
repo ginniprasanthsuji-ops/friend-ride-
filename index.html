@@ -4501,22 +4501,42 @@ main .page.fr-screen-enter.fr-transition-orders{animation:frNativeOrders .3s cub
 @media(max-width:430px){main .page .stats{gap:6px}main .page .stat{padding:9px}main .page .tile{min-height:88px!important;font-size:12px!important}#adminDashboard .grid{gap:6px!important}#adminDashboard .tile{font-size:11px!important;min-height:86px!important}}
 @media(prefers-reduced-motion:reduce){main .page.fr-screen-enter{animation:none!important;transition:none!important}}
 </style>
+<style id="fr-native-reference-layout">
+.frHomeNative{padding:4px 0 14px}
+.frHomeLocation{display:flex;align-items:center;gap:8px;padding:8px 4px 14px;font-size:15px;color:#dce6f7}.frHomeLocation span{margin-left:auto}
+.frHomeHero{overflow:hidden;position:relative;border:1px solid #29476f;border-radius:24px;min-height:160px;padding:18px 16px;background:radial-gradient(ellipse at 85% 0%,#39648e 0,transparent 45%),linear-gradient(125deg,#11254a,#091426 65%,#19263d);display:flex;align-items:center;margin-bottom:12px}
+.frHomeHeroCopy{position:relative;z-index:2;max-width:62%}.frHomeHero h2{font-size:clamp(19px,5.4vw,24px);line-height:1.2;margin:0}.frHomeHero p{margin:8px 0 0;font-size:17px}.frHomeHero p strong{color:#ff9e31}
+.frHomeHeroArt{position:absolute;right:6px;bottom:13px;font-size:clamp(24px,7vw,36px);filter:drop-shadow(0 5px 8px #0006);white-space:nowrap}
+.frHomeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0}
+.frHomeService{min-height:116px;border-radius:21px;border:1px solid #34445f;background:linear-gradient(145deg,#17243a,#0b1424);color:#f7f9ff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;padding:9px 5px;box-shadow:inset 0 1px #ffffff10,0 6px 15px #0003;transition:transform .2s,filter .2s}
+.frHomeService>span{font-size:30px;line-height:1.1}.frHomeService b{font-size:14px}.frHomeService small{font-size:11px;color:#c2cde0}
+.frHomeService.purple{background:linear-gradient(145deg,#34205e,#10182a);border-color:#6247a2}.frHomeService.orange{background:linear-gradient(145deg,#4a2b13,#151b28);border-color:#87501e}.frHomeService.green{background:linear-gradient(145deg,#073b2a,#101a28);border-color:#1c7147}.frHomeService.red{background:linear-gradient(145deg,#4b1e2c,#12182a);border-color:#82394e}.frHomeService.blue{background:linear-gradient(145deg,#0c3456,#111a2a);border-color:#28668c}.frHomeService.amber{background:linear-gradient(145deg,#492b15,#131b29);border-color:#8a5425}
+.frHomeService:active,.frHomeEmi:active{transform:scale(.97);filter:brightness(1.15)}
+.frHomeEmi{position:relative;width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;overflow:hidden;border:1px solid #7041a5;border-radius:23px;padding:15px;background:linear-gradient(110deg,#24134b,#57127a 60%,#161b36);color:white;margin:10px 0 13px;min-height:135px}
+.frHomeEmi h2{font-size:22px;line-height:1.1;margin:5px 0}.frHomeEmi h2 strong{color:#ffb23c}.frHomeEmi p{font-size:13px;margin:4px 0}.frHomeEmi small{color:#d8c7f5;letter-spacing:.7px}.frHomeEmiArt{font-size:28px;max-width:38%;filter:drop-shadow(0 4px 8px #0005)}.frHomeEmi i{font-style:normal;font-size:30px;border-radius:50%;background:#091226aa;padding:0 10px}
+.frHomeQuick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:10px 0}.frHomeQuick .frHomeService{min-height:95px;border-radius:18px}.frHomeQuick .frHomeService>span{font-size:24px}.frHomeQuick .frHomeService b{font-size:12px}
+.frAdminNative .stats{grid-template-columns:repeat(4,minmax(0,1fr))}.frAdminNative .card .grid{grid-template-columns:repeat(4,minmax(0,1fr))}.frAdminNative .tile{min-height:94px;font-size:12px;text-align:center}.frAdminNative .tile b{font-size:12px}
+.frDriverNative .stats{grid-template-columns:repeat(4,minmax(0,1fr))}.frDriverNative .card{border-radius:22px}.frDriverNative #driverLiveMap{border-radius:22px;overflow:hidden}.frDriverNative #driverRequestsList{border:1px solid #694c94;border-radius:20px;background:linear-gradient(140deg,#281a37,#11192a);padding:12px}
+@media(max-width:430px){.frHomeService{min-height:105px}.frHomeHero{min-height:148px}.frHomeQuick .frHomeService{min-height:84px}.frAdminNative .stats{gap:5px}.frAdminNative .card .grid{gap:6px}.frAdminNative .tile{min-height:82px;padding:5px;font-size:10px}.frAdminNative .tile b{font-size:10px}.frDriverNative .stats{gap:5px}.frDriverNative .stat{padding:8px 4px}.frDriverNative .stat small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.frHomeService,.frHomeEmi{transition:none}}
+</style>
 <script id="fr-native-ui-preserve-features">
 (function(){
 'use strict';
-function enhance(){
- const c=document.getElementById('customerDashboard');
- if(c&&!c.querySelector('[data-fr-extra-services]')){
-  const grids=c.querySelectorAll('.grid');
-  const grid=grids[0];
-  if(grid){const extras=[['📦','Delivery / Goods','goods'],['🛒','Friend Mart','shops'],['🍔','Food Delivery','food'],['🛠️','Home Services','homeServices'],['👷','TASKO / GIGGER','homeServices'],['🧺','Laundry','laundryServices'],['🏪','Local Stores','shops'],['🎓','Learning','learnTeach']];
-   const wrap=document.createElement('div');wrap.dataset.frExtraServices='1';wrap.className='grid';wrap.style.marginTop='10px';
-   extras.forEach(([icon,label,page])=>{const b=document.createElement('button');b.className='tile';b.innerHTML=icon+'<b>'+label+'</b>';b.addEventListener('click',()=>{if(typeof showPage==='function')showPage(page)});wrap.appendChild(b)});
-   grid.after(wrap);
-  }
- }
+const tile=(emoji,title,subtitle,route,cls)=>'<button class="frHomeService '+cls+'" data-fr-route="'+route+'"><span>'+emoji+'</span><b>'+title+'</b><small>'+subtitle+'</small></button>';
+function makeHome(){
+ const home=document.getElementById('home');if(!home||home.querySelector('.frHomeNative'))return;
+ const native=document.createElement('section');native.className='frHomeNative';
+ native.innerHTML='<div class="frHomeLocation">📍 <b>Tekkali, Srikakulam, AP</b><span>⌄</span></div><div class="frHomeHero"><div class="frHomeHeroCopy"><h2>Book Rides, Order &amp;<br>Get Local Services</h2><p>in <strong>Your City</strong></p></div><div class="frHomeHeroArt">🚘　🛺　🏍️</div></div><div class="frHomeGrid">'+tile('🚘','Book a Ride','Bike • Auto • Car','ride','purple')+tile('📦','Delivery','Parcel • Goods','goods','orange')+tile('🛒','Friend Mart','Grocery • Daily Needs','shopping','green')+tile('🍔','Food','Order &amp; Deliver','food','red')+tile('🛠️','Services','Home • Repair • More','homeServices','blue')+tile('👷','TASKO','Hire Manpower','homeServices','amber')+'</div><button class="frHomeEmi" data-fr-route="shopping"><div><small>BUY NOW • PAY LATER</small><h2>Smart Grocery<br><strong>EMI Plan</strong></h2><p>Buy now • Pay in 2 installments</p></div><span class="frHomeEmiArt">🛍️🥬🍎</span><i>›</i></button><div class="frHomeQuick">'+tile('🧺','Laundry','Pickup & Delivery','laundryServices','blue')+tile('🏠','Home Services','Experts at home','homeServices','amber')+tile('🏪','Local Stores','Shop nearby','shops','green')+tile('🎓','Learning','Learn & Teach','learnTeach','purple')+'</div>';
+ native.addEventListener('click',e=>{const b=e.target.closest('[data-fr-route]');if(b){e.preventDefault();if(typeof showPage==='function')showPage(b.dataset.frRoute)}});
+ home.insertBefore(native,home.firstChild);
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhance);else enhance();
+function enhanceAdmin(){
+ const p=document.getElementById('adminDashboard');if(p)p.classList.add('frAdminNative');
+}
+function enhanceDriver(){const p=document.getElementById('driverDashboard');if(p)p.classList.add('frDriverNative')}
+function boot(){makeHome();enhanceAdmin();enhanceDriver()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
 </body>
