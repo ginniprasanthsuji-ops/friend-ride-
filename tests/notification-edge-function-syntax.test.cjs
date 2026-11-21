@@ -15,7 +15,7 @@ test("internal push sender parses as TypeScript", () => {
 
 test("push sender requires internal secret and VAPID configuration", () => {
   const source = fs.readFileSync("supabase/functions/fr-push-send/index.ts", "utf8");
-  for (const required of ["FR_PUSH_INTERNAL_SECRET", "FR_VAPID_PUBLIC_KEY", "FR_VAPID_PRIVATE_KEY", "fr_push_subscriptions", "is_active"]) {
+  for (const required of ["FR_PUSH_INTERNAL_SECRET", "FR_VAPID_PUBLIC_KEY", "FR_VAPID_PRIVATE_KEY", "fr_push_subscriptions", "is_active", "SUPABASE_SERVICE_ROLE_KEY", "startsWith(\"//\)", "last_success_at"]) {
     assert.ok(source.includes(required), "missing security/implementation marker: " + required);
   }
 });
