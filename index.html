@@ -4429,6 +4429,8 @@ async function frAdminAssignLaundry(id){
 .fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
 </style>
 </body>
+<!-- FRIEND RIDE FCM Web Push integration -->
+<script src="./fcm-web-push.js"></script>
 </html>
 <style>
 @media(hover:hover){.tile:hover{transform:translateY(-2px);box-shadow:0 10px 22px #32105e16;border-color:#d7c4f0}.btn:hover{filter:brightness(1.025)}}
@@ -4592,6 +4594,3 @@ window.frRefreshHomeProfileAvatar=async function(){
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
-
-<!-- FRIEND RIDE FCM Web Push integration -->
-<script src="./fcm-web-push.js"></script>
