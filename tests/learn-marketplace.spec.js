@@ -28,3 +28,16 @@ test('Student and teacher registration controls exist', async ({ page }) => {
   await expect(page.locator('#frLearnTeacherPanel select')).toBeVisible();
   await expect(page.locator('#frLearnTeacherPanel')).toContainText('Teacher Registration');
 });
+
+
+test('Existing FRIEND RIDE page navigation smoke regression', async ({ page }) => {
+  await page.goto('/', {waitUntil:'domcontentloaded'});
+  const pages=['home','shops','food','marketCart','explore','orders'];
+  for (const id of pages) {
+    await page.evaluate(id => window.showPage(id), id);
+    await expect(page.locator('#'+id)).toHaveClass(/active/);
+    await expect(page.locator('#'+id)).toBeVisible();
+  }
+  await page.locator('.premium-bottom [data-page="menu"]').click();
+  await expect(page.locator('#drawerBackdrop')).toHaveClass(/show/);
+});
