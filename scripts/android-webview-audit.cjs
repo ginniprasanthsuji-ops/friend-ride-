@@ -19,6 +19,9 @@ else {
   add("Notification APIs", /Notification|PushManager/.test(html) ? "INFO" : "WARN", /Notification|PushManager/.test(html) ? "Notification APIs referenced; permission and push behavior need device tests." : "No notification API references detected.");
   add("Supabase endpoint", /supabase\.co/i.test(html) ? "PASS" : "WARN", "Static check only; auth, RLS and network reachability require live tests.");
   add("Payment flow", /cashfree/i.test(html) ? "INFO" : "WARN", /cashfree/i.test(html) ? "Cashfree references exist; redirects and payment results need device tests." : "No Cashfree references detected.");
+  const externalUrls = [...new Set((html.match(/https?:\\/\\/[^\\s"'<>`]+/gi) || []).map(url => url.replace(/[),;]+$/, "")))];
+  const externalHosts = [...new Set(externalUrls.map(url => { try { return new URL(url).hostname; } catch { return null; } }).filter(Boolean))];
+  add("External network dependencies", externalHosts.length ? "WARN" : "INFO", externalHosts.length ? "Runtime may require network/CDN access for: " + externalHosts.join(", ") + ". Validate offline behavior and WebView connectivity." : "No external host URLs detected.");
 }
 if (!fs.existsSync(manifest)) add("Web manifest", "FAIL", "Staged manifest missing.");
 else {
