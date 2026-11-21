@@ -4446,7 +4446,7 @@ async function frAdminAssignLaundry(id){
  const PREF_KEY='fr_notification_prefs_local_v1';
  function localPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||'{}')}catch(_){return {}}}
  function saveLocalPrefs(p){try{localStorage.setItem(PREF_KEY,JSON.stringify({...localPrefs(),...p,updated_at:new Date().toISOString()}))}catch(_){}}
- function status(msg){const el=document.getElementById('frNotificationSetupStatus');if(el){el.textContent=msg;el.classList.remove('hide')}} 
+ function status(msg){const el=document.getElementById('frNotificationSetupStatus');if(el){el.textContent=msg;el.classList.remove('hide')}const pageStatus=document.getElementById('frNotifyPermissionStatus');if(pageStatus)pageStatus.textContent=msg}
  function hideCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.add('hide')}
  function showCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.remove('hide')}
  window.frDismissNotificationSetup=function(){try{localStorage.setItem(KEY,'dismissed')}catch(_){}hideCard()};
@@ -4536,6 +4536,12 @@ async function frAdminAssignLaundry(id){
  };
  document.addEventListener('DOMContentLoaded',()=>window.frLoadNotificationPreferences());
  if(document.readyState!=='loading')window.frLoadNotificationPreferences();
+
+ if(typeof window.acceptSession==='function'&&!window.__frNotificationSessionHook){
+  window.__frNotificationSessionHook=true;
+  const frPreviousAcceptSession=window.acceptSession;
+  window.acceptSession=async function(){const result=await frPreviousAcceptSession.apply(this,arguments);await window.frLoadNotificationPreferences();return result};
+ }
 </script>
 </body>
 </html>
