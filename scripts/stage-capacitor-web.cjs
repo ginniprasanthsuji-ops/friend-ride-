@@ -32,6 +32,9 @@ for (const name of requiredFiles) {
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.copyFileSync(path.join(root, name), target);
 }
+// The app registers ./service-worker.js; repository source is sw.js.
+// Add a staging alias only; source files remain unchanged.
+fs.copyFileSync(path.join(root, "sw.js"), path.join(output, "service-worker.js"));
 console.log("Capacitor web staging prepared at " + output);
 console.log("Copied: " + requiredFiles.join(", "));
 console.log("No production/runtime files were changed.");
