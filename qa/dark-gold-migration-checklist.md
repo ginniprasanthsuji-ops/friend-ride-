@@ -103,3 +103,10 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - The workflow is configured for pushes to this branch, manual dispatch, and daily scheduled regression. The latest inspected migration-branch commit had no reported workflow runs/status through the available GitHub status endpoints.
 - Full `index.html` retrieval is currently unavailable via the connected GitHub file API (file SHA is returned but content is empty). Therefore no source edits or tests are claimed in this audit.
 - Release gate remains BLOCKED until source access, test execution, and evidence-backed PASS results are available.
+
+
+## Auth UI regression coverage added — 2026-11-21
+- Added Playwright checks for Admin login modal: role lock, Admin title, Admin-specific OTP label, hidden registration, hidden role grid, dark modal surface.
+- Added Playwright checks for Customer login modal: Customer title, Customer OTP label, registration visible, role grid hidden.
+- These tests are committed but **not yet confirmed executed/PASS**. GitHub status/workflow query returned no status records and the wrapper does not expose push-triggered runs.
+- Source audit confirmed the Dark + Gold design-system and native UI markers are present, but legacy styles remain: 27 style blocks and visible legacy purple/light color declarations were found. No destructive CSS cleanup was performed without route visual regression evidence.
