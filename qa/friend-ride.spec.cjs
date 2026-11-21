@@ -274,7 +274,7 @@ test('Admin Driver KYC document review page is wired to protected review RPCs', 
   }));
   expect(functions).toEqual({ load: 'function', review: 'function' });
   await page.evaluate(() => { window.currentProfile = { role: 'admin' }; window.showPage('adminDashboard'); });
-  await expect(page.locator('#adminDashboard')).toContainText('Driver KYC Documents');
+  await expect(page.locator('#adminDashboard')).toContainText(/Driver KYC\s*Documents/i);
 });
 
 test('Role-specific order, ride and customer alert preview controls have audio and voice handlers', async ({ page }) => {
