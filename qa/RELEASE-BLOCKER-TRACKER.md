@@ -200,3 +200,11 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Await new attempt completion and inspect its steps/artifact before recording final regression PASS.
 - [ ] Full backend role/RLS/storage, live OTP, notifications, food/goods/parcel/service flows, physical-device and signed-AAB testing remain not executable/verified in this environment; release gate stays blocked.
 - [x] No production deploy, main merge, migration, or payment gateway setup performed.
+
+
+## 22. Final browser regression rerun result — 2026-11-21
+- [x] Re-run of job `browser-regression` completed successfully: job ID `136811974659`, run `44892215524`, branch `qa/navigation-isolation-fix-2026-11-21`, commit `d65e4e08855ad80b27976b59f8aeec0661a7bbb2`.
+- [x] All workflow steps completed with success, including inline JS / Version 10.1 validation, npm install, Chromium setup, local static server, Playwright browser regression, and report upload.
+- [x] Regression report artifact available: `friend-ride-regression-report` (artifact IDs `14702617077` and `14701979057`; not expired at check).
+- [ ] This PASS covers CI browser/source regression only. Live backend/RLS, real OTP, push delivery, device testing, live order integrations, signed AAB, gateway and production certification remain outstanding.
+- [x] No main merge, production deployment, migration, or live payment configuration.
