@@ -100,6 +100,10 @@ test('Zoom session migration enforces participant RLS and server-only meeting cr
  expect(fn).toContain('waiting_room:true');
  expect(fn).toContain('type:3');
  expect(fn).toContain('ZOOM_HOST_USER');
+ expect(fn).toContain('status:"pending_confirmation"');
+ const confirmFn=await readFile(base+'/supabase/functions/confirm-zoom-session/index.ts','utf8');
+ expect(confirmFn).toContain('Only the enrolled student can confirm this class time');
+ expect(confirmFn).toContain('status:"scheduled"');
  expect(fn).toContain('Active student enrollment required');
  expect(fn).toContain('Approved teacher required');
 });
