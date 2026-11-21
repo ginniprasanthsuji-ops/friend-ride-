@@ -1978,42 +1978,7 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body></html>';<style id="fr-premium-ui-theme-transition-location">
-:root{color-scheme:dark;--fr-bg:#050b18;--fr-card:#101b2c;--fr-card2:#172438;--fr-text:#eef4ff;--fr-muted:#9eabc0;--fr-border:#263851;--fr-orange:#ff9b37}
-html,body{background:var(--fr-bg)!important;color:var(--fr-text)!important;transition:background-color .28s ease,color .28s ease}
-body[data-fr-theme="light"]{color-scheme:light;--fr-bg:#f5f7fb;--fr-card:#fff;--fr-card2:#edf2f9;--fr-text:#142136;--fr-muted:#617087;--fr-border:#d7e0ed;background:linear-gradient(180deg,#f7f9fc,#eef2f8)!important;color:var(--fr-text)!important}
-body[data-fr-theme="light"] main .page h1,body[data-fr-theme="light"] main .page h2,body[data-fr-theme="light"] main .page h3{color:var(--fr-text)!important}
-body[data-fr-theme="light"] .fr-native-home{color:var(--fr-text)}
-body[data-fr-theme="light"] .fr-native-location{background:var(--fr-card);border-color:var(--fr-border);color:var(--fr-text)}
-body[data-fr-theme="light"] .fr-native-hero{background:radial-gradient(ellipse at 90% 5%,#c7e5ff 0,transparent 45%),linear-gradient(135deg,#dbeafe,#f4f8ff 75%);border-color:#c4d7ee}
-body[data-fr-theme="light"] .fr-native-hero h1{color:#142136}
-body[data-fr-theme="light"] .fr-native-hero p{color:#34445c}
-body[data-fr-theme="light"] .fr-native-service{background:var(--fr-card)!important;color:var(--fr-text)!important;border-color:var(--fr-border)!important;box-shadow:0 8px 22px #1d2e4710}
-body[data-fr-theme="light"] .fr-native-service small{color:var(--fr-muted)!important}
-body[data-fr-theme="light"] .card,body[data-fr-theme="light"] .panel,body[data-fr-theme="light"] .tile{background:var(--fr-card)!important;color:var(--fr-text)!important;border-color:var(--fr-border)!important}
-body[data-fr-theme="light"] input,body[data-fr-theme="light"] textarea,body[data-fr-theme="light"] select{background:#fff!important;color:#142136!important;border-color:#cbd7e6!important}
-.fr-native-location{width:100%;border:1px solid #243b5a;border-radius:14px;background:linear-gradient(135deg,#101c31,#0b1424);text-align:left;cursor:pointer;min-height:48px;transition:transform .18s ease,border-color .18s ease}
-.fr-native-location:active{transform:scale(.98)}
-.fr-native-location b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fr-theme-switch{position:fixed;z-index:10000;right:12px;top:calc(env(safe-area-inset-top,0px) + 72px);border:1px solid #344760;background:#111d30;color:#fff;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:700;box-shadow:0 6px 20px #0005}
-body[data-fr-theme="light"] .fr-theme-switch{background:#fff;color:#17243a;border-color:#ccd8e6}
-@keyframes frPremiumScreenEnter{0%{opacity:.4;transform:translateX(16px) scale(.985);filter:blur(2px)}100%{opacity:1;transform:translateX(0) scale(1);filter:blur(0)}}
-.fr-screen-enter{animation:frPremiumScreenEnter .34s cubic-bezier(.2,.8,.2,1) both}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
-
-/* QA UI integration: old white header merged into the new native dark home */
-body:has(.fr-native-home) .home-topbar{background:linear-gradient(135deg,#0b1424,#101b2c)!important;color:#eef4ff!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important;padding:calc(env(safe-area-inset-top,0px) + 9px) 12px 10px!important;gap:9px!important;min-height:76px!important}
-body:has(.fr-native-home) .home-topbar .menu-open{background:#15243a!important;color:#ff9b37!important;border:1px solid #263851!important;border-radius:16px!important}
-body:has(.fr-native-home) .home-topbar .location-head{background:transparent!important;color:#eef4ff!important;min-width:0!important;cursor:pointer}
-body:has(.fr-native-home) .home-topbar .location-head b{color:#eef4ff!important;font-size:15px!important}
-body:has(.fr-native-home) .home-topbar .location-head span{color:#a9b8ce!important;font-size:12px!important}
-body:has(.fr-native-home) .home-topbar .notify-btn{background:#15243a!important;color:#eef4ff!important;border:1px solid #263851!important;border-radius:15px!important}
-body:has(.fr-native-home) .home-topbar .notify-btn i{border-color:#15243a!important}
-body:has(.fr-native-home) .fr-native-home{margin-top:0!important}
-body:has(.fr-native-home) .fr-native-location{background:linear-gradient(135deg,#101c31,#0b1424)!important;border:1px solid #263851!important;color:#dbe7f8!important;border-radius:15px!important;animation:frLocationGlow 4s ease-in-out infinite}
-@keyframes frLocationGlow{0%,100%{box-shadow:0 0 0 #4b83c000}50%{box-shadow:0 0 14px #4b83c02b}}
-@media(prefers-reduced-motion:reduce){body:has(.fr-native-home) .fr-native-location{animation:none!important}}
-</style>
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body><</style>
 <script id="fr-theme-auto-location-v2">
 (function(){
  const KEY='fr-ui-theme-v2';let mode='auto';try{mode=localStorage.getItem(KEY)||'auto'}catch(e){}
