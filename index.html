@@ -4495,7 +4495,7 @@ function rebuildHome(){
 function wrapTransitions(){
  const original=window.showPage;if(typeof original!=='function'||original.__frNativeGuard)return;
  const adminRoutes=new Set(['adminDashboard','admin','users','referralApprovals','cashRewardApprovals','paymentApprovals','partnerPaymentSettings','platformBusinessSettings','driverApprovals','partnerApprovals','adminOrders','reports','settings','driverDocumentReviews','crmDashboard','partnerReports','adminDashboard']);
- const role=()=>String(window.currentProfile?.role||'').toLowerCase();
+ const role=()=>String((typeof currentProfile!=='undefined'&&currentProfile?.role)||window.currentProfile?.role||'').toLowerCase();
  const adminRoute=id=>adminRoutes.has(String(id))||String(id).startsWith('admin');
  function cls(id){if(id==='ride'||id==='tracking')return 'fr-transition-ride';if(adminRoute(id))return 'fr-transition-admin';if(id==='orders'||id==='partnerOrders')return 'fr-transition-orders';return 'fr-transition-dashboard'}
  window.showPage=function(id){if(adminRoute(id)&&role()!=='admin'){console.warn('[FR] Admin-only screen denied');id='home'}const result=original.apply(this,[id]);const p=document.getElementById(id);if(p){p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders');void p.offsetWidth;p.classList.add('fr-screen-enter',cls(id));setTimeout(()=>p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders'),430)}return result};
