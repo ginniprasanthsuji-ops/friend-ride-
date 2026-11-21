@@ -5,6 +5,9 @@ const sharedCustomerRoutes = ["home","explore","ride","scheduled","goods","parce
 
 test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
   test.beforeEach(async ({ page }) => {
+    // This suite verifies the Dark + Gold design system. Auto theme is now
+    // system-driven, so explicitly emulate a dark OS instead of relying on runner defaults.
+    await page.emulateMedia({ colorScheme: 'dark' });
     await page.route('https://**/*', route => {
       const url = route.request().url();
       // Allow required CDN libraries so the app initializes; block external APIs/maps.
