@@ -356,7 +356,7 @@ body[data-fr-theme="dark"] .fr-native-home .fr-native-hero p strong{color:#f5b83
 <header class="topbar home-topbar">
  <button class="iconbtn menu-open" aria-label="Open side menu" onclick="openDrawer()">☰</button>
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
- <button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
+ <button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))"><i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button><button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button>
 </header>
 <main>
 <section id="home" class="page active">
@@ -801,14 +801,12 @@ body[data-fr-theme="dark"] .fr-native-home .fr-native-hero p strong{color:#f5b83
 <section id="learnTeach" class="page"><div class="card lt-shell"><div class="lt-row"><button class="lt-btn alt" onclick="showPage('home')">← FRIEND RIDE</button><button class="lt-btn alt" onclick="frLearnTeachAdmin()">Admin Approvals</button></div><div id="learnTeachRoot"></div></div></section>
 </main>
 
-<nav class="bottom premium-bottom">
- <button class="active" data-page="home" onclick="showPage('home')"><span>🏠</span>Home</button>
- <button data-page="shops" onclick="showPage('shops')"><span>🛍️</span>Friend<br>Mart</button>
- <button data-page="food" onclick="showPage('food')"><span>🍱</span>Food<br>Delivery</button>
- <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span><small>My Cart</small><b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
- <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Categories</button>
- <button data-page="learnTeach" onclick="frLearnTeachOpen()"><span>🎓</span>విద్యా సేతు</button>
- <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>🧾</span>Orders</button>
+<nav class="bottom premium-bottom" aria-label="Main navigation">
+ <button class="active" data-page="home" onclick="showPage('home')"><span>⌂</span>Home</button>
+ <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Services</button>
+ <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span>Cart<b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
+ <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>▤</span>Orders</button>
+ <button data-page="profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><span>◉</span>Profile</button>
 </nav>
 
 <div id="drawerBackdrop" class="drawer-backdrop" onclick="if(event.target===this)closeDrawer()"><aside class="drawer">
@@ -2118,7 +2116,7 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body></html>'; 
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button><script id="fr-bottom-nav-cart-zero-fix">(function(){function update(){const el=document.getElementById('frBottomCartCount');if(!el)return;const n=parseInt((el.textContent||'0').replace(/\\D/g,''),10)||0;el.hidden=n===0;el.style.display=n===0?'none':'inline-flex';el.setAttribute('aria-label',n+' items in cart');}document.addEventListener('DOMContentLoaded',update);if(document.readyState!=='loading')update();const target=document.getElementById('frBottomCartCount');if(target)new MutationObserver(update).observe(target,{childList:true,characterData:true,subtree:true});})();</script></body></html>'; 
   w.document.write(html);w.document.close();
  }catch(e){w.document.body.innerHTML='<p style="padding:24px;color:#b00">Invoice generation failed: '+safe(e.message||e)+'</p>';}
 }
