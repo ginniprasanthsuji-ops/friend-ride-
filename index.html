@@ -4532,6 +4532,7 @@ async function frAdminAssignLaundry(id){
     const {data,error}=await frSupabaseClient.from('fr_notification_preferences').select('*').eq('user_id',frAuthUser.id).maybeSingle();
     if(!error&&data){Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el)el.checked=!!data[key]});if(window.frSaveNotificationLocalPrefs)window.frSaveNotificationLocalPrefs(data)}
    }catch(e){console.warn('FR notification preferences load:',e)}
+   if(window.Notification?.permission==='granted')setTimeout(()=>window.frRegisterNativePushToken?.(),700);
   }
  };
  document.addEventListener('DOMContentLoaded',()=>window.frLoadNotificationPreferences());
