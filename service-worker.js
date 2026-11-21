@@ -18,6 +18,13 @@ self.addEventListener('push', (event) => {
   let body = data.body || data.message || 'మీ FRIEND RIDE లో కొత్త సమాచారం ఉంది.';
   let vibration = [120, 70, 120];
   let requireInteraction = false;
+  const isHomeworkReminder = /homework|study reminder|చదువు|హోంవర్క్/.test(raw) || data.type === 'learn_homework_reminder';
+  if (role === 'student' && isHomeworkReminder) {
+    title = 'లక్ష్య సేతు • చదువు సమయం';
+    body = data.body || 'విద్యార్థి, చదువుకోవాల్సిన సమయం అయింది. మీ హోంవర్క్ చెక్ లిస్ట్ పూర్తి చేసి పాఠాలు చదవండి.';
+    vibration = [220, 120, 220, 120, 420];
+    requireInteraction = true;
+  }
 
   if (role === 'partner' && isOrder) {
     title = 'కొత్త ఆర్డర్ వచ్చింది';
