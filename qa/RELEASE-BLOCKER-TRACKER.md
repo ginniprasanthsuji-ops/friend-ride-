@@ -162,3 +162,14 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Until GST is received, keep payment gateway live integration as a release blocker, while continuing non-payment QA and payment-flow UI/mock checks where feasible.
 - [ ] After GST: merchant onboarding/KYC, gateway configuration, webhook verification, test transactions, refunds/settlement checks, and payment-related regression.
 - [ ] Run #250 CI is browser/source verification only; no production deployment, merge, backend/device certification, or release approval occurred.
+
+
+## 18. QA continuation — stale status correction and next non-payment verification queue (2026-11-21)
+- [x] Corrected status by later evidence: Run #248 is complete/successful (see section 16); section 15's historical “in progress” note is stale and must not be used as current status.
+- [ ] Auth/RLS isolated QA: customer, driver, partner, admin, and unauthenticated sessions; verify role routing and access denial on sensitive pages, records, and private KYC media.
+- [ ] Driver/customer two-device staging ride: OTP, GPS, online/offline, accept/reject/counter-offer, start/complete, participant-only details, and QR behavior. Live-device evidence still required.
+- [ ] Notifications: test in-app feed and source wiring now; actual push delivery in foreground/background/closed-app, targeting, hourly cadence, consent, quiet hours, retry/idempotency require backend/device verification.
+- [ ] Food delivery: backend ordering/payment is not certified; demo UI/source tests are not evidence of production order writes. Validate isolated staging order creation, restaurant owner authorization, driver assignment/status, and participant visibility when staging backend is ready.
+- [ ] Goods/parcel/home-services/Tasko/laundry: complete authenticated staging workflows, admin approval, ownership, status transition and private-media checks; payment steps remain deferred where gateway-dependent.
+- [ ] Android: signed AAB and install/upgrade/device regression evidence required. Repository/browser CI does not certify Play Store package.
+- [ ] No production deployment, main merge, database migration, or live payment configuration was performed during this continuation.
