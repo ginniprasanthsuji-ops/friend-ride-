@@ -4624,7 +4624,7 @@ window.frRefreshHomeProfileAvatar=async function(){
   }catch(error){console.warn('FR home profile image:',error.message);}
  }
  fallback.hidden=false;
- const gender=profile.customer_avatar_gender==='female'?'female':'male';
+ const gender=String(profile.customer_avatar_gender||profile.avatar_gender||profile.gender||profile.driver_avatar_gender||profile.partner_avatar_gender||'male').toLowerCase()==='female'?'female':'male';
  const avatar=typeof frCustomerAvatarData==='function'?frCustomerAvatarData(gender):'';
  if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='3D profile avatar';fallback.append(img);}
 };
