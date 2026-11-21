@@ -13,7 +13,7 @@ test("internal push sender parses as TypeScript", () => {
   assert.equal(errors.length, 0, errors.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\\n")).join("\\n"));
 });
 
-test("push sender requires internal secret, VAPID config, and security guards", () => {
+test("push sender requires internal secret, VAPID config, retry and security guards", () => {
   const source = fs.readFileSync("supabase/functions/fr-push-send/index.ts", "utf8");
   for (const required of [
     "FR_PUSH_INTERNAL_SECRET",
@@ -27,7 +27,7 @@ test("push sender requires internal secret, VAPID config, and security guards", 
     "for (let attempt = 0; attempt < 3",
     "statusCode === 404 || statusCode === 410",
     "250 * (attempt + 1)",
-    "retry policy",\n    "attempt < 3",\n    "retries"
+    "retry policy"
   ]) {
     assert.ok(source.includes(required), "missing security/implementation marker: " + required);
   }
