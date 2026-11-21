@@ -2285,7 +2285,7 @@ window.addEventListener('DOMContentLoaded',frRenderSuperHub);
 
 <style id="fr-notify-polish">.fr-notify-hero{padding:23px;border-radius:25px;color:#fff;background:radial-gradient(circle at 90% 0,#9865e7 0,transparent 35%),linear-gradient(125deg,#21133f,#56308f);box-shadow:0 14px 30px #28134a24;margin-bottom:15px}.fr-notify-hero>span{font-size:10px;letter-spacing:2px;font-weight:900;color:#dacbff}.fr-notify-hero h2{font-size:23px;margin:8px 0}.fr-notify-hero p{font-size:12px;color:#e5d9f7}.fr-notify-enable{border:0;border-radius:14px;padding:12px 16px;background:linear-gradient(100deg,#ffc17d,#ffe3b5);color:#38204f;font-weight:900}.fr-notify-hero small{display:block;margin-top:10px;color:#d8c8ef;font-size:10px}.fr-notify-list-head{display:flex;justify-content:space-between;align-items:center}.fr-notify-list-head h3{margin:0}.fr-notify-list-head span{font-size:10px;color:#8c8299}.fr-support-home-entry{margin:14px 0;border:1px solid #ded5ef;background:linear-gradient(135deg,#fff,#f5f0ff)}.fr-support-home-entry h2{margin:0 0 6px}.fr-support-home-entry .btn{width:100%;margin-top:8px}#frAdminSupportPanel{margin-top:14px}#frAdminSupportList{white-space:normal}</style>
 <script id="fr-device-notifications">
-async async function frEnableDeviceAlerts(){return window.frEnableNotifications?window.frEnableNotifications():alert('Notification integration is loading. Please try again.');}
+async function frEnableDeviceAlerts(){return window.frEnableNotifications?window.frEnableNotifications():alert('Notification integration is loading. Please try again.');}
 
 </script>
 
@@ -4446,6 +4446,8 @@ async function frAdminAssignLaundry(id){
  const PREF_KEY='fr_notification_prefs_local_v1';
  function localPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||'{}')}catch(_){return {}}}
  function saveLocalPrefs(p){try{localStorage.setItem(PREF_KEY,JSON.stringify({...localPrefs(),...p,updated_at:new Date().toISOString()}))}catch(_){}}
+ window.frNotificationLocalPrefs=localPrefs;
+ window.frSaveNotificationLocalPrefs=saveLocalPrefs;
  function status(msg){const el=document.getElementById('frNotificationSetupStatus');if(el){el.textContent=msg;el.classList.remove('hide')}const pageStatus=document.getElementById('frNotifyPermissionStatus');if(pageStatus)pageStatus.textContent=msg}
  function hideCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.add('hide')}
  function showCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.remove('hide')}
@@ -4513,7 +4515,7 @@ async function frAdminAssignLaundry(id){
    hourly_enabled:!!document.getElementById('frPrefHourly')?.checked,
    promo_enabled:!!document.getElementById('frPrefPromo')?.checked
   };
-  saveLocalPrefs(values);
+  if(window.frSaveNotificationLocalPrefs)window.frSaveNotificationLocalPrefs(values);
   const statusEl=document.getElementById('frPrefSaveStatus');
   const frAuthUser=typeof currentUser!=='undefined'?currentUser:window.currentUser;
   const frSupabaseClient=typeof sb!=='undefined'?sb:window.sb;
@@ -4522,7 +4524,7 @@ async function frAdminAssignLaundry(id){
   if(statusEl)statusEl.textContent=error?'Save failed: '+error.message:'Notification preferences saved and synced.';
  };
  window.frLoadNotificationPreferences=async function(){
-  const p=localPrefs();
+  const p=window.frNotificationLocalPrefs?window.frNotificationLocalPrefs():{};
   const map={ride_enabled:'frPrefRide',order_enabled:'frPrefOrder',payment_enabled:'frPrefPayment',account_enabled:'frPrefAccount',partner_enabled:'frPrefPartner',hourly_enabled:'frPrefHourly',promo_enabled:'frPrefPromo'};
   Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el&&key in p)el.checked=!!p[key]});
   const frAuthUser=typeof currentUser!=='undefined'?currentUser:window.currentUser;
@@ -4530,7 +4532,7 @@ async function frAdminAssignLaundry(id){
   if(frAuthUser&&frSupabaseClient){
    try{
     const {data,error}=await frSupabaseClient.from('fr_notification_preferences').select('*').eq('user_id',frAuthUser.id).maybeSingle();
-    if(!error&&data){Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el)el.checked=!!data[key]});saveLocalPrefs(data)}
+    if(!error&&data){Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el)el.checked=!!data[key]});if(window.frSaveNotificationLocalPrefs)window.frSaveNotificationLocalPrefs(data)}
    }catch(e){console.warn('FR notification preferences load:',e)}
   }
  };
