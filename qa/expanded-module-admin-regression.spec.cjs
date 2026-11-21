@@ -1,4 +1,7 @@
 
+const { test, expect } = require('@playwright/test');
+
+
 // Expanded module-wide QA coverage: every major route must exist and be navigable in isolation.
 test('All customer, partner, service and admin routes exist and navigation isolates the selected page', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
