@@ -10,12 +10,21 @@ test("internal push sender parses as TypeScript", () => {
     reportDiagnostics: true
   });
   const errors = (result.diagnostics || []).filter(d => d.category === ts.DiagnosticCategory.Error);
-  assert.equal(errors.length, 0, errors.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\n")).join("\n"));
+  assert.equal(errors.length, 0, errors.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\\n")).join("\\n"));
 });
 
-test("push sender requires internal secret and VAPID configuration", () => {
+test("push sender requires internal secret, VAPID config, and security guards", () => {
   const source = fs.readFileSync("supabase/functions/fr-push-send/index.ts", "utf8");
-  for (const required of ["FR_PUSH_INTERNAL_SECRET", "FR_VAPID_PUBLIC_KEY", "FR_VAPID_PRIVATE_KEY", "fr_push_subscriptions", "is_active", "SUPABASE_SERVICE_ROLE_KEY", "startsWith(\"//\"), "last_success_at"]) {
+  for (const required of [
+    "FR_PUSH_INTERNAL_SECRET",
+    "FR_VAPID_PUBLIC_KEY",
+    "FR_VAPID_PRIVATE_KEY",
+    "fr_push_subscriptions",
+    "is_active",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    'startsWith("//")',
+    "last_success_at"
+  ]) {
     assert.ok(source.includes(required), "missing security/implementation marker: " + required);
   }
 });
