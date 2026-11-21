@@ -7,7 +7,7 @@ security invoker
 set search_path = public
 as $$
 begin
-  if exists (select 1 from public.admin_users a where a.user_id = auth.uid()) then
+  if auth.role() = 'service_role'\n     or exists (select 1 from public.admin_users a where a.user_id = auth.uid()) then
     return new;
   end if;
 
