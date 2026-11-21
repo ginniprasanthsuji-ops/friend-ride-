@@ -9,7 +9,7 @@ test("WebView audit detects required files and browser APIs", () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), "fr-webview-audit-"));
   const www = path.join(temp, "www");
   fs.mkdirSync(www, { recursive: true });
-  fs.writeFileSync(path.join(www, "index.html"), "<script>navigator.geolocation; Notification; window.open('x');</script> https://example.supabase.co cashfree https://cdn.example.test/lib.js");
+  fs.writeFileSync(path.join(www, "index.html"), "<script>navigator.geolocation; Notification; window.open('x');</script> https://example.supabase.co cashfree <script>const cdn="https://cdn.example.test/lib.js";</script>");
   fs.writeFileSync(path.join(www, "manifest.webmanifest"), JSON.stringify({ icons: [{ src: "./icons/icon-192.png" }] }));
   fs.writeFileSync(path.join(www, "service-worker.js"), "worker fixture");
   const audit = path.resolve(__dirname, "../scripts/android-webview-audit.cjs");
