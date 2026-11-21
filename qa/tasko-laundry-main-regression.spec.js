@@ -59,6 +59,18 @@ test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
 
 
 test.describe('FRIEND RIDE native screen navigation', () => {
+
+  test('bottom tabs navigate between app root screens without scroll-style navigation', async ({ page }) => {
+    page.setDefaultTimeout(15000);
+    await page.route('https://**/*', route => route.abort());
+    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.locator('.premium-bottom button[data-page="shops"]').click();
+    await expect(page.locator('#shops')).toHaveClass(/active/);
+    await expect(page.locator('.fr-native-back')).not.toBeVisible();
+    await expect(page.locator('.premium-bottom button[data-page="shops"]')).toHaveClass(/active/);
+    await page.locator('.premium-bottom button[data-page="food"]').click();
+    await expect(page.locator('#food')).toHaveClass(/active/);
+  });
   test('sub-page transition shows back control and returns to previous screen', async ({ page }) => {
     page.setDefaultTimeout(15000);
     await page.route('https://**/*', route => route.abort());
