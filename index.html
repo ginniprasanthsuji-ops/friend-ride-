@@ -4683,6 +4683,76 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
 }
 </style>
+
+<script id="fr-ui-migration-route-history">
+(function(){
+ 'use strict';
+ const routePrefix='#/';
+ const scrollPositions=Object.create(null);
+ let currentRoute='home';
+ let routingFromHistory=false;
+ let originalShowPage=window.showPage;
+ function getPageIdFromHash(){
+  const raw=location.hash.startsWith(routePrefix)?location.hash.slice(2):'';
+  const id=decodeURIComponent(raw.split('?')[0]||'');
+  return id&&document.getElementById(id)&&document.getElementById(id).classList.contains('page')?id:'home';
+ }
+ function saveScroll(){
+  if(currentRoute)scrollPositions[currentRoute]=window.scrollY||window.pageYOffset||0;
+ }
+ function setRouteHash(id,replace){
+  const next=routePrefix+encodeURIComponent(String(id));
+  if(location.hash===next)return;
+  if(replace)history.replaceState({frRoute:id},'',next);
+  else history.pushState({frRoute:id},'',next);
+ }
+ function displayRoute(id,restore){
+  if(!document.getElementById(id)||!document.getElementById(id).classList.contains('page'))id='home';
+  if(id!==currentRoute)saveScroll();
+  if(typeof originalShowPage==='function')originalShowPage.call(window,id);
+  const page=document.getElementById(id);
+  if(page){
+   page.setAttribute('aria-hidden','false');
+   if('inert' in page)page.inert=false;
+  }
+  currentRoute=id;
+  const y=restore&&Object.prototype.hasOwnProperty.call(scrollPositions,id)?scrollPositions[id]:0;
+  requestAnimationFrame(()=>window.scrollTo({top:y,behavior:restore?'auto':'smooth'}));
+ }
+ if(typeof originalShowPage==='function'){
+  window.showPage=function(id){
+   const pageId=String(id||'home');
+   if(pageId!==currentRoute)saveScroll();
+   setRouteHash(pageId,false);
+   displayRoute(pageId,false);
+   return;
+  };
+ }
+ function routeFromHistory(){
+  routingFromHistory=true;
+  const id=getPageIdFromHash();
+  displayRoute(id,true);
+  routingFromHistory=false;
+ }
+ window.addEventListener('popstate',routeFromHistory);
+ window.addEventListener('hashchange',routeFromHistory);
+ window.addEventListener('pagehide',saveScroll);
+ if(location.hash.startsWith(routePrefix)){
+  const initial=getPageIdFromHash();
+  displayRoute(initial,true);
+  setRouteHash(initial,true);
+ }else{
+  currentRoute=document.querySelector('main .page.active')?.id||'home';
+  setRouteHash(currentRoute,true);
+ }
+ window.frCurrentRoute=()=>currentRoute;
+})();
+</script>
+<style id="fr-ui-migration-route-transition">
+main .page.active{animation:frRouteFadeIn .18s ease-out both;}
+@keyframes frRouteFadeIn{from{opacity:.92;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){main .page.active{animation:none}}
+</style>
 </html>
 <style>
 @media(hover:hover){.tile:hover{transform:translateY(-2px);box-shadow:0 10px 22px #32105e16;border-color:#d7c4f0}.btn:hover{filter:brightness(1.025)}}
