@@ -65,11 +65,13 @@
 - [x] Session update writes hardened to admin-only
 - [x] Add reusable Zoom classroom table keyed by teacher/student/course on QA
 - [x] Replace manual student/course UUID entry with active-enrollment picker
+- [x] Add student confirmation before the scheduled class link is unlocked
 - [x] Deploy recurring Zoom meeting creation/reuse Edge Function to QA
 - [x] Remove participant-readable host start URL storage
-- [ ] Configure Zoom OAuth credentials and host user as QA Edge Function secrets
+- [ ] Configure Zoom OAuth credentials and host user as QA Edge Function secrets: `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET`, `ZOOM_HOST_USER` (Zoom host email or user ID)
 - [ ] Test Zoom API meeting creation with valid credentials
 - [ ] Verify same join URL in teacher + student authenticated accounts
+- [ ] Verify student confirms mutually agreed class time before join link unlock
 - [ ] Verify unrelated user denied access to meeting link
 - [ ] Verify payment/active enrollment gate
 - [ ] Run full Playwright and regression suite before merge/deploy
