@@ -86,6 +86,8 @@ test('Zoom classroom UI appears for student and teacher roles', async ({ page })
 test('External classroom workflow validates link, enrollment and confirmation', async()=>{
  const {readFile}=await import('node:fs/promises');const base=process.cwd();
  const migration=await readFile(base+'/supabase/migrations/20261121190000_simple_external_classroom_links.sql','utf8');
+ const homeworkMigration=await readFile(base+'/supabase/migrations/20261121200000_student_homework_checklist_teacher_approval.sql','utf8');
+ const homeworkPolicy=await readFile(base+'/supabase/migrations/20261121210000_homework_student_confirm_policy_fix.sql','utf8');
  const fn=await readFile(base+'/supabase/functions/create-external-classroom-session/index.ts','utf8');
  const confirmFn=await readFile(base+'/supabase/functions/confirm-zoom-session/index.ts','utf8');
  const linkFn=await readFile(base+'/supabase/functions/get-zoom-classroom-link/index.ts','utf8');
@@ -98,8 +100,17 @@ test('External classroom workflow validates link, enrollment and confirmation', 
  expect(confirmFn).toContain('Only the enrolled student can confirm this class time');
  expect(linkFn).toContain('Student confirmation required before joining');
  expect(linkFn).toContain('Classroom participant access required');
+ expect(linkFn).toContain('Teacher homework approval required before joining');
+ expect(homeworkMigration).toContain('fr_learn_homework');
+ expect(homeworkMigration).toContain('teacher_approved');
+ expect(homeworkPolicy).toContain('student_confirmed=true and teacher_approved=false');
  expect(ui).toContain('create-external-classroom-session');
  expect(ui).toContain('frZoomExternalLink');
+ expect(ui).toContain('frLearnSubmitHomework');
+ expect(ui).toContain('frLearnApproveHomework');
+ expect(ui).toContain('frLearnEnableHourlyReminder');
+ expect(ui).toContain('SpeechSynthesisUtterance');
+ expect(ui).toContain('Homework approved');
  expect(ui).not.toContain('create-zoom-meeting');
 });
 
