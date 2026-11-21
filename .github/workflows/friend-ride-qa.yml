@@ -1,0 +1,45 @@
+name: FRIEND RIDE QA Playwright
+
+on:
+  push:
+    branches:
+      - feature/delivery-instructions-qa
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout QA branch
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start local app server
+        run: python3 -m http.server 4173 --directory . >/tmp/friend-ride-http.log 2>&1 &
+      - name: Wait for local app server
+        run: for i in {1..20}; do curl -fsS http://127.0.0.1:4173/ >/dev/null && exit 0; sleep 1; done; exit 1
+      - name: Run Playwright QA suite
+        run: npm test
+        env:
+          CI: true
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: friend-ride-playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore

@@ -54,7 +54,12 @@ test('local runtime diagnostics capture errors on-device while remaining hidden 
   await expect(badge).toBeHidden();
   const externalRequests = [];
   page.on('request', request => {
-    if (new URL(request.url()).origin !== new URL(page.url()).origin) externalRequests.push(request.url());
+    const url = new URL(request.url());
+    // Map tiles are expected by the existing Leaflet map; they are unrelated
+    // to the diagnostics reporter and must not fail this privacy regression.
+    if (url.origin !== new URL(page.url()).origin && !/^[a-z0-9-]+\\.tile\\.openstreetmap\\.org$/.test(url.hostname)) {
+      externalRequests.push(request.url());
+    }
   });
   await page.evaluate(() => window.dispatchEvent(new ErrorEvent('error', { message: 'QA injected diagnostic check' })));
   const entries = await page.evaluate(() => JSON.parse(localStorage.getItem('fr_runtime_diagnostics_v1') || '[]'));

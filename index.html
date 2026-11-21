@@ -455,7 +455,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <section id="goods" class="page"><div class="card"><h2>Goods Delivery</h2><div class="field"><label>Pickup Address</label><textarea id="goodsPickup"></textarea></div><div class="field"><label>Delivery Address</label><textarea id="goodsDrop"></textarea></div><div class="field"><label>Goods Description</label><input id="goodsDescription" placeholder="What do you want to transport?"></div><div class="field"><label>Approx. Weight (kg)</label><input id="goodsWeight" type="number" min=".1" step=".1"></div><button class="btn purple" onclick="validateGoods()">Request Goods Delivery</button></div></section>
 
-<section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><div class="field"><label>Sender Name</label><input id="parcelSender"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription"></div><div class="field"><label>Weight (kg)</label><input id="parcelWeight" type="number" min=".1" step=".1"></div><div class="notice">Payment is collected at delivery. Recipient OTP is issued only after verified payment. Driver confirms payment in app before parcel release.</div><button class="btn purple" onclick="submitParcelRequest()">Request Parcel Delivery</button><button class="btn light" onclick="showPage('parcelRelease')">Driver Parcel Release Screen</button></div></section>
+<section id="parcel" class="page"><div class="card"><h2>Parcel Delivery</h2><div class="field"><label>Sender Name</label><input id="parcelSender"></div><div class="field"><label>Sender Mobile</label><input id="parcelSenderPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Pickup Address</label><textarea id="parcelPickup"></textarea></div><div class="field"><label>Receiver Name</label><input id="parcelReceiver"></div><div class="field"><label>Receiver Mobile</label><input id="parcelReceiverPhone" inputmode="numeric" maxlength="10"></div><div class="field"><label>Delivery Address</label><textarea id="parcelDrop"></textarea></div><div class="field"><label>Parcel Description</label><input id="parcelDescription"></div><div class="field"><label>Weight (kg)</label><input id="parcelWeight" type="number" min=".1" step=".1"></div><div class="notice">Payment is collected at delivery. Recipient OTP is issued only after verified payment. Driver confirms payment in app before parcel release.</div><div id="frParcelDeliveryInstructions" style="margin-top:12px"></div><button class="btn purple" onclick="submitParcelRequest()">Request Parcel Delivery</button><button class="btn light" onclick="showPage('parcelRelease')">Driver Parcel Release Screen</button></div></section>
 
 <section id="food" class="page">
  <div class="card">
@@ -583,7 +583,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 <section id="technicianRegister" class="page"><div class="card"><h2>Home Service Technician Registration</h2><div class="field"><label>Technician Passport-size Photo * Required</label><input id="techProfilePhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div><div class="field"><label>Profession *</label><select id="techProfession"><option>Electrician</option><option>Plumber</option><option>AC Technician</option><option>Appliance Repair</option><option>House Cleaning</option><option>Painter</option><option>Carpenter</option><option>Other</option></select></div><div class="field"><label>Full Name *</label><input id="techName"></div><div class="field"><label>Mobile Number *</label><input id="techPhone" maxlength="10" inputmode="numeric"></div><div class="field"><label>Work Experience (Years) *</label><input id="techExperience" type="number" min="0"></div><div class="field"><label>Complete Address *</label><textarea id="techAddress"></textarea></div><div class="field"><label>Aadhaar Card Number *</label><input id="techAadhaar" maxlength="12" inputmode="numeric"></div><div class="field"><label>Aadhaar File *</label><input id="techAadhaarFile" type="file" accept="image/*,.pdf"></div><div class="field"><label>UPI ID / QR Code</label><input id="techUPI" placeholder="UPI ID"></div><div class="field"><label>QR Code Image</label><input id="techQR" type="file" accept="image/*"></div><div class="field"><label>PhonePe Number * (Mandatory)</label><input id="techPhonePe" maxlength="10" inputmode="numeric"></div><button class="btn purple" onclick="validateTechnicianRegistration()">Submit Technician Application</button><div class="notice">Technician account will remain pending until document review and Admin approval.</div></div></section>
 <section id="parcelRelease" class="page"><div class="card"><h2>Parcel Delivery – Secure Handover</h2><p>Delivery OTP will be generated only after verified payment. Driver enters OTP and confirms payment before parcel release.</p><div class="field"><label>Tracking ID</label><input id="parcelTrackingId" placeholder="FR-PARCEL-000001"></div><div class="field"><label>Delivery OTP</label><input id="parcelDeliveryOtp" maxlength="6" inputmode="numeric"></div><button class="btn purple" onclick="confirmParcelRelease()">Driver: Confirm Payment & Release Parcel</button><div id="parcelReleaseStatus" class="notice">Awaiting verified payment and recipient OTP.</div><div class="notice">Payment status, OTP issue/verify and release must be enforced server-side; this screen is not a secure payment verification by itself.</div></div></section>
 <section id="orders" class="page"><div class="card"><h2>My Bookings & Orders</h2><p class="muted">Ride, parcel, food, shop and service bookings.</p><div id="ordersInfo" class="notice">మీ bookings ఇక్కడ కనిపిస్తాయి.</div><h3>Shop Orders / ధరల వివరాలు</h3><div id="frCustomerMarketOrders" class="empty-state">Shop orders loading…</div><button class="btn light" onclick="showPage('tracking')">Open Live Tracking</button></div></section>
-<section id="tracking" class="page"><div class="card"><h2>Live Tracking</h2><div class="row"><button class="btn purple">Ride</button><button class="btn light">Parcel</button><button class="btn light">Food / Shop</button></div><div class="track-actions"><button onclick="showTrackingMode('driver')">🚗 Track Driver</button><button onclick="showTrackingMode('route')">🧭 View Route</button><button onclick="showTrackingMode('pickup')">📍 Pickup Point</button><button onclick="showTrackingMode('support')">🆘 SOS / Help</button></div><div id="trackingMap" style="margin-top:12px"></div><div class="listrow"><div class="grow"><b id="trackingTitle">Live Driver Tracking</b><br><small id="trackingStatus" class="muted">Booking confirm అయిన తర్వాత driver location కనిపిస్తుంది.</small></div><span id="trackingPill" class="pill">Waiting</span></div><div class="row"><button class="btn light" onclick="refreshTracking()">↻ Refresh Location</button><button class="btn light" onclick="callDriver()">📞 Call Driver</button></div><div id="liveRideStatus" class="notice">మీ Active Ride వివరాలు ఇక్కడ కనిపిస్తాయి.</div><div class="row"><button class="btn light" onclick="loadMyRideTracking()">My Active Ride</button><button class="btn light" onclick="startCustomerTrackingFromPanel()">Share My Live Location</button></div><div class="card" style="margin-top:12px"><h3>🆘 Emergency & Personal Contact</h3><div class="row"><a class="btn red" href="tel:112">112 Emergency</a><a class="btn light" href="tel:100">100 Police</a><a class="btn light" href="tel:108">108 Ambulance</a></div><div class="field"><label>Personal Emergency Contact Name</label><input id="emergencyContactName" placeholder="Relative / Friend"></div><div class="field"><label>Personal Emergency Mobile</label><input id="emergencyContactPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><div class="row"><button class="btn light" onclick="savePersonalEmergencyContact()">Save Contact</button><button class="btn light" onclick="callPersonalEmergencyContact()">Call Personal Contact</button></div><button class="btn red" style="width:100%;margin-top:8px" onclick="sendRideSOS()">🆘 SEND SOS LOCATION</button><div id="sosStatus" class="notice">Emergency call links are available. SOS records the current GPS location when signed in.</div></div></div></section>
+<section id="tracking" class="page"><div class="card"><h2>Live Tracking</h2><div class="row"><button class="btn purple">Ride</button><button class="btn light">Parcel</button><button class="btn light">Food / Shop</button></div><div class="track-actions"><button onclick="showTrackingMode('driver')">🚗 Track Driver</button><button onclick="showTrackingMode('route')">🧭 View Route</button><button onclick="showTrackingMode('pickup')">📍 Pickup Point</button><button onclick="showTrackingMode('support')">🆘 SOS / Help</button></div><div id="trackingMap" style="margin-top:12px"></div><div class="listrow"><div class="grow"><b id="trackingTitle">Live Driver Tracking</b><br><small id="trackingStatus" class="muted">Booking confirm అయిన తర్వాత driver location కనిపిస్తుంది.</small></div><span id="trackingPill" class="pill">Waiting</span></div><div class="row"><button class="btn light" onclick="refreshTracking()">↻ Refresh Location</button><button class="btn light" onclick="callDriver()">📞 Call Driver</button></div><div id="liveRideStatus" class="notice">మీ Active Ride వివరాలు ఇక్కడ కనిపిస్తాయి.</div><div id="frCustomerDeliveryInstructions" style="margin-top:12px"></div><div class="row"><button class="btn light" onclick="loadMyRideTracking()">My Active Ride</button><button class="btn light" onclick="startCustomerTrackingFromPanel()">Share My Live Location</button></div><div class="card" style="margin-top:12px"><h3>🆘 Emergency & Personal Contact</h3><div class="row"><a class="btn red" href="tel:112">112 Emergency</a><a class="btn light" href="tel:100">100 Police</a><a class="btn light" href="tel:108">108 Ambulance</a></div><div class="field"><label>Personal Emergency Contact Name</label><input id="emergencyContactName" placeholder="Relative / Friend"></div><div class="field"><label>Personal Emergency Mobile</label><input id="emergencyContactPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div><div class="row"><button class="btn light" onclick="savePersonalEmergencyContact()">Save Contact</button><button class="btn light" onclick="callPersonalEmergencyContact()">Call Personal Contact</button></div><button class="btn red" style="width:100%;margin-top:8px" onclick="sendRideSOS()">🆘 SEND SOS LOCATION</button><div id="sosStatus" class="notice">Emergency call links are available. SOS records the current GPS location when signed in.</div></div></div></section>
 <section id="wallet" class="page"><div class="card"><h2>Wallet & Payments</h2><div class="stats"><div class="stat"><small>Wallet Balance</small><b>₹0.00</b></div><div class="stat"><small>Reward Points</small><b>0</b></div></div><div class="notice">Walletలో డబ్బు జోడించే సదుపాయం ప్రస్తుతం అందుబాటులో లేదు.</div><button class="btn purple" onclick="showMessage('Payment gateway configuration అవసరం.','error')">Add Money</button></div></section>
 <section id="offers" class="page"><div class="card"><h2>🎁 Offers & Rewards</h2>
 <div class="feature-grid">
@@ -1154,11 +1154,14 @@ async function loadPartnerOrders(status='all'){
   const dbStatus=status==='new'?'quote_requested':(status==='all'?null:status);
   const {data,error}=await sb.rpc('fr_partner_list_market_orders',{p_status:dbStatus});if(error)throw error;
   if(!data||!data.length){el.innerHTML='<div class="empty-state">ఇంకా Orders రాలేదు.</div>';return;}
+  let approvedDrivers=[];
+  if(data.some(o=>o.status==='ready')){const dr=await sb.rpc('fr_partner_list_approved_delivery_drivers');if(!dr.error)approvedDrivers=dr.data||[];}
   el.innerHTML=data.map(o=>{
    const items=Array.isArray(o.items)?o.items:[];
    const lines=items.map(i=>'<div class="listrow"><span>'+safe(i.item_name)+' × '+safe(i.quantity)+'</span><b>'+(i.unit_price_paise==null?'Price pending':'₹'+(Number(i.unit_price_paise)*Number(i.quantity)/100).toFixed(2))+'</b></div>').join('');
    const actions=o.status==='quote_requested'?'<div class="row"><button class="btn purple" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'accepted\')">Accept Order</button><button class="btn light" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'rejected\')">Reject</button></div>':(o.status==='accepted'?'<button class="btn purple" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'preparing\')">Start Preparing</button>':(o.status==='preparing'?'<button class="btn purple" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'ready\')">Mark Ready</button>':(o.status==='ready'?'<button class="btn purple" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'completed\')">Complete Order</button>':'')));
-   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+safe(o.order_number)+'</b><span class="pill">'+safe(o.status)+'</span></div><p>Customer: '+safe(o.customer_name||'Customer')+'</p><p>Address: '+safe(o.delivery_address)+'</p>'+lines+'<p><small>'+safe(o.created_at)+'</small></p>'+actions+'</div>';
+   const assign=o.status==='ready'?'<div class="notice" style="margin-top:10px"><b>Assign delivery driver</b><div class="row"><select id="frMarketDriver_'+o.order_id+'"><option value="">Select approved Driver</option>'+approvedDrivers.map(d=>'<option value="'+safe(d.driver_id)+'">'+safe(d.driver_name)+'</option>').join('')+'</select><button class="btn light" type="button" onclick="frPartnerAssignMarketDriver(\''+o.order_id+'\')">Assign</button></div></div>':'';
+   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+safe(o.order_number)+'</b><span class="pill">'+safe(o.status)+'</span></div><p>Customer: '+safe(o.customer_name||'Customer')+'</p><p>Address: '+safe(o.delivery_address)+'</p>'+lines+'<p><small>'+safe(o.created_at)+'</small></p>'+actions+assign+'</div>';
   }).join('');
  }catch(e){el.innerHTML='<div class="notice">Orders load కాలేదు: '+safe(e.message||e)+'</div>';}
 }
@@ -1797,7 +1800,7 @@ async function saveRideRequest(){
     const row={customer_id:currentUser.id,vehicle_type:rideVehicle,pickup,drop,fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested'};
     if(coords){row.pickup_lat=coords[0];row.pickup_lng=coords[1];}
     const {data,error}=await sb.from('rides').insert(row).select('id,status').single();if(error)throw error;
-    frActiveRideId=data.id;frShow('trackingStatus','Ride Request పంపబడింది. దగ్గరలోని Drivers కోసం చూస్తున్నాం…');frShow('liveRideStatus','Active Ride ID: '+data.id+' • Driver response కోసం వేచి ఉంది.');
+    frActiveRideId=data.id;try{FriendRideDelivery.mount('frCustomerDeliveryInstructions','ride',data.id,'customer');}catch(deliveryUiError){console.warn('Delivery instructions UI:',deliveryUiError);}frShow('trackingStatus','Ride Request పంపబడింది. దగ్గరలోని Drivers కోసం చూస్తున్నాం…');frShow('liveRideStatus','Active Ride ID: '+data.id+' • Driver response కోసం వేచి ఉంది.');
     showPage('tracking');frEnsureTrackingMap(coords);await refreshNearbyDrivers();if(frNearbyTimer)clearInterval(frNearbyTimer);frNearbyTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id)refreshNearbyDrivers();},10000);
   }catch(e){alert('Ride Booking Error: '+e.message);}
 }
@@ -3073,6 +3076,11 @@ async function frAdminUpdateBankEnquiry(id,status){
    const r=Array.isArray(data)?data[0]:data;
    if(!r?.parcel_id||!r?.tracking_id)throw Error('Backend parcel confirmation incomplete.');
    window.frLastParcelId=r.parcel_id;window.frLastParcelTracking=r.tracking_id;
+   const parcelHost=$('frParcelDeliveryInstructions');
+   if(parcelHost&&window.FriendRideDelivery){
+    window.frParcelCustomerDeliveryWidget=FriendRideDelivery.mount('frParcelDeliveryInstructions','parcel',r.parcel_id,'customer');
+    await window.frParcelCustomerDeliveryWidget.refresh();
+   }
    if($('parcelTrackingId'))$('parcelTrackingId').value=r.tracking_id;
    alert('Parcel request saved. Tracking ID: '+r.tracking_id+'\nPayment: Cash on Delivery. Driver acceptance తర్వాత status update అవుతుంది.');
    ['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription','parcelWeight'].forEach(id=>{if($(id))$(id).value='';});
@@ -3087,6 +3095,13 @@ async function frAdminUpdateBankEnquiry(id,status){
    if(row.status!=='requested')throw Error('ఈ Parcel ఇప్పటికే '+row.status+' statusలో ఉంది.');
    const {data:ok,error:ae}=await sb.rpc('fr_driver_accept_parcel',{p_parcel_id:row.parcel_id});if(ae)throw ae;
    if(!ok)throw Error('Server rejected parcel acceptance.');
+   const parcelPanel=$('parcelRelease')?.querySelector('.card');
+   if(parcelPanel&&window.FriendRideDelivery){
+    let deliveryHost=$('frParcelDriverDeliveryInstructions');
+    if(!deliveryHost){deliveryHost=document.createElement('div');deliveryHost.id='frParcelDriverDeliveryInstructions';parcelPanel.appendChild(deliveryHost);}
+    window.frParcelDriverDeliveryWidget=FriendRideDelivery.mount('frParcelDriverDeliveryInstructions','parcel',row.parcel_id,'driver');
+    await window.frParcelDriverDeliveryWidget.refresh();
+   }
    alert('Parcel accepted. Pickup, delivery details ఇప్పుడు మీ Driver accountకు assign అయ్యాయి.');
   }catch(e){fail('Parcel accept కాలేదు',e);}
  };
@@ -3614,6 +3629,7 @@ async function renderDriverActiveRide(){
       (ride.pickup||'—')+' → '+(ride.drop||'—')+
       ' | Fare ₹'+(ride.agreed_fare??ride.fare_offer??'—');
     panel.append(details);
+    const deliveryHost=document.createElement('div');deliveryHost.id='frDriverDeliveryInstructions';panel.append(deliveryHost);try{const deliveryWidget=FriendRideDelivery.mount('frDriverDeliveryInstructions','ride',ride.id,'driver');deliveryWidget.refresh().catch(e=>console.warn('Delivery instructions load:',e));}catch(deliveryUiError){console.warn('Driver delivery UI:',deliveryUiError);}
 
     const p=await rideContact(
       'get_ride_customer_details_v2',ride.id
@@ -3892,7 +3908,7 @@ async function loadPartnerOrders(status='all'){
    else if(o.status==='preparing')action='<button class="btn green" onclick="frPartnerUpdateMarketOrder(\''+o.order_id+'\',\'ready\')">Mark Ready</button>';
    else if(o.status==='ready')action='<div class="notice">Ready for Driver Pickup.</div>';
    const phone=(o.customer_phone||'').replace(/[^0-9+]/g,'');
-   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p><b>Customer:</b> '+frMarketEsc(o.customer_name||'Customer')+'</p><p><b>Mobile:</b> '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p><b>Delivery:</b> '+frMarketEsc(o.delivery_address)+'</p>'+lines+action+'</div>';
+   return '<div class="card" data-fr-market-order-id="'+frMarketEsc(o.order_id)+'" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p><b>Customer:</b> '+frMarketEsc(o.customer_name||'Customer')+'</p><p><b>Mobile:</b> '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p><b>Delivery:</b> '+frMarketEsc(o.delivery_address)+'</p>'+lines+action+'</div>';
   }).join('');
  }catch(e){el.innerHTML='<div class="notice">Orders load కాలేదు: '+frMarketEsc(e.message||e)+'</div>';}
 }
@@ -3925,8 +3941,20 @@ async function frLoadCustomerMarketOrders(){
    else if(o.status==='accepted')actions='<div class="notice" style="background:#e8f8ef;color:#087b43">✓ Payment received and verified. Order Confirmed.<br><b>Thank You! ❤️ Use Again.</b></div>';
    else if(o.status==='cancelled')actions='<div class="notice">Order cancelled. Payment was not confirmed within the payment window.</div>';
    const phone=(o.partner_phone||'').replace(/[^0-9+]/g,'');
-   return '<div class="card" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p>Shop: '+frMarketEsc(o.partner_name)+'</p><p>Shop Phone: '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p>Delivery: '+frMarketEsc(o.delivery_address)+'</p>'+lines+actions+'</div>';
+   return '<div class="card" data-fr-market-order-id="'+frMarketEsc(o.order_id)+'" style="margin:10px 0;padding:14px"><div class="row"><b>'+frMarketEsc(o.order_number)+'</b><span class="pill">'+frMarketEsc(o.status)+'</span></div><p>Shop: '+frMarketEsc(o.partner_name)+'</p><p>Shop Phone: '+(phone?'<a href="tel:'+frMarketEsc(phone)+'">'+frMarketEsc(phone)+'</a>':'Unavailable')+'</p><p>Delivery: '+frMarketEsc(o.delivery_address)+'</p>'+lines+actions+'</div>';
   }).join('');
+  // Add delivery-instruction capture to existing FR Market order cards only.
+  // Checkout, quotations, payment and order status handlers remain unchanged.
+  for(const o of data){
+   const hostId='frMarketDelivery_'+o.order_id;
+   const card=el.querySelector('.card[data-fr-market-order-id="'+o.order_id+'"]');
+   if(!card||document.getElementById(hostId))continue;
+   const host=document.createElement('div');host.id=hostId;host.style.marginTop='12px';card.appendChild(host);
+   try{
+    const widget=FriendRideDelivery.mount(hostId,'shop',o.order_id,'customer');
+    await widget.refresh();
+   }catch(widgetError){console.warn('FR Market delivery instructions unavailable',widgetError);}
+  }
  }catch(e){el.innerHTML='<div class="notice">Shop Orders load కాలేదు: '+frMarketEsc(e.message||e)+'</div>';}
 }
 async function frCustomerAcceptQuote(id){
@@ -4514,4 +4542,48 @@ window.frRefreshHomeProfileAvatar=async function(){
   }
 })();
 </script>
+<script src="./assets/delivery-instructions.js"></script>
 
+<script id="fr-market-delivery-instructions-integration">
+(function(){
+  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  window.frPartnerAssignMarketDriver=async function(orderId){
+    const select=document.getElementById('frMarketDriver_'+orderId);
+    const driverId=select?.value;
+    if(!driverId){alert('Approved Driverను select చేయండి.');return;}
+    try{await window.frAssignMarketOrderDeliveryDriver(orderId,driverId);alert('FR Market delivery Driverకు assign అయింది.');if(typeof loadPartnerOrders==='function')await loadPartnerOrders();}
+    catch(error){alert('Driver assignment కాలేదు: '+(error.message||error));}
+  };
+  window.frAssignMarketOrderDeliveryDriver=async function(orderId,driverId){
+    if(!currentUser||!['admin','partner'].includes(String(currentProfile?.role||'').toLowerCase()))throw new Error('Admin or Partner login required');
+    const {data,error}=await sb.rpc('fr_assign_market_order_delivery_driver',{p_order_id:orderId,p_driver_id:driverId});
+    if(error)throw error;if(!data?.ok)throw new Error('Market delivery assignment failed');return data;
+  };
+  window.frLoadAssignedMarketDeliveryInstructions=async function(){
+    const root=document.getElementById('driverDashboard');
+    if(!root||!currentUser||String(currentProfile?.role||'').toLowerCase()!=='driver')return;
+    let panel=document.getElementById('frAssignedMarketDeliveryPanel');
+    if(!panel){panel=document.createElement('section');panel.id='frAssignedMarketDeliveryPanel';panel.className='card';panel.innerHTML='<h3>Shop / FR Market Deliveries</h3><p class="muted">మీకు assign చేసిన Market orders ఇక్కడ కనిపిస్తాయి.</p><button class="btn light" type="button" id="frRefreshMarketDeliveries">Refresh Market Deliveries</button><div id="frAssignedMarketDeliveryList" style="margin-top:12px"></div>';const stats=root.querySelector('.stats');if(stats)stats.insertAdjacentElement('afterend',panel);else root.appendChild(panel);document.getElementById('frRefreshMarketDeliveries').onclick=window.frLoadAssignedMarketDeliveryInstructions;}
+    const list=document.getElementById('frAssignedMarketDeliveryList');list.textContent='Assigned FR Market orders loading…';
+    try{
+      const {data,error}=await sb.rpc('fr_driver_list_assigned_market_orders');if(error)throw error;
+      if(!data?.length){list.textContent='ప్రస్తుతం మీకు FR Market delivery assignment లేదు.';return;}
+      list.replaceChildren();
+      for(const order of data){
+        const card=document.createElement('div');card.className='card';card.style.margin='10px 0';card.style.padding='12px';
+        const heading=document.createElement('b');heading.textContent=order.order_number+' · '+order.order_status;card.append(heading);
+        const address=document.createElement('p');address.textContent='Delivery: '+order.delivery_address;card.append(address);
+        const host=document.createElement('div');host.id='frMarketDriverDelivery_'+order.order_id;card.append(host);list.append(card);
+        const widget=window.FriendRideDelivery.mount(host.id,'shop',order.order_id,'driver');await widget.refresh();
+      }
+    }catch(error){list.textContent='FR Market delivery list unavailable: '+(error.message||error);}
+  };
+  if(typeof sb!=='undefined'&&sb?.auth?.onAuthStateChange){
+    sb.auth.onAuthStateChange((event,session)=>{
+      if(event==='SIGNED_IN'&&session?.user&&String(currentProfile?.role||'').toLowerCase()==='driver'){
+        setTimeout(()=>window.frLoadAssignedMarketDeliveryInstructions().catch(e=>console.warn(e)),500);
+      }
+    });
+  }
+})();
+</script>
