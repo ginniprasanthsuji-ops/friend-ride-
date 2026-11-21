@@ -21,10 +21,12 @@ USING (
   )
 );
 
--- Restaurant owner may update order workflow state only for their restaurant.
--- This policy does not allow changing customer, restaurant, payment totals,
--- payment status, or order identity; application/RPC validation must enforce
--- allowed state transitions and fields.
+-- Restaurant owner may update rows for their approved restaurant.
+-- IMPORTANT: PostgreSQL RLS row policies do NOT restrict which columns can be
+-- changed. This policy alone could permit edits to sensitive columns if table
+-- grants allow them. Before applying, use column-level UPDATE grants or a
+-- constrained RPC/trigger to protect customer, restaurant, payment totals,
+-- payment status, order identity and allowed state transitions.
 DROP POLICY IF EXISTS fr_food_orders_restaurant_update ON public.fr_food_orders;
 CREATE POLICY fr_food_orders_restaurant_update
 ON public.fr_food_orders
