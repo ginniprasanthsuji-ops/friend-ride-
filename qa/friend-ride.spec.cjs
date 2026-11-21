@@ -632,7 +632,7 @@ test('Home current-location label uses GPS coordinates and reverse-geocoded city
       }
     });
   });
-  await page.route(/nominatim\\.openstreetmap\\.org\\/reverse/, route => route.fulfill({
+  await page.route(/nominatim\.openstreetmap\.org\/reverse/, route => route.fulfill({
     status: 200,
     contentType: 'application/json',
     body: JSON.stringify({ address: { suburb: 'Banjara Hills', city: 'Hyderabad', state: 'Telangana', country: 'India' } })
