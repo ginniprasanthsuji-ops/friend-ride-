@@ -89,4 +89,30 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     expect(style.bg).not.toBe('none');
     expect(style.color).toMatch(/rgb\(246, 248, 255\)|rgb\(255, 255, 255\)/);
   });
+
+  test('Admin login modal is role-locked and uses the Dark + Gold authentication UI', async ({ page }) => {
+    await page.evaluate(() => window.openAuth('login', 'admin'));
+    const modal = page.locator('#authModal');
+    await expect(modal).toHaveClass(/show/);
+    await expect(modal).toHaveClass(/fr-role-locked/);
+    await expect(page.locator('#authTitle')).toHaveText('Admin Login');
+    await expect(page.locator('#sendLoginOtpButton')).toHaveText('Send Admin SMS OTP');
+    await expect(page.locator('#authRegisterButton')).toBeHidden();
+    await expect(modal.locator('.rolegrid')).toBeHidden();
+    const surfaces = await modal.locator('.modalbox').evaluate(el => ({
+      background: getComputedStyle(el).backgroundColor,
+      text: getComputedStyle(el).color
+    }));
+    expect(surfaces.background).not.toBe('rgb(255, 255, 255)');
+    expect(surfaces.text).toMatch(/rgb\(/);
+  });
+
+  test('Customer login modal shows Customer OTP flow and registration option', async ({ page }) => {
+    await page.evaluate(() => window.openAuth('login', 'customer'));
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await expect(page.locator('#authTitle')).toHaveText('Customer Login');
+    await expect(page.locator('#sendLoginOtpButton')).toHaveText('Send Customer SMS OTP');
+    await expect(page.locator('#authRegisterButton')).toBeVisible();
+    await expect(page.locator('#authModal .rolegrid')).toBeHidden();
+  });
 });
