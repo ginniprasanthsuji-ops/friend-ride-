@@ -1,0 +1,26 @@
+name: Integration 1 Notification Tests
+
+on:
+  push:
+    branches:
+      - integration/1-core-architecture
+  pull_request:
+    branches:
+      - integration/1-core-architecture
+
+jobs:
+  notification-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check notification modules and tests
+        run: |
+          node --check integrations/notifications/notification-provider.js
+          node --check integrations/notifications/notification-events.js
+          node --check tests/notification-provider.test.cjs
+          node --check tests/notification-events.test.cjs
+      - name: Run notification unit tests
+        run: node --test tests/notification-provider.test.cjs tests/notification-events.test.cjs
