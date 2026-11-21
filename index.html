@@ -2263,6 +2263,30 @@ window.addEventListener('DOMContentLoaded',frRenderSuperHub);
 <script id="fr-device-notifications">
 async function frEnableDeviceAlerts(){
  const out=document.getElementById('frNotifyPermissionStatus');
+ if(!('Notification' in window)){if(out)out.textContent='ఈ Browserలో Notifications అందుబాటులో లేవు.';return false;}
+ if(!('serviceWorker' in navigator)){if(out)out.textContent='ఈ Browserలో background alerts సపోర్ట్ లేదు.';return false;}
+ try{
+  const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();
+  if(permission!=='granted'){if(out)out.textContent='Notifications అనుమతి ఇవ్వలేదు. ఫోన్ Settingsలో అనుమతించండి.';return false;}
+  const registration=await navigator.serviceWorker.register('./service-worker.js');
+  if(out)out.textContent='Notifications permission granted. Background push setup కొనసాగుతుంది.';
+  try{await registration.update();}catch(_e){}
+  if(currentUser&&window.FR_PUSH_VAPID_PUBLIC_KEY){await frEnableBackgroundPush();}
+  return true;
+ }catch(e){if(out)out.textContent='Notifications ప్రారంభించలేకపోయాం. మళ్లీ ప్రయత్నించండి.';return false;}
+}
+function frPushWelcomeOpen(){const el=document.getElementById('frPushWelcomePrompt');if(el)el.style.display='flex';}
+function frPushWelcomeClose(){const el=document.getElementById('frPushWelcomePrompt');if(el)el.style.display='none';try{localStorage.setItem('fr_push_welcome_seen','1');}catch(_){}}
+async function frPushWelcomeAllow(){const ok=await frEnableDeviceAlerts();frPushWelcomeClose();if(ok&&currentUser&&window.FR_PUSH_VAPID_PUBLIC_KEY)await frEnableBackgroundPush();}
+function frPushWelcomeInit(){
+ try{
+  if(Notification?.permission==='granted'){localStorage.setItem('fr_push_welcome_seen','1');return;}
+  if(localStorage.getItem('fr_push_welcome_seen')==='1')return;
+  setTimeout(frPushWelcomeOpen,1800);
+ }catch(_e){}
+}
+
+ const out=document.getElementById('frNotifyPermissionStatus');
  if(!('Notification' in window)){if(out)out.textContent='ఈ Browserలో Notifications అందుబాటులో లేవు.';return;}
  if(!('serviceWorker' in navigator)){if(out)out.textContent='ఈ Browserలో background alerts సపోర్ట్ లేదు.';return;}
  try{
@@ -2274,6 +2298,7 @@ async function frEnableDeviceAlerts(){
  }catch(e){if(out)out.textContent='Notifications ప్రారంభించలేకపోయాం. మళ్లీ ప్రయత్నించండి.';}
 }
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}
+window.addEventListener('load',()=>{frPushWelcomeInit();document.getElementById('frPushWelcomeAllow')?.addEventListener('click',frPushWelcomeAllow);document.getElementById('frPushWelcomeLater')?.addEventListener('click',frPushWelcomeClose);});
 </script>
 <script src="./integrations/notifications/notification-provider.js"></script>
 <script src="./integrations/notifications/push-subscription-lifecycle.js"></script>
@@ -2326,7 +2351,7 @@ function frCrmAddTask(){const title=prompt('Follow-up task title');if(!title)ret
 .fr-ride-notification button{margin-top:9px;border:0;border-radius:9px;padding:7px 11px;background:#eee7f8;color:#3c245b;font-weight:800}
 @keyframes frRideToastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 </style>
-<div id="frRideLiveToast" role="status" aria-live="polite"><b id="frRideLiveToastTitle">FRIEND RIDE</b><p id="frRideLiveToastMessage"></p><button onclick="frOpenNotifications()">View notification</button></div>
+<div id="frPushWelcomePrompt" style="display:none;position:fixed;inset:0;z-index:100000;background:#0009;align-items:center;justify-content:center;padding:18px"><div style="max-width:440px;width:100%;background:#fff;border-radius:22px;padding:22px;box-shadow:0 18px 55px #0004;color:#24153b"><div style="font-size:34px">🔔</div><h2 style="margin:8px 0">FRIEND RIDE Notifications</h2><p style="font-size:14px;color:#625672">Ride, orders, delivery, Home Services, Work/Task, Market మరియు ఇతర ముఖ్యమైన updates real-timeలో అందుకోవడానికి notifications enable చేయండి. App backgroundలో ఉన్నప్పటికీ push alerts రావడానికి setup చేస్తాము.</p><button id="frPushWelcomeAllow" style="width:100%;padding:13px;border:0;border-radius:13px;background:#5b318f;color:#fff;font-weight:900">Allow Notifications</button><button id="frPushWelcomeLater" style="width:100%;padding:12px;border:0;background:transparent;color:#655579;margin-top:7px">Not now</button><small style="display:block;color:#8a8096">System permission మీ అనుమతితో మాత్రమే enable అవుతుంది.</small></div></div><div id="frRideLiveToast" role="status" aria-live="polite"><b id="frRideLiveToastTitle">FRIEND RIDE</b><p id="frRideLiveToastMessage"></p><button onclick="frOpenNotifications()">View notification</button></div>
 <script id="fr-v8-live-ride-notifications">
 let frRideNotifChannel = null;
 let frRideNotifRows = [];
