@@ -4691,6 +4691,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
  const scrollPositions=Object.create(null);
  let currentRoute='home';
  let routingFromHistory=false;
+ let lastProcessedHash=location.hash;
  let originalShowPage=window.showPage;
  function getPageIdFromHash(){
   const raw=location.hash.startsWith(routePrefix)?location.hash.slice(2):'';
@@ -4705,6 +4706,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   if(location.hash===next)return;
   if(replace)history.replaceState({frRoute:id},'',next);
   else history.pushState({frRoute:id},'',next);
+  lastProcessedHash=next;
  }
  function displayRoute(id,restore){
   if(!document.getElementById(id)||!document.getElementById(id).classList.contains('page'))id='home';
@@ -4729,9 +4731,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   };
  }
  function routeFromHistory(){
+  if(location.hash===lastProcessedHash)return;
+  lastProcessedHash=location.hash;
   routingFromHistory=true;
   const id=getPageIdFromHash();
   displayRoute(id,true);
+  setRouteHash(id,true);
   routingFromHistory=false;
  }
  window.addEventListener('popstate',routeFromHistory);
