@@ -4552,7 +4552,7 @@ function wrapTransitions(){
  window.showPage=function(id){if(adminRoute(id)&&role()!=='admin'){console.warn('[FR] Admin-only screen denied');id='home'}const result=original.apply(this,[id]);const p=document.getElementById(id);if(p){p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders');void p.offsetWidth;p.classList.add('fr-screen-enter',cls(id));setTimeout(()=>p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders'),430)}return result};
  window.showPage.__frNativeGuard=true;
 }
-function boot(){rebuildHome();wrapTransitions();document.querySelectorAll('main .page').forEach(p=>p.classList.add('frNativeScreen'))}
+function boot(){rebuildHome();wrapTransitions();document.querySelectorAll('main .page').forEach(p=>p.classList.add('frNativeScreen'));if(document.getElementById('homeLocationText')&&typeof window.useHomeLocation==='function')window.useHomeLocation()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
