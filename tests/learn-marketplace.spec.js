@@ -121,3 +121,16 @@ test('Classroom workflow uses simple external link, no Zoom OAuth secrets', asyn
  expect(js).toContain('Join Online Classroom');
  expect(js).not.toContain('create-zoom-meeting');
 });
+
+test('Homework approval field guard and Telugu hourly reminder regression', async()=>{
+ const {readFile}=await import('node:fs/promises');const base=process.cwd();
+ const guard=await readFile(base+'/supabase/migrations/20261121220000_homework_update_field_guard.sql','utf8');
+ const roleFix=await readFile(base+'/supabase/migrations/20261121230000_homework_update_guard_service_role_allow.sql','utf8');
+ const ui=await readFile(base+'/learn-teach.js','utf8');
+ expect(guard).toContain('Student may only update homework checklist and confirmation fields');
+ expect(guard).toContain('Teacher may only update approval and feedback fields');
+ expect(roleFix).toContain("auth.role()='service_role'");
+ expect(ui).toContain('3600000');
+ expect(ui).toContain('SpeechSynthesisUtterance');
+ expect(ui).toContain('te-IN');
+});
