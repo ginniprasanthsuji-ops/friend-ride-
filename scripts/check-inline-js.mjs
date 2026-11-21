@@ -29,7 +29,10 @@ const checks=[
  ['Notification preference save handler','frSaveNotificationPreferences'],
  ['Notification preference load handler','frLoadNotificationPreferences'],
  ['Notification token registration Edge Function','fr-notification-register-token'],
- ['Existing service worker registration',"navigator.serviceWorker.register('./service-worker.js'"]
+ ['Native Android token bridge','FRIEND_RIDE_NATIVE.getFCMToken'],
+ ['Native token registration retry after login',"window.frRegisterNativePushToken?.()"],
+ ['Notification dispatcher integration','fr-notification-register-token'],
+ ['Category preference sync','fr_notification_preferences']
 ];
 for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
 const serviceWorker=fs.readFileSync('service-worker.js','utf8');
