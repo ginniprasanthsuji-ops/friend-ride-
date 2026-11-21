@@ -1,12 +1,12 @@
 /* FRIEND RIDE FCM Web Push opt-in; public Firebase config only. */
 (function(){
   const FIREBASE_CONFIG={
-    apiKey:'REPLACE_WITH_FIREBASE_WEB_API_KEY',
+    apiKey:'AIzaSyAlFAYAjcV1pR1dzeUjUH9sQaxV19UM',
     authDomain:'friend-ride-app.firebaseapp.com',
     projectId:'friend-ride-app',
     storageBucket:'friend-ride-app.appspot.com',
     messagingSenderId:'986949278576',
-    appId:'REPLACE_WITH_FIREBASE_WEB_APP_ID'
+    appId:'friend-ride-app.firebaseapp.com'
   };
   const VAPID_PUBLIC_KEY='BOYoqlhqA2JZzKxqRUcfPC1Dw7QV7ldMZFzU7aS_gwhyJrerEQNaIP3DuH46BV9z_bLmi5jHliVY3AD6riknmkM';
   const SUPABASE_URL='https://fglyplxcczdjtfwobtzh.supabase.co';
