@@ -13,3 +13,4 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/check-inline-js.mjs
+      - run: node --check learn-teach.js
