@@ -20,8 +20,10 @@ jobs:
         run: |
           node --check integrations/notifications/notification-provider.js
           node --check integrations/notifications/notification-events.js
+          node --check integrations/notifications/push-subscription-lifecycle.js
           node --check tests/notification-provider.test.cjs
           node --check tests/notification-events.test.cjs
           node --check tests/notification-preservation.test.cjs
+          node --check tests/push-subscription-lifecycle.test.cjs
       - name: Run notification unit and preservation tests
-        run: node --test tests/notification-provider.test.cjs tests/notification-events.test.cjs tests/notification-preservation.test.cjs
+        run: node --test tests/notification-provider.test.cjs tests/notification-events.test.cjs tests/notification-preservation.test.cjs tests/push-subscription-lifecycle.test.cjs
