@@ -4703,6 +4703,6 @@ main .page.active{animation:frNativePush .25s cubic-bezier(.18,.72,.18,1) both}
  update(document.querySelector('main .page.active')?.id||'home');
  const mark=()=>document.querySelectorAll('button,.tile,[role="button"],.top-action,.iconbtn').forEach(e=>e.classList.add('fr-native-press'));
  mark();new MutationObserver(mark).observe(document.body,{subtree:true,childList:true});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&window.frAppBack?.())e.preventDefault()});
+ // Escape key is handled once by navigation controller V2; avoid duplicate history-back calls.
 })();
 </script>
