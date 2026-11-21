@@ -4459,13 +4459,8 @@ async function frAdminAssignLaundry(id){
     return;
    }
    saveLocalPrefs({permission:'granted',notifications_enabled:true});
-   try{
-    if('serviceWorker' in navigator){
-      const reg=await navigator.serviceWorker.register('./service-worker.js',{scope:'./'});
-      saveLocalPrefs({service_worker_registered:true});
-      if(reg.active)reg.active.postMessage({type:'FR_NOTIFICATION_PERMISSION_GRANTED'});
-    }
-   }catch(swError){console.warn('FR service worker registration:',swError);saveLocalPrefs({service_worker_registered:false})}
+   // Service-worker background push is deferred until the worker file and provider are installed.
+   saveLocalPrefs({service_worker_registered:false,background_push_pending:true});
    if(window.currentUser&&window.sb){
     const prefs={user_id:window.currentUser.id,ride_enabled:true,order_enabled:true,payment_enabled:true,account_enabled:true,partner_enabled:true,hourly_enabled:true,promo_enabled:false,updated_at:new Date().toISOString()};
     const {error}=await window.sb.from('fr_notification_preferences').upsert(prefs,{onConflict:'user_id'});
@@ -4481,7 +4476,8 @@ async function frAdminAssignLaundry(id){
      }
     }catch(tokenError){console.warn('FR token provider not configured or failed:',tokenError)}
    }
-   status('Notifications permission enabled. Device push token registration will complete when the push provider is configured.');
+   try{if(window.Notification&&Notification.permission==='granted'&&typeof window.Notification==='function'){new Notification('FRIEND RIDE',{body:'Notification permission enabled successfully.'})}}catch(_){/* Native/PWA notification test may require service worker support. */}
+   status('Notification permission enabled. Background push setup is pending provider configuration.');
    try{localStorage.setItem(KEY,'enabled')}catch(_){}
    setTimeout(hideCard,2200);
   }catch(error){status('Notifications setup failed. '+(error?.message||'Please try again.'))}
@@ -4497,9 +4493,7 @@ async function frAdminAssignLaundry(id){
    showCard();
   }catch(_){hideCard()}
  }
- if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).catch(e=>console.warn('FR SW registration',e)));
- }
+ // Background push worker registration is intentionally disabled until the worker file is committed.
  document.addEventListener('DOMContentLoaded',init);
  if(document.readyState!=='loading')init();
 })();
