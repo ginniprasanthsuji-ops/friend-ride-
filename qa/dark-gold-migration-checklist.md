@@ -93,3 +93,13 @@
 
 ## Status semantics
 The checked items above are changes actually committed to the QA branch. All 58 route IDs still exist and preserve their existing destination screens. **The full structural screen-by-screen legacy markup removal is not complete**, and the route verification checkboxes remain unchecked until the tests/device checks confirm them.
+
+
+## Continuation audit — 2026-11-21
+
+- QA branch remains isolated from `main`; no merge or deployment performed.
+- Confirmed the Dark + Gold route regression spec and the 58-route inventory exist.
+- Existing checklist explicitly leaves route-level verification, real role/auth/session verification, integrations, legacy markup cleanup, and full regression incomplete.
+- The workflow is configured for pushes to this branch, manual dispatch, and daily scheduled regression. The latest inspected migration-branch commit had no reported workflow runs/status through the available GitHub status endpoints.
+- Full `index.html` retrieval is currently unavailable via the connected GitHub file API (file SHA is returned but content is empty). Therefore no source edits or tests are claimed in this audit.
+- Release gate remains BLOCKED until source access, test execution, and evidence-backed PASS results are available.
