@@ -258,3 +258,12 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Backend integration/role testing remains blocked: QA project has no FRIEND RIDE schema or Ride/Food/Market/Parcel/Service functions; live test account creation/deletion and device push are not tested.
 - [x] No SQL writes, migrations, deployments, secret changes, main merge, production modifications, or payments.
 - **Status:** Browser regression PASS (53/53). Backend live testing and security remediation/certification still BLOCKED. GST/payment testing stays deferred until user provides GST.
+
+
+## 28. Backend source review continuation — 2026-11-21
+- [x] Reviewed package test scripts: Playwright, Node unit tests, Vitest core, TypeScript typecheck/build scripts are present.
+- [x] Reviewed read-only backend regression SQL: checks expected public tables/RLS, RPC function presence, private storage buckets and expected storage policies. The script explicitly does not invoke RPC authorization or runtime storage access; it is a presence/configuration audit only.
+- [x] Reviewed notification foundation migration source: preferences, campaigns, homework reminders, notification queue, RLS and due-queue index are defined. Migration header says QA only/not deployed; no scheduler/delivery function was verified live.
+- [x] Reviewed cycle delivery pricing migration source. No migration applied.
+- [ ] Runtime backend testing remains blocked pending an isolated FRIEND RIDE QA backend, disposable auth-role accounts and approved test credentials/cleanup path.
+- **No writes/deployments:** production and QA Supabase unchanged; payment/GST deferred.
