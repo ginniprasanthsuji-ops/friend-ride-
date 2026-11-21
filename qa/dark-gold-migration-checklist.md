@@ -144,3 +144,12 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Failure 1 was a test selector scope bug: `main .page` counted 57 while the app has 58 route elements; corrected to count `.page` globally.
 - Failure 2: registration entrypoint test clicked buttons while the Home route was not active/visible. Corrected the test to activate `home` via the existing `showPage('home')` before checking/clicking the registration buttons.
 - Corrections commit: `40dcb3cc2800231d4ac495247df0ed42e22f2e05`. Fresh CI run required; no merge/deploy yet.
+
+
+## Release-readiness audit — 2026-11-22
+- QA branch source blob inspected: index.html blob SHA `553648fb053620ce27aad92c5300f38dc475dc40`. The 58-route inventory remains the migration scope; existing route IDs were preserved.
+- Static source confirms the Dark + Gold design system and native-home location text mirror the existing `homeLocationText` field via MutationObserver. This is structural evidence only; live GPS permission/reverse-geocoding still requires device/browser verification.
+- Static source audit found 27 style blocks and legacy presentation/color rules still present. Do not blanket-remove these without route-level visual evidence; screen-by-screen cleanup and verification remain release work.
+- The source does not expose a clearly named standalone “Integration Project Page v1” route from keyword audit. It contains integration notices for backend/payment, catalogue persistence, OTP/APITXT, ride/tracking, and notifications. Confirm the intended project-page scope from its prior design/reference before inventing a new route.
+- CI run 44936405386 reports typecheck/unit/core and browser-e2e jobs PASS, but its tested commit is not verified to be the current PR head. Current branch-to-main comparison: 31 commits ahead, 0 behind; main is unchanged.
+- Release remains BLOCKED: current-head Quality Gate evidence, full role/route visual checks, and integration/device checks (GPS/maps, auth/OTP delivery, payment verification, uploads/KYC, push notifications, session/permissions) are not all verified.
