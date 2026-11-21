@@ -4,34 +4,28 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import webpush from "npm:web-push@3.6.7";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "null",
-  "Access-Control-Allow-Headers": "content-type, x-fr-push-secret",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+const responseHeaders = { "Content-Type": "application/json" };
 
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+  return new Response(JSON.stringify(body), { status, headers: responseHeaders });
 }
 
-async function constantTimeEqual(a: string, b: string): Promise<boolean> {
-  const encoder = new TextEncoder();
-  const aa = encoder.encode(a);
-  const bb = encoder.encode(b);
+function constantTimeEqual(a: string, b: string): boolean {
+  const aa = new TextEncoder().encode(a);
+  const bb = new TextEncoder().encode(b);
   if (aa.length !== bb.length) return false;
-  return crypto.subtle.timingSafeEqual(aa, bb);
+  let difference = 0;
+  for (let i = 0; i < aa.length; i++) difference |= aa[i] ^ bb[i];
+  return difference === 0;
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok");
   if (req.method !== "POST") return json({ error: "method-not-allowed" }, 405);
 
   const internalSecret = Deno.env.get("FR_PUSH_INTERNAL_SECRET");
   const suppliedSecret = req.headers.get("x-fr-push-secret") || "";
-  if (!internalSecret || !(await constantTimeEqual(suppliedSecret, internalSecret))) {
+  if (!internalSecret || !constantTimeEqual(suppliedSecret, internalSecret)) {
     return json({ error: "unauthorized" }, 401);
   }
 
@@ -85,7 +79,6 @@ Deno.serve(async (req) => {
         expired++;
         await admin.from("fr_push_subscriptions").update({ is_active: false, updated_at: new Date().toISOString() }).eq("id", row.id);
       }
-      // Avoid logging endpoint/key details.
       console.warn("Web push delivery failed", { statusCode, subscriptionId: row.id });
     }
   }
