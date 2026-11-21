@@ -601,3 +601,21 @@ test('VidyaSetu Learning home tile opens Teacher, Student and Coaching Center en
   await expect(page.locator('#learnTeachRoot')).toContainText(/Coaching Center/);
   expect(errors,'VidyaSetu page JavaScript errors').toEqual([]);
 });
+
+
+test('Home notification bell SVG and default profile avatar fallback are visible and accessible', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const bell = page.locator('.fr-notify-bell');
+  await expect(bell).toBeVisible();
+  await expect(bell).toHaveAttribute('aria-label', 'Notifications');
+  const bellSvg = bell.locator('svg.fr-bell-icon');
+  await expect(bellSvg).toBeVisible();
+  await expect(bellSvg.locator('path')).toHaveCount(2);
+
+  const profileButton = page.locator('#frHomeProfileButton');
+  await expect(profileButton).toBeVisible();
+  await expect(profileButton).toHaveAttribute('aria-label', 'Profile');
+  const defaultAvatar = page.locator('#frHomeProfileAvatar svg.fr-default-avatar');
+  await expect(defaultAvatar).toBeVisible();
+  await expect(defaultAvatar).toHaveAttribute('aria-label', 'Default profile avatar');
+});
