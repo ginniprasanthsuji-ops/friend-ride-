@@ -4850,7 +4850,7 @@ window.frRefreshHomeProfileAvatar=async function(){
  photo.hidden=true;photo.removeAttribute('src');fallback.replaceChildren();
  const profile=window.currentProfile||currentProfile||{};
  const user=window.currentUser||currentUser||null;
- if(!user?.id||!profile?.role){fallback.hidden=false;return;}
+ if(!user?.id||!profile?.role){fallback.hidden=false;fallback.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';return;}
  const role=String(profile.role).toLowerCase();
  const column=role==='driver'?'driver_profile_photo_path':role==='partner'?'partner_profile_photo_path':'customer_profile_photo_path';
  const bucket=role==='driver'?'driver-profile-photos':role==='partner'?'partner-profile-photos':'customer-profile-photos';
@@ -4868,9 +4868,7 @@ window.frRefreshHomeProfileAvatar=async function(){
   }catch(error){console.warn('FR home profile image:',error.message);}
  }
  fallback.hidden=false;
- const gender=String(profile.customer_avatar_gender||profile.avatar_gender||profile.gender||profile.driver_avatar_gender||profile.partner_avatar_gender||'male').toLowerCase()==='female'?'female':'male';
- const avatar=typeof frCustomerAvatarData==='function'?frCustomerAvatarData(gender):'';
- if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='Default profile avatar';fallback.append(img);}else{fallback.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';}
+ fallback.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';
 };
 (function(){
  const refresh=()=>window.frRefreshHomeProfileAvatar().catch(e=>console.warn(e));
@@ -4979,3 +4977,26 @@ window.frRefreshHomeProfileAvatar=async function(){
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
+<style id="fr-final-dark-gold-balance">
+/* Final UI balancing: consistent Dark + Gold palette and clear profile/notification controls. */
+.home-topbar{background:linear-gradient(115deg,#101a2c,#07101e 70%,#18243a)!important;color:#f6f8ff!important;border-bottom:1px solid #263b59!important;box-shadow:0 7px 24px #0005!important}
+.home-topbar .location-head{color:#f6f8ff!important}.home-topbar .location-head span{color:#aab9d0!important}
+.home-topbar .menu-open{background:#18243a!important;color:#f5b84c!important;border:1px solid #334966!important}
+.home-topbar .notify-btn{width:44px;height:44px;min-width:44px;display:grid;place-items:center;border-radius:13px;background:#18243a!important;color:#f5b84c!important;border:1px solid #334966!important;font-size:22px;box-shadow:0 2px 8px #0004}
+.home-topbar .fr-home-profile-btn{border-radius:50%!important;border:2px solid #8c6125!important;background:#18243a!important;padding:3px!important;overflow:hidden}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;background:#243247!important}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar .fr-default-avatar{display:grid;place-items:center;width:100%;height:100%;font-size:26px;color:#f5b84c!important}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.home-topbar .fr-notify-bell{position:relative;line-height:1;font-size:23px}.home-topbar .fr-notify-bell i{right:5px;top:5px;background:#ff687d;border:2px solid #18243a}
+.home-topbar #frRideUnreadBadge{border:2px solid #18243a;background:#ff687d;color:#fff}
+body .fr-notify-hero,body .fr-support-home-entry{background:linear-gradient(145deg,#14223a,#0b1423)!important;color:#f6f8ff!important;border-color:#263b59!important}
+body .fr-notify-hero h2,body .fr-notify-hero p,body .fr-notify-hero small{color:inherit}
+body .fr-notify-enable,body .fr-alert-preview-buttons button{background:linear-gradient(135deg,#f5b84c,#d99026)!important;color:#111827!important;border:1px solid #8c6125!important}
+body .market-product,body .fr-store-card,body .fr-catalogue-category-tile,body .fr-premium-hub .fr-service-card,body .fr-premium-hub .fr-category-card{background:linear-gradient(145deg,#14223a,#0b1423)!important;color:#f6f8ff!important;border-color:#263b59!important}
+body .market-product-art,body .fr-store-card .market-store-art{background:radial-gradient(circle at 28% 20%,#ffffff18 0,transparent 43%),linear-gradient(145deg,#332514,#14223a)!important}
+body .fr-open-digital-catalogue,body .fr-premium-hero-btn,body .fr-checkout-btn{background:linear-gradient(100deg,#f5b84c,#d99026)!important;color:#111827!important;border-color:#f5b84c!important}
+body .fr-premium-hero{background:radial-gradient(circle at 78% 30%,#5a431c 0,transparent 30%),radial-gradient(circle at 12% 100%,#1c3b5d 0,transparent 27%),linear-gradient(125deg,#101a2c,#332514 52%,#151d2c)!important;border:1px solid #8c6125!important}
+body .fr-avatar-pick,body .fr-feedback-card{background:linear-gradient(145deg,#14223a,#0b1423)!important;color:#f6f8ff!important;border-color:#263b59!important}
+body .fr-avatar-pick.active{background:linear-gradient(145deg,#332514,#14223a)!important;border-color:#f5b84c!important}
+body .fr-ride-notification{background:#121e32!important;color:#f6f8ff!important;border-color:#263b59!important}body .fr-ride-notification.unread{background:#332514!important;border-color:#8c6125!important}
+</style>
