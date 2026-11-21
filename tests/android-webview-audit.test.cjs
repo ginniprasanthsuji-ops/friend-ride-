@@ -18,7 +18,7 @@ test("WebView audit detects required files and browser APIs", () => {
   assert.match(run.stdout, /Geolocation API/);
   assert.match(run.stdout, /Notification APIs/);
   assert.match(run.stdout, /External navigation/);
-  assert.match(run.stdout, /Manifest icon .*WARN/);
+  assert.match(run.stdout, /WARN .*Manifest icon/);
   assert.match(run.stdout, /Service worker registration file .*PASS/);
   fs.rmSync(temp, { recursive: true, force: true });
 });
@@ -28,7 +28,7 @@ test("WebView audit fails when staged app and worker are missing", () => {
   const audit = path.resolve(__dirname, "../scripts/android-webview-audit.cjs");
   const run = spawnSync(process.execPath, [audit, temp], { encoding: "utf8" });
   assert.notEqual(run.status, 0);
-  assert.match(run.stdout, /Staged index.html .*FAIL/);
-  assert.match(run.stdout, /Service worker registration file .*FAIL/);
+  assert.match(run.stdout, /FAIL .*Staged index.html/);
+  assert.match(run.stdout, /FAIL .*Service worker registration file/);
   fs.rmSync(temp, { recursive: true, force: true });
 });
