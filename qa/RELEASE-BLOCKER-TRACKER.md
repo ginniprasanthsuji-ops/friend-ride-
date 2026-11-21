@@ -131,3 +131,11 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [x] Reconciliation plan added at `qa/LEARN-TEACH-QA-BACKEND-RECONCILIATION.md`.
 - [ ] Homework due-time contract is unresolved: current table only has date field. Do not send timed reminders until a due time/default is product-approved.
 - [ ] QA backend project alignment and test accounts required before implementation/testing.
+
+
+## 14. Notification/UI regression guard additions
+- [x] Added QA checks that notification page/feed/status and device-alert/live-ride notification code remain present.
+- [x] Added explicit audit assertion that homework scheduler is still not present (release gap remains visible).
+- [x] Added regression guard for requested floating-help UI removal.
+- [ ] CI run for commit `824460103042017fc85bad26485dd168489330a9` pending.
+- [ ] These are source/UI checks only; no push delivery, closed-app notification, homework schedule, marketing targeting, or hourly cadence verified.
