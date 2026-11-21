@@ -3487,7 +3487,13 @@ async function frAdminUpdateBankEnquiry(id,status){
 
   sb.auth.onAuthStateChange((event,session)=>{
     if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;frStopDriverPolling();}
-    if(event==='TOKEN_REFRESHED'&&session?.user){currentUser=session.user;}
+    if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED'||event==='INITIAL_SESSION')&&session?.user){
+      currentUser=session.user;
+      // Permission is already granted: silently refresh/register push subscription after auth.
+      if(window.Notification?.permission==='granted'&&typeof frRideStartAfterLogin==='function'){
+        setTimeout(()=>{try{frRideStartAfterLogin();}catch(e){console.warn('Post-login notification setup failed:',e);}},0);
+      }
+    }
   });
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden&&currentUser?.id&&(selectedRole==='driver'||selectedRole==='partner'))window.frRefreshMyApprovalStatus().catch(()=>{});
