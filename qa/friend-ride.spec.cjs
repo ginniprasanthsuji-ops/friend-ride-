@@ -645,3 +645,20 @@ test('Home current-location label uses GPS coordinates and reverse-geocoded city
   expect(coordinates).toEqual({ latitude: '17.4065', longitude: '78.4772' });
   await expect(page.locator('#homeLocationText')).not.toContainText('Tekkali');
 });
+
+
+test('VidyaSetu Teacher, Student and Coaching Center cards open dashboards and return to role selection', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.locator('.fr-native-home [data-fr-native-route="learnTeach"]').click();
+  const roles = page.locator('#learnTeachRoot .fr-v11-learning-grid');
+  await expect(roles).toBeVisible({ timeout: 5000 });
+  for (const role of ['teacher', 'student', 'coaching']) {
+    await page.locator(`#learnTeachRoot [data-learning-role="${role}"]`).click();
+    const dashboard = page.locator('#learnTeachRoot .fr-v11-role-dashboard');
+    await expect(dashboard).toBeVisible();
+    await expect(dashboard).toContainText(new RegExp(role === 'coaching' ? 'Coaching Center' : role, 'i'));
+    await expect(dashboard).toContainText('Dashboard');
+    await dashboard.locator('button').filter({ hasText: 'విద్యా సేతు Roles' }).click();
+    await expect(roles).toBeVisible();
+  }
+});
