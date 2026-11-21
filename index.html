@@ -265,6 +265,14 @@ body{padding-bottom:105px}
 </header>
 <main>
 <section id="home" class="page active">
+ <div id="frNotificationSetupCard" class="card hide" style="border:1px solid #d9c5f5;background:linear-gradient(145deg,#fff,#f7f0ff)">
+  <h2>🔔 FRIEND RIDE Notifications</h2>
+  <p class="muted">Ride updates, order status, payment alerts and important updates కోసం notifications enable చేయండి.</p>
+  <button class="btn purple" id="frEnableNotificationsButton" onclick="frEnableNotifications()">Enable Notifications</button>
+  <button class="btn light" id="frLaterNotificationsButton" onclick="frDismissNotificationSetup()">Later</button>
+  <div id="frNotificationSetupStatus" class="notice" role="status" aria-live="polite"></div>
+ </div>
+
  <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('explore')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Services ↗</span></div><div class="banner-art">🛵</div></div>
   <div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
 <div class="card join-card"><h2>Join FRIEND RIDE</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')"><span class="emoji">👤</span><b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')"><span class="emoji">🚗</span><b>Driver Registration</b></button><button class="tile" onclick="openAuth('register','partner')"><span class="emoji">🏪</span><b>Partner Registration</b></button></div></div>
@@ -642,7 +650,21 @@ body{padding-bottom:105px}
 <section id="settings" class="page"><div class="card"><h2>System Settings</h2><div class="notice">Platform-wide settings must be managed through protected admin APIs.</div></div></section>
 
 <section id="profile" class="page"><div class="card"><h2>My Profile</h2><div id="profileInfo" class="muted">Login చేయండి.</div><button class="btn red" onclick="logout()">Logout</button></div></section>
-<section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><div class="fr-alert-preview"><b>🔊 Alert Sound Preview</b><div class="fr-alert-preview-buttons"><button type="button" onclick="frPreviewAlertTone('order')">🛍️ Order arrived</button><button type="button" onclick="frPreviewAlertTone('ride')">🛵 New ride</button><button type="button" onclick="frPreviewAlertTone('customer')">🔔 Customer update</button></div></div><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div></section>
+<section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><div class="fr-alert-preview"><b>🔊 Alert Sound Preview</b><div class="fr-alert-preview-buttons"><button type="button" onclick="frPreviewAlertTone('order')">🛍️ Order arrived</button><button type="button" onclick="frPreviewAlertTone('ride')">🛵 New ride</button><button type="button" onclick="frPreviewAlertTone('customer')">🔔 Customer update</button></div></div><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div>
+<div class="card" id="frNotificationPreferencesCard">
+ <h3>⚙️ Notification Preferences</h3>
+ <p class="muted tiny">మీకు కావలసిన notification categories ఎంపిక చేసుకోండి. Save చేసిన తర్వాత preferences accountకు sync అవుతాయి.</p>
+ <div class="row"><label><input id="frPrefRide" type="checkbox" checked> Ride Updates</label></div>
+ <div class="row"><label><input id="frPrefOrder" type="checkbox" checked> Order Updates</label></div>
+ <div class="row"><label><input id="frPrefPayment" type="checkbox" checked> Payments</label></div>
+ <div class="row"><label><input id="frPrefAccount" type="checkbox" checked> Account & KYC</label></div>
+ <div class="row"><label><input id="frPrefPartner" type="checkbox" checked> Partner Updates</label></div>
+ <div class="row"><label><input id="frPrefHourly" type="checkbox" checked> Hourly Updates</label></div>
+ <div class="row"><label><input id="frPrefPromo" type="checkbox"> Promotional Offers</label></div>
+ <button class="btn purple" onclick="frSaveNotificationPreferences()">Save Preferences</button>
+ <div id="frPrefSaveStatus" class="notice" role="status" aria-live="polite"></div>
+</div>
+</section>
 <section id="support" class="page"><div class="card"><h2>💬 Complaints & Feedback</h2><p class="muted">ఈ పాత Support లింక్ ఇప్పుడు కొత్త Complaint & Feedback ఫారమ్‌కు తీసుకెళ్తుంది.</p><button class="btn purple" onclick="frOpenSupportPage()">Open Complaints & Feedback</button></div></section>
 <section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
 <section id="cart" class="page"><div class="card"><h2>🛒 My Cart</h2><p class="muted">మీ Friend Mart / Food Delivery items ఇక్కడ కనిపిస్తాయి.</p><div class="notice">మీరు ఎంచుకున్న వస్తువులు ఇక్కడ కనిపిస్తాయి. షాపింగ్ కొనసాగించండి.</div><button class="btn purple" onclick="showPage('shops')">Explore Stores</button><div class="notice" style="margin-top:12px"><b>Charges Transparency</b><br>Platform charge: 2.5% (eligible order valueపై). Delivery charge: location, distance మరియు delivery partner quote ఆధారంగా checkout ముందు చూపబడుతుంది. Final payable amount paymentకి ముందు చూపించాలి.</div></div></section>
@@ -2261,19 +2283,8 @@ window.addEventListener('DOMContentLoaded',frRenderSuperHub);
 
 <style id="fr-notify-polish">.fr-notify-hero{padding:23px;border-radius:25px;color:#fff;background:radial-gradient(circle at 90% 0,#9865e7 0,transparent 35%),linear-gradient(125deg,#21133f,#56308f);box-shadow:0 14px 30px #28134a24;margin-bottom:15px}.fr-notify-hero>span{font-size:10px;letter-spacing:2px;font-weight:900;color:#dacbff}.fr-notify-hero h2{font-size:23px;margin:8px 0}.fr-notify-hero p{font-size:12px;color:#e5d9f7}.fr-notify-enable{border:0;border-radius:14px;padding:12px 16px;background:linear-gradient(100deg,#ffc17d,#ffe3b5);color:#38204f;font-weight:900}.fr-notify-hero small{display:block;margin-top:10px;color:#d8c8ef;font-size:10px}.fr-notify-list-head{display:flex;justify-content:space-between;align-items:center}.fr-notify-list-head h3{margin:0}.fr-notify-list-head span{font-size:10px;color:#8c8299}.fr-support-home-entry{margin:14px 0;border:1px solid #ded5ef;background:linear-gradient(135deg,#fff,#f5f0ff)}.fr-support-home-entry h2{margin:0 0 6px}.fr-support-home-entry .btn{width:100%;margin-top:8px}#frAdminSupportPanel{margin-top:14px}#frAdminSupportList{white-space:normal}</style>
 <script id="fr-device-notifications">
-async function frEnableDeviceAlerts(){
- const out=document.getElementById('frNotifyPermissionStatus');
- if(!('Notification' in window)){if(out)out.textContent='ఈ Browserలో Notifications అందుబాటులో లేవు.';return;}
- if(!('serviceWorker' in navigator)){if(out)out.textContent='ఈ Browserలో background alerts సపోర్ట్ లేదు.';return;}
- try{
-  const permission=await Notification.requestPermission();
-  if(permission!=='granted'){if(out)out.textContent='Notifications అనుమతి ఇవ్వలేదు. ఫోన్ Settingsలో అనుమతించండి.';return;}
-  const registration=await navigator.serviceWorker.register('./service-worker.js');
-  if(out)out.textContent='ఈ పరికరంలో Notifications అనుమతి ప్రారంభమైంది.';
-  try{await registration.update();}catch(_e){}
- }catch(e){if(out)out.textContent='Notifications ప్రారంభించలేకపోయాం. మళ్లీ ప్రయత్నించండి.';}
-}
-if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}
+async function frEnableDeviceAlerts(){return window.frEnableNotifications?window.frEnableNotifications():alert('Notification integration is loading. Please try again.');}
+
 </script>
 
 <style id="fr-crm-premium-style">
@@ -4427,6 +4438,112 @@ async function frAdminAssignLaundry(id){
 <style id="fr-v11.1-pro-learning-routing-style">
 .fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
 </style>
+<script id="fr-phase1-notification-permission-integration">
+(function(){
+ const KEY='fr_notification_setup_v1';
+ const PREF_KEY='fr_notification_prefs_local_v1';
+ function localPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||'{}')}catch(_){return {}}}
+ function saveLocalPrefs(p){try{localStorage.setItem(PREF_KEY,JSON.stringify({...localPrefs(),...p,updated_at:new Date().toISOString()}))}catch(_){}}
+ window.frNotificationLocalPrefs=localPrefs;
+ window.frSaveNotificationLocalPrefs=saveLocalPrefs;
+ function status(msg){const el=document.getElementById('frNotificationSetupStatus');if(el){el.textContent=msg;el.classList.remove('hide')}const pageStatus=document.getElementById('frNotifyPermissionStatus');if(pageStatus)pageStatus.textContent=msg}
+ function hideCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.add('hide')}
+ function showCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.remove('hide')}
+ window.frDismissNotificationSetup=function(){try{localStorage.setItem(KEY,'dismissed')}catch(_){}hideCard()};
+ window.frRegisterNativePushToken=async function(){
+  try{
+   const client=typeof sb!=='undefined'?sb:window.sb;
+   const user=typeof currentUser!=='undefined'?currentUser:window.currentUser;
+   if(!client||!user)return {ok:false,reason:'not-authenticated'};
+   let token=null;
+   if(typeof window.FR_PUSH_TOKEN_PROVIDER==='function')token=await window.FR_PUSH_TOKEN_PROVIDER();
+   else if(window.FRIEND_RIDE_NATIVE&&typeof window.FRIEND_RIDE_NATIVE.getFCMToken==='function')token=await window.FRIEND_RIDE_NATIVE.getFCMToken();
+   if(!token)return {ok:false,reason:'native-token-provider-not-installed'};
+   const {error}=await client.functions.invoke('fr-notification-register-token',{body:{token:String(token),platform:window.FR_PUSH_PLATFORM||'android'}});
+   if(error)throw error;
+   saveLocalPrefs({push_token_registered:true,push_token_registered_at:new Date().toISOString()});
+   return {ok:true};
+  }catch(e){console.warn('FR token registration:',e);return {ok:false,reason:String(e)}}
+ };
+ window.frEnableNotifications=async function(){
+  const button=document.getElementById('frEnableNotificationsButton');if(button)button.disabled=true;
+  try{
+   if(!('Notification' in window)){status('ఈ browser notifications support చేయదు.');return}
+   let permission=Notification.permission;
+   if(permission==='default')permission=await Notification.requestPermission();
+   if(permission!=='granted'){
+    saveLocalPrefs({permission,notifications_enabled:false});
+    status(permission==='denied'?'Notifications browser/Android Settingsలో block అయ్యాయి. Settings నుంచి enable చేయండి.':'Notifications permission ఇవ్వలేదు.');
+    return;
+   }
+   saveLocalPrefs({permission:'granted',notifications_enabled:true});
+   if('serviceWorker' in navigator){try{const reg=await navigator.serviceWorker.register('./service-worker.js',{scope:'./'});saveLocalPrefs({service_worker_registered:true,background_push_pending:true});if(reg.active)reg.active.postMessage({type:'FR_NOTIFICATION_PERMISSION_GRANTED'});}catch(swError){console.warn('FR notification service worker:',swError);saveLocalPrefs({service_worker_registered:false,background_push_pending:true});}}
+   // Notification categories are saved by the dedicated preferences screen; avoid overwriting user choices here.
+   await window.frRegisterNativePushToken?.();
+
+   try{if(window.Notification&&Notification.permission==='granted'&&typeof window.Notification==='function'){new Notification('FRIEND RIDE',{body:'Notification permission enabled successfully.'})}}catch(_){/* Native/PWA notification test may require service worker support. */}
+   status('Notifications enabled. Device token registration is attempted; provider configuration may still be pending.');
+   try{localStorage.setItem(KEY,'enabled')}catch(_){}
+   setTimeout(hideCard,2200);
+  }catch(error){status('Notifications setup failed. '+(error?.message||'Please try again.'))}
+  finally{if(button)button.disabled=false}
+ };
+ function init(){
+  try{
+   if(!('Notification' in window)){hideCard();return}
+   const permission=Notification.permission;
+   if(permission==='granted'){hideCard();saveLocalPrefs({permission,notifications_enabled:true});return}
+   if(permission==='denied'){hideCard();saveLocalPrefs({permission,notifications_enabled:false});return}
+   if(localStorage.getItem(KEY)==='dismissed'){hideCard();return}
+   showCard();
+  }catch(_){hideCard()}
+ }
+ // Worker registration is active; native Android wrapper must expose FRIEND_RIDE_NATIVE.getFCMToken() or FR_PUSH_TOKEN_PROVIDER.
+ document.addEventListener('DOMContentLoaded',init);
+ if(document.readyState!=='loading')init();
+})();
+
+ window.frSaveNotificationPreferences=async function(){
+  const values={
+   ride_enabled:!!document.getElementById('frPrefRide')?.checked,
+   order_enabled:!!document.getElementById('frPrefOrder')?.checked,
+   payment_enabled:!!document.getElementById('frPrefPayment')?.checked,
+   account_enabled:!!document.getElementById('frPrefAccount')?.checked,
+   partner_enabled:!!document.getElementById('frPrefPartner')?.checked,
+   hourly_enabled:!!document.getElementById('frPrefHourly')?.checked,
+   promo_enabled:!!document.getElementById('frPrefPromo')?.checked
+  };
+  if(window.frSaveNotificationLocalPrefs)window.frSaveNotificationLocalPrefs(values);
+  const statusEl=document.getElementById('frPrefSaveStatus');
+  const frAuthUser=typeof currentUser!=='undefined'?currentUser:window.currentUser;
+  const frSupabaseClient=typeof sb!=='undefined'?sb:window.sb;
+  if(!frAuthUser||!frSupabaseClient){if(statusEl)statusEl.textContent='Preferences ఈ పరికరంలో save అయ్యాయి. Accountలో sync చేయడానికి login చేయండి.';return}
+  const {error}=await frSupabaseClient.from('fr_notification_preferences').upsert({user_id:frAuthUser.id,...values,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  if(statusEl)statusEl.textContent=error?'Save failed: '+error.message:'Notification preferences saved and synced.';
+ };
+ window.frLoadNotificationPreferences=async function(){
+  const p=window.frNotificationLocalPrefs?window.frNotificationLocalPrefs():{};
+  const map={ride_enabled:'frPrefRide',order_enabled:'frPrefOrder',payment_enabled:'frPrefPayment',account_enabled:'frPrefAccount',partner_enabled:'frPrefPartner',hourly_enabled:'frPrefHourly',promo_enabled:'frPrefPromo'};
+  Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el&&key in p)el.checked=!!p[key]});
+  const frAuthUser=typeof currentUser!=='undefined'?currentUser:window.currentUser;
+  const frSupabaseClient=typeof sb!=='undefined'?sb:window.sb;
+  if(frAuthUser&&frSupabaseClient){
+   try{
+    const {data,error}=await frSupabaseClient.from('fr_notification_preferences').select('*').eq('user_id',frAuthUser.id).maybeSingle();
+    if(!error&&data){Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el)el.checked=!!data[key]});if(window.frSaveNotificationLocalPrefs)window.frSaveNotificationLocalPrefs(data)}
+   }catch(e){console.warn('FR notification preferences load:',e)}
+   if(window.Notification?.permission==='granted')setTimeout(()=>window.frRegisterNativePushToken?.(),700);
+  }
+ };
+ document.addEventListener('DOMContentLoaded',()=>window.frLoadNotificationPreferences());
+ if(document.readyState!=='loading')window.frLoadNotificationPreferences();
+
+ if(typeof window.acceptSession==='function'&&!window.__frNotificationSessionHook){
+  window.__frNotificationSessionHook=true;
+  const frPreviousAcceptSession=window.acceptSession;
+  window.acceptSession=async function(){const result=await frPreviousAcceptSession.apply(this,arguments);await window.frLoadNotificationPreferences();return result};
+ }
+</script>
 </body>
 </html>
 <style>

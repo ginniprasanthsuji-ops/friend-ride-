@@ -14,7 +14,7 @@ const checks=[
  ['OTP backend','Sms-otp'],
  ['Role-aware session restore','adminRow?.user_id===authUser.id'],
  ['Customer photo upload','frUploadPrivateRegistrationFile(customerPhoto'],
- ['Version 10.2 feedback hotfix marker','name="application-version" content="10.2-feedback-hotfix"'],
+ ['Current application version marker','name="application-version" content="11.1-PRO-category-routing-learning-isolation"'],
  ['Partner GPS save RPC','fr_partner_save_location'],
  ['Approved store geo RPC','fr_customer_list_approved_stores_geo'],
  ['Friend Mart map','friendMartMap'],
@@ -23,8 +23,24 @@ const checks=[
  ['Profile photo signed URL loader','frLoadProfilePhoto'],
  ['Assigned driver vehicle/contact RPC','get_ride_driver_details'],
  ['Customer WhatsApp action','https://wa.me/'],
- ['Customer active ride contact rendering','frRenderCustomerRideDriverAndPayment(active)']
+ ['Customer active ride contact rendering','frRenderCustomerRideDriverAndPayment(active)'],
+ ['Notification permission card','frNotificationSetupCard'],
+ ['Unified notification permission handler','window.frEnableNotifications'],
+ ['Notification preference save handler','frSaveNotificationPreferences'],
+ ['Notification preference load handler','frLoadNotificationPreferences'],
+ ['Notification token registration Edge Function','fr-notification-register-token'],
+ ['Native Android token bridge','FRIEND_RIDE_NATIVE.getFCMToken'],
+ ['Native token registration retry after login',"window.frRegisterNativePushToken?.()"],
+ ['Notification dispatcher integration','fr-notification-register-token'],
+ ['Category preference sync','fr_notification_preferences']
 ];
 for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
+const serviceWorker=fs.readFileSync('service-worker.js','utf8');
+try{new vm.Script(serviceWorker,{filename:'service-worker.js'});console.log('PASS service-worker syntax');}
+catch(e){failed=true;console.error('FAIL service-worker syntax: '+e.message);}
+for(const [label,token] of [['Role-aware push title','🛵 కొత్త రైడ్ వచ్చింది'],['Push handler','addEventListener(\'push\''],['Notification click handler','addEventListener(\'notificationclick\'']]){
+ if(serviceWorker.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}
+}
+
 if(failed)process.exit(1);
 console.log(`Checked ${blocks.length} inline scripts.`);
