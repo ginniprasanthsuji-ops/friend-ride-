@@ -154,3 +154,11 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [x] Food RLS review SQL comment corrected: row policies do not limit updated columns. Restaurant-owner UPDATE requires column-level grants, constrained RPC, or trigger validation before safe application.
 - [ ] Food RLS correction remains review-only and is not applied. Backend integration, auth-role testing, payments, delivery partner status RPC and device tests remain blockers.
 - [ ] New commit CI pending.
+
+
+## 17. Run #250 verified and GST/payment-gateway deferral (2026-11-21)
+- [x] Run #250 succeeded: browser-regression job completed; inline JavaScript/version validation, npm install, Chromium setup, Playwright browser regression, and report upload all passed.
+- [x] Payment Gateway live integration is explicitly deferred until the user's GST registration is received; no merchant KYC, live credentials, webhook/settlement verification, or live payment transactions are claimed complete.
+- [ ] Until GST is received, keep payment gateway live integration as a release blocker, while continuing non-payment QA and payment-flow UI/mock checks where feasible.
+- [ ] After GST: merchant onboarding/KYC, gateway configuration, webhook verification, test transactions, refunds/settlement checks, and payment-related regression.
+- [ ] Run #250 CI is browser/source verification only; no production deployment, merge, backend/device certification, or release approval occurred.
