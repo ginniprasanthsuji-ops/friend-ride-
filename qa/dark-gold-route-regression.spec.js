@@ -32,6 +32,7 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
 
   test('new home replaces the old home presentation and mirrors live location', async ({ page }) => {
     await expect(page.locator('#home .fr-native-home')).toBeAttached();
+    await expect(page.locator('#home .fr-native-home')).toBeVisible();
     await expect(page.locator('#home .home-banner')).toHaveCount(0);
     await expect(page.locator('#home .fr-native-location')).toBeAttached();
     await page.locator('#homeLocationText').evaluate(el => { el.textContent = 'QA GPS location'; });
@@ -42,6 +43,7 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     await page.evaluate(() => window.showPage('home'));
     const registrations = page.locator('#home .fr-native-register-grid button[data-fr-native-register]');
     await expect(registrations).toHaveCount(3);
+    await expect(registrations.first()).toBeVisible();
     for (const role of ['customer', 'driver', 'partner']) {
       await page.locator('#home [data-fr-native-register="' + role + '"]').click();
       await expect(page.locator('#authModal')).toHaveClass(/show/);
