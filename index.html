@@ -4609,3 +4609,40 @@ window.frRefreshHomeProfileAvatar=async function(){
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
+
+<style id="fr-native-app-transition-style">
+main .page.active{animation:frAppPageEnter .28s cubic-bezier(.2,.7,.2,1) both;will-change:transform,opacity}
+@keyframes frAppPageEnter{from{opacity:.0;transform:translateX(18px) scale(.985)}to{opacity:1;transform:translateX(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){main .page.active{animation:none!important}}
+.bottom button,.premium-bottom button{transition:color .18s ease,background .18s ease,transform .15s ease}
+.bottom button:active,.premium-bottom button:active{transform:scale(.94)}
+.fr-app-loading{display:inline-flex;gap:6px;align-items:center}
+.fr-app-loading i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:frAppDot .8s ease-in-out infinite alternate}
+.fr-app-loading i:nth-child(2){animation-delay:.15s}.fr-app-loading i:nth-child(3){animation-delay:.3s}
+@keyframes frAppDot{to{opacity:.3;transform:translateY(-4px)}}
+</style>
+<script id="fr-native-app-transition-controller">
+(function(){
+ if(window.__frNativeAppTransitionController)return;
+ window.__frNativeAppTransitionController=true;
+ const previous=window.showPage;
+ let lastPage=document.querySelector('main .page.active')?.id||'home';
+ if(typeof previous!=='function')return;
+ window.showPage=function(id){
+  const target=String(id||'');
+  const result=previous.apply(this,arguments);
+  const page=document.getElementById(target);
+  if(page&&target!==lastPage){
+   page.classList.remove('fr-app-page-enter');
+   void page.offsetWidth;
+   page.classList.add('fr-app-page-enter');
+   lastPage=target;
+  }
+  return result;
+ };
+ // Remove the temporary marker after animation so the transition can replay.
+ document.addEventListener('animationend',function(e){
+  if(e.animationName==='frAppPageEnter')e.target.classList.remove('fr-app-page-enter');
+ });
+})();
+</script>
