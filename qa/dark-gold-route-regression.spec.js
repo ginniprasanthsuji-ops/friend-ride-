@@ -32,6 +32,27 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     await expect(page.locator('#frNativeLocationText')).toHaveText('QA GPS location');
   });
 
+  test('native home preserves customer, driver and partner registration entry points', async ({ page }) => {
+    const registrations = page.locator('#home .fr-native-register-grid button[data-fr-native-register]');
+    await expect(registrations).toHaveCount(3);
+    for (const role of ['customer', 'driver', 'partner']) {
+      await page.locator('#home [data-fr-native-register="' + role + '"]').click();
+      await expect(page.locator('#authModal')).toHaveClass(/show/);
+      await expect(page.locator('#authModal')).toHaveAttribute('data-active-role', role);
+      await page.locator('#authModal .close').click();
+    }
+  });
+
+  test('drawer and CRM surfaces use the shared dark surfaces', async ({ page }) => {
+    await page.evaluate(() => window.openDrawer());
+    await expect(page.locator('.drawer-backdrop')).toHaveClass(/show/);
+    const drawerBg = await page.locator('.drawer').evaluate(el => getComputedStyle(el).backgroundImage);
+    expect(drawerBg).not.toBe('none');
+    await page.evaluate(() => { window.currentProfile = { role: 'admin' }; window.showPage('crmDashboard'); });
+    const crmBg = await page.locator('#crmDashboard .fr-crm-panel').first().evaluate(el => getComputedStyle(el).backgroundImage).catch(() => '');
+    expect(crmBg).not.toBe('none');
+  });
+
   test('primary navigation has no duplicate legacy service tabs', async ({ page }) => {
     const nav = page.locator('.premium-bottom');
     await expect(nav.locator('button')).toHaveCount(5);
