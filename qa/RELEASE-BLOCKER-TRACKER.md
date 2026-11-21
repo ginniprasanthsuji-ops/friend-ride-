@@ -89,3 +89,11 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] `fr_push_subscriptions` upsert and policy/schema compatibility not verified against the FRIEND RIDE Supabase project.
 - [ ] Background push sender, retry/expiry, campaign queue, homework schedule queue, delivery receipts, unsubscribe/preferences, quiet hours and duplicate suppression remain blockers.
 - [ ] Do not claim push delivery success: physical Android device and closed-app tests are still required.
+
+
+## 9. Notification schema groundwork — QA only (2026-11-21)
+- [x] Added migration draft `supabase/migrations/20261121100000_notification_scheduler_foundation.sql`: preference categories, admin campaigns, homework reminders, server-owned idempotent queue, RLS scaffolding.
+- [ ] Migration NOT applied to any Supabase project; review schema compatibility before applying.
+- [ ] Edge Function sender/scheduler, cron, delivery retries/receipts, consent enforcement, frequency/quiet-hour policy enforcement and device testing still NOT implemented.
+- [ ] Parent/student recipient mapping must be validated with the education account data model; migration currently supports optional parent user ID but does not prove relationship authorization.
+- [ ] CI run for current branch head is not available through connected status/run lookup.
