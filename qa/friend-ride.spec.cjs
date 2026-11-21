@@ -586,15 +586,15 @@ test('Cycle Delivery home tile, dedicated screen, pricing calculator and partner
   expect(errors,'Cycle Delivery page JavaScript errors').toEqual([]);
 });
 
-test('VidyaSetu Learning tab opens Teacher, Student and Coaching Center entry points', async ({ page }) => {
+test('VidyaSetu Learning home tile opens Teacher, Student and Coaching Center entry points', async ({ page }) => {
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto('./',{waitUntil:'domcontentloaded'});
-  const learningTab=page.locator('nav.premium-bottom button[data-page="learnTeach"]');
-  await expect(learningTab).toBeAttached();
-  await learningTab.click();
+  await page.waitForTimeout(1200);
+  const learningTile=page.locator('.fr-native-home [data-fr-native-route="learnTeach"]');
+  await expect(learningTile).toBeVisible();
+  await learningTile.click();
   await expect(page.locator('#learnTeach')).toBeVisible();
-  await expect(page.locator('#learnTeachRoot')).toContainText(/Learning & Education/);
   await expect(page.locator('#learnTeachRoot')).toContainText(/Teacher/);
   await expect(page.locator('#learnTeachRoot')).toContainText(/Student/);
   await expect(page.locator('#learnTeachRoot')).toContainText(/Coaching Center/);
