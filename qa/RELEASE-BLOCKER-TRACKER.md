@@ -137,5 +137,11 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [x] Added QA checks that notification page/feed/status and device-alert/live-ride notification code remain present.
 - [x] Added explicit audit assertion that homework scheduler is still not present (release gap remains visible).
 - [x] Added regression guard for requested floating-help UI removal.
-- [ ] CI run for commit `824460103042017fc85bad26485dd168489330a9` pending.
+- [x] Browser Regression CI run #247 succeeded for commit `824460103042017fc85bad26485dd168489330a9`; JS validation, npm install, Chromium setup and browser tests passed (browser-only).
 - [ ] These are source/UI checks only; no push delivery, closed-app notification, homework schedule, marketing targeting, or hourly cadence verified.
+
+
+## 15. Run #247 verified
+- [x] Run #247 completed successfully; all workflow steps passed, including inline JavaScript/version validation and Playwright browser regression.
+- [ ] Run #248 (tracker-only commit) is in progress as of this check.
+- [ ] CI success does not certify backend integrations, live push, Android device behavior, or production readiness.
