@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
 
   const title = typeof notification.title === "string" ? notification.title.slice(0, 100) : "FRIEND RIDE";
   const message = typeof notification.body === "string" ? notification.body.slice(0, 240) : "మీ FRIEND RIDE అప్‌డేట్ ఉంది.";
-  const url = typeof notification.url === "string" && notification.url.startsWith("/") ? notification.url : "/";
+  const requestedUrl = typeof notification.url === "string" ? notification.url : "/";\n  const url = requestedUrl.startsWith("/") && !requestedUrl.startsWith("//") && !/[\\u0000-\\u001f\\u007f]/.test(requestedUrl) ? requestedUrl : "/";
   const tag = typeof notification.tag === "string" ? notification.tag.slice(0, 80) : undefined;
 
   const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
