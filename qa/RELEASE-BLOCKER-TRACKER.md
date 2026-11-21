@@ -36,6 +36,10 @@ This tracker separates source/UI evidence from backend execution and real-device
 - [ ] Real staging registration/review/assignment/completion flow.
 
 ## 4. Notifications scheduling & targeting — BLOCKED / NOT VERIFIED
+- [ ] Marketing notifications: campaign draft/schedule, role/interest segmentation, frequency caps, consent/preferences, unsubscribe, delivery/failed status.
+- [ ] Student homework reminders: assignment due-date scheduler, pre-due and due-time reminder policy, cancel/skip when completed, teacher assignment/update notification, student/parent recipient mapping.
+- [ ] Separate notification categories and preference toggles (transactional, marketing, learning/homework); marketing opt-out must not suppress essential homework reminders.
+- [ ] Server-side schedule queue with idempotency keys; browser timers are not sufficient.
 - [ ] Server-side scheduler/cron (not browser-only timer) configured and active.
 - [ ] User activity segments and role targeting implemented and tested.
 - [ ] Frequency cap: maximum 4 promotional notifications/day, with spacing of roughly 6–8 hours where applicable.
