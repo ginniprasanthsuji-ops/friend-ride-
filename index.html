@@ -650,7 +650,21 @@ body{padding-bottom:105px}
 <section id="settings" class="page"><div class="card"><h2>System Settings</h2><div class="notice">Platform-wide settings must be managed through protected admin APIs.</div></div></section>
 
 <section id="profile" class="page"><div class="card"><h2>My Profile</h2><div id="profileInfo" class="muted">Login చేయండి.</div><button class="btn red" onclick="logout()">Logout</button></div></section>
-<section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><div class="fr-alert-preview"><b>🔊 Alert Sound Preview</b><div class="fr-alert-preview-buttons"><button type="button" onclick="frPreviewAlertTone('order')">🛍️ Order arrived</button><button type="button" onclick="frPreviewAlertTone('ride')">🛵 New ride</button><button type="button" onclick="frPreviewAlertTone('customer')">🔔 Customer update</button></div></div><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div></section>
+<section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><div class="fr-alert-preview"><b>🔊 Alert Sound Preview</b><div class="fr-alert-preview-buttons"><button type="button" onclick="frPreviewAlertTone('order')">🛍️ Order arrived</button><button type="button" onclick="frPreviewAlertTone('ride')">🛵 New ride</button><button type="button" onclick="frPreviewAlertTone('customer')">🔔 Customer update</button></div></div><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div>
+<div class="card" id="frNotificationPreferencesCard">
+ <h3>⚙️ Notification Preferences</h3>
+ <p class="muted tiny">మీకు కావలసిన notification categories ఎంపిక చేసుకోండి. Save చేసిన తర్వాత preferences accountకు sync అవుతాయి.</p>
+ <div class="row"><label><input id="frPrefRide" type="checkbox" checked> Ride Updates</label></div>
+ <div class="row"><label><input id="frPrefOrder" type="checkbox" checked> Order Updates</label></div>
+ <div class="row"><label><input id="frPrefPayment" type="checkbox" checked> Payments</label></div>
+ <div class="row"><label><input id="frPrefAccount" type="checkbox" checked> Account & KYC</label></div>
+ <div class="row"><label><input id="frPrefPartner" type="checkbox" checked> Partner Updates</label></div>
+ <div class="row"><label><input id="frPrefHourly" type="checkbox" checked> Hourly Updates</label></div>
+ <div class="row"><label><input id="frPrefPromo" type="checkbox"> Promotional Offers</label></div>
+ <button class="btn purple" onclick="frSaveNotificationPreferences()">Save Preferences</button>
+ <div id="frPrefSaveStatus" class="notice" role="status" aria-live="polite"></div>
+</div>
+</section>
 <section id="support" class="page"><div class="card"><h2>💬 Complaints & Feedback</h2><p class="muted">ఈ పాత Support లింక్ ఇప్పుడు కొత్త Complaint & Feedback ఫారమ్‌కు తీసుకెళ్తుంది.</p><button class="btn purple" onclick="frOpenSupportPage()">Open Complaints & Feedback</button></div></section>
 <section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
 <section id="cart" class="page"><div class="card"><h2>🛒 My Cart</h2><p class="muted">మీ Friend Mart / Food Delivery items ఇక్కడ కనిపిస్తాయి.</p><div class="notice">మీరు ఎంచుకున్న వస్తువులు ఇక్కడ కనిపిస్తాయి. షాపింగ్ కొనసాగించండి.</div><button class="btn purple" onclick="showPage('shops')">Explore Stores</button><div class="notice" style="margin-top:12px"><b>Charges Transparency</b><br>Platform charge: 2.5% (eligible order valueపై). Delivery charge: location, distance మరియు delivery partner quote ఆధారంగా checkout ముందు చూపబడుతుంది. Final payable amount paymentకి ముందు చూపించాలి.</div></div></section>
@@ -4486,6 +4500,36 @@ async function frAdminAssignLaundry(id){
  document.addEventListener('DOMContentLoaded',init);
  if(document.readyState!=='loading')init();
 })();
+
+ window.frSaveNotificationPreferences=async function(){
+  const values={
+   ride_enabled:!!document.getElementById('frPrefRide')?.checked,
+   order_enabled:!!document.getElementById('frPrefOrder')?.checked,
+   payment_enabled:!!document.getElementById('frPrefPayment')?.checked,
+   account_enabled:!!document.getElementById('frPrefAccount')?.checked,
+   partner_enabled:!!document.getElementById('frPrefPartner')?.checked,
+   hourly_enabled:!!document.getElementById('frPrefHourly')?.checked,
+   promo_enabled:!!document.getElementById('frPrefPromo')?.checked
+  };
+  saveLocalPrefs(values);
+  const statusEl=document.getElementById('frPrefSaveStatus');
+  if(!window.currentUser||!window.sb){if(statusEl)statusEl.textContent='Preferences ఈ పరికరంలో save అయ్యాయి. Accountలో sync చేయడానికి login చేయండి.';return}
+  const {error}=await window.sb.from('fr_notification_preferences').upsert({user_id:window.currentUser.id,...values,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  if(statusEl)statusEl.textContent=error?'Save failed: '+error.message:'Notification preferences saved and synced.';
+ };
+ window.frLoadNotificationPreferences=async function(){
+  const p=localPrefs();
+  const map={ride_enabled:'frPrefRide',order_enabled:'frPrefOrder',payment_enabled:'frPrefPayment',account_enabled:'frPrefAccount',partner_enabled:'frPrefPartner',hourly_enabled:'frPrefHourly',promo_enabled:'frPrefPromo'};
+  Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el&&key in p)el.checked=!!p[key]});
+  if(window.currentUser&&window.sb){
+   try{
+    const {data,error}=await window.sb.from('fr_notification_preferences').select('*').eq('user_id',window.currentUser.id).maybeSingle();
+    if(!error&&data){Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el)el.checked=!!data[key]});saveLocalPrefs(data)}
+   }catch(e){console.warn('FR notification preferences load:',e)}
+  }
+ };
+ document.addEventListener('DOMContentLoaded',()=>window.frLoadNotificationPreferences());
+ if(document.readyState!=='loading')window.frLoadNotificationPreferences();
 </script>
 </body>
 </html>
