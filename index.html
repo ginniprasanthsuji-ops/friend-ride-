@@ -4427,6 +4427,41 @@ async function frAdminAssignLaundry(id){
 <style id="fr-v11.1-pro-learning-routing-style">
 .fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
 </style>
+
+<!-- FRIEND RIDE UI FREEZE: premium transitions + strict admin role isolation -->
+<style id="fr-ui-freeze-native-transitions">
+main .page.fr-screen-enter{animation:frScreenFade .28s cubic-bezier(.2,.75,.25,1) both}
+main .page.fr-screen-enter.fr-transition-ride{animation:frRideSlide .34s cubic-bezier(.18,.8,.2,1) both}
+main .page.fr-screen-enter.fr-transition-dashboard{animation:frDashboardReveal .32s cubic-bezier(.2,.7,.2,1) both}
+main .page.fr-screen-enter.fr-transition-admin{animation:frAdminReveal .36s cubic-bezier(.15,.75,.2,1) both}
+main .page.fr-screen-enter.fr-transition-orders{animation:frOrdersSlide .3s cubic-bezier(.2,.75,.25,1) both}
+@keyframes frScreenFade{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:none}}
+@keyframes frRideSlide{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+@keyframes frDashboardReveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes frAdminReveal{from{opacity:0;transform:scale(.985);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+@keyframes frOrdersSlide{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){main .page.fr-screen-enter{animation:none!important}}
+</style>
+<script id="fr-ui-freeze-transition-admin-guard">
+(function(){
+ 'use strict';
+ const adminPages=new Set(['adminDashboard','users','referralApprovals','cashRewardApprovals','paymentApprovals','partnerPaymentSettings','platformBusinessSettings','driverApprovals','partnerApprovals','adminOrders','reports','settings','driverDocumentReviews','crmDashboard','partnerReports']);
+ const original=window.showPage;
+ let lastRoute=document.querySelector('main .page.active')?.id||'home';
+ function role(){return String(window.currentProfile?.role||'').toLowerCase();}
+ function animationFor(id){if(id==='ride'||id==='tracking')return 'fr-transition-ride';if(id==='adminDashboard'||adminPages.has(id))return 'fr-transition-admin';if(id==='orders'||id==='partnerOrders')return 'fr-transition-orders';return 'fr-transition-dashboard';}
+ function animate(id){const p=document.getElementById(id);if(!p)return;p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders');void p.offsetWidth;p.classList.add('fr-screen-enter',animationFor(id));setTimeout(()=>p.classList.remove('fr-screen-enter','fr-transition-ride','fr-transition-dashboard','fr-transition-admin','fr-transition-orders'),420);}
+ window.showPage=function(id){
+   id=String(id||'');
+   if(adminPages.has(id)&&role()!=='admin'){console.warn('[FR Access] Admin-only route blocked:',id);id=window.dashboardFor?window.dashboardFor(role()):'home';}
+   if(typeof original==='function')original.apply(this,arguments);
+   lastRoute=id;animate(id);return true;
+ };
+ window.addEventListener('popstate',()=>{if(lastRoute&&typeof window.showPage==='function')window.showPage(lastRoute);});
+ // Explicitly prevent admin-only tiles/routes from opening without an admin profile.
+ document.addEventListener('click',function(e){const target=e.target.closest('[data-admin-only]');if(!target)return;if(role()!=='admin'){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();console.warn('[FR Access] Admin control blocked for non-admin');}},true);
+})();
+</script>
 </body>
 </html>
 <style>
