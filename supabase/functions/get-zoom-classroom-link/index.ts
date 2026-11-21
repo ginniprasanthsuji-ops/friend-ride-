@@ -15,6 +15,8 @@ serve(async req=>{
   if(sessionError||!session)throw new Error("Session not found");
   if(user.id!==session.teacher_id&&user.id!==session.student_id)throw new Error("Classroom participant access required");
   if(!["scheduled","started"].includes(session.status))throw new Error("Student confirmation required before joining");
+  const {data:homework,error:homeworkError}=await admin.from("fr_learn_homework").select("teacher_approved").eq("session_id",session_id).eq("teacher_approved",true).maybeSingle();
+  if(homeworkError||!homework)throw new Error("Teacher homework approval required before joining");
   const {data:room,error:roomError}=await admin.from("fr_learn_zoom_classrooms").select("zoom_join_url").eq("id",session.classroom_id).single();
   if(roomError||!room?.zoom_join_url)throw new Error("Classroom join link unavailable");
   return reply({join_url:room.zoom_join_url});
