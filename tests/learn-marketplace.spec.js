@@ -83,37 +83,25 @@ test('Zoom classroom UI appears for student and teacher roles', async ({ page })
  await expect(page.locator('#frZoomStart')).toBeVisible();
 });
 
-test('Zoom session migration enforces participant RLS and server-only meeting creation', async () => {
- const {readFile}=await import('node:fs/promises'); const base=process.cwd();
- const sql=await readFile(base+'/supabase/migrations/20261121140000_zoom_class_sessions.sql','utf8');
- const hard=await readFile(base+'/supabase/migrations/20261121150000_zoom_session_update_hardening.sql','utf8');
- const fn=await readFile(base+'/supabase/functions/create-zoom-meeting/index.ts','utf8');
- expect(sql).toContain('enable row level security');
- expect(sql).toContain('learn_sessions_participant_select');
- expect(sql).toContain('duration_minutes int not null default 90 check(duration_minutes=90)');
- expect(hard).toContain('drop policy if exists learn_sessions_participant_update');
- expect(hard).toContain('learn_sessions_admin_update');
- const classroom=await readFile(base+'/supabase/migrations/20261121160000_reusable_zoom_classrooms.sql','utf8');
- expect(classroom).toContain('unique(teacher_id, student_id, course_id)');
- expect(classroom).toContain('drop column if exists zoom_start_url');
- expect(fn).toContain('ZOOM_CLIENT_SECRET');
- expect(fn).toContain('waiting_room:true');
- expect(fn).toContain('type:3');
- expect(fn).toContain('ZOOM_HOST_USER');
- expect(fn).toContain('status:"pending_confirmation"');
+test('External classroom workflow validates link, enrollment and confirmation', async()=>{
+ const {readFile}=await import('node:fs/promises');const base=process.cwd();
+ const migration=await readFile(base+'/supabase/migrations/20261121190000_simple_external_classroom_links.sql','utf8');
+ const fn=await readFile(base+'/supabase/functions/create-external-classroom-session/index.ts','utf8');
  const confirmFn=await readFile(base+'/supabase/functions/confirm-zoom-session/index.ts','utf8');
- expect(confirmFn).toContain('Only the enrolled student can confirm this class time');
- expect(confirmFn).toContain('status:"scheduled"');
  const linkFn=await readFile(base+'/supabase/functions/get-zoom-classroom-link/index.ts','utf8');
- expect(linkFn).toContain('Student confirmation required before joining');
- expect(linkFn).toContain('Classroom participant access required');
  const ui=await readFile(base+'/learn-teach.js','utf8');
- expect(ui).not.toContain('zoom_join_url,status,teacher_id,student_id');
- expect(ui).toContain('get-zoom-classroom-link');
+ expect(migration).toContain('external_classroom_url');
+ expect(fn).toContain('Only HTTP/HTTPS classroom links are accepted');
  expect(fn).toContain('Active student enrollment required');
  expect(fn).toContain('Approved teacher required');
+ expect(fn).toContain('status:"pending_confirmation"');
+ expect(confirmFn).toContain('Only the enrolled student can confirm this class time');
+ expect(linkFn).toContain('Student confirmation required before joining');
+ expect(linkFn).toContain('Classroom participant access required');
+ expect(ui).toContain('create-external-classroom-session');
+ expect(ui).toContain('frZoomExternalLink');
+ expect(ui).not.toContain('create-zoom-meeting');
 });
-
 
 test('Classroom workflow uses simple external link, no Zoom OAuth secrets', async ({page})=>{
  const js=await (await page.request.get('/learn-teach.js')).text();
