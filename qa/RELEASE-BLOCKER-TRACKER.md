@@ -249,3 +249,12 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Disposable live dummy-account test: not performed. No test-only phone/email, verified safe account-creation path, or reliable cleanup/delete API has been supplied/verified. Do not create real users or send SMS OTPs without safe test mechanism and credentials.
 - [ ] Once safe test account mechanism is available: create one account with `QA_TEST_` marker; run only approved non-payment tests; capture evidence; delete account and test data; verify deletion/cleanup; never run real ride/order/payment or send chargeable notifications.
 - **Status:** Existing browser regression remains PASS (53/53 at the previously verified commit). Live test and dummy account create/delete remain **NOT RUN**, not PASS. Production and QA backend unchanged.
+
+## 27. Backend QA continuation and fresh regression verification — 2026-11-21
+- [x] QA commit `fe8501dc6d3b81d1ae9b33b7fa973e89dc160b88` fixed a flaky diagnostics assertion that incorrectly treated asynchronous external map-tile requests as a test failure.
+- [x] Regression run `44893835068` completed **SUCCESS**; job log confirms **53 passed (20.4s)** and report artifact `14703008340`. This remains local static-server Playwright regression—not live backend testing.
+- [x] Fresh QA advisor read-only check: security lints = 0; health lints = 0. Performance observations remain 15 unindexed foreign keys, 4 auth-RLS initplan warnings, 6 multiple-permissive-policy warnings (Learn & Teach QA schema only).
+- [x] Fresh production advisor read-only check reconfirmed 23 RLS-enabled tables with no policies, 34 multiple-permissive-policy warnings, and 2 duplicate-index groups; production remains untouched.
+- [ ] Backend integration/role testing remains blocked: QA project has no FRIEND RIDE schema or Ride/Food/Market/Parcel/Service functions; live test account creation/deletion and device push are not tested.
+- [x] No SQL writes, migrations, deployments, secret changes, main merge, production modifications, or payments.
+- **Status:** Browser regression PASS (53/53). Backend live testing and security remediation/certification still BLOCKED. GST/payment testing stays deferred until user provides GST.
