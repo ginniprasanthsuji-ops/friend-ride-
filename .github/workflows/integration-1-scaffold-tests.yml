@@ -1,0 +1,26 @@
+name: Integration 1 Scaffold Tests
+
+on:
+  push:
+    branches:
+      - integration/1-core-architecture
+  pull_request:
+    branches:
+      - integration/1-core-architecture
+
+jobs:
+  node-scaffold-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Syntax-check packaging scripts and tests
+        run: |
+          node --check scripts/stage-capacitor-web.cjs
+          node --check scripts/android-webview-audit.cjs
+          node --check tests/capacitor-staging.test.cjs
+          node --check tests/android-webview-audit.test.cjs
+      - name: Run staging and WebView fixture tests
+        run: node --test tests/capacitor-staging.test.cjs tests/android-webview-audit.test.cjs
