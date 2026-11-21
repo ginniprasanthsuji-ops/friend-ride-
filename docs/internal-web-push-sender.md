@@ -46,3 +46,16 @@ This endpoint must be invoked only by trusted server-side event processing. It i
 - No dedicated Web Push sender Edge Function was listed during the read-only function inventory.
 
 No production database, function, secrets, or deployment was changed.
+
+
+## Subscription lifecycle audit (read-only)
+The production table schema was inspected without writing data:
+- Columns: `id`, `user_id`, `endpoint` (unique), `p256dh`, `auth_key`, `user_agent`, `is_active`, `created_at`, `updated_at`, `last_success_at`.
+- RLS is enabled.
+- Two authenticated policies were found; both restrict `user_id = auth.uid()` for ALL operations (duplicate/overlapping policies; no cleanup performed).
+
+A branch-only lifecycle helper now uses this existing schema:
+- Explicit enable action: requests permission, subscribes using public VAPID key, then upserts the user's subscription by unique endpoint.
+- Explicit disable action: marks the user's current endpoint inactive before browser unsubscribe.
+- Permission is not requested at module load; helper is not wired into live UI yet.
+- On database save failure after subscribe, it attempts browser unsubscribe to avoid orphaning a subscription.
