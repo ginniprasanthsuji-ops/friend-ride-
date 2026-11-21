@@ -23,7 +23,11 @@ test("push sender requires internal secret, VAPID config, and security guards", 
     "is_active",
     "SUPABASE_SERVICE_ROLE_KEY",
     'startsWith("//")',
-    "last_success_at",\n    "attempt < 3",\n    "retries"
+    "last_success_at",
+    "for (let attempt = 0; attempt < 3",
+    "statusCode === 404 || statusCode === 410",
+    "250 * (attempt + 1)",
+    "retry policy",\n    "attempt < 3",\n    "retries"
   ]) {
     assert.ok(source.includes(required), "missing security/implementation marker: " + required);
   }
