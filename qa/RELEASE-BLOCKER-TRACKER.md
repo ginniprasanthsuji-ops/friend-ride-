@@ -191,3 +191,12 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Staging account matrix needed: unauthenticated, customer, driver, partner, admin. Attempt direct page navigation and sensitive handler calls, then confirm backend rejects unauthorized data/actions.
 - [ ] Supabase RLS/RPC/storage policies must be tested with isolated QA identities; source-only review is not proof of backend security.
 - [x] No production, main-branch, or database changes made.
+
+
+## 21. Requested full audit and final regression — 2026-11-21
+- [x] Source review: package test scripts, expanded module/admin regression test, navigation/auth entry points, KYC admin handler.
+- [x] Prior verified Run #250 browser-regression result checked: success (all listed CI steps successful).
+- [x] Requested re-run of the previously successful browser-regression job accepted by GitHub Actions; new attempt is queued as job `136811974659` (run `44892215524`).
+- [ ] Await new attempt completion and inspect its steps/artifact before recording final regression PASS.
+- [ ] Full backend role/RLS/storage, live OTP, notifications, food/goods/parcel/service flows, physical-device and signed-AAB testing remain not executable/verified in this environment; release gate stays blocked.
+- [x] No production deploy, main merge, migration, or payment gateway setup performed.
