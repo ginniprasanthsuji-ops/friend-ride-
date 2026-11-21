@@ -4646,7 +4646,7 @@ main .page.fr-screen-enter.fr-transition-orders{animation:frOrdersSlide .3s cubi
 (function(){
 'use strict';
 const routeMap={ride:'ride',delivery:'goods',mart:'shopping',food:'food',services:'homeServices',tasko:'homeServices',emi:'shopping',laundry:'laundryServices',homeServices:'homeServices',stores:'shops',learning:'learnTeach'};
-function service(icon,title,sub,route,theme){const extra=title==='Cycle Delivery'?' cycle-delivery-home-card':title==='TASKO / GIGGER'?' home-pro-service':'';return '<button type="button" class="fr-native-service '+theme+extra+'" data-fr-native-route="'+route+'"><span class="fr-icon">'+icon+'</span><b>'+title+'</b><small>'+sub+'</small></button>}
+function service(icon,title,sub,route,theme){const extra=title==='Cycle Delivery'?' cycle-delivery-home-card':title==='TASKO / GIGGER'?' home-pro-service':'';return `<button type="button" class="fr-native-service ${theme}${extra}" data-fr-native-route="${route}"><span class="fr-icon">${icon}</span><b>${title}</b><small>${sub}</small></button>`;}
 function rebuildHome(){
  const home=document.getElementById('home');if(!home||home.dataset.frNativeBuilt)return;
  // Move orphaned legacy Home sections back into the Home page before replacing it.
