@@ -18,7 +18,7 @@ test("Capacitor staging copies app entry, UI modules, and required assets while 
     "assets/ride-contact.js": "/* contact fixture */",
     "assets/driver-kyc-upload.js": "/* upload fixture */",
     "icons/icon-192.png": "binary-icon-192-fixture",
-    "icons/icon-512.png": "binary-icon-512-fixture""
+    "icons/icon-512.png": "binary-icon-512-fixture"
   };
   for (const [name, content] of Object.entries(files)) {
     const file = path.join(root, name);
