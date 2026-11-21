@@ -4533,3 +4533,26 @@ window.frRefreshHomeProfileAvatar=async function(){
 })();
 </script>
 
+
+<script id="fr-tasko-laundry-category-router-fallback">
+(function(){
+  function routeCategory(){
+    const select=document.getElementById('shopCategory');
+    const category=select&&select.value;
+    if(category==='tasko_service'){
+      select.value='all';
+      if(typeof window.showPage==='function') window.showPage('homeServices');
+      return;
+    }
+    if(category==='laundry_service'){
+      select.value='all';
+      if(typeof window.showPage==='function') window.showPage('laundryServices');
+      return;
+    }
+    if(typeof window.loadApprovedStores==='function') window.loadApprovedStores();
+  }
+  window.frHandleShopCategoryChange=routeCategory;
+  const select=document.getElementById('shopCategory');
+  if(select) select.onchange=routeCategory;
+})();
+</script>
