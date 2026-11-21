@@ -254,3 +254,12 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - GitHub Actions after the KYC handler fix: browser regression **29/29 PASS**, browser E2E **29/29 PASS**, TypeScript/core typecheck PASS, unit tests **5/5 PASS**, core tests **2/2 PASS**, Pages build/deploy PASS.
 - The earlier 28/29 failure was a test assertion expecting the bucket name inside the handler function text. The handler was corrected to satisfy that assertion; the next CI run passed 29/29.
 - These are browser/source wiring checks. They do **not** prove an authenticated driver has uploaded real documents or that an Admin has reviewed them. Those remain live staging tests.
+
+
+## QA branch update — GST and payment gateway deferred (2026-11-21)
+
+- Payment gateway merchant onboarding and live integration are intentionally deferred until the user's GST registration is received.
+- Until GST is received, payment-gateway live integration, merchant KYC, live credentials, webhook/settlement verification, refunds, and live transaction tests remain **PENDING / BLOCKED**. Do not treat payment mock/UI checks as live-payment evidence.
+- Continue non-payment QA independently where possible.
+- After GST registration: complete merchant onboarding/KYC, gateway configuration, webhook/signature validation, payment success/failure/cancel tests, refund/settlement verification, and full payment-related regression.
+- This addendum is QA documentation only. No production changes, deployment, or main-branch merge are authorized by it.
