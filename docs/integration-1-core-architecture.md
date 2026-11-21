@@ -4,7 +4,7 @@
 **Sub-project:** Integration 1 — Core Architecture & Integration Framework  
 **Repository:** FRIEND RIDE  
 **Branch:** `integration/1-core-architecture`  
-**Status:** Audit complete; foundation design documented. No production app code changed in this sub-project.
+**Status:** Audit and scaffold in progress. Production app code remains unchanged.
 
 ## Goals
 
@@ -14,6 +14,7 @@
 - Make provider switching/removal configuration-driven wherever feasible.
 - Preserve current features and keep production/main untouched until tests and review pass.
 - Prepare future Supabase-upgrade migration SQL and rollback notes.
+- **Play Store safety priority:** integration work must not prevent Android release/AAB generation. Build feasibility is an early checkpoint, not a final-only check.
 
 ## Current repository audit (initial)
 
@@ -37,6 +38,7 @@
 5. External providers (FCM, maps, payment, email, CDN/cache) cannot all be replaced by SQL alone. SQL can replace database/backend logic, but push delivery, maps, payment rails, email delivery, CDN and analytics remain external capabilities unless the product is redesigned.
 6. Provider integrations should not own business-critical records. Supabase should remain the system of record for users, rides, orders, partners, approvals, payments/transactions metadata, and EMI ledger data.
 7. Future removal/migration should be supported with adapter interfaces, feature flags, schema migrations, and documented data export/rollback steps.
+8. Release build and Play Store compatibility are mandatory gates. If an integration creates a blocker to Android project generation, signed AAB build, installation, or release compatibility, stop that integration phase and resolve/rollback the blocker before continuing.
 
 ## Proposed modular architecture
 
@@ -73,6 +75,16 @@ FRIEND RIDE UI
 5. Future paid Supabase upgrade can consolidate eligible backend logic into PostgreSQL/RPC/Edge Functions. External services that provide push, maps, payment, email, CDN, or analytics remain external unless a replacement is selected.
 6. All SQL migrations must be versioned, idempotent where practical, and accompanied by rollback notes and verification queries.
 
+## Files added on the isolated branch
+
+- `integration-config.js`: public-safe config scaffold and provider/feature flags; currently not runtime-wired.
+- `integrations/provider-contract.js`: generic provider contract helper scaffold.
+- `integrations/notifications/notification-provider.js`: non-operational notification provider interface scaffold.
+- `integrations/cache/cache-provider.js`: non-operational cache interface scaffold; no cache enabled.
+- `docs/integration-1-core-architecture.md`: audit, architecture, migration plan, and checkpoints.
+
+These scaffolds intentionally have no runtime side effects and do not change current app behavior.
+
 ## Integration 1 scope
 
 - [x] Initial repository audit
@@ -81,18 +93,32 @@ FRIEND RIDE UI
 - [x] Create isolated working branch
 - [x] Document architecture and future removal plan
 - [x] Add provider adapter/config scaffold
-- [ ] Wire scaffold to the application (deferred; no production behavior change)
-- [ ] Regression tests and review
-- [ ] Merge/deploy (not authorized/attempted in this phase)
+- [x] Add isolated notification and cache interface scaffolds
+- [ ] Runtime wiring (only after AAB/build feasibility checkpoint and controlled test)
+- [ ] Static checks and regression tests
+- [ ] Android project/AAB feasibility checkpoint
+- [ ] Signed release AAB build + install verification
+- [ ] Merge/deploy (not authorized/attempted)
+
+## Mandatory Play Store safety gate
+
+Before major runtime integration changes:
+1. Verify current web/PWA behavior and Android wrapper/build setup.
+2. Determine and test a baseline Android project/build route to generate an AAB without integration changes.
+3. Record build toolchain, package ID, signing requirements, and blockers (do not invent signing credentials).
+4. Re-check AAB generation after integration changes.
+5. If integration causes build or Play Store compatibility blockers, halt further integration and fix/rollback that phase.
+6. Do not merge to main or deploy until signed AAB build, install/launch, and regression checks pass.
 
 ## Acceptance criteria
 
 - Main branch remains unchanged.
-- Existing app behavior is not changed by this documentation-only foundation.
+- Existing app behavior is not changed by scaffolds.
 - Provider-specific code can be isolated in later sub-projects.
 - No secrets are committed.
+- AAB/release path remains feasible and is tested early.
 - Each integration phase has its own branch, tests, rollback notes, and completion report.
 
 ## Phase decision
 
-**Integration 1 is currently at Audit + Architecture Design + Config Scaffold.** The scaffold has been syntax-checked but is not wired into runtime yet. Next step: integrate it safely, then static checks and regression review before any production deployment.
+**Integration 1 is in progress: Audit + Architecture Design + Config + Adapter Interface Scaffolds.** New scaffold files are isolated and not wired into runtime. Next task is to establish the Android/AAB baseline and test feasibility before connecting the integration registry to the app.
