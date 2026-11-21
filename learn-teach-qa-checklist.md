@@ -20,7 +20,7 @@
 - [x] SQL schema and RLS migration drafted
 
 ## Not yet live / blockers
-- [ ] Provision a separate Supabase QA project (connector currently exposes production only; no QA branches), then apply all four Learn & Teach migrations there\n- [x] Add SQL owner-update transition hardening migration: prevent student enrollment activation/fee/course changes; restrict tuition-request cancellation and application decisions; allow trusted service-role/admin updates\n- [x] Add CI static checks for RLS, migration constraints, eligibility tiers, one-person center rules, and update-transition guards
+- [x] Provision separate FRIEND RIDE QA Supabase project; apply all four Learn & Teach migrations (QA only) there\n- [x] Add SQL owner-update transition hardening migration: prevent student enrollment activation/fee/course changes; restrict tuition-request cancellation and application decisions; allow trusted service-role/admin updates\n- [x] Add CI static checks for RLS, migration constraints, eligibility tiers, one-person center rules, and update-transition guards
 - [ ] Cashfree course enrollment payment integration
 - [ ] Cashfree teacher ₹129 subscription payment integration
 - [ ] Live teacher/student notification delivery
