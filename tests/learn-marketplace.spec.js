@@ -104,6 +104,12 @@ test('Zoom session migration enforces participant RLS and server-only meeting cr
  const confirmFn=await readFile(base+'/supabase/functions/confirm-zoom-session/index.ts','utf8');
  expect(confirmFn).toContain('Only the enrolled student can confirm this class time');
  expect(confirmFn).toContain('status:"scheduled"');
+ const linkFn=await readFile(base+'/supabase/functions/get-zoom-classroom-link/index.ts','utf8');
+ expect(linkFn).toContain('Student confirmation required before joining');
+ expect(linkFn).toContain('Classroom participant access required');
+ const ui=await readFile(base+'/learn-teach.js','utf8');
+ expect(ui).not.toContain('zoom_join_url,status,teacher_id,student_id');
+ expect(ui).toContain('get-zoom-classroom-link');
  expect(fn).toContain('Active student enrollment required');
  expect(fn).toContain('Approved teacher required');
 });
