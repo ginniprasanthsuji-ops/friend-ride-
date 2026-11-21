@@ -82,6 +82,9 @@ FRIEND RIDE UI
 - `integrations/notifications/notification-provider.js`: non-operational notification provider interface scaffold.
 - `integrations/cache/cache-provider.js`: non-operational cache interface scaffold; no cache enabled.
 - `docs/integration-1-core-architecture.md`: audit, architecture, migration plan, and checkpoints.
+- `scripts/stage-capacitor-web.cjs`: creates isolated `www/` staging folder from `index.html`, manifest, and service worker; does not alter source files.
+- `npm run build:capacitor-web`: staging preparation command only; no Android build yet.
+- `tests/capacitor-staging.test.cjs`: staging safety tests (copy-only and missing-input failure).
 
 These scaffolds intentionally have no runtime side effects and do not change current app behavior.
 
@@ -93,14 +96,33 @@ These scaffolds intentionally have no runtime side effects and do not change cur
 - [x] Create isolated working branch
 - [x] Document architecture and future removal plan
 - [x] Add provider adapter/config scaffold
-- [x] Add isolated notification and cache interface scaffolds\n- [x] Add Node unit tests for config/contracts/scaffold behavior (4 tests passed locally)
+- [x] Add isolated notification and cache interface scaffolds
+- [x] Add Node unit tests for config/contracts/scaffold behavior (4 tests passed locally)
 - [ ] Runtime wiring (blocked pending Android/AAB baseline feasibility checkpoint)
+- [x] Create safe static-web staging script for Capacitor baseline
+- [x] Add npm staging command
+- [x] Add staging safety tests
 - [ ] Static checks and regression tests
 - [x] Android project/AAB feasibility audit (no native Android project/build configuration found in repository)
 - [ ] Signed release AAB build + install verification
 - [ ] Merge/deploy (not authorized/attempted)
 
-## Android/AAB feasibility checkpoint — initial audit\n\nRepository checks on the integration branch found:\n- \`package.json\` has test/typecheck scripts but no Android build script or app build script.\n- No \`android/` project, Gradle wrapper, Gradle build files, Capacitor configuration, Cordova configuration, or Android build workflow was found at the checked repository paths.\n- Current README describes a static frontend/PWA and push limitations.\n- Therefore, **an AAB cannot currently be generated directly from this repository as-is**. This is a missing Android packaging/build setup, not a demonstrated integration-caused failure.\n- Runtime integration wiring is paused until a safe Android packaging baseline (likely a Capacitor wrapper, subject to verification) is created and an AAB feasibility test is performed. No signing credentials or package IDs are assumed.\n\n## Capacitor Android packaging baseline plan\n\nThe current static frontend can potentially be wrapped with Capacitor, but this is not yet proven for this repository. The official Capacitor setup requires a package manifest, a web-assets directory (configured as \`webDir\`) with \`index.html\`, Capacitor dependencies/config, Android platform generation, and Android Studio/SDK. Current app is a static/PWA root-file structure, so first create a controlled staging web-assets directory without changing main/live, validate routing/auth/service worker behavior inside Android WebView, then generate the native Android project and attempt a debug build before any signed release AAB. Keep keystore/signing secrets out of Git.\n\nCheckpoint sequence: (1) staging copy of web assets and Capacitor config, (2) Android platform generation in isolated branch, (3) debug APK build/install smoke test, (4) signed AAB feasibility (signing credentials supplied/created securely by owner), (5) regression and release compatibility. If any step breaks existing core flows, stop and fix before further integrations.\n\n## Mandatory Play Store safety gate
+## Android/AAB feasibility checkpoint — initial audit
+
+Repository checks on the integration branch found:
+- \`package.json\` has test/typecheck scripts but no Android build script or app build script.
+- No \`android/` project, Gradle wrapper, Gradle build files, Capacitor configuration, Cordova configuration, or Android build workflow was found at the checked repository paths.
+- Current README describes a static frontend/PWA and push limitations.
+- Therefore, **an AAB cannot currently be generated directly from this repository as-is**. This is a missing Android packaging/build setup, not a demonstrated integration-caused failure.
+- Runtime integration wiring is paused until a safe Android packaging baseline (likely a Capacitor wrapper, subject to verification) is created and an AAB feasibility test is performed. No signing credentials or package IDs are assumed.
+
+## Capacitor Android packaging baseline plan
+
+The current static frontend can potentially be wrapped with Capacitor, but this is not yet proven for this repository. The official Capacitor setup requires a package manifest, a web-assets directory (configured as \`webDir\`) with \`index.html\`, Capacitor dependencies/config, Android platform generation, and Android Studio/SDK. Current app is a static/PWA root-file structure, so first create a controlled staging web-assets directory without changing main/live, validate routing/auth/service worker behavior inside Android WebView, then generate the native Android project and attempt a debug build before any signed release AAB. Keep keystore/signing secrets out of Git.
+
+Checkpoint sequence: (1) staging copy of web assets (implemented) and Capacitor config (pending confirmed app ID), (2) Android platform generation in isolated branch, (3) debug APK build/install smoke test, (4) signed AAB feasibility (signing credentials supplied/created securely by owner), (5) regression and release compatibility. If any step breaks existing core flows, stop and fix before further integrations.
+
+## Mandatory Play Store safety gate
 
 Before major runtime integration changes:
 1. Verify current web/PWA behavior and Android wrapper/build setup.
