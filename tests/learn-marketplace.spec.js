@@ -25,7 +25,8 @@ test('Student and teacher registration controls exist', async ({ page }) => {
   await page.locator('.premium-bottom [data-page="learn"]').click();
   await expect(page.locator('#frLearnStudentPanel button')).toHaveCount(2);
   await page.getByRole('button', {name:/Teacher \/ Teach/}).click();
-  await expect(page.locator('#frLearnTeacherPanel select')).toBeVisible();
+  await expect(page.locator('#frLearnTeacherPanel select').first()).toBeVisible();
+  await expect(page.locator('#frLearnTeacherPanel select')).toHaveCount(5);
   await expect(page.locator('#frLearnTeacherPanel')).toContainText('Teacher Registration');
 });
 
