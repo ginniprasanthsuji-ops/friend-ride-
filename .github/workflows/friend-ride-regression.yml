@@ -1,7 +1,7 @@
 name: FRIEND RIDE Regression
 on:
   push:
-    branches: [main]
+    branches: [main, ui/full-native-dark-gold-2026-11-21]
   workflow_dispatch:
   schedule:
     - cron: '17 2 * * *'
