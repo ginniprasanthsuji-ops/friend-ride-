@@ -143,3 +143,10 @@ test('Service worker renders Telugu student homework push reminder', async()=>{
  expect(sw).toContain('మీ హోంవర్క్ చెక్ లిస్ట్ పూర్తి చేసి పాఠాలు చదవండి');
  expect(sw).toContain('requireInteraction = true');
 });
+
+
+test('Learn & Teach script passes JavaScript syntax compilation', async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const js=await readFile(process.cwd()+'/learn-teach.js','utf8');
+ try { new Function(js); } catch(e) { throw new Error('learn-teach.js syntax error: '+e.message+'; stack='+e.stack); }
+});
