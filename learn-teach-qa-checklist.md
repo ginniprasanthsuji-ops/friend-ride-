@@ -52,3 +52,20 @@
 19. One-person center is shown with the correct label and subject/schedule details after admin approval.
 20. Teacher eligibility validation: 10th level cannot exceed Class 6; Intermediate cannot exceed Class 8; Degree cannot exceed Class 10; B.Ed subject-wise requires admin verification.
 21. One-person coaching center qualification and class-range validation rejects disallowed combinations.
+
+
+## Zoom classroom implementation (QA branch)
+- [x] Separate QA table for 90-minute Zoom sessions
+- [x] RLS limits read access to teacher, student, admin participants
+- [x] Session scheduling UI on Teacher mode and participant session list
+- [x] Edge Function scaffold uses Zoom Server-to-Server OAuth secrets (server only)
+- [x] Host start URL is not sent to client response
+- [x] Waiting room enabled and join-before-host disabled
+- [x] QA migration applied to FRIEND RIDE QA project
+- [x] Session update writes hardened to admin-only
+- [ ] Configure Zoom OAuth credentials as QA Edge Function secrets
+- [ ] Test Zoom API meeting creation with valid credentials
+- [ ] Verify same join URL in teacher + student authenticated accounts
+- [ ] Verify unrelated user denied access to meeting link
+- [ ] Verify payment/active enrollment gate
+- [ ] Run full Playwright and regression suite before merge/deploy
