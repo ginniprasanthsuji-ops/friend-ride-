@@ -1,0 +1,54 @@
+# FRIEND RIDE Learn & Teach QA checklist
+
+## Implemented on QA branch
+- [x] Separate Learn tab in bottom navigation
+- [x] Learn & Teach landing page and role cards
+- [x] Student free registration action
+- [x] Course search/category filters
+- [x] ₹599/month enrollment request
+- [x] Teacher registration form and teaching modes
+- [x] ₹129/month teacher subscription request
+- [x] Teacher dashboard status display
+- [x] Course creation gate: approved teacher + active subscription
+- [x] 90-minute class duration labels
+- [x] Flexible scheduling note
+- [x] Student home-tuition request form
+- [x] Teacher application to open tuition requests
+- [x] Coaching-center marketplace and institute registration
+- [x] Admin approval UI for teachers, courses, institutes
+- [x] Admin manual teacher-subscription activation (after payment verification)
+- [x] SQL schema and RLS migration drafted
+
+## Not yet live / blockers
+- [ ] Apply Learn & Teach, One-Person Coaching Center, and Teacher Eligibility migrations to a Supabase QA database (project currently has no Supabase development branches)
+- [ ] Cashfree course enrollment payment integration
+- [ ] Cashfree teacher ₹129 subscription payment integration
+- [ ] Live teacher/student notification delivery
+- [ ] Student/teacher schedule booking calendar and 90-minute session slot validation
+- [ ] Institute referral attribution / commission tracking
+- [ ] Admin approvals tested with real admin account
+- [ ] Browser/device regression tests
+- [ ] Security advisor review after QA schema deployment
+
+## Regression test cases
+1. Existing FRIEND RIDE Home, Friend Mart, Food Delivery, Categories, Orders and Menu tabs still open.
+2. Learn tab is visible and opens the Learn page.
+3. Student can register with authenticated account; duplicate registration is idempotent.
+4. Anonymous user is prompted to login before registration/enrollment/request.
+5. Approved course appears in student marketplace and is priced ₹599/month.
+6. Enrollment inserts pending_payment; no success is claimed for payment.
+7. Teacher registration saves as pending and does not publish courses.
+8. Teacher subscription request is ₹129/month and pending_payment.
+9. Teacher cannot create course until teacher approval and active subscription.
+10. Admin can approve teacher/course/institute and activate teacher subscription after verifying payment.
+11. Course creation always fixes monthly fee at ₹599.
+12. Student tuition request contains class, subject, area, schedule, mode.
+13. Approved subscribed teacher can view open requests and apply.
+14. Student can browse approved institutes and send enquiry.
+15. RLS prevents another user reading private student/enrollment data or changing approvals.
+16. Class-duration UI consistently displays 90 minutes; time schedule is mutually agreed (calendar implementation still pending).
+17. One-person coaching center registration requires teacher_count=1, supports multiple subjects, and daily hours are 4 or 5 split into periods.
+18. One-person schedule validation rejects period totals below 4, above 5, or not matching the selected daily total.
+19. One-person center is shown with the correct label and subject/schedule details after admin approval.
+20. Teacher eligibility validation: 10th level cannot exceed Class 6; Intermediate cannot exceed Class 8; Degree cannot exceed Class 10; B.Ed subject-wise requires admin verification.
+21. One-person coaching center qualification and class-range validation rejects disallowed combinations.
