@@ -76,3 +76,17 @@ create policy learn_tuition_application_admin_update on public.fr_learn_tuition_
 for update to authenticated
 using (exists(select 1 from public.admin_users a where a.user_id=(select auth.uid())))
 with check (exists(select 1 from public.admin_users a where a.user_id=(select auth.uid())));
+
+-- Server-side teacher eligibility guard (UI validation is not a security boundary).
+alter table public.fr_learn_teacher_profiles
+drop constraint if exists fr_learn_teacher_profiles_teaching_range_check;
+alter table public.fr_learn_teacher_profiles
+add constraint fr_learn_teacher_profiles_teaching_range_check
+check (
+  eligibility_level is null
+  or eligibility_level = 'other'
+  or (eligibility_level = '10th' and teach_up_to = '6')
+  or (eligibility_level = 'intermediate' and teach_up_to in ('6','8'))
+  or (eligibility_level = 'degree' and teach_up_to in ('6','8','10'))
+  or (eligibility_level = 'bed' and teach_up_to = 'subject' and nullif(trim(bed_subject),'') is not null)
+);
