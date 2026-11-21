@@ -4672,3 +4672,36 @@ main .page.active.fr-screen-back{animation:frScreenBack .24s cubic-bezier(.22,.7
  document.addEventListener('animationend',e=>{if(e.animationName==='frScreenBack')e.target.classList.remove('fr-screen-back');});
 })();
 </script>
+<!-- FRIEND RIDE native app UX enhancement v3 -->
+<style id="fr-native-app-ux-v3">
+html{scroll-behavior:auto!important}body{overscroll-behavior-y:contain}
+main{min-height:calc(100dvh - 150px)}
+main .page{min-height:calc(100dvh - 165px);padding-bottom:18px;overflow-x:hidden}
+main .page.active{animation:frNativePush .25s cubic-bezier(.18,.72,.18,1) both}
+@keyframes frNativePush{from{opacity:0;transform:translate3d(20px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.fr-native-back{display:none;border:0;background:#ffffff20;color:#fff;border-radius:13px;width:40px;height:40px;font-size:22px;flex:0 0 40px;align-items:center;justify-content:center}
+.fr-native-back.show{display:flex}.fr-native-back:active{transform:scale(.92)}
+.fr-native-screen-title{display:none;font-size:13px;font-weight:800;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-native-screen-title.show{display:block}
+.fr-native-press{transition:transform .12s ease,filter .12s ease!important}
+.fr-native-press:active{transform:scale(.97);filter:brightness(.97)}
+@media(prefers-reduced-motion:reduce){main .page.active{animation:none!important}.fr-native-press{transition:none!important}}
+</style>
+<script id="fr-native-app-ux-controller-v3">
+(function(){
+ if(window.__frNativeAppUXV3)return;window.__frNativeAppUXV3=true;
+ const original=window.showPage;if(typeof original!=='function')return;
+ const roots=new Set([...document.querySelectorAll('.bottom button[data-page],.premium-bottom button[data-page]')].map(b=>b.dataset.page).filter(Boolean));
+ const header=document.querySelector('.topbar');let back=document.querySelector('.fr-native-back');
+ if(header&&!back){back=document.createElement('button');back.type='button';back.className='fr-native-back';back.setAttribute('aria-label','Back');back.textContent='‹';back.onclick=()=>window.frAppBack?.();header.insertBefore(back,header.firstChild);}
+ let title=document.querySelector('.fr-native-screen-title');
+ if(header&&!title){title=document.createElement('span');title.className='fr-native-screen-title';title.setAttribute('aria-live','polite');header.querySelector('.brand')?.appendChild(title);}
+ const labelFor=id=>{const p=document.getElementById(id);const h=p?.querySelector('h1,h2,h3');return(h?.textContent||id).trim().slice(0,50)};
+ const update=id=>{const sub=!roots.has(id)&&id!=='home';back?.classList.toggle('show',sub);title?.classList.toggle('show',sub);if(title)title.textContent=sub?labelFor(id):''};
+ window.showPage=function(id){const before=document.querySelector('main .page.active')?.id;const r=original.apply(this,arguments);const target=String(id||'');if(target&&target!==before){window.scrollTo({top:0,behavior:'instant'});update(target)}return r};
+ update(document.querySelector('main .page.active')?.id||'home');
+ const mark=()=>document.querySelectorAll('button,.tile,[role="button"],.top-action,.iconbtn').forEach(e=>e.classList.add('fr-native-press'));
+ mark();new MutationObserver(mark).observe(document.body,{subtree:true,childList:true});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&window.frAppBack?.())e.preventDefault()});
+})();
+</script>
