@@ -31,7 +31,7 @@
         const scripts=['https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js'];
         for(const src of scripts)await loadScript(src);
         if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
-        const reg=await navigator.serviceWorker.register('/firebase-messaging-sw.js',{scope:'/'});
+        const reg=await navigator.serviceWorker.register('./service-worker.js');
         const messaging=firebase.messaging();
         const token=await messaging.getToken({vapidKey:VAPID_PUBLIC_KEY,serviceWorkerRegistration:reg});
         if(!token)throw new Error('FCM token generation failed.');
