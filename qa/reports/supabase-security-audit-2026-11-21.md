@@ -45,6 +45,23 @@
 - fr_list_approved_partner_stores()
 - fr_public_homepage_feedback()
 
+## Additional targeted findings (reviewed 2026-11-21)
+
+### Authorization consistency finding — `public.is_admin()` (MEDIUM, remediation candidate)
+- Function source checks a single hard-coded UUID instead of the `public.admin_users` membership table.
+- Live database comparison: `admin_users` contains 1 row; the hard-coded UUID is **not** a member of that table.
+- This is an authorization-definition mismatch. Depending on which app/RPC paths call `is_admin()`, the legitimate admin may be denied or the hard-coded account may be treated differently from the admin allowlist. It is **not yet confirmed exploitable**.
+- Recommendation: in QA branch, propose replacing the hard-coded check with a consistent membership check against `admin_users`, then test admin and non-admin access. **Do not change production yet**; first map callers and verify the intended admin identity.
+
+### Functions sampled — checks present
+- Admin driver/partner review and listing RPCs sampled use `is_friend_ride_admin()` or explicit `admin_users` checks.
+- Ride payment creation checks customer ownership and completed ride status.
+- Ride payment state is restricted to the ride's customer or assigned driver.
+- Driver payment confirmation requires approved driver identity and assignment to the ride.
+- Parcel delivery OTP requires customer ownership, delivery-ready state, payment collected, cooldown and expiry; verification checks assigned approved driver, attempts and expiry.
+- TASKO payment submission is limited to the authenticated customer and completed TASKO booking; admin verification checks admin membership.
+- `fr_process_market_payment_timeouts()` is executable only by postgres in its ACL (service/cron-side function).
+
 ## Recommended safe next steps
 1. Review function source and classify: public read, authenticated user RPC, admin-only, service-only.
 2. Confirm authorization checks inside each SECURITY DEFINER function; prioritize `admin_*`, order/parcel/payment, KYC/document, and OTP-related RPCs.
