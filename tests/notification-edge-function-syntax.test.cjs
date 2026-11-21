@@ -23,7 +23,7 @@ test("push sender requires internal secret, VAPID config, and security guards", 
     "is_active",
     "SUPABASE_SERVICE_ROLE_KEY",
     'startsWith("//")',
-    "last_success_at"
+    "last_success_at",\n    "attempt < 3",\n    "retries"
   ]) {
     assert.ok(source.includes(required), "missing security/implementation marker: " + required);
   }
