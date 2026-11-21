@@ -4464,17 +4464,19 @@ async function frAdminAssignLaundry(id){
    saveLocalPrefs({permission:'granted',notifications_enabled:true});
    // Service-worker background push is deferred until the worker file and provider are installed.
    saveLocalPrefs({service_worker_registered:false,background_push_pending:true});
-   if(window.currentUser&&window.sb){
-    const prefs={user_id:window.currentUser.id,ride_enabled:true,order_enabled:true,payment_enabled:true,account_enabled:true,partner_enabled:true,hourly_enabled:true,promo_enabled:false,updated_at:new Date().toISOString()};
-    const {error}=await window.sb.from('fr_notification_preferences').upsert(prefs,{onConflict:'user_id'});
+   const frAuthUser=typeof currentUser!=='undefined'?currentUser:window.currentUser;
+   const frSupabaseClient=typeof sb!=='undefined'?sb:window.sb;
+   if(frAuthUser&&frSupabaseClient){
+    const prefs={user_id:frAuthUser.id,ride_enabled:true,order_enabled:true,payment_enabled:true,account_enabled:true,partner_enabled:true,hourly_enabled:true,promo_enabled:false,updated_at:new Date().toISOString()};
+    const {error}=await frSupabaseClient.from('fr_notification_preferences').upsert(prefs,{onConflict:'user_id'});
     if(error)console.warn('FR preference sync:',error.message);
    }
    // Android wrapper/native integration can provide a secure FCM token provider.
    if(typeof window.FR_PUSH_TOKEN_PROVIDER==='function'){
     try{
      const pushToken=await window.FR_PUSH_TOKEN_PROVIDER();
-     if(pushToken&&window.sb){
-      const {error}=await window.sb.functions.invoke('fr-notification-register-token',{body:{token:pushToken,platform:window.FR_PUSH_PLATFORM||'android'}});
+     if(pushToken&&frSupabaseClient){
+      const {error}=await frSupabaseClient.functions.invoke('fr-notification-register-token',{body:{token:pushToken,platform:window.FR_PUSH_PLATFORM||'android'}});
       if(error)console.warn('FR push token registration:',error.message);
      }
     }catch(tokenError){console.warn('FR token provider not configured or failed:',tokenError)}
@@ -4513,17 +4515,21 @@ async function frAdminAssignLaundry(id){
   };
   saveLocalPrefs(values);
   const statusEl=document.getElementById('frPrefSaveStatus');
-  if(!window.currentUser||!window.sb){if(statusEl)statusEl.textContent='Preferences ఈ పరికరంలో save అయ్యాయి. Accountలో sync చేయడానికి login చేయండి.';return}
-  const {error}=await window.sb.from('fr_notification_preferences').upsert({user_id:window.currentUser.id,...values,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  const frAuthUser=typeof currentUser!=='undefined'?currentUser:window.currentUser;
+  const frSupabaseClient=typeof sb!=='undefined'?sb:window.sb;
+  if(!frAuthUser||!frSupabaseClient){if(statusEl)statusEl.textContent='Preferences ఈ పరికరంలో save అయ్యాయి. Accountలో sync చేయడానికి login చేయండి.';return}
+  const {error}=await frSupabaseClient.from('fr_notification_preferences').upsert({user_id:frAuthUser.id,...values,updated_at:new Date().toISOString()},{onConflict:'user_id'});
   if(statusEl)statusEl.textContent=error?'Save failed: '+error.message:'Notification preferences saved and synced.';
  };
  window.frLoadNotificationPreferences=async function(){
   const p=localPrefs();
   const map={ride_enabled:'frPrefRide',order_enabled:'frPrefOrder',payment_enabled:'frPrefPayment',account_enabled:'frPrefAccount',partner_enabled:'frPrefPartner',hourly_enabled:'frPrefHourly',promo_enabled:'frPrefPromo'};
   Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el&&key in p)el.checked=!!p[key]});
-  if(window.currentUser&&window.sb){
+  const frAuthUser=typeof currentUser!=='undefined'?currentUser:window.currentUser;
+  const frSupabaseClient=typeof sb!=='undefined'?sb:window.sb;
+  if(frAuthUser&&frSupabaseClient){
    try{
-    const {data,error}=await window.sb.from('fr_notification_preferences').select('*').eq('user_id',window.currentUser.id).maybeSingle();
+    const {data,error}=await frSupabaseClient.from('fr_notification_preferences').select('*').eq('user_id',frAuthUser.id).maybeSingle();
     if(!error&&data){Object.entries(map).forEach(([key,id])=>{const el=document.getElementById(id);if(el)el.checked=!!data[key]});saveLocalPrefs(data)}
    }catch(e){console.warn('FR notification preferences load:',e)}
   }
