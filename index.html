@@ -4427,6 +4427,36 @@ async function frAdminAssignLaundry(id){
 <style id="fr-v11.1-pro-learning-routing-style">
 .fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
 </style>
+<!-- FULL APP NATIVE DARK/GOLD DESIGN SYSTEM: unified legacy screen styling -->
+<style id="fr-full-native-dark-gold">
+:root{--purple:#a879ff;--purple2:#bd91ff;--navy:#080d17;--orange:#f5b84c;--bg:#050b17;--ink:#f5f7fb;--muted:#aab6ca;--line:#26364d;--white:#101a2c;--gold:#f5b84c;--green:#39c28b;--red:#ff687d}
+html,body{background:#050b17!important;color:#f5f7fb!important}
+body{background:radial-gradient(ellipse at 15% 0%,#1a2440 0,transparent 34%),linear-gradient(180deg,#050b17,#080d17)!important;padding-bottom:calc(90px + env(safe-area-inset-bottom))!important}
+.topbar,.home-topbar{background:linear-gradient(135deg,#101a2c,#07101e)!important;color:#f5f7fb!important;border-bottom:1px solid #283a54!important;box-shadow:0 7px 24px #0005!important}
+.topbar .iconbtn,.home-topbar .menu-open{background:#18243a!important;color:#f5b84c!important;border:1px solid #334966!important}
+.topbar .logo{background:linear-gradient(135deg,#f5b84c,#d58b25)!important;color:#111827!important}
+.topbar .brand small{color:#aab6ca!important}
+.top-action,.btn.purple,.btn.orange,.btn.primary{background:linear-gradient(135deg,#f5b84c,#d99026)!important;color:#111827!important;border:1px solid #f5b84c!important;box-shadow:0 5px 18px #f5b84c20!important}
+main{max-width:760px!important;margin:0 auto!important}
+main .page{background:transparent!important;color:#f5f7fb!important;min-height:calc(100dvh - 90px)!important;padding:12px 12px 110px!important}
+main .page .card,main .page .panel,main .page .section-card,main .page .notice{background:linear-gradient(145deg,#121e32,#0b1423)!important;color:#f5f7fb!important;border:1px solid #263b59!important;border-radius:22px!important;box-shadow:0 8px 24px #0004!important}
+main .page .tile,main .page .service-card,main .page .category-card,main .page .listrow{background:linear-gradient(145deg,#172640,#0c1525)!important;color:#f5f7fb!important;border:1px solid #314762!important;border-radius:18px!important}
+main .page h1,main .page h2,main .page h3,main .page h4,label,strong,b{color:inherit}
+main .page .muted,main .page small,main .page .tiny{color:#aab6ca!important}
+main .page input,main .page select,main .page textarea{background:#0a1424!important;color:#f5f7fb!important;border:1px solid #354a65!important;border-radius:13px!important;box-shadow:none!important}
+main .page input::placeholder,main .page textarea::placeholder{color:#7f91ab!important}
+main .page .btn.light,main .page button.light,main .page button:not(.purple):not(.orange):not(.primary):not(.fr-native-service):not(.fr-native-emi){background:linear-gradient(145deg,#172640,#0c1525)!important;color:#f5f7fb!important;border:1px solid #314762!important;border-radius:13px!important}
+main .page button:active,.bottom button:active{transform:scale(.97)!important}
+.bottom{background:linear-gradient(180deg,#101a2c,#07101e)!important;border:1px solid #293b55!important;border-radius:22px 22px 0 0!important;box-shadow:0 -8px 28px #0006!important;padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
+.bottom button{color:#9baac0!important}.bottom button.active{background:linear-gradient(145deg,#3b2b16,#171e35)!important;color:#f5b84c!important}.bottom button.active span{background:#3b2b16!important}
+.modal{background:#030712d9!important;backdrop-filter:blur(12px)!important;align-items:flex-end!important;padding:10px!important}
+.modalbox{background:linear-gradient(145deg,#142139,#0a1322)!important;color:#f5f7fb!important;border:1px solid #30445f!important;border-radius:26px!important;box-shadow:0 18px 50px #0009!important;padding:20px!important}
+.modalhead h2,.modalbox h2,.modalbox h3{color:#f5f7fb!important}.close{background:#1a2940!important;color:#f5b84c!important;border:1px solid #334762!important}
+.modalbox .field label{color:#f5f7fb!important}.modalbox input,.modalbox select,.modalbox textarea{background:#0a1424!important;color:#f5f7fb!important;border:1px solid #354a65!important;border-radius:13px!important}
+.modalbox .btn{border-radius:14px!important;font-weight:800!important}.modalbox .btn.purple{background:linear-gradient(135deg,#f5b84c,#d99026)!important;color:#111827!important}
+.role{background:#111e31!important;color:#f5f7fb!important;border:1px solid #344a66!important}.role.active{border-color:#f5b84c!important;background:#332514!important}
+@media(min-width:650px){.modal{align-items:center!important}.modalbox{border-radius:24px!important}}
+</style>
 <!-- FRIEND RIDE LIVE NATIVE UI: screenshot-inspired premium home and role dashboards -->
 <style id="fr-native-ui-live">
 :root{--fr-bg:#050b17;--fr-surface:#101a2c;--fr-surface2:#14223a;--fr-border:#263b59;--fr-text:#f6f8ff;--fr-muted:#aab9d0;--fr-orange:#ff982e;--fr-purple:#8a5cf6}
