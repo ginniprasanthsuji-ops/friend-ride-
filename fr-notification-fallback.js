@@ -17,19 +17,24 @@
     if(Notification.permission==='granted'){try{new Notification(title,{body,icon:'./icons/icon-192.png'});}catch(_e){}}
   }
   async function loadRecent(){
-    if(!window.sb||!activeUser)return;
+    if(typeof sb==='undefined'||!activeUser)return;
     const {data,error}=await sb.from('fr_notification_events').select('id,title,body,status,created_at,category,payload').eq('user_id',activeUser).order('created_at',{ascending:false}).limit(20);
     if(!error&&Array.isArray(data))data.reverse().forEach(showEvent);
   }
   async function init(){
-    if(!window.sb||!sb.auth)return;
-    const {data}=await sb.auth.getSession();activeUser=data?.session?.user?.id||null;
-    if(!activeUser)return;
-    await loadRecent();
-    if(channel)sb.removeChannel(channel);
-    channel=sb.channel('fr-notification-fallback-'+activeUser).on('postgres_changes',{event:'INSERT',schema:'public',table:'fr_notification_events',filter:'user_id=eq.'+activeUser},payload=>showEvent(payload.new)).subscribe();
-    if(timer)clearInterval(timer);timer=setInterval(loadRecent,60000);
-    sb.auth.onAuthStateChange((_event,session)=>{activeUser=session?.user?.id||null;if(channel){sb.removeChannel(channel);channel=null;}if(timer){clearInterval(timer);timer=null;}if(activeUser){loadRecent();channel=sb.channel('fr-notification-fallback-'+activeUser).on('postgres_changes',{event:'INSERT',schema:'public',table:'fr_notification_events',filter:'user_id=eq.'+activeUser},payload=>showEvent(payload.new)).subscribe();timer=setInterval(loadRecent,60000);}});
+    if(typeof sb==='undefined'||!sb.auth)return;
+    async function connect(session){
+      activeUser=session?.user?.id||null;
+      if(channel){sb.removeChannel(channel);channel=null;}
+      if(timer){clearInterval(timer);timer=null;}
+      if(!activeUser)return;
+      await loadRecent();
+      channel=sb.channel('fr-notification-fallback-'+activeUser).on('postgres_changes',{event:'INSERT',schema:'public',table:'fr_notification_events',filter:'user_id=eq.'+activeUser},payload=>showEvent(payload.new)).subscribe();
+      timer=setInterval(loadRecent,60000);
+    }
+    const {data}=await sb.auth.getSession();
+    await connect(data?.session||null);
+    sb.auth.onAuthStateChange((_event,session)=>{connect(session);});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
