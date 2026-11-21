@@ -152,3 +152,10 @@ Before major runtime integration changes:
 - Maps use Leaflet and require map tiles/network access; verify tile requests and location permissions on-device.
 - Android WebView audit now reports detected external URL hostnames as a warning so offline/network-dependent dependencies are visible during packaging.
 - No CDN scripts were bundled locally yet; keep this as a release test gate rather than modifying runtime source in this architecture-only phase.
+
+## Capacitor staging icon fix — follow-up
+
+- The PWA manifest references two icons, but the staging copy list previously omitted the `icons/` directory. That would leave the staged manifest pointing at absent files.
+- Staging now requires and copies `icons/icon-192.png` and `icons/icon-512.png` into `www/icons/`.
+- Staging test updated to verify both icon files are copied and original source files remain unchanged.
+- Local fixture staging tests: **2/2 passed**. This is a fixture test; a full repository npm test and device build are still pending.
