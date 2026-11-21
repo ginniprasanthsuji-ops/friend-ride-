@@ -4738,6 +4738,76 @@ body[data-fr-theme="dark"] .fr-theme-switch{background:#17253b;color:#fff;border
 .fr-native-quick .fr-native-service:nth-child(2n){animation-delay:.06s}.fr-native-quick .fr-native-service:nth-child(3n){animation-delay:.12s}
 @keyframes frServiceRise{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){.fr-native-quick .fr-native-service{animation:none!important;transition:none!important}}
+
+/* FRIEND RIDE unified customer-first palette: Midnight Ocean + Teal + Coral + Champagne */
+:root{
+ --fr-bg:#07131f;--fr-surface:#101e2d;--fr-surface-2:#17283a;
+ --fr-gold:#f4c66a;--fr-gold-soft:#ffe3a0;--fr-text:#f4f8fb;--fr-muted:#a8bacb;
+ --fr-success:#38d6a1;--fr-warning:#ffbf5b;--fr-danger:#ff7183;--fr-border:#263c50;
+ --fr-primary:#20c7b5;--fr-primary-strong:#0fae9e;--fr-coral:#ff7867;
+}
+body{background:radial-gradient(ellipse at 8% -8%,#12364a 0,transparent 36%),radial-gradient(ellipse at 96% 0%,#39232b 0,transparent 27%),linear-gradient(180deg,#07131f,#091725 75%,#07131f)!important;color:#f4f8fb!important}
+.topbar{background:linear-gradient(105deg,#081522 0%,#123047 62%,#173446)!important;border-bottom:1px solid #2d5064!important}
+.logo{background:linear-gradient(145deg,#ffe3a0,#f0b94d)!important;color:#102131!important}
+.iconbtn{background:#19364a!important;border:1px solid #2e5064!important;color:#53e1d0!important}
+.top-action{background:linear-gradient(110deg,#20c7b5,#7ce8d8)!important;color:#06212a!important}
+.card,.stat,.listrow,.tile,.market-store,.market-product,.master-visual-card,.partner-catalog-row,.home-catalog-shortcuts button,.home-pro-service,.market-empty,.market-category-row button,.market-cart-row{
+ background:linear-gradient(145deg,#142638,#0e1c2a)!important;border-color:#294256!important;color:#edf6fb!important;box-shadow:0 7px 22px #0003!important
+}
+.card{border-radius:18px!important}
+.hero,.home-banner{background:radial-gradient(circle at 88% 10%,#267c79 0,transparent 30%),linear-gradient(120deg,#102437,#174256)!important;border:1px solid #32606b!important}
+.hero .eyebrow,.home-banner small{color:#8df0df!important}
+.hero p{color:#c5dbe7!important}
+.tile{border-radius:16px!important;min-height:92px!important}
+.tile b,.home-pro-service b,.market-store-info b,.market-product-info b,.master-visual-info b,.home-catalog-shortcuts b{color:#f4f8fb!important}
+.tile small,.market-store-info small,.market-product-info small,.master-visual-info small,.home-catalog-shortcuts small{color:#a9bdcd!important}
+.tile .emoji{background:linear-gradient(145deg,#183b4d,#24414e)!important}
+.btn{background:linear-gradient(110deg,#20c7b5,#75e4d4)!important;color:#08222b!important;border:1px solid #1bb9a9!important;box-shadow:0 5px 16px #20c7b522!important;border-radius:14px!important}
+.btn.purple,.btn.dark{background:linear-gradient(110deg,#1c3348,#152435)!important;color:#f4c66a!important;border:1px solid #39536a!important}
+.btn.light{background:#183448!important;color:#72e5d6!important;border:1px solid #31596d!important}
+.btn.red{background:#3a202b!important;color:#ff8b98!important;border:1px solid #70404b!important}
+.btn.green{background:#12372f!important;color:#59e0ac!important;border:1px solid #286653!important}
+.field input,.field textarea,.field select,input,textarea,select{background:#122234!important;color:#f4f8fb!important;border-color:#2d465b!important}
+.field input::placeholder,input::placeholder,textarea::placeholder{color:#8299ad!important}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#20c7b5!important;box-shadow:0 0 0 3px #20c7b51c!important}
+.notice{background:#14283a!important;color:#c0d2df!important;border:1px solid #294256!important}
+.status{background:#3a2d1b!important;color:#ffd58a!important}.status.ok{background:#12372e!important;color:#67e2b2!important}
+.pill{background:#163a4b!important;color:#70e4d5!important}
+.bottom{background:#081522f7!important;border-top:1px solid #294256!important;box-shadow:0 -7px 22px #0005!important}
+.bottom button{color:#8da5b9!important}.bottom button.active{color:#54e0d0!important}.bottom button.active span{background:#183a4b!important}
+.drawer{background:linear-gradient(180deg,#122334,#091522)!important;border-right:1px solid #294256!important}
+.drawer-head{background:radial-gradient(circle at 90% 10%,#287c77 0,transparent 32%),linear-gradient(120deg,#102437,#1b3948)!important;border:1px solid #355b68!important}
+.menu-item{background:#142638!important;color:#e4f0f7!important;border:1px solid #2a4358!important}
+.menu-item:active,.menu-item:hover{background:#1b3c4e!important;color:#65e4d4!important}
+.menu-label{color:#91a8bb!important}
+.modalbox{background:linear-gradient(150deg,#16293a,#0c1927)!important;color:#edf5fa!important;border:1px solid #2d465b!important}
+.close{background:#1b3347!important;color:#63e1d2!important}
+.role{background:#142638!important;color:#e9f2f8!important;border-color:#2d465b!important}
+.role.active{background:#183b4b!important;border-color:#20c7b5!important;color:#8df0df!important}
+.home-pro-service{background:linear-gradient(145deg,#162a3c,#102032)!important;border:1px solid #2b455b!important}
+.cycle-delivery-home-card,.cycle-delivery-hero{background:linear-gradient(120deg,#12382f,#10271f)!important;border-color:#2a6650!important;color:#e8fff4!important}
+.cycle-delivery-home-copy small,.cycle-delivery-rate{color:#73e2ad!important}
+.cycle-price-table div{background:#142638!important;border-color:#294256!important;color:#e8f2f8!important}
+.cycle-price-table b{color:#73e2ad!important}
+.fr-poster{box-shadow:0 10px 24px #0004!important}
+.fr-poster-dots span{background:#294256!important}.fr-poster-dots span:first-child{background:#20c7b5!important}
+.market-search input,.partner-price-editor input{background:#122234!important;color:#f4f8fb!important;border-color:#2d465b!important}
+.market-category-row button{color:#76e5d5!important;border-color:#315267!important}
+.market-category-row button.active{background:#183a4b!important;color:#a3f4e8!important;border-color:#20c7b5!important}
+.market-price,.master-visual-info .master-partner-price{color:#f4c66a!important}
+.market-store-distance{color:#63e1ad!important}
+.market-empty{border-color:#355064!important;color:#a8bacb!important}
+.coordline{color:#a8bacb!important}
+.location-action{background:#183448!important;color:#72e5d6!important;border-color:#31596d!important}
+.track-actions button{background:#142638!important;color:#72e5d6!important;border-color:#2d465b!important}
+#mapPlaceholder{background:linear-gradient(135deg,#15362d,#173246)!important;color:#b6e4d0!important;border-color:#2b5648!important}
+hr{border-color:#294256!important}
+#message.error{background:#3a202b!important;color:#ff8b98!important}#message.good{background:#12372f!important;color:#67e2b2!important}
+.home-service,.cab-feature,.store-card,.home-section-title button{border-color:#294256!important}
+.home-service,.store-card{background:linear-gradient(145deg,#142638,#0f1e2c)!important;color:#eef6fb!important}
+.cab-feature{background:linear-gradient(110deg,#153247,#1a3c49)!important;color:#f4f8fb!important}
+.home-section-title h2{color:#f4c66a!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 <script id="fr-home-profile-avatar">
 window.frRefreshHomeProfileAvatar=async function(){
