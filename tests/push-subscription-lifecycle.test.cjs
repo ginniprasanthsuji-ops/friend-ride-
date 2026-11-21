@@ -3,8 +3,8 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const vm = require("node:vm");
 
-function loadLifecycle() {
-  const window = { navigator: { userAgent: "FR test" } };
+function loadLifecycle(navigator = { userAgent: "FR test" }) {
+  const window = { navigator };
   vm.runInNewContext(fs.readFileSync("integrations/notifications/push-subscription-lifecycle.js", "utf8"), { window });
   return window.FRPushSubscriptionLifecycle;
 }
@@ -19,7 +19,7 @@ test("enable requires auth and provider", async () => {
 test("enable saves subscription only after granted permission and successful subscribe", async () => {
   const lifecycle = loadLifecycle();
   let upsertPayload = null, upsertOptions = null;
-  const sb = { from: (table) => ({ upsert: async (payload, options) => { upsertPayload = payload; upsertOptions = options; return { error: null }; } }) };
+  const sb = { from: () => ({ upsert: async (payload, options) => { upsertPayload = payload; upsertOptions = options; return { error: null }; } }) };
   const provider = {
     requestPermission: async () => "granted",
     subscribe: async () => ({ subscribed: true, subscription: { endpoint: "https://push.example/sub", keys: { p256dh: "p", auth: "a" } } })
@@ -43,14 +43,30 @@ test("enable does not write when permission denied", async () => {
   assert.equal(writes, 0);
 });
 
-test("disable marks current endpoint inactive before browser unsubscribe", async () => {
+test("enable cleans up browser subscription if DB upsert fails", async () => {
   const lifecycle = loadLifecycle();
+  let unsubscribed = false;
+  const sb = { from: () => ({ upsert: async () => ({ error: { message: "database unavailable" } }) }) };
+  const provider = {
+    requestPermission: async () => "granted",
+    subscribe: async () => ({ subscribed: true, subscription: { endpoint: "https://push.example/sub", keys: { p256dh: "p", auth: "a" } } }),
+    unsubscribe: async () => { unsubscribed = true; return { unsubscribed: true }; }
+  };
+  const result = await lifecycle.enable({ sb, user: { id: "user-uuid" }, provider, vapidPublicKey: "public" });
+  assert.equal(result.enabled, false);
+  assert.equal(result.reason, "subscription-save-failed");
+  assert.equal(unsubscribed, true);
+});
+
+test("disable marks current endpoint inactive then unsubscribes browser", async () => {
+  const lifecycle = loadLifecycle({ userAgent: "FR test", serviceWorker: { getRegistration: async () => ({ pushManager: { getSubscription: async () => ({ endpoint: "https://push.example/sub" }) } }) } });
   let updatePayload = null, filters = [];
-  const sb = { from: (table) => ({ update: (payload) => { updatePayload = payload; return { eq: async (key, value) => { filters.push([key, value]); if (filters.length === 1) return { eq: async (key2, value2) => { filters.push([key2, value2]); return { error: null }; } }; return { error: null }; } }; } }) };
+  const sb = { from: () => ({ update: (payload) => { updatePayload = payload; return { eq: async (key, value) => { filters.push([key, value]); return { eq: async (key2, value2) => { filters.push([key2, value2]); return { error: null }; } }; } }; } }) };
   const provider = { unsubscribe: async () => ({ unsubscribed: true }) };
   const result = await lifecycle.disable({ sb, user: { id: "user-uuid" }, provider });
   assert.equal(result.disabled, true);
-  assert.equal(result.databaseMarkedInactive, false); // no active browser subscription in test harness
+  assert.equal(result.databaseMarkedInactive, true);
   assert.equal(result.browserUnsubscribed, true);
-  assert.equal(updatePayload, null);
+  assert.equal(updatePayload.is_active, false);
+  assert.deepEqual(filters, [["user_id", "user-uuid"], ["endpoint", "https://push.example/sub"]]);
 });
