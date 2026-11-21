@@ -145,3 +145,12 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [x] Run #247 completed successfully; all workflow steps passed, including inline JavaScript/version validation and Playwright browser regression.
 - [ ] Run #248 (tracker-only commit) is in progress as of this check.
 - [ ] CI success does not certify backend integrations, live push, Android device behavior, or production readiness.
+
+
+## 16. CI verification and Food RLS review safety note (2026-11-21)
+- [x] Run #247 succeeded: floating-help removal guard and notification gap audit tests passed.
+- [x] Run #248 succeeded at SHA `117f800206b975ff60225a95864e5666a933217d`.
+- [x] Run #249 succeeded at SHA `1622c95060867cb50314c80f654f7830ac591d56`; browser regression job and all steps passed.
+- [x] Food RLS review SQL comment corrected: row policies do not limit updated columns. Restaurant-owner UPDATE requires column-level grants, constrained RPC, or trigger validation before safe application.
+- [ ] Food RLS correction remains review-only and is not applied. Backend integration, auth-role testing, payments, delivery partner status RPC and device tests remain blockers.
+- [ ] New commit CI pending.
