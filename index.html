@@ -724,7 +724,7 @@ body{padding-bottom:105px}
  </div>
  <div id="loginForm">
   <div class="field"><label>Mobile Number</label><input id="loginPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number" autocomplete="tel"></div>
-  <button class="btn" style="width:100%" onclick="sendLoginOtp()">Send SMS OTP</button>
+  <button type="button" class="btn" style="width:100%" onclick="window.sendLoginOtp?.()">Send SMS OTP</button>
   <div class="field" id="otpArea"><label>SMS OTP</label><input id="loginOtp" type="tel" inputmode="numeric" maxlength="6" placeholder="6 digit OTP" autocomplete="one-time-code"></div>
   <button class="btn light" style="width:100%" onclick="verifyLoginOtp()">Verify OTP & Continue</button>
   <button id="authRegisterButton" class="btn light" style="width:100%;margin-top:8px" onclick="switchAuth('register')">New Customer Registration</button>
