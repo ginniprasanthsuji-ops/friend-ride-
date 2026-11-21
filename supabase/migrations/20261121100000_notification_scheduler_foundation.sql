@@ -32,11 +32,11 @@ create table if not exists public.fr_notification_campaigns (
 alter table public.fr_notification_campaigns enable row level security;
 drop policy if exists "fr campaigns admin read" on public.fr_notification_campaigns;
 create policy "fr campaigns admin read" on public.fr_notification_campaigns
-  for select to authenticated using (exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+  for select to authenticated using (exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
 drop policy if exists "fr campaigns admin write" on public.fr_notification_campaigns;
 create policy "fr campaigns admin write" on public.fr_notification_campaigns
-  for all to authenticated using (exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'))
-  with check (exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+  for all to authenticated using (exists(select 1 from public.admin_users a where a.user_id=auth.uid()))
+  with check (exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
 
 create table if not exists public.fr_homework_reminders (
   id uuid primary key default gen_random_uuid(),
@@ -56,11 +56,11 @@ create table if not exists public.fr_homework_reminders (
 alter table public.fr_homework_reminders enable row level security;
 drop policy if exists "fr homework reminder participants read" on public.fr_homework_reminders;
 create policy "fr homework reminder participants read" on public.fr_homework_reminders
-  for select to authenticated using (student_user_id=auth.uid() or teacher_user_id=auth.uid() or parent_user_id=auth.uid() or exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+  for select to authenticated using (student_user_id=auth.uid() or teacher_user_id=auth.uid() or parent_user_id=auth.uid() or exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
 drop policy if exists "fr homework reminder admin manage" on public.fr_homework_reminders;
 create policy "fr homework reminder admin manage" on public.fr_homework_reminders
-  for all to authenticated using (exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'))
-  with check (exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+  for all to authenticated using (exists(select 1 from public.admin_users a where a.user_id=auth.uid()))
+  with check (exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
 
 create table if not exists public.fr_notification_queue (
   id uuid primary key default gen_random_uuid(),
@@ -83,5 +83,5 @@ create index if not exists fr_notification_queue_due_idx on public.fr_notificati
 alter table public.fr_notification_queue enable row level security;
 drop policy if exists "fr notification queue admin read" on public.fr_notification_queue;
 create policy "fr notification queue admin read" on public.fr_notification_queue
-  for select to authenticated using (exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+  for select to authenticated using (exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
 -- No client write policy: trusted server/Edge Function (service role) owns queueing and delivery.
