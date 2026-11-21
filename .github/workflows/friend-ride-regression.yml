@@ -1,5 +1,8 @@
 name: FRIEND RIDE Regression
 on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
   push:
     branches: [main]
   workflow_dispatch:
