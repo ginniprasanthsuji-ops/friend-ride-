@@ -2,9 +2,10 @@
 <html lang="te">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
 <script id="fr-system-theme-bootstrap">
-(function(){try{var mq=window.matchMedia('(prefers-color-scheme: dark)');function apply(dark){var theme=dark?'dark':'light';document.documentElement.setAttribute('data-theme',theme);document.documentElement.style.colorScheme=theme;var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',dark?'#172131':'#f6f8fc');}apply(mq.matches);if(mq.addEventListener)mq.addEventListener('change',function(e){apply(e.matches);});else if(mq.addListener)mq.addListener(function(e){apply(e.matches);});}catch(e){}})();
+(function(){try{var mq=window.matchMedia('(prefers-color-scheme: dark)'),mode='auto';try{mode=localStorage.getItem('fr-theme-mode')||'auto'}catch(_){}function apply(){var dark=mode==='dark'||(mode==='auto'&&mq.matches),theme=dark?'dark':'light';document.documentElement.setAttribute('data-theme',theme);document.documentElement.style.colorScheme=theme;var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',dark?'#172131':'#f6f8fc');}window.frGetThemeMode=function(){return mode};window.frSetThemeMode=function(next){if(!['auto','light','dark'].includes(next))return;mode=next;try{localStorage.setItem('fr-theme-mode',mode)}catch(_){}apply();var s=document.getElementById('frThemeModeSelect');if(s)s.value=mode;};apply();if(mq.addEventListener)mq.addEventListener('change',apply);else if(mq.addListener)mq.addListener(apply);}catch(e){}})();
 </script>
 <meta name="theme-color" content="#050b17">
 <meta name="application-version" content="11.1-PRO-category-routing-learning-isolation">
@@ -575,7 +576,7 @@ body{padding-bottom:82px}</style>
 <section id="reports" class="page"><div class="card"><h2>Reports & Analytics</h2><div class="notice">Revenue and activity reports will be populated from verified database records.</div></div></section>
 <section id="settings" class="page"><div class="card"><h2>System Settings</h2><div class="notice">Platform-wide settings must be managed through protected admin APIs.</div></div></section>
 
-<section id="profile" class="page"><div class="card"><h2>My Profile</h2><div id="profileInfo" class="muted">Login చేయండి.</div><button class="btn red" onclick="logout()">Logout</button></div></section>
+<section id="profile" class="page"><div class="card"><h2>My Profile</h2><div id="profileInfo" class="muted">Login చేయండి.</div><div class="fr-theme-setting" role="group" aria-labelledby="frThemeModeLabel"><label id="frThemeModeLabel" for="frThemeModeSelect">Appearance / థీమ్</label><select id="frThemeModeSelect" aria-label="Choose appearance theme" onchange="frSetThemeMode(this.value)"><option value="auto">Auto — System</option><option value="light">Light</option><option value="dark">Dark</option></select><p class="fr-theme-help">Auto mode follows your device theme and switches live.</p></div><button class="btn red" onclick="logout()">Logout</button></div></section>
 <section id="notifications" class="page"><div class="fr-notify-hero"><span>FRIEND RIDE ALERTS</span><h2>మీకు ముఖ్యమైన సమాచారం</h2><p>Ride, Orders, Delivery updates — అన్నీ ఒకే చోట.</p><button class="fr-notify-enable" onclick="frEnableDeviceAlerts()">🔔 Enable Notifications</button><div class="fr-alert-preview"><b>🔊 Alert Sound Preview</b><div class="fr-alert-preview-buttons"><button type="button" onclick="frPreviewAlertTone('order')">🛍️ Order arrived</button><button type="button" onclick="frPreviewAlertTone('ride')">🛵 New ride</button><button type="button" onclick="frPreviewAlertTone('customer')">🔔 Customer update</button></div></div><small id="frNotifyPermissionStatus">మీ ఫోన్‌లో నోటిఫికేషన్లు ఆన్ చేసుకోండి.</small></div><div class="card"><div class="fr-notify-list-head"><h3>Recent activity</h3><span>Latest updates</span></div><div id="frRideNotificationStatus" class="muted" style="font-size:12px;margin:8px 0">Login తర్వాత live notifications connect అవుతాయి.</div><div id="frNotificationFeed" class="empty-state">ప్రస్తుతం కొత్త నోటిఫికేషన్లు లేవు.</div></div></section>
 <section id="support" class="page"><div class="card"><h2>💬 Complaints & Feedback</h2><p class="muted">ఈ పాత Support లింక్ ఇప్పుడు కొత్త Complaint & Feedback ఫారమ్‌కు తీసుకెళ్తుంది.</p><button class="btn purple" onclick="frOpenSupportPage()">Open Complaints & Feedback</button></div></section>
 <section id="about" class="page"><div class="card"><h2>About FRIEND RIDE</h2><p>Local Ride • Delivery • Services</p><p class="muted">One app. Every local need.</p></div></section>
@@ -1910,7 +1911,25 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body></html>';
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="fr-step-a-readability">
+html,body{font-family:Inter,'Noto Sans Telugu',system-ui,-apple-system,'Segoe UI',sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+:root{--fr-body-size:16px;--fr-secondary-size:14px;--fr-caption-size:12px}
+body{font-size:var(--fr-body-size);line-height:1.5}
+:where(p,li,label,input,textarea,select,button,.btn,.notice,.muted,.helper-text,.subtitle,.secondary-text){font-size:max(14px,1em)}
+:where(p,li,.notice,.helper-text,.secondary-text){line-height:1.6}
+:where(small,.tiny,.caption,.helper-text){font-size:max(12px,1em)}
+:where(.muted,.subtitle,.secondary-text,.helper-text,small){color:var(--fr-muted)!important;opacity:1!important}
+:where(.page h1,.page h2,.page h3,.card h1,.card h2,.card h3){font-weight:650;line-height:1.35}
+:where(.tile,.service-card,.category-card,.card,.notice){overflow-wrap:anywhere}
+.fr-theme-setting{margin:16px 0;padding:14px;border:1px solid var(--fr-border);border-radius:14px;background:var(--fr-surface-raised);color:var(--fr-text)}
+.fr-theme-setting label{display:block;font-weight:600;margin-bottom:8px;color:var(--fr-text)}
+.fr-theme-setting select{width:100%;min-height:44px;border-radius:10px;padding:8px 12px;background:var(--fr-input);color:var(--fr-text);border:1px solid var(--fr-border)}
+.fr-theme-help{margin:8px 0 0;color:var(--fr-muted);font-size:14px;line-height:1.6}
+[lang="te"],:lang(te){line-height:1.65}
+</style>
+</html>';
   w.document.open();w.document.write(html);w.document.close();
  }catch(e){w.close();alert('Invoice: '+e.message);}
 }
