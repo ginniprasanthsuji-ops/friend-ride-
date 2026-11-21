@@ -257,15 +257,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
  <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('explore')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Services ↗</span></div><div class="banner-art">🛵</div></div>
   <div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
 <div class="card join-card"><h2>Join FRIEND RIDE</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')"><span class="emoji">👤</span><b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')"><span class="emoji">🚗</span><b>Driver Registration</b></button><button class="tile" onclick="openAuth('register','partner')"><span class="emoji">🏪</span><b>Partner Registration</b></button></div></div>
- <button type="button" class="fr-ai-launch" id="frAiLaunch" draggable="false" aria-label="Open FRIEND RIDE AI Assistant"><span class="fr-ai-orb">✦</span><span>FR AI సహాయం</span></button>
-<section class="fr-ai-panel" id="frAiPanel" aria-label="FRIEND RIDE AI Assistant">
- <header class="fr-ai-head"><div><strong>✦ FRIEND RIDE AI సహాయకుడు</strong><small>మీ సందేహాలకు తెలుగులో వెంటనే సహాయం</small></div><button type="button" class="fr-ai-close" id="frAiClose" aria-label="Close">×</button></header>
- <div class="fr-ai-body" id="frAiMessages" aria-live="polite">
-  <div class="fr-ai-msg bot">నమస్కారం! నేను FRIEND RIDE AI సహాయకుడిని. Customer, Driver, Partner, Admin — మీకు ఏ సందేహం ఉన్నా తెలుగులో అడగండి. ఒక్కో దశగా వివరిస్తాను.</div>
-  <div class="fr-ai-suggestions"><button type="button" data-fr-ai-q="Customerగా Ride ఎలా బుక్ చేయాలి?">Customer Help</button><button type="button" data-fr-ai-q="Driver Ride Accept చేసి Start ఎలా చేయాలి?">Driver Help</button><button type="button" data-fr-ai-q="Partnerగా Shop Catalogue ఎలా నిర్వహించాలి?">Partner Help</button><button type="button" data-fr-ai-q="UPI QR Payment, Transaction ID, Invoice ఎలా పనిచేస్తాయి?">Payment Help</button></div>
- </div>
- <form class="fr-ai-form" id="frAiForm"><input id="frAiInput" maxlength="1500" autocomplete="off" placeholder="మీ సందేహం ఇక్కడ టైప్ చేయండి…" aria-label="Ask FRIEND RIDE AI"><button id="frAiSend" type="submit">Send</button></form>
- <div class="fr-ai-foot">మీ OTP, UPI PIN లేదా Password ఎప్పుడూ ఇక్కడ పంపవద్దు.</div>
+
 </section>
 
 <div class="fr-poster-rail" aria-label="Friend Ride offers and safety posters">
@@ -4067,76 +4059,7 @@ function frAddPartnerCatalogueItem(index){
 <script src="./assets/ride-contact.js"></script>
 
 
-<script>
-(()=>{
- const panel=document.getElementById('frAiPanel'),launch=document.getElementById('frAiLaunch'),close=document.getElementById('frAiClose'),form=document.getElementById('frAiForm'),input=document.getElementById('frAiInput'),messages=document.getElementById('frAiMessages'),send=document.getElementById('frAiSend');
- if(!panel||!launch||!form||!input||!messages)return;
- const history=[];
- const add=(text,who='bot')=>{const el=document.createElement('div');el.className='fr-ai-msg '+who;el.textContent=text;messages.append(el);messages.scrollTop=messages.scrollHeight;return el;};
- const open=()=>{panel.classList.add('open');input.focus();};
- launch.addEventListener('click',open);close?.addEventListener('click',()=>panel.classList.remove('open'));
- messages.querySelectorAll('[data-fr-ai-q]').forEach(b=>b.addEventListener('click',()=>{input.value=b.dataset.frAiQ||'';form.requestSubmit();}));
- form.addEventListener('submit',async ev=>{
-  ev.preventDefault();const question=input.value.trim();if(!question||send.disabled)return;
-  add(question,'user');input.value='';send.disabled=true;send.textContent='…';
-  const loading=add('మీ సందేహానికి సమాధానం సిద్ధం చేస్తున్నాను…','bot');
-  try{
-   if(!currentUser){loading.textContent='AI సహాయకుడిని ఉపయోగించడానికి ముందుగా మీ Customer / Driver / Partner / Admin ఖాతాలో Login చేయండి.';return;}
-   const page=document.querySelector('.page.active')?.id||'';
-   const {data,error}=await sb.functions.invoke('friend-ride-ai-assistant',{body:{question,role:currentProfile?.role||selectedRole||'user',page,history}});
-   if(error)throw error;
-   if(!data?.ok||!data?.answer)throw new Error(data?.error||'AI సమాధానం అందుబాటులో లేదు.');
-   loading.textContent=data.answer;history.push({role:'user',content:question},{role:'assistant',content:data.answer});if(history.length>8)history.splice(0,history.length-8);
-  }catch(e){loading.textContent=e?.context?.error||e?.message||'AI సహాయం ప్రస్తుతం అందుబాటులో లేదు. కొద్దిసేపటి తర్వాత ప్రయత్నించండి.';}
-  finally{send.disabled=false;send.textContent='Send';messages.scrollTop=messages.scrollHeight;}
- });
-})();
 
-/* FRIEND RIDE booking location autocomplete + selectable map pins */
-let frBookingMap=null,frBookingPickupMarker=null,frBookingDropMarker=null,frBookingActivePin='pickup',frGeoTimers={pickup:null,drop:null},frGeoAbort={pickup:null,drop:null};
-function frInitBookingMap(){
- if(frBookingMap||!window.L||!document.getElementById('frBookingMap'))return;
- frBookingMap=L.map('frBookingMap').setView([17.6868,83.2185],12);
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(frBookingMap);
- frBookingMap.on('click',e=>frSetBookingPin(frBookingActivePin,e.latlng.lat,e.latlng.lng,'Map Pin'));
- setTimeout(()=>frBookingMap.invalidateSize(),180);
-}
-function frSetBookingPin(kind,lat,lon,label,zoom=true){
- frInitBookingMap();const pt=[Number(lat),Number(lon)];if(!Number.isFinite(pt[0])||!Number.isFinite(pt[1]))return;
- const markerKey=kind==='pickup'?'frBookingPickupMarker':'frBookingDropMarker';
- if(window[markerKey])frBookingMap.removeLayer(window[markerKey]);
- window[markerKey]=L.marker(pt,{draggable:true}).addTo(frBookingMap).bindPopup((kind==='pickup'?'Pickup: ':'Drop: ')+label);
- window[markerKey].on('dragend',async ev=>{const p=ev.target.getLatLng();await frResolvePinAddress(kind,p.lat,p.lng);});
- if(kind==='pickup')pickupCoords={lat:pt[0],lon:pt[1]};else dropCoords={lat:pt[0],lon:pt[1]};
- if(window[markerKey]&&frBookingMap){if(zoom)frBookingMap.setView(pt,16);window[markerKey].openPopup();}
- const hint=document.getElementById(kind==='pickup'?'frPickupHint':'frDropHint');
- if(hint)hint.textContent='📍 '+(label||'Location')+' — Mapలో Pin పెట్టబడింది. అవసరమైతే పిన్‌ను లాగండి.';
-}
-async function frResolvePinAddress(kind,lat,lon){
- const hint=document.getElementById(kind==='pickup'?'frPickupHint':'frDropHint');
- if(hint)hint.textContent='పిన్ చేసిన ప్రాంతం పేరు గుర్తిస్తున్నాం…';
- try{const u='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon+'&zoom=18&addressdetails=1';const r=await fetch(u,{headers:{'Accept-Language':'te,en'}});if(!r.ok)throw Error('Address lookup failed');const d=await r.json();const name=d.display_name||('Pinned location '+lat.toFixed(5)+', '+lon.toFixed(5));const input=document.getElementById(kind);input.value=name;if(kind==='pickup')pickupCoords={lat,lon};else dropCoords={lat,lon};if(hint)hint.textContent='📍 '+(d.name||d.address?.suburb||d.address?.neighbourhood||d.address?.village||d.address?.town||d.address?.city||'ఈ ప్రాంతం')+' — Location Pin అయింది.';return name;}catch(e){const input=document.getElementById(kind);input.value='Pinned location ('+lat.toFixed(6)+', '+lon.toFixed(6)+')';if(hint)hint.textContent='📍 Coordinatesతో Location Pin అయింది.';return input.value;}
-}
-function frChooseMapPin(kind){frBookingActivePin=kind;frInitBookingMap();if(!frBookingMap)return;const c=kind==='pickup'?pickupCoords:dropCoords;if(c)frBookingMap.setView([c.lat,c.lon],16);else if(navigator.geolocation&&kind==='pickup'){navigator.geolocation.getCurrentPosition(p=>frBookingMap.setView([p.coords.latitude,p.coords.longitude],15),()=>{});}document.getElementById('frBookingMap').scrollIntoView({behavior:'smooth',block:'center'});const h=document.getElementById(kind==='pickup'?'frPickupHint':'frDropHint');if(h)h.textContent='మ్యాప్‌పై సరైన చోట నొక్కండి. పిన్‌ను లాగి ఖచ్చితమైన స్థానం ఎంచుకోండి.';}
-async function frUseMyLocation(){
- const hint=document.getElementById('frPickupHint');if(!navigator.geolocation){if(hint)hint.textContent='ఈ పరికరంలో Location support లేదు.';return;}
- if(hint)hint.textContent='మీ ప్రస్తుత Location గుర్తిస్తున్నాం…';
- navigator.geolocation.getCurrentPosition(async p=>{const lat=p.coords.latitude,lon=p.coords.longitude;frInitBookingMap();frSetBookingPin('pickup',lat,lon,'My Location');await frResolvePinAddress('pickup',lat,lon);frBookingMap.setView([lat,lon],17);},e=>{if(hint)hint.textContent=e.code===1?'Location permission ఇవ్వండి.':'ప్రస్తుత Location దొరకలేదు. Mapలో Pin పెట్టండి.';},{enableHighAccuracy:true,timeout:18000,maximumAge:10000});
-}
-async function frSearchLocation(kind,q){
- const box=document.getElementById(kind==='pickup'?'frPickupSuggestions':'frDropSuggestions');if(!box)return;
- if(frGeoAbort[kind])frGeoAbort[kind].abort();frGeoAbort[kind]=new AbortController();
- try{const url='https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=in&q='+encodeURIComponent(q);const r=await fetch(url,{signal:frGeoAbort[kind].signal,headers:{'Accept-Language':'te,en'}});if(!r.ok)throw Error('Search failed');const rows=await r.json();box.replaceChildren();if(!rows.length){box.classList.remove('open');return;}
- rows.forEach(item=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','option');b.textContent=item.display_name;b.addEventListener('click',()=>{document.getElementById(kind).value=item.display_name;box.classList.remove('open');frSetBookingPin(kind,Number(item.lat),Number(item.lon),item.name||item.display_name.split(',')[0]);const hint=document.getElementById(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='📍 '+(item.name||item.display_name.split(',')[0])+' — Location Pin అయింది.';});box.appendChild(b);});
- box.classList.add('open');
- }catch(e){if(e.name!=='AbortError')box.classList.remove('open');}
-}
-function frSetupLocationAutocomplete(){
- ['pickup','drop'].forEach(kind=>{const input=document.getElementById(kind);if(!input||input.dataset.frAutocomplete)return;input.dataset.frAutocomplete='1';input.addEventListener('input',()=>{if(kind==='pickup')pickupCoords=null;else dropCoords=null;clearTimeout(frGeoTimers[kind]);const box=document.getElementById(kind==='pickup'?'frPickupSuggestions':'frDropSuggestions');if(input.value.trim().length<3){box.classList.remove('open');return;}frGeoTimers[kind]=setTimeout(()=>frSearchLocation(kind,input.value.trim()),450);});input.addEventListener('focus',()=>{if(input.value.trim().length>=3)frSearchLocation(kind,input.value.trim());});});
- document.addEventListener('click',e=>{if(!e.target.closest('.fr-location-field'))document.querySelectorAll('.fr-location-suggestions').forEach(x=>x.classList.remove('open'));});
-}
-document.addEventListener('DOMContentLoaded',()=>{frSetupLocationAutocomplete();frInitBookingMap();});
-</script>
 
 <script id="fr-digital-catalogue-live">
 (function(){
@@ -4446,20 +4369,6 @@ input,textarea,select{box-shadow:0 1px 2px #24104405}
 .fr-pay-total{font-size:23px;font-weight:950;color:#13875b}
 .fr-quote-total{background:#fff8e8;border:1px solid #f4d58a;border-radius:12px;padding:11px;margin:10px 0}
 .fr-pay-link{display:block;text-align:center;background:#13875b;color:#fff;padding:12px;border-radius:12px;font-weight:900;text-decoration:none;margin:8px 0}
-
-/* FRIEND RIDE AI help assistant */
-.fr-ai-launch{position:fixed;right:16px;bottom:88px;z-index:9998;border:0;border-radius:999px;padding:12px 16px;background:linear-gradient(135deg,#13875b,#ff8a24);color:#fff;font-weight:900;box-shadow:0 8px 26px #1b0d3340;display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;touch-action:manipulation}
-.fr-ai-launch .fr-ai-orb{width:28px;height:28px;border-radius:50%;background:#fff;color:#13875b;display:grid;place-items:center;font-size:17px}
-.fr-ai-panel{position:fixed;right:16px;bottom:150px;z-index:9999;width:min(390px,calc(100vw - 24px));height:min(590px,calc(100dvh - 120px));background:#fff;border:1px solid #e8def3;border-radius:20px;box-shadow:0 18px 55px #1b0d3350;display:none;flex-direction:column;overflow:hidden}
-.fr-ai-panel.open{display:flex}.fr-ai-head{padding:14px 16px;background:linear-gradient(120deg,#13875b,#ff8a24);color:#fff;display:flex;align-items:center;justify-content:space-between}
-.fr-ai-head strong{font-size:16px}.fr-ai-head small{display:block;opacity:.9}.fr-ai-close{border:0;background:#ffffff28;color:#fff;border-radius:10px;padding:7px 11px;font-size:20px}
-.fr-ai-body{padding:14px;flex:1;overflow:auto;background:#f8f7fb;display:flex;flex-direction:column;gap:10px}
-.fr-ai-msg{max-width:90%;padding:10px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.5}
-.fr-ai-msg.bot{align-self:flex-start;background:#fff;border:1px solid #ece6f2;color:#28213a;border-bottom-left-radius:4px}.fr-ai-msg.user{align-self:flex-end;background:#e8f7ee;color:#174b32;border-bottom-right-radius:4px}
-.fr-ai-suggestions{display:flex;gap:7px;flex-wrap:wrap}.fr-ai-suggestions button{border:1px solid #d8c9e9;background:#fff;border-radius:18px;padding:7px 10px;color:#45236e;font-size:12px;font-weight:700}
-.fr-ai-form{padding:11px;border-top:1px solid #eee8f4;display:flex;gap:8px;background:#fff}.fr-ai-form input{min-width:0;flex:1;border:1px solid #ded5e8;border-radius:12px;padding:12px;font-size:14px}
-.fr-ai-form button{border:0;border-radius:12px;padding:0 16px;background:#13875b;color:#fff;font-weight:900}.fr-ai-foot{font-size:10px;color:#827b8e;padding:0 12px 8px;background:#fff}
-@media(max-width:480px){.fr-ai-panel{right:8px;bottom:150px;width:calc(100vw - 16px);height:min(590px,calc(100dvh - 100px))}.fr-ai-launch{right:12px;bottom:88px}}
 
 .fr-location-field{position:relative}.fr-location-suggestions{display:none;position:relative;z-index:40;background:#fff;border:1px solid #ded4eb;border-radius:12px;margin-top:5px;max-height:210px;overflow:auto;box-shadow:0 8px 22px #24104418}.fr-location-suggestions.open{display:block}.fr-location-suggestions button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #f0ebf5;background:#fff;padding:10px 12px;color:#241936;font-size:13px}.fr-location-suggestions button:last-child{border-bottom:0}.fr-location-suggestions button:active{background:#f2eaff}.fr-location-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.fr-location-actions .btn{font-size:12px;padding:8px 11px}.fr-location-field small{display:block;margin-top:5px}
 </style>
