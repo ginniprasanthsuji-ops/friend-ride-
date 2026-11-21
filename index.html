@@ -1569,7 +1569,7 @@ async function sendLoginOtp(){
     if(result.ok!==true) throw Error(result.error||'APITXT OTP request accepted కాలేదు.');
     frRequestedLoginPhone=digits;
     frStartOtpCooldown(button,60,'Send '+roleLabel+' SMS OTP');
-    showMessage(result.message||'APITXT ద్వారా SMS OTP పంపించాం.');
+    showMessage(result.message||'SMS provider OTP request accept చేసింది. Delivery ఇంకా confirm కాలేదు; SMS inbox/spam మరియు network check చేయండి.');
   } catch(e){
     const message=String(e.message||e);
     if(/429|15 seconds|60 seconds|SMS provider request failed/i.test(message))
