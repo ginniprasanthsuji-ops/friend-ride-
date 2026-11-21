@@ -31,7 +31,7 @@ serve(async(req)=>{
    const {data:saved,error:saveRoomErr}=await sb.from("fr_learn_zoom_classrooms").insert({teacher_id:user.id,student_id,course_id,title,zoom_meeting_id:String(meeting.id),zoom_join_url:meeting.join_url}).select("id,zoom_meeting_id,zoom_join_url,title").single();
    if(saveRoomErr)throw saveRoomErr;room=saved;
   }
-  const {data:session,error:sessionErr}=await sb.from("fr_learn_sessions").insert({teacher_id:user.id,student_id,course_id,classroom_id:room.id,title,scheduled_start:start.toISOString(),duration_minutes:90,zoom_meeting_id:room.zoom_meeting_id,zoom_join_url:room.zoom_join_url,status:"scheduled"}).select("id,title,scheduled_start,duration_minutes,zoom_meeting_id,zoom_join_url,status,classroom_id").single();
+  const {data:session,error:sessionErr}=await sb.from("fr_learn_sessions").insert({teacher_id:user.id,student_id,course_id,classroom_id:room.id,title,scheduled_start:start.toISOString(),duration_minutes:90,zoom_meeting_id:room.zoom_meeting_id,zoom_join_url:room.zoom_join_url,status:"pending_confirmation"}).select("id,title,scheduled_start,duration_minutes,zoom_meeting_id,zoom_join_url,status,classroom_id").single();
   if(sessionErr)throw sessionErr;
   return json({session,classroom:{id:room.id,title:room.title,zoom_meeting_id:room.zoom_meeting_id,zoom_join_url:room.zoom_join_url,reused:!!existing}});
  }catch(e){return json({error:String(e?.message||e)},400);}
