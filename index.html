@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#24105f">
-<meta name="application-version" content="10.3-menu-learning-feedback-layout">
+<meta name="application-version" content="11.1-PRO-category-routing-learning-isolation">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>FRIEND RIDE – Friend Mart | Version 10.3</title>
+<title>FRIEND RIDE V11.1 PRO – Friend Mart | Version 10.3</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--purple:#5420b8;--purple2:#7b35df;--navy:#211044;--orange:#ff8a24;--bg:#f6f4fb;--ink:#201936;--muted:#77718a;--line:#e9e3f2;--green:#13875b;--red:#c83c4c;--white:#fff;--gold:#ffc65a}
@@ -234,7 +234,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 
 <style id="fr-bottom-menu-removal-and-layout">
 /* Menu/drawer removed; keep seven bottom navigation items compact. */
-.home-topbar .menu-open,#drawerBackdrop,.drawer-backdrop{display:none!important}
+#drawerBackdrop,.drawer-backdrop{display:none!important}
 .premium-bottom{grid-template-columns:repeat(7,minmax(0,1fr))!important}
 .premium-bottom button[data-page="learnTeach"]{font-size:9px;color:#6a43a7;font-weight:900}
 #home #frHomeRatings{margin-bottom:12px}
@@ -258,6 +258,7 @@ body{padding-bottom:105px}
  </div>
 </div>
 <header class="topbar home-topbar">
+ <button class="iconbtn menu-open" aria-label="Open side menu" onclick="openDrawer()">☰</button>
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
  <button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
 </header>
@@ -665,9 +666,49 @@ body{padding-bottom:105px}
  <button data-page="food" onclick="showPage('food')"><span>🍱</span>Food<br>Delivery</button>
  <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span><small>My Cart</small><b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
  <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Categories</button>
- <button data-page="learnTeach" onclick="frLearnTeachOpen()"><span>🎓</span>విజ్ఞా సేతు</button>
+ <button data-page="learnTeach" onclick="frLearnTeachOpen()"><span>🎓</span>విద్యా సేతు</button>
  <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>🧾</span>Orders</button>
 </nav>
+
+<div id="drawerBackdrop" class="drawer-backdrop" onclick="if(event.target===this)closeDrawer()"><aside class="drawer">
+ <div class="drawer-head"><button class="close" style="float:right" onclick="closeDrawer()">✕</button><div class="logo">FR</div><b>FRIEND RIDE ULTIMATE</b><br><small id="drawerUser">One app. Every local need.</small></div>
+ <button class="menu-item" onclick="menuGo('home')"><span class="mi">🏠</span>Home</button>
+ <div class="menu-label">Dashboards</div>
+ <button class="menu-item" onclick="menuGo('customerDashboard')"><span class="mi">👤</span>Customer Dashboard</button>
+ <button class="menu-item" onclick="menuGo('driverDashboard')"><span class="mi">🚗</span>Driver Dashboard</button>
+ <button class="menu-item" onclick="menuGo('partnerDashboard')"><span class="mi">🏪</span>Partner Dashboard</button>
+ <div class="menu-label">Services</div>
+ <button class="menu-item" onclick="menuGo('ride')"><span class="mi">🛵</span>Ride Booking</button>
+ <button class="menu-item" onclick="menuGo('goods')"><span class="mi">🚚</span>Goods Delivery</button>
+ <button class="menu-item" onclick="menuGo('parcel')"><span class="mi">📦</span>Parcel Delivery</button>
+ <button class="menu-item" onclick="menuGo('food')"><span class="mi">🍱</span>Food Delivery</button>
+ <button class="menu-item" onclick="menuGo('homeServices')"><span class="mi">🧰</span>Home Services</button>
+ <button class="menu-item" onclick="menuGo('shops')"><span class="mi">🏪</span>Local Stores</button>
+ <button class="menu-item" onclick="menuGo('shopping')"><span class="mi">🛍️</span>Shopping</button>
+ <button class="menu-item" onclick="menuGo('scheduled')"><span class="mi">🗓️</span>Scheduled Booking</button>
+ <div class="menu-label">My Account</div>
+ <button class="menu-item" onclick="menuGo('orders')"><span class="mi">🧾</span>My Orders & Bookings</button>
+ <button class="menu-item" onclick="menuGo('tracking')"><span class="mi">📍</span>Live Tracking</button>
+ <button class="menu-item" onclick="menuGo('wallet')"><span class="mi">💳</span>Wallet & Payments</button>
+ <button class="menu-item" onclick="menuGo('offers')"><span class="mi">🎁</span>Offers & Rewards</button>
+ <button class="menu-item" onclick="menuGo('notifications')"><span class="mi">🔔</span>Notifications</button>
+ <div class="menu-label">Business & Admin</div>
+ <button class="menu-item" onclick="menuGo('partnerOrders')"><span class="mi">🛒</span>Partner Orders</button>
+ <button class="menu-item" onclick="menuGo('catalogue')"><span class="mi">🍽️</span>Restaurant Menu / Catalogue</button><button class="menu-item" onclick="menuGo('subscription')"><span class="mi">💎</span>Partner Subscription</button><button class="menu-item" onclick="menuGo('referrals')"><span class="mi">🎁</span>Partner Referrals</button><button class="menu-item" onclick="menuGo('partnerReports')"><span class="mi">📊</span>Partner Reports</button><button class="menu-item" onclick="menuGo('products')"><span class="mi">📦</span>Products & Stock</button>
+ <button class="menu-item" onclick="menuGo('inventory')"><span class="mi">⚠️</span>Inventory / Low Stock</button>
+ <button class="menu-item" onclick="menuGo('gst')"><span class="mi">🧾</span>GST Bills & Invoices</button>
+ <button class="menu-item" onclick="menuGo('users')"><span class="mi">👥</span>User Management</button>
+ <button class="menu-item" onclick="menuGo('driverApprovals')"><span class="mi">🪪</span>Driver Approvals</button>
+ <button class="menu-item" onclick="menuGo('partnerApprovals')"><span class="mi">🏬</span>Partner Management</button><button class="menu-item" onclick="menuGo('referralApprovals')"><span class="mi">🎁</span>Referral Approvals</button><button class="menu-item" onclick="menuGo('cashRewardApprovals')"><span class="mi">💰</span>Customer Cash Reward Approvals</button>
+ <button class="menu-item" onclick="menuGo('adminOrders')"><span class="mi">📋</span>All Orders</button>
+ <button class="menu-item" onclick="menuGo('reports')"><span class="mi">📊</span>Reports & Analytics</button>
+ <button class="menu-item" onclick="menuGo('paymentApprovals')"><span class="mi">💰</span>Payment & Approval Queue</button><button class="menu-item" onclick="menuGo('platformBusinessSettings')"><span class="mi">☎️</span>Toll-Free / GST Details</button><button class="menu-item" onclick="menuGo('settings')"><span class="mi">⚙️</span>System Settings</button>
+ <div class="menu-label">More</div>
+ <button class="menu-item" id="frSupportMenu" onclick="frOpenSupportPage()"><span class="mi">💬</span>Complaints & Feedback</button>
+ <button class="menu-item" onclick="menuGo('adminDashboard')"><span class="mi">🛡️</span>Admin Dashboard</button>
+ <button class="menu-item" onclick="menuGo('about')"><span class="mi">ℹ️</span>About Us</button>
+ <button class="menu-item" onclick="logout()"><span class="mi">🚪</span>Logout</button>
+</aside></div>
 
 
 
@@ -1936,7 +1977,7 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body></html>';
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body></html>';
   w.document.open();w.document.write(html);w.document.close();
  }catch(e){w.close();alert('Invoice: '+e.message);}
 }
@@ -2165,13 +2206,27 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentPr
 
 // FRIEND RIDE Super App additions (catalogue and multi-shop cart UI)
 const frSuperCategories=[
- ['🚕','Ride Booking','Bike, Auto, Car'],['🍲','Food & Restaurants','Meals, tiffin, bakery, snacks'],['💊','Medical & Pharmacy','Medicines, medical supplies'],['🛒','General & Grocery','Kirana, household, daily needs'],['📺','Electronics','TV, fridge, washing machine, mixer'],['💡','Electrical','Wires, switches, bulbs, LED, MCB, inverter, batteries'],['💄','Ladies Accessories','Clips, pins, rubber bands, bangles, combs'],['🍗','Chicken & Fresh','Chicken, mushrooms, paneer'],['📦','Parcel','Local parcel pickup and delivery'],['🧰','Home Services','Electrician, plumber, mason, AC mechanic'],['🚽','Septic Tank Service','Cleaning and maintenance'],['🛠️','Tools & Hardware','Tools, fittings, repair items'],['📱','Mobiles & Accessories','Phones, chargers, cables'],['👕','Clothing & Fashion','Clothes, footwear, accessories'],['🧸','Kids & Toys','Toys, school and baby items'],['🐾','Pet Supplies','Food and daily pet needs'],['🌱','Agriculture','Seeds, garden and farm supplies'],['🎁','Gifts & Stationery','Gifts, books, stationery']
+ ['🚕','Ride Booking','Bike, Auto, Car'],['🍲','Food & Restaurants','Meals, tiffin, bakery, snacks'],['💊','Medical & Pharmacy','Medicines, medical supplies'],['🛒','General & Grocery','Kirana, household, daily needs'],['📺','Electronics','TV, fridge, washing machine, mixer'],['💡','Electrical','Wires, switches, bulbs, LED, MCB, inverter, batteries'],['💄','Ladies Accessories','Clips, pins, rubber bands, bangles, combs'],['🍗','Chicken & Fresh','Chicken, mushrooms, paneer'],['📦','Parcel','Local parcel pickup and delivery'],['🧰','Home Services','Electrician, plumber, mason, AC mechanic'],['🚽','Septic Tank Service','Cleaning and maintenance'],['🛠️','Tools & Hardware','Tools, fittings, repair items'],['📱','Mobiles & Accessories','Phones, chargers, cables'],['👕','Clothing & Fashion','Clothes, footwear, accessories'],['🧸','Kids & Toys','Toys, school and baby items'],['🐾','Pet Supplies','Food and daily pet needs'],['🌱','Agriculture','Seeds, garden and farm supplies'],['🎁','Gifts & Stationery','Gifts, books, stationery'],['🎓','విద్యా సేతు','Learning • Teacher • Student • Coaching Center']
 ];
 let frMultiCart=[];
 function frOpenSuperHub(){if(typeof showPage==='function')showPage('frSuperHub');else document.getElementById('frSuperHub')?.scrollIntoView();frRenderSuperHub();}
 function frOpenExisting(id){const el=document.getElementById(id);if(el&&typeof showPage==='function')showPage(id);else{alert('ఈ విభాగం ప్రస్తుత V7లో వేరే పేరుతో ఉండవచ్చు. సంబంధిత Dashboard నుంచి తెరవండి.');}}
 function frRenderSuperHub(){const grid=document.getElementById('frCategoryGrid');if(grid&&!grid.dataset.ready){grid.innerHTML=frSuperCategories.map((c,i)=>`<button class="fr-category-card" onclick="frCategoryInfo(${i})"><span class="fr-category-art art-${i%8}"><span>${c[0]}</span></span><span class="fr-category-copy"><b>${frEsc(c[1])}</b><small>${frEsc(c[2])}</small><i>Explore category →</i></span></button>`).join('');grid.dataset.ready='1';}frRenderMultiCart();}
-function frCategoryInfo(i){const c=frSuperCategories[i];alert(c[1]+'\n'+c[2]+'\n\nఈ కేటగిరీలో అందుబాటులో ఉన్న స్థానిక షాపులు, ఉత్పత్తులను త్వరలో ఇక్కడ చూడవచ్చు.');}
+function frCategoryInfo(i){
+ const c=frSuperCategories[i]; if(!c)return;
+ const routeMap={
+  'Ride Booking':'ride','Food & Restaurants':'food','Medical & Pharmacy':'shops',
+  'General & Grocery':'shops','Electronics':'shops','Electrical':'shops','Ladies Accessories':'shops',
+  'Chicken & Fresh':'shops','Parcel':'parcel','Home Services':'homeServices','Septic Tank Service':'homeServices',
+  'Tools & Hardware':'shops','Mobiles & Accessories':'shops','Clothing & Fashion':'shops','Kids & Toys':'shops',
+  'Pet Supplies':'shops','Agriculture':'shops','Gifts & Stationery':'shops'
+ };
+ if(c[1]==='విద్యా సేతు'||c[1]==='Learning'){
+   frOpenLearningCategory(); return;
+ }
+ const target=routeMap[c[1]]||'shops';
+ if(target==='shops'&&typeof requireLogin==='function')requireLogin(()=>showPage(target));else showPage(target);
+}
 function frAddCartItem(shop,name,price){const p=Number(price);if(!shop||!name||!Number.isFinite(p)||p<0)return;frMultiCart.push({shop,name,price:p});frRenderMultiCart();}
 function frRenderMultiCart(){const el=document.getElementById('frMultiCartList');if(!el)return;if(!frMultiCart.length){el.textContent='Cart ఖాళీగా ఉంది.';}else{const groups={};frMultiCart.forEach(x=>(groups[x.shop]??=[]).push(x));el.innerHTML=Object.entries(groups).map(([shop,items])=>`<div style="padding:10px 0;border-bottom:1px solid #eee"><b>${frEsc(shop)}</b>${items.map(x=>`<div>${frEsc(x.name)} — ₹${x.price.toFixed(2)}</div>`).join('')}</div>`).join('');}const total=frMultiCart.reduce((a,x)=>a+x.price,0);const t=document.getElementById('frCartTotal');if(t)t.textContent='Total: ₹'+total.toFixed(2);}
 function frEsc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -4322,6 +4377,55 @@ async function frAdminAssignLaundry(id){
  }catch(e){alert('Laundry assignment failed: '+(e.message||e));}
 }
 </script>
+
+<script id="fr-v11.1-pro-category-routing">
+(function(){
+ const roleNames=[
+  {key:'teacher',title:'ప్రగతి సేతు (Teacher)',emoji:'👩‍🏫',desc:'Teacher dashboard, classes, learning content and student management.'},
+  {key:'student',title:'సమర్థ సేతు (Student)',emoji:'🎓',desc:'Student dashboard, lessons, progress, assignments and learning.'},
+  {key:'coaching',title:'భవిష్యత్తు సేతు (Coaching Center)',emoji:'🏫',desc:'Coaching center dashboard, batches, students and course management.'}
+ ];
+ window.frOpenLearningCategory=function(){
+   if(typeof window.showPage==='function')window.showPage('learnTeach');
+   const root=document.getElementById('learnTeachRoot');
+   if(root){
+    root.innerHTML=`<div class="fr-v11-learning-head"><span>🎓 విద్యా సేతు</span><h2>Learning & Education</h2><p>Teacher, Student మరియు Coaching Center కోసం ప్రత్యేక dashboards.</p></div><div class="fr-v11-learning-grid">${roleNames.map(r=>`<button class="fr-v11-learning-card" data-learning-role="${r.key}" onclick="frV11OpenLearningRole('${r.key}')"><span>${r.emoji}</span><b>${r.title}</b><small>${r.desc}</small><i>Open dashboard →</i></button>`).join('')}</div><button class="fr-v11-back" onclick="showPage('home')">← Homeకి తిరిగి వెళ్ళండి</button>`;
+   }
+   if(typeof window.frLearnTeachOpen==='function'){
+     try{window.frLearnTeachOpen();}catch(e){console.warn('Learning module open:',e);}
+     // Restore the standalone role-selection landing if the linked module does not render it.
+     setTimeout(()=>{const r=document.getElementById('learnTeachRoot');if(r&&!r.querySelector('.fr-v11-learning-grid'))window.frOpenLearningCategory();},500);
+   }
+ };
+ window.frV11OpenLearningRole=function(role){
+   const item=roleNames.find(x=>x.key===role);if(!item)return;
+   const root=document.getElementById('learnTeachRoot');if(!root)return;
+   root.innerHTML=`<div class="fr-v11-learning-head"><span>🎓 విద్యా సేతు</span><h2>${item.title}</h2><p>${item.desc}</p></div><div class="fr-v11-role-dashboard"><div class="fr-v11-role-icon">${item.emoji}</div><h3>${item.title} Dashboard</h3><p>ఈ roleకు సంబంధించిన dashboard తెరవబడింది. Learning module backend / dashboard scripts అందుబాటులో ఉన్నప్పుడు live data మరియు role-specific actions ఇక్కడ render అవుతాయి.</p><button onclick="frOpenLearningCategory()">← విద్యా సేతు Roles</button><button onclick="showPage('home')">Home</button></div>`;
+ };
+ // Bottom navigation and category/service buttons route to their own page, never Home as a fallback.
+ const bottom=document.querySelector('.premium-bottom');
+ if(bottom){
+  const learn=bottom.querySelector('[data-page="learnTeach"]');if(learn){learn.innerHTML='<span>🎓</span>విద్యా సేతు';learn.onclick=()=>window.frOpenLearningCategory();}
+  bottom.querySelectorAll('button[data-page]').forEach(btn=>{
+   const id=btn.dataset.page;
+   if(id==='learnTeach')return;
+   btn.onclick=function(){const target=id; if(target==='orders'&&typeof requireLogin==='function')requireLogin(()=>showPage(target));else showPage(target);};
+  });
+ }
+ // Category grid cards use dedicated page routes; category info dialogs are eliminated.
+ const grid=document.getElementById('frCategoryGrid');
+ if(grid){grid.dataset.ready='';if(typeof window.frRenderSuperHub==='function')window.frRenderSuperHub();}
+ // Ensure only one page is visible after every navigation action.
+ const original=window.showPage;
+ if(typeof original==='function'&&!window.__frV11ShowPageWrap){
+  window.__frV11ShowPageWrap=true;
+  window.showPage=function(id){const out=original.apply(this,arguments);document.querySelectorAll('main .page').forEach(p=>{const active=p.id===String(id);p.classList.toggle('active',active);p.setAttribute('aria-hidden',active?'false':'true');if('inert' in p)p.inert=!active;});document.querySelectorAll('.premium-bottom button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===String(id)));return out;};
+ }
+})();
+</script>
+<style id="fr-v11.1-pro-learning-routing-style">
+.fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
+</style>
 </body>
 </html>
 <style>
