@@ -208,3 +208,13 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [x] Regression report artifact available: `friend-ride-regression-report` (artifact IDs `14702617077` and `14701979057`; not expired at check).
 - [ ] This PASS covers CI browser/source regression only. Live backend/RLS, real OTP, push delivery, device testing, live order integrations, signed AAB, gateway and production certification remain outstanding.
 - [x] No main merge, production deployment, migration, or live payment configuration.
+
+
+## 23. Release-certification audit — read-only Supabase findings (2026-11-21)
+- [x] Confirmed QA Supabase project `FRIEND RIDE QA` is ACTIVE_HEALTHY. QA public schema currently contains Learn & Teach tables only; ride/food/market/parcel/service schemas are absent from QA.
+- [x] Production Supabase catalog was inspected read-only only. No SQL writes, migrations, deployment, secret changes, or transactions were performed.
+- [x] Production tables with RLS enabled but zero policies detected in catalog include: `fr_ai_usage_daily`, `fr_market_order_items`, `fr_market_orders`, `fr_parcel_orders`, `fr_partner_catalogue_items`, `fr_partner_order_candidates`, `fr_partner_order_routes`, `fr_platform_business_settings`, `fr_service_requests`, `fr_v8_delivery_otps`, `fr_v8_invoice_lines`, `fr_v8_invoice_verification_logs`, `fr_v8_invoices`, `fr_v8_order_ledger`, `fr_v8_platform_settings`, `fr_v8_subscription_events`, `fr_ride_offers`, `fr_shop_delivery_assignments`, `fr_shop_order_items`, `fr_shop_payment_profiles`, `fr_receipt_email_logs` (table name as returned by catalog).
+- [ ] These catalog findings are not yet a security certification: effective grants, RPC security, storage policies, role-based tests, and runtime behavior must be reviewed. Avoid enabling direct client access until restrictive role/ownership policies and explicit grants are designed and tested.
+- [ ] Create a complete isolated QA backend schema/migrations and staging seed/test accounts; migrate the blockers to QA only; run cross-role RLS tests; then validate with real OTP/devices and push.
+- [ ] Live payments/GST onboarding, production release, Play Store AAB/signing/device validation and external integrations remain unverified/blocked.
+- **Release decision:** 100% Play Store/live certificate remains withheld. Browser CI PASS is not sufficient for certification.
