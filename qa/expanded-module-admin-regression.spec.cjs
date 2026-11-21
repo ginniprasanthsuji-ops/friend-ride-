@@ -104,3 +104,26 @@ test('Food Delivery release blocker audit: demo menu is not mistaken for backend
   // until a verified DB-backed food order implementation replaces it.
   expect(source).toContain('Price set by restaurant');
 });
+
+
+// Notification audit: current UI supports device permission and ride/order activity,
+// but homework/student marketing schedules are not yet implemented. Keep this visible as a blocker.
+test('Notification regression audit: notification page exists and homework scheduler gap is explicit', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#notifications')).toBeAttached();
+  await expect(page.locator('#frNotificationFeed')).toBeAttached();
+  await expect(page.locator('#frRideNotificationStatus')).toBeAttached();
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).toContain('frEnableDeviceAlerts');
+  expect(source).toContain('fr-v8-live-ride-notifications');
+  // Audit marker: absence of homework assignment/reminder UI is a known release blocker.
+  expect(source.toLowerCase()).not.toContain('homework reminder scheduler');
+  expect(source.toLowerCase()).not.toContain('fr_homework_reminder');
+});
+
+// User-requested floating help button removal is protected from regression.
+test('UI regression: floating help button and its dedicated UI are absent', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const source = await page.locator('body').evaluate(el => el.ownerDocument.documentElement.innerHTML);
+  expect(source).not.toMatch(/floating-help|frFloatingHelp|floatingHelpButton/i);
+});
