@@ -94,13 +94,13 @@ These scaffolds intentionally have no runtime side effects and do not change cur
 - [x] Document architecture and future removal plan
 - [x] Add provider adapter/config scaffold
 - [x] Add isolated notification and cache interface scaffolds
-- [ ] Runtime wiring (only after AAB/build feasibility checkpoint and controlled test)
+- [ ] Runtime wiring (blocked pending Android/AAB baseline feasibility checkpoint)
 - [ ] Static checks and regression tests
-- [ ] Android project/AAB feasibility checkpoint
+- [x] Android project/AAB feasibility audit (no native Android project/build configuration found in repository)
 - [ ] Signed release AAB build + install verification
 - [ ] Merge/deploy (not authorized/attempted)
 
-## Mandatory Play Store safety gate
+## Android/AAB feasibility checkpoint — initial audit\n\nRepository checks on the integration branch found:\n- \`package.json\` has test/typecheck scripts but no Android build script or app build script.\n- No \`android/` project, Gradle wrapper, Gradle build files, Capacitor configuration, Cordova configuration, or Android build workflow was found at the checked repository paths.\n- Current README describes a static frontend/PWA and push limitations.\n- Therefore, **an AAB cannot currently be generated directly from this repository as-is**. This is a missing Android packaging/build setup, not a demonstrated integration-caused failure.\n- Runtime integration wiring is paused until a safe Android packaging baseline (likely a Capacitor wrapper, subject to verification) is created and an AAB feasibility test is performed. No signing credentials or package IDs are assumed.\n\n## Mandatory Play Store safety gate
 
 Before major runtime integration changes:
 1. Verify current web/PWA behavior and Android wrapper/build setup.
@@ -121,4 +121,4 @@ Before major runtime integration changes:
 
 ## Phase decision
 
-**Integration 1 is in progress: Audit + Architecture Design + Config + Adapter Interface Scaffolds.** New scaffold files are isolated and not wired into runtime. Next task is to establish the Android/AAB baseline and test feasibility before connecting the integration registry to the app.
+**Integration 1 is in progress: Audit + Architecture Design + Config + Adapter Interface Scaffolds.** New scaffold files are isolated and not wired into runtime. The initial Android/AAB audit found no native Android build setup in the repository, so runtime wiring is paused while the Android packaging baseline is planned and feasibility-tested. Main/live remains unchanged.
