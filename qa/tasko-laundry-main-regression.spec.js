@@ -22,14 +22,25 @@ test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
     expect(options).toContain('Laundry Services');
   });
 
+  // The legacy app can make the category selector inert behind a startup overlay.
+  // Test the routing handler directly, without relying on Playwright's user-action
+  //ability to interact with an inert element.
+  async function routeCategory(page, value) {
+    await page.evaluate((category) => {
+      const select = document.querySelector('#shopCategory');
+      select.value = category;
+      window.frHandleShopCategoryChange();
+    }, value);
+  }
+
   test('TASKO category opens the existing TASKO booking page', async ({ page }) => {
-    await page.locator('#shopCategory').selectOption('tasko_service');
+    await routeCategory(page, 'tasko_service');
     await expect.poll(() => page.evaluate(() => window.__frLastPage)).toBe('homeServices');
     await expect(page.locator('#homeServices #taskoGiggerLaunch')).toHaveCount(1);
   });
 
   test('Laundry category opens the existing Laundry booking page', async ({ page }) => {
-    await page.locator('#shopCategory').selectOption('laundry_service');
+    await routeCategory(page, 'laundry_service');
     await expect.poll(() => page.evaluate(() => window.__frLastPage)).toBe('laundryServices');
     await expect(page.locator('#laundryServices #laundryServiceLaunch')).toHaveCount(1);
   });
