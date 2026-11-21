@@ -1987,73 +1987,7 @@ async function frDownloadRideInvoice(rideId,kind){
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
   const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button>
-<script id="fr-phase1-notification-permission-integration">
-(function(){
- const KEY='fr_notification_setup_v1';
- const PREF_KEY='fr_notification_prefs_local_v1';
- function localPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||'{}')}catch(_){return {}}}
- function saveLocalPrefs(p){try{localStorage.setItem(PREF_KEY,JSON.stringify({...localPrefs(),...p,updated_at:new Date().toISOString()}))}catch(_){}}
- function status(msg){const el=document.getElementById('frNotificationSetupStatus');if(el){el.textContent=msg;el.classList.remove('hide')}} 
- function hideCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.add('hide')}
- function showCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.remove('hide')}
- window.frDismissNotificationSetup=function(){try{localStorage.setItem(KEY,'dismissed')}catch(_){}hideCard()};
- window.frEnableNotifications=async function(){
-  const button=document.getElementById('frEnableNotificationsButton');if(button)button.disabled=true;
-  try{
-   if(!('Notification' in window)){status('ఈ browser notifications support చేయదు.');return}
-   let permission=Notification.permission;
-   if(permission==='default')permission=await Notification.requestPermission();
-   if(permission!=='granted'){
-    saveLocalPrefs({permission,notifications_enabled:false});
-    status(permission==='denied'?'Notifications browser/Android Settingsలో block అయ్యాయి. Settings నుంచి enable చేయండి.':'Notifications permission ఇవ్వలేదు.');
-    return;
-   }
-   saveLocalPrefs({permission:'granted',notifications_enabled:true});
-   try{
-    if('serviceWorker' in navigator){
-      const reg=await navigator.serviceWorker.register('./service-worker.js',{scope:'./'});
-      saveLocalPrefs({service_worker_registered:true});
-      if(reg.active)reg.active.postMessage({type:'FR_NOTIFICATION_PERMISSION_GRANTED'});
-    }
-   }catch(swError){console.warn('FR service worker registration:',swError);saveLocalPrefs({service_worker_registered:false})}
-   if(window.currentUser&&window.sb){
-    const prefs={user_id:window.currentUser.id,ride_enabled:true,order_enabled:true,payment_enabled:true,account_enabled:true,partner_enabled:true,hourly_enabled:true,promo_enabled:false,updated_at:new Date().toISOString()};
-    const {error}=await window.sb.from('fr_notification_preferences').upsert(prefs,{onConflict:'user_id'});
-    if(error)console.warn('FR preference sync:',error.message);
-   }
-   // Android wrapper/native integration can provide a secure FCM token provider.
-   if(typeof window.FR_PUSH_TOKEN_PROVIDER==='function'){
-    try{
-     const pushToken=await window.FR_PUSH_TOKEN_PROVIDER();
-     if(pushToken&&window.sb){
-      const {error}=await window.sb.functions.invoke('fr-notification-register-token',{body:{token:pushToken,platform:window.FR_PUSH_PLATFORM||'android'}});
-      if(error)console.warn('FR push token registration:',error.message);
-     }
-    }catch(tokenError){console.warn('FR token provider not configured or failed:',tokenError)}
-   }
-   status('Notifications permission enabled. Device push token registration will complete when the push provider is configured.');
-   try{localStorage.setItem(KEY,'enabled')}catch(_){}
-   setTimeout(hideCard,2200);
-  }catch(error){status('Notifications setup failed. '+(error?.message||'Please try again.'))}
-  finally{if(button)button.disabled=false}
- };
- function init(){
-  try{
-   if(!('Notification' in window)){hideCard();return}
-   const permission=Notification.permission;
-   if(permission==='granted'){hideCard();saveLocalPrefs({permission,notifications_enabled:true});return}
-   if(permission==='denied'){hideCard();saveLocalPrefs({permission,notifications_enabled:false});return}
-   if(localStorage.getItem(KEY)==='dismissed'){hideCard();return}
-   showCard();
-  }catch(_){hideCard()}
- }
- if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).catch(e=>console.warn('FR SW registration',e)));
- }
- document.addEventListener('DOMContentLoaded',init);
- if(document.readyState!=='loading')init();
-})();
-</script>
+
 </body></html>';
   w.document.open();w.document.write(html);w.document.close();
  }catch(e){w.close();alert('Invoice: '+e.message);}
@@ -4503,6 +4437,73 @@ async function frAdminAssignLaundry(id){
 <style id="fr-v11.1-pro-learning-routing-style">
 .fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
 </style>
+<script id="fr-phase1-notification-permission-integration">
+(function(){
+ const KEY='fr_notification_setup_v1';
+ const PREF_KEY='fr_notification_prefs_local_v1';
+ function localPrefs(){try{return JSON.parse(localStorage.getItem(PREF_KEY)||'{}')}catch(_){return {}}}
+ function saveLocalPrefs(p){try{localStorage.setItem(PREF_KEY,JSON.stringify({...localPrefs(),...p,updated_at:new Date().toISOString()}))}catch(_){}}
+ function status(msg){const el=document.getElementById('frNotificationSetupStatus');if(el){el.textContent=msg;el.classList.remove('hide')}} 
+ function hideCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.add('hide')}
+ function showCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.remove('hide')}
+ window.frDismissNotificationSetup=function(){try{localStorage.setItem(KEY,'dismissed')}catch(_){}hideCard()};
+ window.frEnableNotifications=async function(){
+  const button=document.getElementById('frEnableNotificationsButton');if(button)button.disabled=true;
+  try{
+   if(!('Notification' in window)){status('ఈ browser notifications support చేయదు.');return}
+   let permission=Notification.permission;
+   if(permission==='default')permission=await Notification.requestPermission();
+   if(permission!=='granted'){
+    saveLocalPrefs({permission,notifications_enabled:false});
+    status(permission==='denied'?'Notifications browser/Android Settingsలో block అయ్యాయి. Settings నుంచి enable చేయండి.':'Notifications permission ఇవ్వలేదు.');
+    return;
+   }
+   saveLocalPrefs({permission:'granted',notifications_enabled:true});
+   try{
+    if('serviceWorker' in navigator){
+      const reg=await navigator.serviceWorker.register('./service-worker.js',{scope:'./'});
+      saveLocalPrefs({service_worker_registered:true});
+      if(reg.active)reg.active.postMessage({type:'FR_NOTIFICATION_PERMISSION_GRANTED'});
+    }
+   }catch(swError){console.warn('FR service worker registration:',swError);saveLocalPrefs({service_worker_registered:false})}
+   if(window.currentUser&&window.sb){
+    const prefs={user_id:window.currentUser.id,ride_enabled:true,order_enabled:true,payment_enabled:true,account_enabled:true,partner_enabled:true,hourly_enabled:true,promo_enabled:false,updated_at:new Date().toISOString()};
+    const {error}=await window.sb.from('fr_notification_preferences').upsert(prefs,{onConflict:'user_id'});
+    if(error)console.warn('FR preference sync:',error.message);
+   }
+   // Android wrapper/native integration can provide a secure FCM token provider.
+   if(typeof window.FR_PUSH_TOKEN_PROVIDER==='function'){
+    try{
+     const pushToken=await window.FR_PUSH_TOKEN_PROVIDER();
+     if(pushToken&&window.sb){
+      const {error}=await window.sb.functions.invoke('fr-notification-register-token',{body:{token:pushToken,platform:window.FR_PUSH_PLATFORM||'android'}});
+      if(error)console.warn('FR push token registration:',error.message);
+     }
+    }catch(tokenError){console.warn('FR token provider not configured or failed:',tokenError)}
+   }
+   status('Notifications permission enabled. Device push token registration will complete when the push provider is configured.');
+   try{localStorage.setItem(KEY,'enabled')}catch(_){}
+   setTimeout(hideCard,2200);
+  }catch(error){status('Notifications setup failed. '+(error?.message||'Please try again.'))}
+  finally{if(button)button.disabled=false}
+ };
+ function init(){
+  try{
+   if(!('Notification' in window)){hideCard();return}
+   const permission=Notification.permission;
+   if(permission==='granted'){hideCard();saveLocalPrefs({permission,notifications_enabled:true});return}
+   if(permission==='denied'){hideCard();saveLocalPrefs({permission,notifications_enabled:false});return}
+   if(localStorage.getItem(KEY)==='dismissed'){hideCard();return}
+   showCard();
+  }catch(_){hideCard()}
+ }
+ if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).catch(e=>console.warn('FR SW registration',e)));
+ }
+ document.addEventListener('DOMContentLoaded',init);
+ if(document.readyState!=='loading')init();
+})();
+</script>
 </body>
 </html>
 <style>
