@@ -62,6 +62,14 @@
 - TASKO payment submission is limited to the authenticated customer and completed TASKO booking; admin verification checks admin membership.
 - `fr_process_market_payment_timeouts()` is executable only by postgres in its ACL (service/cron-side function).
 
+## Navigation bug reported by user — fix candidate (2026-11-21)
+
+- Symptom: tapping a Partner business tab could show a toast and leave the current page in place.
+- Root cause identified in QA branch wrapper: unapproved Partner role navigation to protected business pages returned early after `showMessage()`, preventing `showPage(id)` from opening the selected page.
+- QA candidate commit: `d8e8a1bb`.
+- Change: navigation now proceeds; approval state is shown as an inline, non-blocking notice on the selected page; partner operational buttons remain disabled pending approval.
+- Verification: code-level fix committed to QA branch. Automated workflow run for this commit was not returned by the GitHub workflow-run lookup; browser regression is therefore **pending** and fix is not live/main merged.
+
 ## Recommended safe next steps
 1. Review function source and classify: public read, authenticated user RPC, admin-only, service-only.
 2. Confirm authorization checks inside each SECURITY DEFINER function; prioritize `admin_*`, order/parcel/payment, KYC/document, and OTP-related RPCs.
