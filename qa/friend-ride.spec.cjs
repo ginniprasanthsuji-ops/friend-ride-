@@ -567,3 +567,36 @@ test('Laundry Partner registration uses the exact approved database category and
   expect(source).toContain('laundry_unit_price:unitPrice');
 });
 
+
+
+test('Cycle Delivery home tile, dedicated screen, pricing calculator and partner entry are visible', async ({ page }) => {
+  const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('./',{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>window.showPage('home'));
+  await expect(page.locator('.cycle-delivery-home-card')).toHaveCount(1);
+  await expect(page.locator('.cycle-delivery-home-card')).toContainText(/Cycle Delivery/);
+  await page.evaluate(()=>window.showPage('cycleDelivery'));
+  await expect(page.locator('#cycleDelivery')).toBeVisible();
+  await expect(page.locator('#cycleDistanceInput')).toBeAttached();
+  await expect(page.locator('#cyclePriceResult')).toBeAttached();
+  await expect(page.locator('#cycleDelivery')).toContainText('₹25');
+  await expect(page.locator('#cycleDelivery')).toContainText('₹40');
+  await expect(page.locator('#cycleDelivery')).toContainText(/Delivery Partner Login/);
+  expect(errors,'Cycle Delivery page JavaScript errors').toEqual([]);
+});
+
+test('VidyaSetu Learning tab opens Teacher, Student and Coaching Center entry points', async ({ page }) => {
+  const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('./',{waitUntil:'domcontentloaded'});
+  const learningTab=page.locator('nav.premium-bottom button[data-page="learnTeach"]');
+  await expect(learningTab).toBeAttached();
+  await learningTab.click();
+  await expect(page.locator('#learnTeach')).toBeVisible();
+  await expect(page.locator('#learnTeachRoot')).toContainText(/Learning & Education/);
+  await expect(page.locator('#learnTeachRoot')).toContainText(/Teacher/);
+  await expect(page.locator('#learnTeachRoot')).toContainText(/Student/);
+  await expect(page.locator('#learnTeachRoot')).toContainText(/Coaching Center/);
+  expect(errors,'VidyaSetu page JavaScript errors').toEqual([]);
+});
