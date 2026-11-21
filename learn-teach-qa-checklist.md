@@ -92,3 +92,7 @@
 - [ ] Hourly voice/notification device test
 - [ ] Background notification test (requires push delivery setup; foreground timer alone does not guarantee background delivery)
 - [ ] Playwright run and full regression
+
+
+## QA CI trigger checkpoint
+- Updated to trigger Playwright QA workflow from latest QA branch push. Verify actual GitHub Actions run before marking tests complete.
