@@ -3,22 +3,24 @@ const { test, expect } = require('@playwright/test');
 test.describe('Learn & Teach marketplace UI smoke', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1200);
   });
 
-  test('Learn tab is present and opens marketplace landing screen', async ({ page }) => {
-    await expect(page.locator('[data-page="learnTeach"]')).toHaveCount(1);
-    await page.locator('[data-page="learnTeach"]').click();
+  test('Learning Home tile opens VidyaSetu role landing', async ({ page }) => {
+    await page.locator('.fr-native-home [data-fr-native-route="learnTeach"]').click();
     await expect(page.locator('#learnTeach')).toHaveClass(/active/);
-    await expect(page.locator('#learnTeachRoot')).toContainText('Learn • Teach • Grow');
-    await expect(page.locator('#learnTeachRoot')).toContainText('Student (Learn)');
-    await expect(page.locator('#learnTeachRoot')).toContainText('Teacher (Teach)');
+    await expect(page.locator('#learnTeachRoot .fr-v11-learning-grid')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('#learnTeachRoot')).toContainText('Teacher');
+    await expect(page.locator('#learnTeachRoot')).toContainText('Student');
     await expect(page.locator('#learnTeachRoot')).toContainText('Coaching Center');
   });
 
-  test('education category cards are rendered', async ({ page }) => {
-    await page.locator('[data-page="learnTeach"]').click();
-    for (const label of ['School Tuition','Competitive Exams','Skill Courses','Finance & Trading','SAP Courses','Tally & GST','Spoken English','Computer Skills']) {
-      await expect(page.locator('#learnTeachRoot')).toContainText(label);
-    }
+  test('Teacher role opens dashboard and returns to role selector', async ({ page }) => {
+    await page.locator('.fr-native-home [data-fr-native-route="learnTeach"]').click();
+    await expect(page.locator('#learnTeachRoot .fr-v11-learning-grid')).toBeVisible({ timeout: 5000 });
+    await page.locator('#learnTeachRoot [data-learning-role="teacher"]').click();
+    await expect(page.locator('#learnTeachRoot')).toContainText('Teacher Dashboard');
+    await page.locator('#learnTeachRoot button').filter({ hasText: 'విద్యా సేతు Roles' }).click();
+    await expect(page.locator('#learnTeachRoot .fr-v11-learning-grid')).toBeVisible();
   });
 });
