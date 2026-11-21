@@ -124,3 +124,10 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [x] Read-only function definition confirms production `fr_learn_teach_is_admin()` checks `public.profiles(id,role='admin')`; do not reuse the QA `admin_users` policy expression for production without adaptation.
 - [ ] Policies are not runtime authorization tests; test with student, approved provider, pending provider, and admin accounts in isolated QA before release.
 - [ ] Notification foundation migration is not applied to production or QA.
+
+
+## 13. Homework reminder source contract (read-only QA schema inspection)
+- [x] Exact QA homework columns confirmed: `id`, `session_id`, `teacher_id`, `student_id`, `homework_date`, `checklist` JSONB, student confirmation, teacher approval, feedback, timestamps.
+- [x] Reconciliation plan added at `qa/LEARN-TEACH-QA-BACKEND-RECONCILIATION.md`.
+- [ ] Homework due-time contract is unresolved: current table only has date field. Do not send timed reminders until a due time/default is product-approved.
+- [ ] QA backend project alignment and test accounts required before implementation/testing.
