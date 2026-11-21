@@ -20,7 +20,7 @@
 - [x] SQL schema and RLS migration drafted
 
 ## Not yet live / blockers
-- [ ] Apply both Learn & Teach and One-Person Coaching Center migrations to a Supabase QA database (project currently has no Supabase development branches)
+- [ ] Apply Learn & Teach, One-Person Coaching Center, and Teacher Eligibility migrations to a Supabase QA database (project currently has no Supabase development branches)
 - [ ] Cashfree course enrollment payment integration
 - [ ] Cashfree teacher ₹129 subscription payment integration
 - [ ] Live teacher/student notification delivery
@@ -50,3 +50,5 @@
 17. One-person coaching center registration requires teacher_count=1, supports multiple subjects, and daily hours are 4 or 5 split into periods.
 18. One-person schedule validation rejects period totals below 4, above 5, or not matching the selected daily total.
 19. One-person center is shown with the correct label and subject/schedule details after admin approval.
+20. Teacher eligibility validation: 10th level cannot exceed Class 6; Intermediate cannot exceed Class 8; Degree cannot exceed Class 10; B.Ed subject-wise requires admin verification.
+21. One-person coaching center qualification and class-range validation rejects disallowed combinations.
