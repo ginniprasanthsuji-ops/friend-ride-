@@ -173,3 +173,11 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Goods/parcel/home-services/Tasko/laundry: complete authenticated staging workflows, admin approval, ownership, status transition and private-media checks; payment steps remain deferred where gateway-dependent.
 - [ ] Android: signed AAB and install/upgrade/device regression evidence required. Repository/browser CI does not certify Play Store package.
 - [ ] No production deployment, main merge, database migration, or live payment configuration was performed during this continuation.
+
+
+## 19. QA continuation — evidence limits after tracker updates (2026-11-21)
+- [x] Repository QA source and tracker reviewed; package scripts confirm Playwright, unit, core, typecheck, and runtime-build commands exist.
+- [ ] CI was not verified as triggered for tracker-only commits in this continuation: the GitHub connector returned no workflow runs for those commit SHAs. Do not report new CI pass from these documentation commits.
+- [ ] Next actionable code/test phase requires a locally or CI-executed test run against the QA branch; browser CI can be triggered only through available repository workflow mechanisms, not from this connector.
+- [ ] Review security role flows and test design before modifying application authorization. Real account/RLS/private-media tests require isolated QA credentials and backend setup.
+- [ ] No production deployment, main merge, migration, merchant setup, or live-payment integration occurred.
