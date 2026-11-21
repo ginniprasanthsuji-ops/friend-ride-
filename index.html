@@ -2280,7 +2280,7 @@ function frPushWelcomeClose(){const el=document.getElementById('frPushWelcomePro
 async function frPushWelcomeAllow(){const ok=await frEnableDeviceAlerts();frPushWelcomeClose();if(ok&&currentUser&&window.FR_PUSH_VAPID_PUBLIC_KEY)await frEnableBackgroundPush();}
 function frPushWelcomeInit(){
  try{
-  if(Notification?.permission==='granted'){localStorage.setItem('fr_push_welcome_seen','1');return;}
+  if(window.Notification?.permission==='granted'){localStorage.setItem('fr_push_welcome_seen','1');return;}
   if(localStorage.getItem('fr_push_welcome_seen')==='1')return;
   setTimeout(frPushWelcomeOpen,1800);
  }catch(_e){}
