@@ -19,7 +19,7 @@ test("WebView audit detects required files and browser APIs", () => {
   assert.match(run.stdout, /Notification APIs/);
   assert.match(run.stdout, /External navigation/);
   assert.match(run.stdout, /External network dependencies/);
-  assert.match(run.stdout, /cdn\\.example\\.test/);
+  assert.match(run.stdout, /cdn\.example\.test/);
   assert.match(run.stdout, /WARN .*Manifest icon/);
   assert.match(run.stdout, /PASS .*Service worker registration file/);
   fs.rmSync(temp, { recursive: true, force: true });
