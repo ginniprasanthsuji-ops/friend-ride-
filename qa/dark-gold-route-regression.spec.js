@@ -5,7 +5,13 @@ const sharedCustomerRoutes = ["home","explore","ride","scheduled","goods","parce
 
 test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('https://**/*', route => route.abort());
+    await page.route('https://**/*', route => {
+      const url = route.request().url();
+      // Allow required CDN libraries so the app initializes; block external APIs/maps.
+      if (url.includes('cdn.jsdelivr.net/npm/@supabase/supabase-js@2') ||
+          url.includes('unpkg.com/leaflet@1.9.4/')) return route.continue();
+      return route.abort();
+    });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
