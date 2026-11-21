@@ -113,3 +113,13 @@ test('Zoom session migration enforces participant RLS and server-only meeting cr
  expect(fn).toContain('Active student enrollment required');
  expect(fn).toContain('Approved teacher required');
 });
+
+
+test('Classroom workflow uses simple external link, no Zoom OAuth secrets', async ({page})=>{
+ const js=await (await page.request.get('/learn-teach.js')).text();
+ expect(js).toContain('frZoomExternalLink');
+ expect(js).toContain('create-external-classroom-session');
+ expect(js).toContain('Join Online Classroom');
+ expect(js).not.toContain('create-zoom-meeting');
+ const fn=await (await page.request.get('/supabase/functions/create-external-classroom-session/index.ts')).text().catch(()=>'' );
+});
