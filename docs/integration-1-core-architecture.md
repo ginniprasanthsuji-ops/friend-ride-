@@ -144,3 +144,11 @@ Before major runtime integration changes:
 ## Phase decision
 
 **Integration 1 is in progress: Audit + Architecture Design + Config + Adapter Interface Scaffolds.** New scaffold files are isolated and not wired into runtime. The initial Android/AAB audit found no native Android build setup in the repository, so runtime wiring is paused while the Android packaging baseline is planned and feasibility-tested. Main/live remains unchanged.
+
+## External network dependency audit — follow-up
+
+- Static HTML contains Leaflet CSS/JS hosted by `unpkg.com` and Supabase JS v2 hosted by `cdn.jsdelivr.net`. These are runtime CDN dependencies and require WebView network access.
+- Links/flows also reference FINEDUCATION domains and WhatsApp (`wa.me`), which should be tested as external navigation in Android WebView.
+- Maps use Leaflet and require map tiles/network access; verify tile requests and location permissions on-device.
+- Android WebView audit now reports detected external URL hostnames as a warning so offline/network-dependent dependencies are visible during packaging.
+- No CDN scripts were bundled locally yet; keep this as a release test gate rather than modifying runtime source in this architecture-only phase.
