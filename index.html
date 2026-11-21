@@ -4464,15 +4464,8 @@ async function frAdminAssignLaundry(id){
     return;
    }
    saveLocalPrefs({permission:'granted',notifications_enabled:true});
-   // Service-worker background push is deferred until the worker file and provider are installed.
-   saveLocalPrefs({service_worker_registered:false,background_push_pending:true});
-   const frAuthUser=typeof currentUser!=='undefined'?currentUser:window.currentUser;
-   const frSupabaseClient=typeof sb!=='undefined'?sb:window.sb;
-   if(frAuthUser&&frSupabaseClient){
-    const prefs={user_id:frAuthUser.id,ride_enabled:true,order_enabled:true,payment_enabled:true,account_enabled:true,partner_enabled:true,hourly_enabled:true,promo_enabled:false,updated_at:new Date().toISOString()};
-    const {error}=await frSupabaseClient.from('fr_notification_preferences').upsert(prefs,{onConflict:'user_id'});
-    if(error)console.warn('FR preference sync:',error.message);
-   }
+   if('serviceWorker' in navigator){try{const reg=await navigator.serviceWorker.register('./service-worker.js',{scope:'./'});saveLocalPrefs({service_worker_registered:true,background_push_pending:true});if(reg.active)reg.active.postMessage({type:'FR_NOTIFICATION_PERMISSION_GRANTED'});}catch(swError){console.warn('FR notification service worker:',swError);saveLocalPrefs({service_worker_registered:false,background_push_pending:true});}}
+   // Notification categories are saved by the dedicated preferences screen; avoid overwriting user choices here.
    // Android wrapper/native integration can provide a secure FCM token provider.
    if(typeof window.FR_PUSH_TOKEN_PROVIDER==='function'){
     try{
