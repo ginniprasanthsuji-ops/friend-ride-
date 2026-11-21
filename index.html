@@ -243,7 +243,55 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 body{padding-bottom:105px}
 </style>
 <link rel="stylesheet" href="./learn-teach.css">
-</head>
+<style id="fr-unified-premium-dark-ui">
+/* FRIEND RIDE unified premium mobile-first dark UI — removes layered legacy themes */
+:root{--purple:#a46bff;--purple2:#7137d8;--navy:#08101f;--orange:#ff9b3d;--bg:#070d18;--ink:#eef3ff;--muted:#9ba9c2;--line:#24334d;--green:#16c784;--red:#ff526c;--white:#111c2e;--gold:#ffc65a}
+html{background:#060b14;scroll-behavior:auto}
+body{background:radial-gradient(ellipse at 20% -10%,#172c50 0,transparent 40%),linear-gradient(180deg,#070d18,#08111f 60%,#070d18)!important;color:#eef3ff!important;padding-bottom:100px!important}
+main{max-width:760px!important;padding:12px 13px 28px!important}
+.topbar,.home-topbar{position:sticky!important;top:0!important;background:rgba(8,14,26,.92)!important;color:#f3f6ff!important;border-bottom:1px solid #25334c!important;box-shadow:0 8px 25px #0005!important;backdrop-filter:blur(18px)!important}
+.home-topbar .location-head b,.home-topbar .location-head span,.home-topbar .notify-btn{color:#f3f6ff!important;background:transparent!important}
+.iconbtn,.home-topbar .menu-open{background:#17243a!important;color:#f4f7ff!important;border:1px solid #2a3c59!important}
+.logo{background:linear-gradient(135deg,#ff9637,#a65cff)!important;color:#09111e!important}
+.card,.tile,.stat,.kpi,.service-card,.category-card,.fr-service-card{background:linear-gradient(145deg,#111d30,#0b1424)!important;color:#eef3ff!important;border:1px solid #263752!important;box-shadow:0 8px 24px #0003!important}
+.card{border-radius:22px!important;padding:17px!important}
+.card h2,.card h3,.tile b,.tile small,.muted,.notice{color:inherit!important}
+.hero,.home-banner{background:radial-gradient(circle at 88% 15%,#253d65,transparent 30%),linear-gradient(125deg,#101d34,#172743 60%,#25153e)!important;color:#f4f7ff!important;border:1px solid #344968!important}
+.hero p,.home-banner p{color:#b9c8e5!important}
+.home-banner{border-radius:25px!important;min-height:175px!important}
+.home-banner h1{font-size:clamp(23px,6vw,30px)!important}
+.banner-cta{background:linear-gradient(110deg,#ff983a,#ffbf55)!important;color:#121a29!important}
+.tile{min-height:126px!important;border-radius:21px!important;padding:15px!important;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important}
+.tile:active,.btn:active,.premium-bottom button:active{transform:scale(.965)!important}
+.tile .emoji{background:linear-gradient(145deg,#243957,#17253c)!important;border:1px solid #344d70!important;color:#fff!important;box-shadow:none!important}
+.grid{gap:11px!important}
+.btn{background:linear-gradient(110deg,#ff983a,#ffc15d)!important;color:#111827!important;border-radius:16px!important}
+.btn.purple{background:linear-gradient(110deg,#7c43e8,#b06bff)!important;color:#fff!important}
+.btn.light,.notice{background:#16243a!important;color:#cbd7ed!important;border:1px solid #293c59!important}
+.btn.red{background:#351827!important;color:#ff9caf!important}
+.btn.green{background:linear-gradient(110deg,#08a969,#19d38b)!important;color:#061b12!important}
+input,textarea,select,.field input,.field textarea,.field select{background:#0b1526!important;color:#eef3ff!important;border-color:#2a3d59!important}
+input::placeholder,textarea::placeholder{color:#8090aa!important}
+.field label{color:#d9e3f5!important}
+.status,.status.ok{background:#142b2a!important;color:#65e5b1!important}
+.fr-poster{border-radius:24px!important;border:1px solid #354a67!important;box-shadow:0 10px 26px #0004!important}
+.fr-poster-ins{background:linear-gradient(125deg,#0c3452,#08769a)!important}
+.fr-poster-ref{background:linear-gradient(125deg,#29124c,#5526a4)!important}
+.fr-poster-copy h3,.fr-poster-copy p,.fr-poster-kicker{color:#f2f6ff!important}
+.fr-poster-cta{background:#101a2b!important;color:#f5f7ff!important}
+.premium-bottom,.bottom{background:rgba(8,15,27,.94)!important;border:1px solid #2a3b56!important;border-top:1px solid #354866!important;box-shadow:0 -8px 26px #0005!important;backdrop-filter:blur(18px)!important;border-radius:23px 23px 0 0!important}
+.premium-bottom button,.bottom button{color:#8493ad!important}
+.premium-bottom button.active,.bottom button.active{color:#ffad52!important}
+.premium-bottom button.active span,.bottom button.active span{background:#2a1e37!important;border-radius:13px!important}
+.drawer{background:linear-gradient(180deg,#0c1628,#08111f)!important;color:#eef3ff!important}
+.drawer-head{background:linear-gradient(125deg,#172944,#482275)!important}
+.modal,.modal-content,.auth-modal{background:#0d182a!important;color:#eef3ff!important;border:1px solid #2b3c59!important}
+hr{border-color:#263751!important}
+.page{display:none!important;opacity:0;transform:translateX(12px)}
+.page.active{display:block!important;opacity:1;transform:none}
+@media(min-width:650px){main{padding-left:20px!important;padding-right:20px!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style></head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
  <div class="fr-launcher-inner">
@@ -4779,5 +4827,44 @@ window.frRefreshHomeProfileAvatar=async function(){
     return {pages:[...pageIds],active:[...document.querySelectorAll('main .page.active')].map(p=>p.id),
       tabs:[...document.querySelectorAll('.premium-bottom button[data-page]')].map(b=>({label:b.textContent.trim(),route:b.dataset.page,hasTarget:pageIds.has(b.dataset.page)}))};
   };
+})();
+</script>
+
+<script id="fr-screen-transition-native-navigation">
+(function(){
+ 'use strict';
+ const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ let lastRoute=document.querySelector('main .page.active')?.id||'home';
+ const base=window.showPage;
+ if(typeof base!=='function')return;
+ window.showPage=function(id){
+   const next=String(id||'');
+   const old=document.querySelector('main .page.active');
+   const incoming=document.getElementById(next);
+   if(!incoming||next===lastRoute){return base.apply(this,arguments);}
+   const direction=(next==='home'||next==='customerDashboard'||next==='driverDashboard'||next==='partnerDashboard'||next==='adminDashboard')?'up':'right';
+   const result=base.apply(this,arguments);
+   const page=document.getElementById(next);
+   if(page&&!reduced){
+     page.animate([{opacity:0,transform:direction==='up'?'translateY(14px)':'translateX(18px)'},{opacity:1,transform:'translate(0,0)'}],{duration:230,easing:'cubic-bezier(.2,.75,.25,1)'});
+     if(old&&old!==page)old.animate([{opacity:1,transform:'translate(0,0)'},{opacity:0,transform:direction==='up'?'translateY(-8px)':'translateX(-8px)'}],{duration:160,easing:'ease-out'});
+   }
+   lastRoute=next;
+   try{history.replaceState({frRoute:lastRoute},'',location.pathname+location.search+location.hash);}catch(e){}
+   return result;
+ };
+ // Android/browser back should return to the previous FRIEND RIDE screen, not exit immediately.
+ const stack=[lastRoute];
+ document.addEventListener('click',function(e){
+   const target=e.target.closest('.premium-bottom button[data-page],.bottom button[data-page],[data-route-page],[data-category-page]');
+   if(!target)return;
+   const route=target.dataset.page||target.dataset.routePage||target.dataset.categoryPage;
+   if(route&&route!==stack.at(-1)){stack.push(route);}
+ },true);
+ window.addEventListener('popstate',function(){
+   const previous=stack.length>1?stack.pop():'home';
+   if(typeof window.showPage==='function')window.showPage(previous);
+ });
+ document.documentElement.classList.add('fr-premium-dark-ready');
 })();
 </script>
