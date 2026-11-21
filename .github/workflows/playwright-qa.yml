@@ -14,7 +14,5 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npx playwright install --with-deps chromium
-      - name: Start static server
-        run: npx --yes http-server . -p 4173 -a 127.0.0.1 -c-1 &
       - name: Run Playwright
         run: npx playwright test
