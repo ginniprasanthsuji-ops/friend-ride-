@@ -4450,6 +4450,21 @@ async function frAdminAssignLaundry(id){
  function hideCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.add('hide')}
  function showCard(){const card=document.getElementById('frNotificationSetupCard');if(card)card.classList.remove('hide')}
  window.frDismissNotificationSetup=function(){try{localStorage.setItem(KEY,'dismissed')}catch(_){}hideCard()};
+ window.frRegisterNativePushToken=async function(){
+  try{
+   const client=typeof sb!=='undefined'?sb:window.sb;
+   const user=typeof currentUser!=='undefined'?currentUser:window.currentUser;
+   if(!client||!user)return {ok:false,reason:'not-authenticated'};
+   let token=null;
+   if(typeof window.FR_PUSH_TOKEN_PROVIDER==='function')token=await window.FR_PUSH_TOKEN_PROVIDER();
+   else if(window.FRIEND_RIDE_NATIVE&&typeof window.FRIEND_RIDE_NATIVE.getFCMToken==='function')token=await window.FRIEND_RIDE_NATIVE.getFCMToken();
+   if(!token)return {ok:false,reason:'native-token-provider-not-installed'};
+   const {error}=await client.functions.invoke('fr-notification-register-token',{body:{token:String(token),platform:window.FR_PUSH_PLATFORM||'android'}});
+   if(error)throw error;
+   saveLocalPrefs({push_token_registered:true,push_token_registered_at:new Date().toISOString()});
+   return {ok:true};
+  }catch(e){console.warn('FR token registration:',e);return {ok:false,reason:String(e)}}
+ };
  window.frEnableNotifications=async function(){
   const button=document.getElementById('frEnableNotificationsButton');if(button)button.disabled=true;
   try{
@@ -4464,18 +4479,10 @@ async function frAdminAssignLaundry(id){
    saveLocalPrefs({permission:'granted',notifications_enabled:true});
    if('serviceWorker' in navigator){try{const reg=await navigator.serviceWorker.register('./service-worker.js',{scope:'./'});saveLocalPrefs({service_worker_registered:true,background_push_pending:true});if(reg.active)reg.active.postMessage({type:'FR_NOTIFICATION_PERMISSION_GRANTED'});}catch(swError){console.warn('FR notification service worker:',swError);saveLocalPrefs({service_worker_registered:false,background_push_pending:true});}}
    // Notification categories are saved by the dedicated preferences screen; avoid overwriting user choices here.
-   // Android wrapper/native integration can provide a secure FCM token provider.
-   if(typeof window.FR_PUSH_TOKEN_PROVIDER==='function'){
-    try{
-     const pushToken=await window.FR_PUSH_TOKEN_PROVIDER();
-     if(pushToken&&frSupabaseClient){
-      const {error}=await frSupabaseClient.functions.invoke('fr-notification-register-token',{body:{token:pushToken,platform:window.FR_PUSH_PLATFORM||'android'}});
-      if(error)console.warn('FR push token registration:',error.message);
-     }
-    }catch(tokenError){console.warn('FR token provider not configured or failed:',tokenError)}
-   }
+   await window.frRegisterNativePushToken?.();
+
    try{if(window.Notification&&Notification.permission==='granted'&&typeof window.Notification==='function'){new Notification('FRIEND RIDE',{body:'Notification permission enabled successfully.'})}}catch(_){/* Native/PWA notification test may require service worker support. */}
-   status('Notification permission enabled. Background push setup is pending provider configuration.');
+   status('Notifications enabled. Device token registration is attempted; provider configuration may still be pending.');
    try{localStorage.setItem(KEY,'enabled')}catch(_){}
    setTimeout(hideCard,2200);
   }catch(error){status('Notifications setup failed. '+(error?.message||'Please try again.'))}
@@ -4491,7 +4498,7 @@ async function frAdminAssignLaundry(id){
    showCard();
   }catch(_){hideCard()}
  }
- // Background push worker registration is intentionally disabled until the worker file is committed.
+ // Worker registration is active; native Android wrapper must expose FRIEND_RIDE_NATIVE.getFCMToken() or FR_PUSH_TOKEN_PROVIDER.
  document.addEventListener('DOMContentLoaded',init);
  if(document.readyState!=='loading')init();
 })();
