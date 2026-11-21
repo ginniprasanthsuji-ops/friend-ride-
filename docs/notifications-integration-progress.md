@@ -1,7 +1,7 @@
 # FRIEND RIDE Notifications — Integration 1
 
 ## CI status
-- Latest integration branch commit: `6601a47` (subscription lifecycle mock chaining fix).
+- Latest integration branch includes first-launch notification permission onboarding, login-time push subscription registration, and bounded retry handling for transient push sender failures. CI for the earlier onboarding commit `1f95f402` passed all three checks; latest changes are awaiting CI.
 - Scaffold tests: PASS.
 - Notification unit, lifecycle, and preservation regression tests: PASS.
 - Push sender static/security tests: PASS.
@@ -13,14 +13,14 @@ The app's existing notification page and alert pipeline are already present and 
 - Existing role-based classification, voice/speech, vibration, toast, browser alerts, recent feed/unread state, and Supabase Realtime.
 - Existing notification page includes a device-alert enable control and tone-preview controls.
 - Existing `frEnableDeviceAlerts()` implementation (the later definition is active) requests permission only on user action, registers `service-worker.js`, reads the public VAPID key, creates/validates the Push subscription, and upserts `fr_push_subscriptions`.
-- Public VAPID key is client-side by design; private VAPID key and internal sender secret must remain Supabase Edge Function secrets.
+- Public VAPID key is client-side by design; private VAPID key and internal sender secret must remain Supabase Edge Function secrets. First-launch permission prompt is independent of login; after login, granted permission is used to register/upsert the device push subscription.
 - Earlier duplicate/legacy permission-only function exists in the HTML; active later function provides background push subscription.
 
 ## Integration branch additive modules
 - `integrations/notifications/notification-provider.js`: opt-in browser notification adapter and push subscribe/unsubscribe.
 - `integrations/notifications/notification-events.js`: role/event templates and Telugu event catalog.
 - `integrations/notifications/push-subscription-lifecycle.js`: isolated helper with enable/disable lifecycle behavior and tests; not wired into the app because the app already has an existing lifecycle implementation.
-- `supabase/functions/fr-push-send/index.ts`: internal-secret protected sender, service-role access, VAPID secrets from environment, user/subscription limits, URL sanitization, delivery result accounting, and deactivation of expired (404/410) subscriptions. Static tests pass; function is not deployed.
+- `supabase/functions/fr-push-send/index.ts`: internal-secret protected sender, service-role access, VAPID secrets from environment, user/subscription limits, URL sanitization, delivery result accounting, deactivation of expired (404/410) subscriptions, and bounded retries for transient network/429/5xx failures. Static tests pass at prior commit; latest retry changes await CI. Function is not deployed.
 
 ## Supabase audit (read-only)
 - Production project inspected read-only.
