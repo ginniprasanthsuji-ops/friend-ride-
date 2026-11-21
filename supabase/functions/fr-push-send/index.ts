@@ -62,22 +62,36 @@ Deno.serve(async (req) => {
     .in("user_id", userIds);
   if (error) return json({ error: "subscription-query-failed" }, 500);
 
-  let sent = 0, failed = 0, expired = 0;
+  let sent = 0, failed = 0, expired = 0, retries = 0;
   for (const row of rows || []) {
     const subscription = { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth_key } };
-    try {
-      await webpush.sendNotification(subscription, JSON.stringify({ title, body: message, url, tag }));
+    let delivered = false;
+    let terminalStatus: number | undefined;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        await webpush.sendNotification(subscription, JSON.stringify({ title, body: message, url, tag }));
+        delivered = true;
+        break;
+      } catch (err) {
+        const statusCode = (err as { statusCode?: number }).statusCode;
+        terminalStatus = statusCode;
+        // Expired endpoints are terminal. Retry only transient rate-limit/server/network failures.
+        if (statusCode === 404 || statusCode === 410 || (statusCode && statusCode < 500 && statusCode !== 429) || attempt === 2) break;
+        retries++;
+        await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
+      }
+    }
+    if (delivered) {
       sent++;
       await admin.from("fr_push_subscriptions").update({ last_success_at: new Date().toISOString() }).eq("id", row.id);
-    } catch (err) {
+    } else {
       failed++;
-      const statusCode = (err as { statusCode?: number }).statusCode;
-      if (statusCode === 404 || statusCode === 410) {
+      if (terminalStatus === 404 || terminalStatus === 410) {
         expired++;
         await admin.from("fr_push_subscriptions").update({ is_active: false, updated_at: new Date().toISOString() }).eq("id", row.id);
       }
-      console.warn("Web push delivery failed", { statusCode, subscriptionId: row.id });
+      console.warn("Web push delivery failed after retry policy", { statusCode: terminalStatus, subscriptionId: row.id });
     }
   }
-  return json({ targetedSubscriptions: (rows || []).length, sent, failed, expired });
+  return json({ targetedSubscriptions: (rows || []).length, sent, failed, expired, retries });
 });
