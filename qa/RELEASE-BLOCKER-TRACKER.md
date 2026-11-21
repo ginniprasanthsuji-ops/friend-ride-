@@ -218,3 +218,13 @@ Approval only after all blockers are closed, full regression passes, physical-de
 - [ ] Create a complete isolated QA backend schema/migrations and staging seed/test accounts; migrate the blockers to QA only; run cross-role RLS tests; then validate with real OTP/devices and push.
 - [ ] Live payments/GST onboarding, production release, Play Store AAB/signing/device validation and external integrations remain unverified/blocked.
 - **Release decision:** 100% Play Store/live certificate remains withheld. Browser CI PASS is not sufficient for certification.
+
+
+## 24. User-requested non-payment final regression report (2026-11-21)
+- [x] Payment gateway, GST onboarding, live transactions, settlement/refund-through-gateway and payment credentials are explicitly excluded/deferred per user instruction.
+- [x] Verified browser CI job log for run `44892215524`, job `136811974659`: **53 Playwright tests passed**, 0 failed (workflow/job successful); report artifact uploaded (`friend-ride-regression-report`, artifact `14702617077`).
+- [x] Inline JavaScript check logged PASS for scripts 1–26 and multiple integration/source guards (OTP backend, role-aware session restore, completed-only QR condition, customer photo, partner/store GPS, secure bank enquiry persistence, assigned driver contact RPC, etc.). These are source/static guard checks, not real service/device tests.
+- [x] Run/commit under test: `d65e4e08855ad80b27976b59f8aeec0661a7bbb2`; branch `qa/navigation-isolation-fix-2026-11-21`.
+- [x] Reconfirmed no production SQL writes, migration, merge, deployment, or payment setup.
+- [ ] Remaining non-payment release blockers cannot be honestly marked complete: QA backend lacks the Ride/Food/Market/Parcel/Services schema; no isolated role test accounts/fixtures; production catalog read-only audit found RLS-enabled tables with zero policies; effective grants/RPC/storage security not verified; real OTP/push closed-app, GPS and two-device lifecycle tests not run; signed AAB/device upgrade/Play Store compliance checks not performed.
+- **Final report:** Browser CI regression = PASS (53/53). Overall non-payment release readiness = **BLOCKED / not 100% certified** until QA backend is provisioned, security fixes/tests and real device/AAB validation complete. Payment/GST tasks remain intentionally deferred.
