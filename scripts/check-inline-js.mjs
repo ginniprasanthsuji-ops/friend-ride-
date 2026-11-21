@@ -23,8 +23,21 @@ const checks=[
  ['Profile photo signed URL loader','frLoadProfilePhoto'],
  ['Assigned driver vehicle/contact RPC','get_ride_driver_details'],
  ['Customer WhatsApp action','https://wa.me/'],
- ['Customer active ride contact rendering','frRenderCustomerRideDriverAndPayment(active)']
+ ['Customer active ride contact rendering','frRenderCustomerRideDriverAndPayment(active)'],
+ ['Notification permission card','frNotificationSetupCard'],
+ ['Unified notification permission handler','window.frEnableNotifications'],
+ ['Notification preference save handler','frSaveNotificationPreferences'],
+ ['Notification preference load handler','frLoadNotificationPreferences'],
+ ['Notification token registration Edge Function','fr-notification-register-token'],
+ ['Existing service worker registration',"navigator.serviceWorker.register('./service-worker.js'"]
 ];
 for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
+const serviceWorker=fs.readFileSync('service-worker.js','utf8');
+try{new vm.Script(serviceWorker,{filename:'service-worker.js'});console.log('PASS service-worker syntax');}
+catch(e){failed=true;console.error('FAIL service-worker syntax: '+e.message);}
+for(const [label,token] of [['Role-aware push title','🛵 նոր'],['Push handler','addEventListener(\'push\''],['Notification click handler','addEventListener(\'notificationclick\'']]){
+ if(serviceWorker.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}
+}
+
 if(failed)process.exit(1);
 console.log(`Checked ${blocks.length} inline scripts.`);
