@@ -137,3 +137,10 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Failure diagnosis from runner logs: Dark + Gold test `beforeEach` blocked all HTTPS requests, including the required Supabase JS CDN library. This prevented app initialization (`supabase.createClient` undefined; `sb` and app state globals unavailable), so the new route/auth UI tests were exercising a broken harness rather than a valid initialized app.
 - Fixed test harness to allow the required Supabase JS and Leaflet CDN library requests while continuing to block external API/map calls. Fix commit: `2abe334ad5fc36d1d4ab4163c8f62017cd24f5b6`.
 - A fresh CI run is required before merge. PR #26 remains draft/unmerged. User requested merge/deploy, but the browser suite currently has a verified failure; do not merge until the corrected run is green.
+
+
+## Quality Gate run 306 failure diagnosis and test corrections — 2026-11-21
+- Quality Gate run #306: typecheck/core job **PASS**; browser-e2e **FAIL** with 54 passed and 2 failed.
+- Failure 1 was a test selector scope bug: `main .page` counted 57 while the app has 58 route elements; corrected to count `.page` globally.
+- Failure 2: registration entrypoint test clicked buttons while the Home route was not active/visible. Corrected the test to activate `home` via the existing `showPage('home')` before checking/clicking the registration buttons.
+- Corrections commit: `40dcb3cc2800231d4ac495247df0ed42e22f2e05`. Fresh CI run required; no merge/deploy yet.
