@@ -115,4 +115,23 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     await expect(page.locator('#authRegisterButton')).toBeVisible();
     await expect(page.locator('#authModal .rolegrid')).toBeHidden();
   });
+
+  test('all inventoried route IDs can activate their destination screen without route loss', async ({ page }) => {
+    const routeResults = await page.evaluate(ids => {
+      window.currentProfile = { role: 'admin' };
+      const results = [];
+      for (const id of ids) {
+        try {
+          window.showPage(id);
+          const target = document.getElementById(id);
+          results.push({ id, exists: !!target, active: !!target?.classList.contains('active') });
+        } catch (error) {
+          results.push({ id, exists: !!document.getElementById(id), active: false, error: String(error) });
+        }
+      }
+      return results;
+    }, allPageIds);
+    expect(routeResults.filter(r => !r.exists).map(r => r.id)).toEqual([]);
+    expect(routeResults.filter(r => !r.active).map(r => ({ id: r.id, error: r.error || null }))).toEqual([]);
+  });
 });
