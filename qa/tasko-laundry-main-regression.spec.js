@@ -4,7 +4,7 @@ test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
   test.beforeEach(async ({ page }) => {
     page.setDefaultTimeout(15000);
     await page.route('https://**/*', route => route.abort());
-    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'load', timeout: 30000 });
+    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForFunction(() => typeof window.frHandleShopCategoryChange === 'function', null, { timeout: 15000 });
     await page.evaluate(() => {
       window.currentUser = { id: 'playwright-test-user' };
