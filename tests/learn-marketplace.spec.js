@@ -134,3 +134,12 @@ test('Homework approval field guard and Telugu hourly reminder regression', asyn
  expect(ui).toContain('SpeechSynthesisUtterance');
  expect(ui).toContain('te-IN');
 });
+
+
+test('Service worker renders Telugu student homework push reminder', async()=>{
+ const {readFile}=await import('node:fs/promises');const sw=await readFile(process.cwd()+'/service-worker.js','utf8');
+ expect(sw).toContain("data.type === 'learn_homework_reminder'");
+ expect(sw).toContain('లక్ష్య సేతు • చదువు సమయం');
+ expect(sw).toContain('మీ హోంవర్క్ చెక్ లిస్ట్ పూర్తి చేసి పాఠాలు చదవండి');
+ expect(sw).toContain('requireInteraction = true');
+});
