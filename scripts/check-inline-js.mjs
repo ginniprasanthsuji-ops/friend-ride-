@@ -35,7 +35,7 @@ for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+l
 const serviceWorker=fs.readFileSync('service-worker.js','utf8');
 try{new vm.Script(serviceWorker,{filename:'service-worker.js'});console.log('PASS service-worker syntax');}
 catch(e){failed=true;console.error('FAIL service-worker syntax: '+e.message);}
-for(const [label,token] of [['Role-aware push title','🛵 նոր'],['Push handler','addEventListener(\'push\''],['Notification click handler','addEventListener(\'notificationclick\'']]){
+for(const [label,token] of [['Role-aware push title','🛵 కొత్త రైడ్ వచ్చింది'],['Push handler','addEventListener(\'push\''],['Notification click handler','addEventListener(\'notificationclick\'']]){
  if(serviceWorker.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}
 }
 
