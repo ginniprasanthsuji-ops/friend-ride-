@@ -2277,7 +2277,18 @@ async function frEnableDeviceAlerts(){
 }
 function frPushWelcomeOpen(){const el=document.getElementById('frPushWelcomePrompt');if(el)el.style.display='flex';}
 function frPushWelcomeClose(){const el=document.getElementById('frPushWelcomePrompt');if(el)el.style.display='none';try{localStorage.setItem('fr_push_welcome_seen','1');}catch(_){}}
-async function frPushWelcomeAllow(){const ok=await frEnableDeviceAlerts();frPushWelcomeClose();if(ok&&currentUser&&window.FR_PUSH_VAPID_PUBLIC_KEY)await frEnableBackgroundPush();}
+async function frPushWelcomeAllow(){
+ try{
+  if(!('Notification' in window)||!('serviceWorker' in navigator)){frPushLifecycleStatus('ఈ device/browser notifications support చేయడం లేదు.',true);return;}
+  const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();
+  if(permission!=='granted'){frPushLifecycleStatus('Notification permission ఇవ్వలేదు. Settingsలో Allow చేయండి.',true);frPushWelcomeClose();return;}
+  await navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'});
+  await navigator.serviceWorker.ready;
+  frPushLifecycleStatus('Notifications allowed. Login తర్వాత ఈ deviceకి background push subscription register అవుతుంది.');
+  frPushWelcomeClose();
+  if(currentUser?.id)await frEnableDeviceAlerts();
+ }catch(e){frPushLifecycleStatus('Notification setup failed: '+String(e?.message||e),true);}
+}
 function frPushWelcomeInit(){
  try{
   if(window.Notification?.permission==='granted'){localStorage.setItem('fr_push_welcome_seen','1');return;}
@@ -2590,7 +2601,12 @@ function frRideStopRealtime(){
   frRideNotifChannel=null;frRideNotificationStartedFor=null;frRideNotifRows=[];frRideSetUnread(0);
 }
 function frRideStartAfterLogin(){
-  if(currentUser?.id)frRideStartRealtime();
+  if(currentUser?.id){
+    frRideStartRealtime();
+    if(window.Notification?.permission==='granted'&&typeof frEnableDeviceAlerts==='function'){
+      frEnableDeviceAlerts().catch(e=>console.warn('Background push subscription after login failed:',e));
+    }
+  }
 }
 
 // Set this to the VAPID public key generated for the deployed push sender.
