@@ -63,7 +63,11 @@
 - [x] Waiting room enabled and join-before-host disabled
 - [x] QA migration applied to FRIEND RIDE QA project
 - [x] Session update writes hardened to admin-only
-- [ ] Configure Zoom OAuth credentials as QA Edge Function secrets
+- [x] Add reusable Zoom classroom table keyed by teacher/student/course on QA
+- [x] Replace manual student/course UUID entry with active-enrollment picker
+- [x] Deploy recurring Zoom meeting creation/reuse Edge Function to QA
+- [x] Remove participant-readable host start URL storage
+- [ ] Configure Zoom OAuth credentials and host user as QA Edge Function secrets
 - [ ] Test Zoom API meeting creation with valid credentials
 - [ ] Verify same join URL in teacher + student authenticated accounts
 - [ ] Verify unrelated user denied access to meeting link
