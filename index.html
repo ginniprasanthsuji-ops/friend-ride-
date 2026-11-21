@@ -3386,16 +3386,31 @@ async function frAdminUpdateBankEnquiry(id,status){
     }catch(e){showMessage('Logout పూర్తికాలేదు; మీ Session తొలగించలేదు: '+(e.message||e));}
   };
 
-  // Block partner operational pages until approval; admin workflows remain unaffected.
+  // Partner approval is a feature-access gate, not a navigation blocker.
+  // Always open the requested page; show a non-blocking inline notice and keep
+  // protected actions disabled until approval.
   const originalShowPage=window.showPage;
   if(typeof originalShowPage==='function')window.showPage=function(id){
     const protectedPartnerPages=['partnerOrders','catalogue','products','inventory','subscription','referrals','partnerReports','partnerPaymentSettings','gst'];
-    if(selectedRole==='partner'&&protectedPartnerPages.includes(id)&&!FR_APPROVED(FR_STATUS('partner',currentProfile))){
+    const blocked=selectedRole==='partner'&&protectedPartnerPages.includes(id)&&!FR_APPROVED(FR_STATUS('partner',currentProfile));
+    const result=originalShowPage.apply(this,arguments);
+    if(blocked){
       frApplyApprovalUI('partner',currentProfile||{partner_approval_status:'pending'});
-      showMessage('Partner Approval వచ్చిన తర్వాత మాత్రమే ఈ Business feature ఉపయోగించవచ్చు.');
-      return;
+      const page=document.getElementById(String(id));
+      if(page){
+        let notice=page.querySelector('.fr-page-approval-notice');
+        if(!notice){
+          notice=document.createElement('div');
+          notice.className='notice fr-page-approval-notice';
+          notice.setAttribute('role','status');
+          notice.textContent='Partner approval pending. ఈ పేజీ చూడవచ్చు; ఇందులోని business actions Admin approval వచ్చిన తర్వాత అందుబాటులో ఉంటాయి.';
+          const firstCard=page.querySelector('.card');
+          if(firstCard)firstCard.insertAdjacentElement('afterbegin',notice);
+          else page.insertAdjacentElement('afterbegin',notice);
+        }
+      }
     }
-    return originalShowPage.apply(this,arguments);
+    return result;
   };
 
   // Restore once from persisted Supabase storage; retries never clear or replace the session.
