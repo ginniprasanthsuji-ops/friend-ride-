@@ -66,6 +66,8 @@
 - [x] Add reusable Zoom classroom table keyed by teacher/student/course on QA
 - [x] Replace manual student/course UUID entry with active-enrollment picker
 - [x] Add student confirmation before the scheduled class link is unlocked
+- [x] Secure join-link Edge Function only returns link after confirmation to participants
+- [x] Column-level grants prevent direct participant reads of stored join URLs
 - [x] Deploy recurring Zoom meeting creation/reuse Edge Function to QA
 - [x] Remove participant-readable host start URL storage
 - [ ] Configure Zoom OAuth credentials and host user as QA Edge Function secrets: `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET`, `ZOOM_HOST_USER` (Zoom host email or user ID)
