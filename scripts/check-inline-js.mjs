@@ -14,7 +14,7 @@ const checks=[
  ['OTP backend','Sms-otp'],
  ['Role-aware session restore','adminRow?.user_id===authUser.id'],
  ['Customer photo upload','frUploadPrivateRegistrationFile(customerPhoto'],
- ['Version 10.2 feedback hotfix marker','name="application-version" content="10.2-feedback-hotfix"'],
+ ['Current application version marker','name="application-version" content="11.1-PRO-category-routing-learning-isolation"'],
  ['Partner GPS save RPC','fr_partner_save_location'],
  ['Approved store geo RPC','fr_customer_list_approved_stores_geo'],
  ['Friend Mart map','friendMartMap'],
