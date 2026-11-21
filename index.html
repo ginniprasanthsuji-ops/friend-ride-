@@ -3051,12 +3051,13 @@ async function frAdminUpdateBankEnquiry(id,status){
 
 <script id="FR_RUNTIME_DIAGNOSTICS_V1">
 (()=>{'use strict';
- const KEY='fr_runtime_diagnostics_v1',MAX=25;
+ const KEY='fr_runtime_diagnostics_v1',SESSION_KEY='fr_runtime_session_errors_v1',MAX=25;
+ try{sessionStorage.setItem(SESSION_KEY,'0')}catch(_){}
  const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(_){return []}};
  const write=items=>{try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)))}catch(_){}};
  const isIssue=x=>['JavaScript','Promise'].includes(String(x?.kind||''));
- const issueCount=()=>read().filter(isIssue).length;
- const record=(kind,message,source='')=>{const items=read();items.push({at:new Date().toISOString(),kind,message:String(message||'Unknown error').slice(0,500),source:String(source||'').slice(0,240),online:navigator.onLine});write(items);render();refresh()};
+ const issueCount=()=>{try{return Number(sessionStorage.getItem(SESSION_KEY)||0)}catch(_){return 0}};
+ const record=(kind,message,source='')=>{if(isIssue({kind})){try{sessionStorage.setItem(SESSION_KEY,String(issueCount()+1))}catch(_){}}const items=read();items.push({at:new Date().toISOString(),kind,message:String(message||'Unknown error').slice(0,500),source:String(source||'').slice(0,240),online:navigator.onLine});write(items);render();refresh()};
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  window.addEventListener('error',e=>record('JavaScript',e.message||'Script error',((e.filename||'')+':'+(e.lineno||''))));
  window.addEventListener('unhandledrejection',e=>record('Promise',e.reason?.message||e.reason||'Unhandled promise rejection'));
@@ -3068,7 +3069,7 @@ async function frAdminUpdateBankEnquiry(id,status){
  const b=document.createElement('button');b.id='frDiagBadge';b.type='button';b.hidden=true;b.textContent='✓ App status';b.setAttribute('aria-label','Admin app diagnostics');b.style.cssText='position:fixed;right:14px;bottom:142px;z-index:99998;border:0;border-radius:24px;padding:11px 16px;color:#fff;font:700 13px system-ui;box-shadow:0 4px 16px #0004;background:#176b4c;max-width:calc(100vw - 28px)';
  const p=document.createElement('section');p.id='frDiagPanel';p.hidden=true;p.style.cssText='position:fixed;inset:auto 10px 205px 10px;z-index:99999;max-width:560px;margin-left:auto;max-height:58vh;overflow:auto;background:#fff;color:#211936;border:1px solid #ddd;border-radius:14px;padding:14px;box-shadow:0 8px 32px #0004;font:13px/1.5 system-ui';
  p.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>FRIEND RIDE · App Diagnostics</b><button id="frDiagClose" type="button">Close</button></div><p id="frDiagHealth"></p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="frDiagCheck" type="button">Run safe checks</button><a href="./test.html" target="_blank" rel="noopener" style="display:inline-block;padding:6px 10px;border-radius:8px;background:#eee7fb;color:#51258f;font-weight:700;text-decoration:none">Open full Regression Tests</a><button id="frDiagCopy" type="button">Copy report</button><button id="frDiagClear" type="button">Clear local log</button></div><p id="frDiagCounts"></p><pre id="frDiagLog" style="white-space:pre-wrap;background:#f5f2f8;padding:9px;border-radius:8px;max-height:220px;overflow:auto"></pre><small>JavaScript and Promise errors count as App issues. Network online/offline changes are informational only. Logs stay on this device; no passwords, OTPs, payment data or location are collected.</small>';
- document.body.append(b,p);b.onclick=()=>{if(!isAdminDashboard())return;p.hidden=!p.hidden;refresh()};p.querySelector('#frDiagClose').onclick=()=>p.hidden=true;const observe=new MutationObserver(()=>{if(!isAdminDashboard())p.hidden=true;render()});observe.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','style']});p.querySelector('#frDiagClear').onclick=()=>{write([]);refresh();render()};p.querySelector('#frDiagCopy').onclick=()=>{const items=read();const report={app:'FRIEND RIDE',at:new Date().toISOString(),online:navigator.onLine,issueCount:items.filter(isIssue).length,errors:items.filter(isIssue),events:items.filter(x=>!isIssue(x))};navigator.clipboard?.writeText(JSON.stringify(report,null,2)).then(()=>alert('Diagnostics report copied')).catch(()=>alert('Copy unavailable; select and copy the report text.'))};p.querySelector('#frDiagCheck').onclick=check;refresh();render();window.frRefreshDiagnosticsVisibility=render;
+ document.body.append(b,p);b.onclick=()=>{if(!isAdminDashboard())return;p.hidden=!p.hidden;refresh()};p.querySelector('#frDiagClose').onclick=()=>p.hidden=true;const observe=new MutationObserver(()=>{if(!isAdminDashboard())p.hidden=true;render()});observe.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','style']});p.querySelector('#frDiagClear').onclick=()=>{write([]);try{sessionStorage.setItem(SESSION_KEY,'0')}catch(_){}refresh();render();};p.querySelector('#frDiagCopy').onclick=()=>{const items=read();const report={app:'FRIEND RIDE',at:new Date().toISOString(),online:navigator.onLine,issueCount:items.filter(isIssue).length,errors:items.filter(isIssue),events:items.filter(x=>!isIssue(x))};navigator.clipboard?.writeText(JSON.stringify(report,null,2)).then(()=>alert('Diagnostics report copied')).catch(()=>alert('Copy unavailable; select and copy the report text.'))};p.querySelector('#frDiagCheck').onclick=check;refresh();render();window.frRefreshDiagnosticsVisibility=render;
  }
  function refresh(){const h=document.getElementById('frDiagHealth'),l=document.getElementById('frDiagLog'),counts=document.getElementById('frDiagCounts');if(!h||!l)return;h.textContent='Network: '+(navigator.onLine?'Online':'Offline')+' · Supabase client: '+((typeof sb!=='undefined')?'available':'not exposed')+' · Service Worker: '+('serviceWorker' in navigator?'supported':'not supported')+' · Notification: '+('Notification' in window?Notification.permission:'unsupported');const items=read(),issues=items.filter(isIssue),events=items.filter(x=>!isIssue(x));if(counts)counts.textContent='Actual app errors: '+issues.length+' · Informational events: '+events.length;l.textContent=items.length?items.map(x=>x.at+' ['+x.kind+'] '+x.message+(x.source?' · '+x.source:'')).join('\n'):'No recorded runtime errors.'}
  async function check(){const h=document.getElementById('frDiagHealth');if(!h)return;const lines=['Network: '+(navigator.onLine?'PASS':'FAIL'),'Supabase client: '+(window.sb?'PASS':'NOT EXPOSED'),'Service Worker API: '+('serviceWorker' in navigator?'PASS':'UNAVAILABLE'),'Geolocation API: '+('geolocation' in navigator?'PASS':'UNAVAILABLE'),'Notifications API: '+('Notification' in window?'PASS':'UNAVAILABLE')];if(typeof sb!=='undefined'){try{const r=await sb.from('profiles').select('id').limit(1);lines.push('Supabase read-only profiles query: '+(r.error?'AUTH/RLS — '+r.error.message:'PASS'));}catch(e){lines.push('Supabase read-only query: AUTH/RLS — '+e.message)}}h.textContent=lines.join(' · ');refreshLog(lines)}
@@ -3386,16 +3387,31 @@ async function frAdminUpdateBankEnquiry(id,status){
     }catch(e){showMessage('Logout పూర్తికాలేదు; మీ Session తొలగించలేదు: '+(e.message||e));}
   };
 
-  // Block partner operational pages until approval; admin workflows remain unaffected.
+  // Partner approval is a feature-access gate, not a navigation blocker.
+  // Always open the requested page; show a non-blocking inline notice and keep
+  // protected actions disabled until approval.
   const originalShowPage=window.showPage;
   if(typeof originalShowPage==='function')window.showPage=function(id){
     const protectedPartnerPages=['partnerOrders','catalogue','products','inventory','subscription','referrals','partnerReports','partnerPaymentSettings','gst'];
-    if(selectedRole==='partner'&&protectedPartnerPages.includes(id)&&!FR_APPROVED(FR_STATUS('partner',currentProfile))){
+    const blocked=selectedRole==='partner'&&protectedPartnerPages.includes(id)&&!FR_APPROVED(FR_STATUS('partner',currentProfile));
+    const result=originalShowPage.apply(this,arguments);
+    if(blocked){
       frApplyApprovalUI('partner',currentProfile||{partner_approval_status:'pending'});
-      showMessage('Partner Approval వచ్చిన తర్వాత మాత్రమే ఈ Business feature ఉపయోగించవచ్చు.');
-      return;
+      const page=document.getElementById(String(id));
+      if(page){
+        let notice=page.querySelector('.fr-page-approval-notice');
+        if(!notice){
+          notice=document.createElement('div');
+          notice.className='notice fr-page-approval-notice';
+          notice.setAttribute('role','status');
+          notice.textContent='Partner approval pending. ఈ పేజీ చూడవచ్చు; ఇందులోని business actions Admin approval వచ్చిన తర్వాత అందుబాటులో ఉంటాయి.';
+          const firstCard=page.querySelector('.card');
+          if(firstCard)firstCard.insertAdjacentElement('afterbegin',notice);
+          else page.insertAdjacentElement('afterbegin',notice);
+        }
+      }
     }
-    return originalShowPage.apply(this,arguments);
+    return result;
   };
 
   // Restore once from persisted Supabase storage; retries never clear or replace the session.
@@ -4592,5 +4608,101 @@ window.frRefreshHomeProfileAvatar=async function(){
     }
   });
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+})();
+</script>
+
+<style id="fr-native-app-transition-style">
+main .page.active{animation:frAppPageEnter .28s cubic-bezier(.2,.7,.2,1) both;will-change:transform,opacity}
+@keyframes frAppPageEnter{from{opacity:.0;transform:translateX(18px) scale(.985)}to{opacity:1;transform:translateX(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){main .page.active{animation:none!important}}
+.bottom button,.premium-bottom button{transition:color .18s ease,background .18s ease,transform .15s ease}
+.bottom button:active,.premium-bottom button:active{transform:scale(.94)}
+.fr-app-loading{display:inline-flex;gap:6px;align-items:center}
+.fr-app-loading i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:frAppDot .8s ease-in-out infinite alternate}
+.fr-app-loading i:nth-child(2){animation-delay:.15s}.fr-app-loading i:nth-child(3){animation-delay:.3s}
+@keyframes frAppDot{to{opacity:.3;transform:translateY(-4px)}}
+</style>
+<script id="fr-native-app-transition-controller">
+(function(){
+ if(window.__frNativeAppTransitionController)return;
+ window.__frNativeAppTransitionController=true;
+ const previous=window.showPage;
+ let lastPage=document.querySelector('main .page.active')?.id||'home';
+ if(typeof previous!=='function')return;
+ window.showPage=function(id){
+  const target=String(id||'');
+  const result=previous.apply(this,arguments);
+  const page=document.getElementById(target);
+  if(page&&target!==lastPage){
+   page.classList.remove('fr-app-page-enter');
+   void page.offsetWidth;
+   page.classList.add('fr-app-page-enter');
+   lastPage=target;
+  }
+  return result;
+ };
+ // Remove the temporary marker after animation so the transition can replay.
+ document.addEventListener('animationend',function(e){
+  if(e.animationName==='frAppPageEnter')e.target.classList.remove('fr-app-page-enter');
+ });
+})();
+</script>
+
+<!-- FRIEND RIDE native navigation v2: directional screen transitions + app back history -->
+<style id="fr-native-navigation-v2">
+main .page.active{animation:frScreenForward .26s cubic-bezier(.22,.72,.2,1) both;will-change:transform,opacity}
+main .page.active.fr-screen-back{animation:frScreenBack .24s cubic-bezier(.22,.72,.2,1) both}
+@keyframes frScreenForward{from{opacity:0;transform:translateX(22px) scale(.99)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes frScreenBack{from{opacity:0;transform:translateX(-18px) scale(.99)}to{opacity:1;transform:translateX(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){main .page.active{animation:none!important;will-change:auto}}
+</style>
+<script id="fr-native-navigation-controller-v2">
+(function(){
+ if(window.__frNativeNavigationV2)return;window.__frNativeNavigationV2=true;
+ const original=window.showPage;if(typeof original!=='function')return;
+ const roots=new Set([...document.querySelectorAll('.bottom button[data-page],.premium-bottom button[data-page]')].map(b=>b.dataset.page).filter(Boolean));
+ let current=document.querySelector('main .page.active')?.id||'home';let popMode=false;const stack=[];
+ function animate(id,back){const p=document.getElementById(id);if(!p)return;p.classList.remove('fr-screen-back');if(back)p.classList.add('fr-screen-back');void p.offsetWidth;}
+ window.showPage=function(id){id=String(id||'');if(!id||id===current)return original.apply(this,arguments);
+  if(!popMode&&!roots.has(id)){stack.push(current);try{history.pushState({frPage:id},'',location.pathname+location.search+location.hash);}catch(e){}}
+  const back=popMode;const result=original.apply(this,arguments);current=id;animate(id,back);return result;
+ };
+ window.frAppBack=function(){if(stack.length){history.back();return true;}if(current!=='home'){popMode=true;window.showPage('home');popMode=false;return true;}return false;};
+ window.addEventListener('popstate',function(){if(stack.length){const prev=stack.pop();popMode=true;window.showPage(prev);popMode=false;}else if(current!=='home'){popMode=true;window.showPage('home');popMode=false;}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&window.frAppBack())e.preventDefault();});
+ document.addEventListener('animationend',e=>{if(e.animationName==='frScreenBack')e.target.classList.remove('fr-screen-back');});
+})();
+</script>
+<!-- FRIEND RIDE native app UX enhancement v3 -->
+<style id="fr-native-app-ux-v3">
+html{scroll-behavior:auto!important}body{overscroll-behavior-y:contain}
+main{min-height:calc(100dvh - 150px)}
+main .page{min-height:calc(100dvh - 165px);padding-bottom:18px;overflow-x:hidden}
+main .page.active{animation:frNativePush .25s cubic-bezier(.18,.72,.18,1) both}
+@keyframes frNativePush{from{opacity:0;transform:translate3d(20px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.fr-native-back{display:none;border:0;background:#ffffff20;color:#fff;border-radius:13px;width:40px;height:40px;font-size:22px;flex:0 0 40px;align-items:center;justify-content:center}
+.fr-native-back.show{display:flex}.fr-native-back:active{transform:scale(.92)}
+.fr-native-screen-title{display:none;font-size:13px;font-weight:800;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-native-screen-title.show{display:block}
+.fr-native-press{transition:transform .12s ease,filter .12s ease!important}
+.fr-native-press:active{transform:scale(.97);filter:brightness(.97)}
+@media(prefers-reduced-motion:reduce){main .page.active{animation:none!important}.fr-native-press{transition:none!important}}
+</style>
+<script id="fr-native-app-ux-controller-v3">
+(function(){
+ if(window.__frNativeAppUXV3)return;window.__frNativeAppUXV3=true;
+ const original=window.showPage;if(typeof original!=='function')return;
+ const roots=new Set([...document.querySelectorAll('.bottom button[data-page],.premium-bottom button[data-page]')].map(b=>b.dataset.page).filter(Boolean));
+ const header=document.querySelector('.topbar');let back=document.querySelector('.fr-native-back');
+ if(header&&!back){back=document.createElement('button');back.type='button';back.className='fr-native-back';back.setAttribute('aria-label','Back');back.textContent='‹';back.onclick=()=>window.frAppBack?.();header.insertBefore(back,header.firstChild);}
+ let title=document.querySelector('.fr-native-screen-title');
+ if(header&&!title){title=document.createElement('span');title.className='fr-native-screen-title';title.setAttribute('aria-live','polite');header.querySelector('.brand')?.appendChild(title);}
+ const labelFor=id=>{const p=document.getElementById(id);const h=p?.querySelector('h1,h2,h3');return(h?.textContent||id).trim().slice(0,50)};
+ const update=id=>{const sub=!roots.has(id)&&id!=='home';back?.classList.toggle('show',sub);title?.classList.toggle('show',sub);if(title)title.textContent=sub?labelFor(id):''};
+ window.showPage=function(id){const before=document.querySelector('main .page.active')?.id;const r=original.apply(this,arguments);const target=String(id||'');if(target&&target!==before){window.scrollTo({top:0,behavior:'instant'});update(target)}return r};
+ update(document.querySelector('main .page.active')?.id||'home');
+ const mark=()=>document.querySelectorAll('button,.tile,[role="button"],.top-action,.iconbtn').forEach(e=>e.classList.add('fr-native-press'));
+ mark();new MutationObserver(mark).observe(document.body,{subtree:true,childList:true});
+ // Escape key is handled once by navigation controller V2; avoid duplicate history-back calls.
 })();
 </script>
