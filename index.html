@@ -395,7 +395,7 @@ main{background:transparent!important}
 <header class="topbar home-topbar">
  <button class="iconbtn menu-open" aria-label="Open side menu" onclick="openDrawer()">☰</button>
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
- <button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">🔔<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button><button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button>
+ <button class="notify-btn fr-notify-bell" aria-label="Notifications" title="Notifications" onclick="requireLogin(()=>showPage('notifications'))"><svg class="fr-bell-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button><button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button>
 </header>
 <main>
 <section id="home" class="page active">
@@ -4850,7 +4850,7 @@ window.frRefreshHomeProfileAvatar=async function(){
  photo.hidden=true;photo.removeAttribute('src');fallback.replaceChildren();
  const profile=window.currentProfile||currentProfile||{};
  const user=window.currentUser||currentUser||null;
- if(!user?.id||!profile?.role){fallback.hidden=false;fallback.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';return;}
+ if(!user?.id||!profile?.role){fallback.hidden=false;fallback.innerHTML='<svg class="fr-default-avatar" viewBox="0 0 48 48" role="img" aria-label="Default profile avatar"><circle cx="24" cy="24" r="23" fill="#243247"/><circle cx="24" cy="17" r="8" fill="#f5b84c"/><path d="M9 40c1.8-8 7-12 15-12s13.2 4 15 12" fill="#f5b84c"/></svg>';return;}
  const role=String(profile.role).toLowerCase();
  const column=role==='driver'?'driver_profile_photo_path':role==='partner'?'partner_profile_photo_path':'customer_profile_photo_path';
  const bucket=role==='driver'?'driver-profile-photos':role==='partner'?'partner-profile-photos':'customer-profile-photos';
@@ -4868,7 +4868,7 @@ window.frRefreshHomeProfileAvatar=async function(){
   }catch(error){console.warn('FR home profile image:',error.message);}
  }
  fallback.hidden=false;
- fallback.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';
+ fallback.innerHTML='<svg class="fr-default-avatar" viewBox="0 0 48 48" role="img" aria-label="Default profile avatar"><circle cx="24" cy="24" r="23" fill="#243247"/><circle cx="24" cy="17" r="8" fill="#f5b84c"/><path d="M9 40c1.8-8 7-12 15-12s13.2 4 15 12" fill="#f5b84c"/></svg>';
 };
 (function(){
  const refresh=()=>window.frRefreshHomeProfileAvatar().catch(e=>console.warn(e));
@@ -4987,7 +4987,7 @@ window.frRefreshHomeProfileAvatar=async function(){
 .home-topbar .fr-home-profile-btn #frHomeProfileAvatar{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;background:#243247!important}
 .home-topbar .fr-home-profile-btn #frHomeProfileAvatar .fr-default-avatar{display:grid;place-items:center;width:100%;height:100%;font-size:26px;color:#f5b84c!important}
 .home-topbar .fr-home-profile-btn #frHomeProfileAvatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
-.home-topbar .fr-notify-bell{position:relative;line-height:1;font-size:23px}.home-topbar .fr-notify-bell i{right:5px;top:5px;background:#ff687d;border:2px solid #18243a}
+.home-topbar .fr-notify-bell{position:relative;line-height:1;font-size:23px}.home-topbar .fr-notify-bell .fr-bell-icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;display:block}.home-topbar .fr-home-profile-btn #frHomeProfileAvatar .fr-default-avatar{width:34px;height:34px;display:block}.home-topbar .fr-notify-bell i{right:5px;top:5px;background:#ff687d;border:2px solid #18243a}
 .home-topbar #frRideUnreadBadge{border:2px solid #18243a;background:#ff687d;color:#fff}
 body .fr-notify-hero,body .fr-support-home-entry{background:linear-gradient(145deg,#14223a,#0b1423)!important;color:#f6f8ff!important;border-color:#263b59!important}
 body .fr-notify-hero h2,body .fr-notify-hero p,body .fr-notify-hero small{color:inherit}
