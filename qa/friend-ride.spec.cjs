@@ -428,7 +428,7 @@ test('TASKO booking form exposes helper categories, hours, date, time, address a
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#taskoGiggerLaunch')).toBeAttached();
   await expect(page.locator('#taskoCategory option')).toHaveCount(11);
-  await expect(page.locator('#taskoCategory')).toContainText(['Catering / Halwai', 'DJ / Sound & Lights', 'Beauty Makeover']);
+  expect(await page.locator('#taskoCategory option').allTextContents()).toEqual(expect.arrayContaining(['Catering / Halwai', 'DJ / Sound & Lights', 'Beauty Makeover']));
   await expect(page.locator('#taskoHours')).toBeAttached();
   await expect(page.locator('#taskoDate')).toHaveAttribute('type', 'date');
   await expect(page.locator('#taskoTime')).toHaveAttribute('type', 'time');
