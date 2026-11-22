@@ -4428,15 +4428,13 @@ async function frAdminAssignLaundry(id){
 <style id="fr-v11.1-pro-learning-routing-style">
 .fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
 </style>
-</body>
-
 <script id="project-arjuna-pickup-autocomplete-fix">
 (function(){
  const $=id=>document.getElementById(id); let timers={pickup:null,drop:null}, controllers={pickup:null,drop:null}, pinMode=null;
  const fields={pickup:{input:'pickup',list:'frPickupSuggestions',hint:'frPickupHint'},drop:{input:'drop',list:'frDropSuggestions',hint:'frDropHint'}};
  function hint(kind,msg){const el=$(fields[kind].hint);if(el)el.textContent=msg;}
  function clearCoords(kind){if(kind==='pickup')pickupCoords=null;else dropCoords=null;}
- function close(kind){const list=$(fields[kind].list);if(list){list.classList.remove('open');list.innerHTML='';}}
+ function close(kind){const list=$(fields[kind].list);if(list){list.classList.remove('open');list.innerHTML='';}}}
  function render(kind,items){const list=$(fields[kind].list);if(!list)return;list.innerHTML='';if(!items.length){list.innerHTML='<div class="fr-suggestion-status">No places found. మరింత వివరంగా టైప్ చేయండి.</div>';list.classList.add('open');return;}
  items.forEach(item=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','option');b.textContent=item.display_name;b.addEventListener('click',()=>select(kind,item));list.appendChild(b);});list.classList.add('open');}
  function select(kind,item){const input=$(fields[kind].input);if(!input)return;const lat=Number(item.lat),lon=Number(item.lon);if(!Number.isFinite(lat)||!Number.isFinite(lon))return;input.value=item.display_name;input.dataset.selectedLat=lat;input.dataset.selectedLon=lon;input.dataset.selectedAddress=item.display_name;setMapPoint(kind,lat,lon,item.display_name);close(kind);hint(kind,'✓ Location selected. Map pin and coordinates updated.');const coord=$(kind==='pickup'?'pickupCoords':'dropCoords');if(coord)coord.textContent='Latitude: '+lat.toFixed(6)+' | Longitude: '+lon.toFixed(6);}
@@ -4453,6 +4451,9 @@ async function frAdminAssignLaundry(id){
 <style id="project-arjuna-pickup-autocomplete-style">
 .fr-location-field{position:relative;overflow:visible!important}.fr-location-suggestions{position:absolute!important;left:0;right:0;top:68px;margin:0!important;max-height:260px;overflow:auto;z-index:99999!important;background:#101a27!important;border:1px solid #d6ad55!important;border-radius:12px!important;box-shadow:0 12px 30px #0008!important}.fr-location-suggestions button{background:#101a27!important;color:#f5f0e5!important;border-bottom-color:#293648!important;padding:12px 14px!important;white-space:normal!important;line-height:1.35!important}.fr-location-suggestions button:hover,.fr-location-suggestions button:focus{background:#263445!important;color:#e7c46b!important}.fr-suggestion-status{padding:12px;color:#e7c46b;font-size:13px}.fr-location-field textarea{position:relative;z-index:2}
 </style>
+</body>
+
+
 </html>
 <style>
 @media(hover:hover){.tile:hover{transform:translateY(-2px);box-shadow:0 10px 22px #32105e16;border-color:#d7c4f0}.btn:hover{filter:brightness(1.025)}}
