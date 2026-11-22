@@ -48,7 +48,7 @@ globalThis.FRRideContact = FRRideContact;
 
 
 /* QA recovery: keep route inert state in sync with the final navigation wrapper. */
-(function frRouteInertSync(){
+if(typeof window!=='undefined'&&typeof document!=='undefined'){(function frRouteInertSync(){
   function sync(){
     const pages=[...document.querySelectorAll('main .page')];
     if(!pages.length)return;
@@ -140,9 +140,9 @@ globalThis.FRRideContact = FRRideContact;
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
-})();
+})();}
 
-(function frSavedRideReadFallback(){
+if(typeof window!=='undefined'&&typeof document!=='undefined'){(function frSavedRideReadFallback(){
   const win=window;
   function install(){
     const previous=win.loadMyRideTracking;
@@ -171,4 +171,4 @@ globalThis.FRRideContact = FRRideContact;
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
-})();
+})();}

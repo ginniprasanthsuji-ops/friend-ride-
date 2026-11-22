@@ -50,7 +50,7 @@ declare const safe: any;
 declare const frCustomerTrackingStatusAllowed: any;
 declare const frRenderCustomerRideDriverAndPayment: any;
 
-(function frRouteInertSync(){
+if(typeof window!=='undefined'&&typeof document!=='undefined'){(function frRouteInertSync(){
   const win=window as any;
   function sync(){
     const pages=Array.from(document.querySelectorAll<HTMLElement>('main .page'));
@@ -79,9 +79,9 @@ declare const frRenderCustomerRideDriverAndPayment: any;
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
-})();
+})();}
 
-(function frSavedRideReadFallback(){
+if(typeof window!=='undefined'&&typeof document!=='undefined'){(function frSavedRideReadFallback(){
   const win=window as any;
   function install(){
     const previous=win.loadMyRideTracking;
@@ -112,4 +112,4 @@ declare const frRenderCustomerRideDriverAndPayment: any;
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
-})();
+})();}
