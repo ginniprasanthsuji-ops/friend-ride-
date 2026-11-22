@@ -50,7 +50,10 @@
 ### QA backend / security (read-only)
 - QA Supabase project `pqsangtvietawkfgpgfu` is ACTIVE_HEALTHY but currently has only four public tables: `admin_users`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`. Core `profiles`, `rides`, driver, shop/order, parcel, service-provider and booking tables are absent.
 - RLS is enabled on all four existing tables. Policies reviewed: `admin_users_self_select` (own row), notification events (own-user SELECT), preferences and device tokens (own-user ALL with matching `USING` / `WITH CHECK`).
-- Core-table RLS cannot be reviewed or live booking/dispatch/OTP/push/payment tested against QA until the schema is provisioned. Browser booking tests are mocked and are not production integration certification.
+- Core-table RLS cannot be live-tested against QA until the schema is provisioned. Browser booking tests are mocked and are not production integration certification.
+- Read-only production metadata audit: **85/85 public tables have RLS enabled** (0 disabled). Key profiles/rides/driver-locations/live-location/service-booking/provider policies are authenticated and user/participant/admin-scoped.
+- Potential functional RLS bug found in production `fr_food_orders_read`: delivery-partner predicate compares `d.order_id = d.id` instead of the parent food order ID; likely prevents assigned delivery partners from reading their order. Needs a QA migration + regression test before release.
+- `fr_market_orders`, `fr_parcel_orders`, `fr_service_requests`, and `ride_offers` have RLS enabled but no direct table policies in metadata; verify they are intentionally accessed only through safe RPC/service-role paths. Duplicate read/update policies exist on some profile/notification/SOS tables and should be consolidated later.
 - `vitest` is now `^4.1.11` (patched for the identified Vitest advisories). CI install audit reported zero vulnerabilities at run 171. No committed lockfile remains a reproducibility gap.
 
 ### Release gate
