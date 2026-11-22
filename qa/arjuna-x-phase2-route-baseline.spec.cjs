@@ -61,6 +61,14 @@ const routeIds = [
   "frSuperHub"
 ];
 
+test.beforeEach(async ({ page }) => {
+  await page.route('https://**/*', route => {
+    const url = route.request().url();
+    if (url.includes('cdn.jsdelivr.net/npm/@supabase/supabase-js@2') || url.includes('unpkg.com/leaflet@1.9.4/')) return route.continue();
+    return route.abort();
+  });
+});
+
 test('ARJUNA X baseline: all 58 existing route IDs are present in the runtime page registry', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   const audit = await page.evaluate(ids => {
@@ -82,7 +90,8 @@ test('ARJUNA X baseline: all 58 existing route IDs are present in the runtime pa
 test('ARJUNA X baseline: every inventoried page can be activated by the existing router', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   const result = await page.evaluate(ids => {
-    window.currentProfile = { role: 'admin' };
+    currentProfile = { role: 'admin' };
+    currentUser = null;
     return ids.map(id => {
       try {
         window.showPage(id);
