@@ -15,6 +15,17 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - name: Capture dependency audit report (non-blocking while remediation is pending)
+        run: |
+          npm audit --json > npm-audit.json || true
+          node -e "const r=JSON.parse(require('fs').readFileSync('npm-audit.json','utf8')); const v=r.metadata?.vulnerabilities||{}; console.log('npm audit totals:', JSON.stringify(v)); console.log('Advisory report saved as npm-audit.json artifact for review.')"
+      - name: Upload dependency audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-dependency-audit
+          path: npm-audit.json
+          if-no-files-found: ignore
       - run: npm run typecheck
       - run: npm run typecheck:core
       - run: npm run build:runtime
