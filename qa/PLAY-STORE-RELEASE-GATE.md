@@ -59,6 +59,27 @@
 - **BLOCKED**: full Browser E2E results pending; QA Supabase schema incomplete for live booking; no real OTP/push/payment/physical GPS tests; security/RLS review for core tables cannot be completed; signed AAB and Play Store validation remain outstanding.
 - Main/live remains untouched. Do not merge/deploy until all required checks pass and live integration/security blockers are resolved.
 
+## PROJECT ARJUNA progress checkpoint (2026-11-22, 06:26 UTC)
+
+| Release work | Evidence/status |
+|---|---|
+| Source regression | PASS on latest checked commit `08320991f69bf8c35c870aa1dbd0f7f781b5063f` |
+| Typecheck / Unit / Core | PASS on latest completed quality run; current latest quality gate queued/running |
+| TASKO/Laundry integration | Earlier PASS; latest run pending |
+| TASKO categories | 10 options expected; Beauty Makeover and Halwai – Sweets & Food Preparation asserted in Playwright |
+| Current premium home UI | Tests updated to actual existing home markup/theme; obsolete Dark Gold selectors removed from this regression spec |
+| Notification bell | Source verified: dedicated SVG bell and accessible Notifications button |
+| Default profile avatar | Source verified: 3D avatar fallback before login and when photo missing; added browser test |
+| Unwanted services | Static source scan: VidyaSetu, Telugu VidyaSetu string, Catering Services, DJ – Sound & Lights, and learn-teach.js all 0 occurrences; Beauty Makeover and Halwai remain only as TASKO/GIGGER categories |
+| Pickup/drop map | Existing Playwright coverage: map init, Photon suggestions, two markers, pin selection, Nominatim fallback |
+| GPS | Added mocked GPS browser test; latest browser result pending |
+| Fare | Fare offer increment test added |
+| Ride insert mapping | Added mocked payload test; pickup/drop text and both coordinate pairs now included in frontend insert row |
+| Real database booking/dispatch | BLOCKED/NOT TESTED: QA Supabase project has only admin_users + notification tables and lacks profiles/rides core schema. The app's mocked insert test does not prove persistence. |
+| Live/main | Untouched; no merge/deployment |
+
+**Frontend ride request mapping correction:** added `pickup_text`, `drop_text`, and `drop_lat/drop_lng` to the ride insert payload while preserving pickup coordinates and fare. Corrected the booking handler to be async and repaired the invoice HTML string that caused inline JavaScript syntax regression. Latest source regression passed after these corrections.
+
 This is a working release gate, not the final release-ready certificate. A feature is not marked PASS merely because a label, button, database table, RPC name, source marker, or mock simulation exists.
 
 ## Release rule
