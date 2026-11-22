@@ -27,15 +27,37 @@
 
 ## PROJECT ARJUNA latest recheck (2026-11-22)
 
-- Latest Quality Gate run before the test correction: **FAIL, 46 passed / 13 failed**.
-- Failure diagnosis: `qa/dark-gold-route-regression.spec.js` asserted selectors/classes for a Dark+Gold native-home implementation that is absent from the current app source (also absent on main). This is an obsolete test suite, not evidence that those specific expected elements are broken in the app.
-- Replaced obsolete selectors with current-home assertions (existing premium purple theme, banner, Join registration buttons, service shortcuts, TASKO/Laundry/Cycle Delivery) and retained route wiring coverage.
-- TASKO test updated from 8 to 10 categories and asserts **Beauty Makeover** and **Halwai – Sweets & Food Preparation** are present.
-- Source regression for the latest test commits: **PASS**. Quality Gate and TASKO/Laundry runs are still **IN PROGRESS** at this update; no new browser PASS claim.
-- Critical backend finding: QA Supabase project `pqsangtvietawkfgpgfu` currently has only four public tables: `admin_users`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`. No ride/order/driver/partner/profile tables are present in this QA project.
-- `saveRideRequest()` currently only validates pickup/drop/fare and shows a message that a live booking insert requires existing rides-table mapping. It does **not** create a database ride request. Therefore genuine ride booking submission, driver dispatch/acceptance and authenticated data persistence are **BLOCKED / NOT TESTED** until a safe QA schema + role authorization model and integration are implemented.
-- Map UI test coverage currently includes map initialization, Photon suggestions, marker placement, direct pickup/drop map-pin placement, and Nominatim fallback. GPS, fare calculation and actual booking persistence still need dedicated tests.
-- Live/main remains untouched. Release remains blocked.
+### CI evidence (current QA branch)
+- Source regression: **PASS** — run 203, commit `40abfcd` (latest source check at this checkpoint).
+- TASKO / Laundry / Admin integration: **PASS, 4/4** — run 152, commit `eb2b1ed`.
+- Quality Gate typecheck/unit/core/runtime: **PASS** — run 374 typecheck job.
+- Full Browser E2E: **RUNNING** — run 375, commit `40abfcd`; results not yet available.
+- Earlier Browser E2E failure: 46 PASS / 13 FAIL (run 355). The failing 12 UI checks were stale Dark+Gold/native-home expectations; the remaining TASKO count assertion was stale (8 vs 10). Those tests were replaced with current UI/route assertions and a five-tab navigation check. Do not treat the earlier failure as current-pass evidence.
+
+### Implemented on QA branch only
+- Fixed source regression workflow to stop checking deleted `learn-teach.js`; Source Regression now passes.
+- QA-only premium teal/blue theme override and PWA theme colors; primary navigation is reduced to Home / Services / Cart / Orders / Profile (Categories tab removed).
+- Default 3D avatar now renders even when the user is not logged in or has no profile photo; bell SVG is retained.
+- VidyaSetu / event-personal services routes removed; TASKO/GIGGER options retain Beauty Makeover and Halwai.
+- Ride booking submission handler now inserts to `rides` and carries pickup coordinates; browser tests mock Supabase responses to avoid writes.
+- QA branch Supabase URL/key is isolated to the QA project; production project URL is no longer embedded in the QA branch.
+
+### Booking, TASKO and UI test coverage
+- Pickup/Drop autocomplete: Photon suggestions and Nominatim fallback (mocked) — in Browser E2E.
+- Map initialization, direct pickup/drop pins, markers, GPS reverse-geocoding, fare control, OSM→CARTO tile fallback, and mocked ride submission/tracking transition — in Browser E2E; **latest run pending**.
+- Beauty Makeover/Halwai category options, mocked request-row category persistence, Admin list mapping, and TASKO/Laundry control-centre regression — in Browser E2E; **latest run pending**.
+- Bell SVG/default avatar, five-tab nav, teal-blue theme, removed services, and retained routes — in Browser E2E; **latest run pending**.
+
+### QA backend / security findings (read-only)
+- QA Supabase project `pqsangtvietawkfgpgfu` is ACTIVE_HEALTHY but currently has only four public tables: `admin_users`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`. Core `profiles`, `rides`, driver, shop/order, parcel, service-provider and booking tables are absent.
+- All four existing public tables have RLS enabled.
+- Policies observed: `admin_users_self_select` restricts authenticated users to their own row; notification events are own-user SELECT; notification preferences and device tokens are own-user ALL with matching `USING` and `WITH CHECK`.
+- No RLS policies for core ride/order tables can be reviewed in QA because those tables are missing. No live QA ride writes, dispatch/acceptance, driver GPS or role authorization were exercised.
+- npm install reported **3 dependency audit findings (1 moderate, 2 critical)**; severity details have not yet been triaged.
+
+### Release gate
+- **BLOCKED**: full Browser E2E results pending; QA Supabase schema incomplete for live booking; no real OTP/push/payment/physical GPS tests; security/RLS review for core tables cannot be completed; signed AAB and Play Store validation remain outstanding.
+- Main/live remains untouched. Do not merge/deploy until all required checks pass and live integration/security blockers are resolved.
 
 This is a working release gate, not the final release-ready certificate. A feature is not marked PASS merely because a label, button, database table, RPC name, source marker, or mock simulation exists.
 
