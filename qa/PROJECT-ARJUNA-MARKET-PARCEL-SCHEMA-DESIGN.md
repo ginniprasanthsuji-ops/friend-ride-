@@ -87,3 +87,29 @@
 - CI: migration lint, unit contract tests, authenticated Supabase integration, Playwright end-to-end.
 
 **Decision:** Design is ready for review, but implementation should wait until the base-schema source and exact UI contracts are reconciled. This document does not authorize or apply schema changes.
+
+
+## Alternative fallback operation plan — when missing RPCs block release
+This is a non-live fallback design; it does not claim these flows are currently implemented.
+
+### Marketplace / store orders
+1. If catalogue/order/quote RPC is unavailable, show a service-unavailable state with a retry option; do not fabricate catalogue, quote, order number, or confirmation.
+2. If the business approves an assisted request channel, allow the customer to copy/share a structured request (store, item names, quantities, optional delivery address) to support/partner. Mark it **Request draft — not submitted** until a supported backend records it.
+3. Partner quotes must be recorded by an authorized partner/admin workflow. Customer accept/counter actions remain disabled without the authenticated backend contract.
+4. Offline/manual partner follow-up is tracked outside the app; no app-generated fake order status.
+
+### Parcel
+1. If parcel create/list/driver-accept RPCs are missing, do not show a generated tracking ID as real or a booking as confirmed.
+2. Offer a copyable parcel request summary only if policy/privacy allows; explicitly label **Draft / Support-assisted — not booked**.
+3. Manual tracking is support-provided and labeled as such; driver acceptance, OTP delivery, delivery completion, and status history cannot be simulated.
+4. Validate sender/receiver phone formats and required fields locally; backend ownership, rate limits, OTP and status transitions remain server-side requirements.
+
+### Acceptance tests before any fallback is exposed
+- No fake order/parcel confirmation or tracking ID.
+- Draft/request text visibly distinguishes draft from submitted/confirmed.
+- Sensitive contact/address data is not sent to external messaging without explicit user action.
+- No unauthenticated partner/admin actions.
+- Existing RPC success path is not bypassed when available.
+- Retry and support fallback are non-destructive and do not duplicate backend submissions.
+
+**Release gate:** these fallbacks are not substitutes for missing authenticated database contracts unless business owner explicitly accepts the assisted/manual process and the UI plus tests are implemented. No SQL applied, no production changes.
