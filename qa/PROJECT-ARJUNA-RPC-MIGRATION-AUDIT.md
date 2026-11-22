@@ -9,9 +9,9 @@
 - Frontend unique RPC names: **57**
 - Names found in branch migration definitions: **25**
 - Names absent from branch migrations: **32**
-- QA database functions found for frontend RPC names: **25**
-- QA database functions absent for frontend RPC names: **32**
-- Payment-specific names among the absent list: **12**
+- QA database functions found for frontend RPC names: **23** (read-only catalog query)
+- QA database functions absent for frontend RPC names: **34**
+- Payment-specific names absent from QA: **14** (includes 2 Tasko payment RPCs defined in branch migrations but not present in QA catalog)
 - Non-payment / core workflow names absent in QA: **20**
 
 ## RPCs present in QA database (25)
@@ -43,7 +43,7 @@ fr_public_homepage_feedback
 fr_laundry_provider_transition
 ```
 
-## Payment-specific RPCs absent in QA (12)
+## Payment-specific RPCs absent in QA (14)
 These are excluded from the non-payment release scope pending separate payment-provider classification/integration:
 ```
 fr_partner_save_payment_details
@@ -58,6 +58,8 @@ fr_driver_confirm_parcel_payment
 fr_partner_confirm_market_payment
 fr_customer_market_payment_details
 fr_customer_tick_market_payment
+fr_tasko_submit_payment
+fr_tasko_admin_verify_payment
 ```
 
 ## Non-payment / core RPCs absent in QA (20)
@@ -89,7 +91,7 @@ fr_customer_place_multi_market_order
 Read-only public-table inventory shows the QA database currently contains 21 public tables, including rides, profiles, driver locations, service bookings/requests/providers, KYC documents, feedback, notification tables, and SOS. It does **not** currently show the marketplace/catalogue/order/parcel tables required to safely implement and test the 20 missing core RPCs. The frontend also references storage buckets; bucket names are not database tables.
 
 ## Important interpretation
-- Static migration definitions and QA database catalog currently reconcile at **25/57 present**, **32/57 absent** for the frontend RPC set.
+- Static branch-migration definitions contain 25 of the 57 frontend RPC names. The QA database catalog currently contains **23/57**, with **34/57 absent** at runtime/catalog level. Two Tasko payment RPCs have migration definitions but are not present in the QA catalog snapshot.
 - Missing core RPCs cannot be safely implemented as stubs. Their data tables, constraints, RLS, lifecycle rules, argument contracts, and authorization must be designed/verified first.
-- The QA schema is incomplete for the marketplace/order/parcel runtime scope; next step is a schema parity review of the relevant frontend features and migration sources, then QA-only schema/RPC/test additions. No production schema or data was touched.
+- The QA schema is incomplete for marketplace/order/parcel runtime scope; schema parity audit shows 15/15 required base tables present, but 34 required functions absent from the QA catalog. Marketplace/order/parcel tables are not in the current 21-table QA inventory. Next step is a schema parity review of relevant frontend feature contracts and migration sources, then QA-only schema/RPC/test additions. No production schema or data was touched.
 - Do not merge to main or deploy. Payment-provider integration remains deferred.
