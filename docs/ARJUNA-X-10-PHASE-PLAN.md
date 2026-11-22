@@ -96,3 +96,8 @@ CI run `45056922006` passed **48 Playwright tests** and all typecheck/build/unit
 ## Pass 42 environment wiring
 
 The app source hardcodes production Supabase ref `fglyplxcczdjtfwobtzh`; the separate QA project `pqsangtvietawkfgpgfu` is not referenced. Current CI blocks external API traffic. Full live QA integration E2E is therefore not available until an approved QA-only environment selector/config is introduced. Phase 2 remains gated; no backend/app configuration change made.
+
+
+## Pass 43 repository governance
+
+Rulesets query returns 0; branch protection/required status checks previously observed disabled. CI now runs on QA branch push but is not enforced. Owner-approved branch protection policy is still required. No repository settings changed.

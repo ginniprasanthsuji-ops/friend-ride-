@@ -951,3 +951,12 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 ### Pass 42 disposition
 - Source/config audit only. QA backend remains separate and active/healthy but is not wired into app source. This is a Phase 2 acceptance blocker for live integration testing. No runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 43 — Repository governance ruleset check
+
+- Fresh read-only GitHub rulesets query returned **0 rulesets**. Prior branch-protection inspection recorded protection disabled and no required status checks on the active QA branch; the branch protection API URL could not be re-fetched in this pass because the connector rejected the encoded branch path.
+- Quality Gate is now push-triggered on the active QA branch, but the workflow is not enforced as a required check. Do not enable required checks/protection without owner-approved policy and a stable required-check name; this governance blocker remains.
+
+### Pass 43 disposition
+- Read-only governance inventory only; no branch settings changed. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
