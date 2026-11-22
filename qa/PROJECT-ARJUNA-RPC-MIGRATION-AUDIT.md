@@ -1,17 +1,20 @@
-# Project Arjuna — Frontend RPC Migration Inventory (Static Audit)
+# Project Arjuna — Frontend RPC Migration Inventory & QA Snapshot
 
 **Branch:** `project-arjuna/dark-gold-ui-rollout`  
-**Audited commit:** `4912a42773ecaf672a57a2b96c32d6fdd430c950`  
-**Scope:** Static comparison of `.rpc(...)` names in `index.html` against function definitions in the 24 SQL migration files present on this branch. This is **not** proof of absence from the base Supabase schema or live database.
+**Static source commit:** `4912a42773ecaf672a57a2b96c32d6fdd430c950`  
+**QA Supabase:** FRIEND RIDE QA (`pqsangtvietawkfgpgfu`), read-only catalog inspection performed on 2026-11-22.  
+**Scope:** Frontend RPC inventory vs SQL migration definitions and read-only QA database catalog. No production changes.
 
 ## Counts
 - Frontend unique RPC names: **57**
-- Names found as function definitions in branch migrations: **25**
-- Names not found in branch migrations: **32**
-- Payment-specific names among migration-missing list: **12**
-- Non-payment / core workflow names among migration-missing list: **20**
+- Names found in branch migration definitions: **25**
+- Names absent from branch migrations: **32**
+- QA database functions found for frontend RPC names: **25**
+- QA database functions absent for frontend RPC names: **32**
+- Payment-specific names among the absent list: **12**
+- Non-payment / core workflow names absent in QA: **20**
 
-## RPCs found in branch migrations (25)
+## RPCs present in QA database (25)
 ```
 admin_list_driver_documents
 admin_review_driver_document
@@ -40,8 +43,8 @@ fr_public_homepage_feedback
 fr_laundry_provider_transition
 ```
 
-## Payment-specific names absent from branch migrations (12)
-These are excluded from the current non-payment release scope pending separate payment-provider classification/integration:
+## Payment-specific RPCs absent in QA (12)
+These are excluded from the non-payment release scope pending separate payment-provider classification/integration:
 ```
 fr_partner_save_payment_details
 fr_customer_store_payment_options
@@ -57,8 +60,8 @@ fr_customer_market_payment_details
 fr_customer_tick_market_payment
 ```
 
-## Non-payment / core names absent from branch migrations (20)
-These need base-schema/runtime verification and authenticated integration tests; do **not** treat static migration absence as proof they are missing from Supabase:
+## Non-payment / core RPCs absent in QA (20)
+These remain implementation/runtime integration gaps for QA:
 ```
 fr_partner_list_market_orders
 fr_partner_update_market_order
@@ -82,7 +85,11 @@ fr_driver_verify_parcel_delivery_otp
 fr_customer_place_multi_market_order
 ```
 
+## QA schema inventory finding
+Read-only public-table inventory shows the QA database currently contains 21 public tables, including rides, profiles, driver locations, service bookings/requests/providers, KYC documents, feedback, notification tables, and SOS. It does **not** currently show the marketplace/catalogue/order/parcel tables required to safely implement and test the 20 missing core RPCs. The frontend also references storage buckets; bucket names are not database tables.
+
 ## Important interpretation
-- A migration inventory is not a complete database function inventory. Existing functions may be defined in the baseline schema or already deployed.
-- The QA snapshot in the prior status report indicated 18 frontend RPCs implemented there. This static branch-migration audit counts 25 names matching migration definitions; runtime/schema introspection is required to reconcile the difference.
-- Next action: read-only QA Supabase function catalog audit, then test each core missing-from-migrations RPC with authenticated role/arguments. Do not write to production or merge/deploy.
+- Static migration definitions and QA database catalog currently reconcile at **25/57 present**, **32/57 absent** for the frontend RPC set.
+- Missing core RPCs cannot be safely implemented as stubs. Their data tables, constraints, RLS, lifecycle rules, argument contracts, and authorization must be designed/verified first.
+- The QA schema is incomplete for the marketplace/order/parcel runtime scope; next step is a schema parity review of the relevant frontend features and migration sources, then QA-only schema/RPC/test additions. No production schema or data was touched.
+- Do not merge to main or deploy. Payment-provider integration remains deferred.
