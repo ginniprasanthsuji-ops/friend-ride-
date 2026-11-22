@@ -2142,7 +2142,7 @@ async function loadDriverRideRequests(){
     }));
     if(r.status==='ongoing')card.append(frRideBtn('✓ Complete My Ride','green',async()=>{
       if(!confirm('ఈ Ride పూర్తయిందా? Complete చేయాలా?'))return;
-      try{const x=await sb.rpc('fr_driver_complete_ride',{p_ride_id:r.id});if(x.error)throw x.error;frActiveRideId=r.id;alert('Ride Completed. Customer Dashboardలో UPI QR Payment ఆటోమేటిక్‌గా కనిపిస్తుంది. మీ Dashboardలో కూడా QR మరియు Payment Confirmation కనిపిస్తాయి. QR Upload చేయకపోతే ముందుగా My Payment QR Upload చేయండి.');await loadDriverRideRequests();}
+      try{const x=await sb.rpc('fr_driver_complete_ride',{p_ride_id:r.id});if(x.error)throw x.error;frActiveRideId=r.id;alert('Ride Completed. Driver QR ద్వారా Customer manual payment చేయవచ్చు. Payment received అయిన తర్వాత మాత్రమే Driver Dashboardలో Confirm Payment చేయండి. Automatic payment verification ఈ QA scopeలో లేదు.');await loadDriverRideRequests();}
       catch(e){alert('Complete My Ride: '+e.message);}
     }));
     if(r.status==='completed')await frRenderDriverRidePayment(r,card);
