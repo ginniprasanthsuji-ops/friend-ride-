@@ -27,6 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - run: npm install -g npm@11.21.1
       - run: npm install --no-save --no-package-lock @playwright/test
       - run: npx playwright install --with-deps chromium
       - name: Start local app server
