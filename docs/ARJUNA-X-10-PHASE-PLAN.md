@@ -58,8 +58,9 @@
 - [x] Phase 1 documentation committed and branch content verified.
 
 ## Current Phase Status
-**Phase 1 — SCOPE LOCKED / DOCUMENTATION COMPLETE. Phase 2 — IN PROGRESS.** The active branch contains source-tree and asset inventory documentation with 14 audit passes recorded. Remaining Phase 2 acceptance gaps include full route/role guard source extraction, visual logo/icon inspection, notification/PWA runtime registration proof, deployed RPC/Edge Function contracts and authorization evidence, and current CI/test evidence. The official logo binary is still not verified in repository assets. No app runtime, backend, schema, authentication, payment, main branch, or live deployment has been changed.
+**Phase 1 — SCOPE LOCKED / DOCUMENTATION COMPLETE. Phase 2 — IN PROGRESS / NOT ACCEPTED.** Current verified evidence: 58 runtime route IDs reconciled and route activation tested; Quality Gate run `45056922006` passed 48 Playwright tests, typecheck/core typecheck, runtime build, Node unit (7/7) and Vitest; local PWA smoke verified active service-worker registration, linked manifest and icon HTTP responses; production and QA Supabase projects are active/healthy with migration/table/RLS metadata and a sampled SECDEF review recorded.
 
+Remaining Phase 2 acceptance blockers: official icon/logo visual inspection; installed-device PWA/worker update/background push proof; full RLS/SECDEF/Edge secret/auth audit; app source currently hardcodes production Supabase and does not wire the QA project, so full live integration E2E cannot be safely run; QA branch protection/required checks are not enforced and require owner policy. Legacy Dark+Gold spec is archived/excluded from active suite; target Navy/Orange/White design acceptance is deferred to Phase 3. Phases 3–10 remain pending. No app runtime, backend, schema, authentication, payment, main branch, or live deployment has been changed.
 
 ## Latest ARJUNA X status update (Pass 37)
 
