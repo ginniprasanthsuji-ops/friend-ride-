@@ -98,13 +98,15 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
       saveFunction: typeof saveRideRequest,
       userId: currentUser?.id,
       role: currentProfile?.role,
-      pickup: { address: $('#pickup').dataset.selectedAddress, lat: $('#pickup').dataset.selectedLat, lon: $('#pickup').dataset.selectedLon },
-      drop: { address: $('#drop').dataset.selectedAddress, lat: $('#drop').dataset.selectedLat, lon: $('#drop').dataset.selectedLon },
-      fare: $('#fare').value,
+      pickup: (() => { const el = document.getElementById('pickup'); return el ? { address: el.dataset.selectedAddress, lat: el.dataset.selectedLat, lon: el.dataset.selectedLon, value: el.value } : null; })(),
+      drop: (() => { const el = document.getElementById('drop'); return el ? { address: el.dataset.selectedAddress, lat: el.dataset.selectedLat, lon: el.dataset.selectedLon, value: el.value } : null; })(),
+      fare: document.getElementById('fare')?.value ?? null,
       buttonExists: !!document.querySelector('#ride button[onclick="saveRideRequest()"]')
     }));
     expect(diagnostics.saveFunction).toBe('function');
     expect(diagnostics.userId).toBeTruthy();
+    expect(diagnostics.pickup).not.toBeNull();
+    expect(diagnostics.drop).not.toBeNull();
     expect(diagnostics.pickup.address).toContain('Tekkali');
     expect(diagnostics.drop.address).toContain('Naupada');
     await page.evaluate(async () => { await saveRideRequest(); });
