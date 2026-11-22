@@ -567,3 +567,15 @@ The GitHub connector successfully returned targeted line ranges of `index.html` 
 
 ### Phase 2 update
 This pass materially reduces the root-HTML inspection gap, but full source remains too large to reliably retrieve in one pass. Continue targeted chunk extraction for customer/driver/partner auth verification, route list reconciliation, customer photo/avatar rendering, role checks, notification tone assets, and the remaining UI-to-backend placeholder alerts. No runtime code/backend/schema/auth/payment/main/live changes made.
+
+
+## Pass 17 — Legacy route regression spec compatibility audit
+
+### Source-verified findings
+- The existing `qa/dark-gold-route-regression.spec.js` declares a 58-ID `allPageIds` array and a 30-ID `sharedCustomerRoutes` array. These are test-spec lists, not independently confirmed runtime DOM counts.
+- The suite is explicitly titled `FRIEND RIDE in-place Dark + Gold UI` and asserts legacy design markers including `fr-dark-gold-design-system`, `theme-color #050b17`, and Dark-Gold assumptions. This is incompatible with the ARJUNA X locked Navy Blue + Orange + White direction and must not be treated as a release gate for the current design.
+- Existing test coverage in the inspected first section includes screen presence/design markers, live-location text mirroring, customer/driver/partner registration entry points and home service-card navigation. Because the design assertions are obsolete, a failure may be a stale-test failure rather than an ARJUNA X regression; tests should be split/retargeted without weakening genuine route/function coverage.
+- Repository tree confirms the four existing workflows previously inventoried; no branch trigger or CI run evidence was obtained in this pass.
+
+### Phase 2 disposition
+This audit confirms an additional test-authority mismatch. The 58 route IDs remain a provisional source list until runtime DOM IDs, role access, navigation and all route pages are reconciled. The legacy Dark-Gold regression is not authoritative for ARJUNA X. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; Phase 3 implementation cannot be considered complete based on this source audit alone. No runtime/backend/schema/auth/payment/main/live changes made.
