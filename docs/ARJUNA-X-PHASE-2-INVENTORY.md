@@ -812,3 +812,11 @@ Source inventory update only. No UI/runtime source was edited; no browser, locat
 - Queried GitHub Actions runs filtered to active Phase 2 branch `arjuna-x/phase-2-repository-assets-inventory`; API returned `total_count: 0`. No workflow run is currently evidenced on this branch. This aligns with Pass 27 trigger review.
 - Latest documentation blob re-fetched before update. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; test execution and route/PWA/runtime verification blocked by lack of checkout/browser runtime in this session.
 - No app runtime, backend, schema, auth, payment, main branch, or deployment changed.
+
+
+## Pass 33 — Branch governance and latest ref check
+
+- Fresh branch API check confirmed Phase 2 QA branch HEAD is `6ee47ab88436fbae5d0bde66b9d4fa2ff71272cb` (Pass 32 inventory commit). `main` currently points to `64845496f22487788aedbcf66b74147add3ab9c1`, commit message `Add FRIEND RIDE navy-orange UI skin`; main was read-only in this pass. This indicates a separate main-branch UI update exists and requires a controlled reconciliation review before release; no merge/cherry-pick was attempted.
+- GitHub branch API reports Phase 2 QA branch protection disabled and required status checks empty. Direct commits to the branch are technically permitted; maintain the project's explicit manual QA discipline and keep all changes on the work branch. Phase 10 should include reviewed branch protection/status-check configuration when authorized.
+- A GitHub compare endpoint request was rejected by the connector allowlist; ahead/behind and full diff relationship remain **unverified**. Do not infer mergeability.
+- No main update, merge, test run, deployment or app/backend changes occurred.
