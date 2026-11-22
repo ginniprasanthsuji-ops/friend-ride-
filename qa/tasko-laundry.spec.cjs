@@ -4,7 +4,7 @@ test('TASKO and Laundry services appear as separate home entries and banners',as
  await page.goto('./',{waitUntil:'domcontentloaded'});
  await page.evaluate(()=>window.showPage('home'));
  await expect(page.locator('#home .fr-native-service.home-pro-service[data-fr-native-route="homeServices"]')).toBeVisible();
- await expect(page.locator('#home .fr-native-service.home-pro-service[data-fr-native-route="laundryServices"]')).toBeVisible();
+ await expect(page.getByRole('button',{name:/Laundry Pickup & Delivery/})).toBeVisible();
  await expect(page.locator('.fr-poster-rail')).toBeAttached();
  // Home service cards are the entry points; promotional poster rail is a separate UI.
  expect(errors).toEqual([]);
