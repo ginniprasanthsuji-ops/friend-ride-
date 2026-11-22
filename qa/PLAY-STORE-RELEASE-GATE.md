@@ -31,7 +31,7 @@
 - Source Regression: **PASS** — run 224, commit `32fa1ea`.
 - TASKO / Laundry / Admin integration: **PASS, 4/4** — run 171, commit `c9fec7a`.
 - Dependency audit: **0 vulnerabilities reported** during TASKO CI install on run 171 after Vitest was upgraded to `4.1.11`.
-- Quality Gate: **RERUN QUEUED** — run 398, commit `32fa1ea`; previous runs 395–397 failed at npm install because npm 10.9.9 / flags hit the Arborist `edgesOut` error. CI install was changed to pin npm 10.8.2 without extra flags; new run pending.
+- Quality Gate: **Typecheck/unit/core/runtime PASS** — run 405 typecheck-and-unit job. Browser E2E **RUNNING** — run 405, commit `24d5f4e`. CI install is now pinned to npm 11.21.1 on Node 22 to resolve the Arborist `edgesOut` crash; browser job is still executing.
 - Full Browser E2E: **PENDING** — the 46 PASS / 13 FAIL result from run 355 is obsolete (stale Dark+Gold/native-home assertions and TASKO option-count). The UI regression tests were rewritten and booking/GPS/TASKO mapping tests added; latest full suite is pending.
 
 ### Implemented on QA branch only
