@@ -1012,3 +1012,11 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - Workflow commits: `f69e86b` (audit report step) and `19fe31e` (shell-safe summary correction). Run `45066821254` for `f69e86b` was in progress at observation; run `45066833414` for `19fe31e` was queued. No outcome claimed.
 - Current branch head verified: `19fe31e276a1c73d25fec779974b9d910d0c2104`. Branch protection is disabled and required status checks are absent.
 - No dependency upgrade, lockfile generation, runtime test execution, main merge or deployment was performed in this pass. Phase 2 remains NOT ACCEPTED.
+
+
+## Pass 49 — Dependency audit capture verified in CI logs
+
+- CI job logs for run `45066821254` show the audit capture step completed successfully and reported: `info=0, low=0, moderate=1, high=0, critical=2, total=3`. The raw `npm-audit.json` artifact was uploaded (artifact `14772085077`, 1,075 bytes). The connector can read artifact metadata but cannot download its archive/inspect package advisory detail here; detailed remediation is therefore pending artifact review.
+- The first audit-step version's log shows the summary command executed and succeeded. A shell-safe heredoc follow-up was committed at `19fe31e` and its CI run `45066833414` was still in progress when checked. Browser regression on that run was pending Chromium installation.
+- Audit capture is informational/non-blocking; vulnerability count is unchanged and not remediated.
+- No runtime tests executed in this environment; CI is doing the run. Phase 2 remains NOT ACCEPTED.
