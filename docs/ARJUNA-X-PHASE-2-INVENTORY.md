@@ -1003,3 +1003,12 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - CI workflows use `npm install`, not `npm ci`. Without a committed lockfile, semver ranges may resolve to different dependency graphs between runs, complicating repeatable test evidence and the Pass 46 advisory triage.
 - Do not fabricate a lockfile or switch workflows to `npm ci` yet: lockfile generation requires a real package install/command environment and then a fresh isolated full CI run. No dependency files/workflows changed in this pass.
 - Phase 2 acceptance adds a reproducible dependency install/lockfile requirement. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; no runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 48 — Dependency advisory evidence capture CI (pending result)
+
+- Fresh CI logs from successful run `45056922006` confirm the install step reported **3 vulnerabilities: 1 moderate, 2 critical**, but the log did not print advisory/package detail. The run passed typecheck/core typecheck/runtime build, Node unit (7/7), Vitest (5/5) and Playwright (48/48). It ran at SHA `d00abcfc369adfee2355a702ca51a3562aa5a5ed`, which is older than the current branch head.
+- Added a non-blocking `npm audit --json` report capture after install in the Quality Gate workflow, and upload the raw JSON artifact. It is non-blocking because dependency remediation and a committed lockfile are not yet prepared; it does **not** resolve the reported vulnerabilities.
+- Workflow commits: `f69e86b` (audit report step) and `19fe31e` (shell-safe summary correction). Run `45066821254` for `f69e86b` was in progress at observation; run `45066833414` for `19fe31e` was queued. No outcome claimed.
+- Current branch head verified: `19fe31e276a1c73d25fec779974b9d910d0c2104`. Branch protection is disabled and required status checks are absent.
+- No dependency upgrade, lockfile generation, runtime test execution, main merge or deployment was performed in this pass. Phase 2 remains NOT ACCEPTED.
