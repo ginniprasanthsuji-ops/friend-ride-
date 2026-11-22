@@ -13,7 +13,7 @@ try {
 } catch {
   throw new Error('FRIEND_RIDE_BASE_URL must be a valid URL.');
 }
-if (!['localhost', '127.0.0.1', '::1'].includes(baseURL.hostname)) {
+if (!['localhost', '127.0.0.1', '::1', '[::1]'].includes(baseURL.hostname)) {
   throw new Error(
     `Unsafe Playwright base URL "${configuredBaseURL}". Use localhost/127.0.0.1/::1 only; do not run the suite against production.`
   );
