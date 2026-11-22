@@ -20,8 +20,9 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     }
     await expect(launcher).toHaveClass(/hide/);
     await page.evaluate(()=>window.showPage('home'));
-    const homeState=await page.evaluate(()=>({url:location.href,homeClass:document.getElementById('home')?.className,homeAria:document.getElementById('home')?.getAttribute('aria-hidden'),homeHtmlLength:document.getElementById('home')?.innerHTML.length,cabCount:document.querySelectorAll('#home .cab-feature').length,proCount:document.querySelectorAll('#home .home-pro-service').length,activePages:[...document.querySelectorAll('main .page.active')].map(x=>x.id),selectedRole,launcher:document.getElementById('roleLauncher')?.className,showPageType:typeof window.showPage}));
-    console.log('PROJECT ARJUNA UI setup',JSON.stringify(homeState));
+    await expect(page.locator('#home')).toHaveClass(/active/);
+    await expect(page.locator('#home .cab-feature')).toBeAttached();
+    await expect(page.locator('#home .home-pro-service')).toHaveCount(8);
   });
 
   test('current 56 routes exist; removed VidyaSetu and event services remain absent; theme tokens are applied', async ({ page }) => {
