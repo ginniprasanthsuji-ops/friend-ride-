@@ -45,3 +45,35 @@ var FRRideContact;
     FRRideContact.confirmedStatus = confirmedStatus;
 })(FRRideContact || (FRRideContact = {}));
 globalThis.FRRideContact = FRRideContact;
+
+
+/* QA recovery: keep route inert state in sync with the final navigation wrapper. */
+(function frRouteInertSync(){
+  function sync(){
+    const pages=[...document.querySelectorAll('main .page')];
+    if(!pages.length)return;
+    const active=pages.filter(page=>page.classList.contains('active'));
+    if(!active.length){pages.forEach(page=>{page.inert=true;page.setAttribute('aria-hidden','true');});return;}
+    let target=active[0];
+    if(active.length>1){
+      const navId=document.querySelector('.premium-bottom button.active[data-page]')?.dataset.page;
+      target=active.find(page=>page.id===navId)||active[0];
+    }
+    pages.forEach(page=>{
+      const isActive=page===target;
+      page.inert=!isActive;
+      page.setAttribute('aria-hidden',isActive?'false':'true');
+    });
+  }
+  function install(){
+    const main=document.querySelector('main');
+    if(!main)return;
+    sync();
+    if(!window.__frRouteInertObserver){
+      window.__frRouteInertObserver=new MutationObserver(sync);
+      window.__frRouteInertObserver.observe(main,{subtree:true,attributes:true,attributeFilter:['class']});
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
+  else install();
+})();

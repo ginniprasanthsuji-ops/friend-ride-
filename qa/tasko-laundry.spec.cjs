@@ -3,8 +3,8 @@ test('TASKO and Laundry services appear as separate home entries and banners',as
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('./',{waitUntil:'domcontentloaded'});
  await page.evaluate(()=>window.showPage('home'));
- await expect(page.locator('.fr-native-service-grid .fr-native-service').filter({hasText:'TASKO / GIGGER'})).toBeAttached();
- await expect(page.locator('.fr-native-quick .fr-native-service').filter({hasText:/^Laundry/})).toBeAttached();
+ await expect(page.locator('.home-pro-services .home-pro-service').filter({hasText:/TASKO \/ GIGGER/})).toBeVisible();
+ await expect(page.locator('.home-pro-services .home-pro-service').filter({hasText:/LAUNDRY SERVICES/})).toBeVisible();
  await expect(page.locator('.fr-poster-rail')).toBeAttached();
  // Home service cards are the entry points; promotional poster rail is a separate UI.
  expect(errors).toEqual([]);

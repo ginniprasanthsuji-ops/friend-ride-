@@ -490,10 +490,12 @@ test('Home screen exposes separate TASKO / GIGGER and Laundry service tiles and 
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => window.showPage('home'));
-  const tasko = page.locator('.fr-native-service-grid .fr-native-service').filter({ hasText: 'TASKO / GIGGER' });
-  const laundry = page.locator('.fr-native-quick .fr-native-service').filter({ hasText: /^Laundry/ });
+  const tasko = page.locator('.home-pro-services .home-pro-service').filter({ hasText: /TASKO \/ GIGGER/ });
+  const laundry = page.locator('.home-pro-services .home-pro-service').filter({ hasText: /LAUNDRY SERVICES/ });
   await expect(tasko).toHaveCount(1);
   await expect(laundry).toHaveCount(1);
+  await expect(tasko).toBeVisible();
+  await expect(laundry).toBeVisible();
   await expect(page.locator('.fr-poster-rail')).toBeAttached();
   // TASKO and Laundry are separate home service tiles, not poster-rail promotions.
   expect(errors, 'Home page JavaScript errors').toEqual([]);
