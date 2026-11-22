@@ -24,6 +24,6 @@ test('Project Arjuna marketplace/parcel schema design covers required safety con
     'expired',
     'client price tampering',
     'cross-customer order/parcel access denied',
-    'No production SQL, no deploy, no merge'
+    'no production SQL, no deploy, no merge'
   ]) assert.ok(design.includes(phrase), 'schema proposal must cover: ' + phrase);
 });
