@@ -490,8 +490,8 @@ test('Home screen exposes separate TASKO / GIGGER and Laundry service tiles and 
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => window.showPage('home'));
-  const tasko = page.locator('.home-pro-services .home-pro-service').filter({ hasText: /TASKO \/ GIGGER/ });
-  const laundry = page.locator('.home-pro-services .home-pro-service').filter({ hasText: /LAUNDRY SERVICES/ });
+  const tasko = page.getByRole('button', { name: /TASKO \/ GIGGER/ });
+  const laundry = page.getByRole('button', { name: /Laundry Pickup & Delivery/ });
   await expect(tasko).toHaveCount(1);
   await expect(laundry).toHaveCount(1);
   await expect(tasko).toBeVisible();

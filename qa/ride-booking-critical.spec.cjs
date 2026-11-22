@@ -70,12 +70,14 @@ test('Ride insert succeeds and saved booking is retrievable in My Ride using moc
     notes: 'QA booking insert and retrieval', created_at: '2026-11-22T05:00:00Z'
   };
   let insertedRow = null;
+  const getUrls = [];
   await page.route('**/rest/v1/rides*', async route => {
     const method = route.request().method();
     if (method === 'POST') {
       insertedRow = JSON.parse(route.request().postData() || '{}');
       await route.fulfill({ status: 201, contentType: 'application/json', headers: { 'content-range': '0-0/1' }, body: JSON.stringify({ id: savedRide.id, status: savedRide.status }) });
     } else if (method === 'GET') {
+      getUrls.push(route.request().url());
       await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'content-range': '0-0/1' }, body: JSON.stringify([savedRide]) });
     } else {
       await route.continue();
@@ -101,7 +103,8 @@ test('Ride insert succeeds and saved booking is retrievable in My Ride using moc
   await expect(page.locator('#liveRideStatus')).toContainText('Active Ride ID: qa-ride-001');
   await expect(page.locator('#trackingStatus')).toContainText('Ride Request');
   expect(insertedRow).toMatchObject({ customer_id: 'qa-user-1', pickup: savedRide.pickup, drop: savedRide.drop, fare_offer: 125, status: 'requested' });
-  await page.evaluate(() => window.loadMyRideTracking());
+  await page.evaluate(() => { currentUser = { id: 'qa-user-1' }; currentProfile = { role: 'customer' }; return window.loadMyRideTracking(); });
+  expect(getUrls.some(url => url.includes('select=*')), 'saved ride retrieval must query the full row').toBe(true);
   await expect(page.locator('#liveRideStatus')).toContainText('QA Pickup, Tekkali');
   await expect(page.locator('#liveRideStatus')).toContainText('QA Drop, Srikakulam');
   await expect(page.locator('#liveRideStatus')).toContainText('qa-ride-001');
