@@ -1107,3 +1107,9 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - GitHub connector's workflow-run lookup for workflow commit d6cb8c79 returns no PR-triggered runs; it does not expose the push-run listing. CI status for audit-summary commits remains **UNVERIFIED**, not assumed.
 - Additional isolated check: missing npm-audit.json fallback emits a warning to the job summary and exits without throwing; **PASS**. This tests only the helper snippet in isolation.
 - No further app/backend/schema/auth/payment changes. Phase 2 remains NOT ACCEPTED; access gaps remain documented.
+
+
+## Pass 57 — Ahead/behind count correction
+
+- The Pass 56 comparison was made before the two Pass 56 documentation commits. A fresh comparison after those commits reports QA **94 ahead / 1 behind** main (diverged); main-only commit 64845496f22487788aedbcf66b74147add3ab9c1 remains unintegrated. This supersedes the 92-ahead count in the prior note. No merge/cherry-pick.
+- Latest commit verified at this checkpoint: d0a0256959234f08dfbb07cb027237efb7fd5512 (Phase-plan Pass 56 update). No CI status for the workflow audit-summary changes is available through the connector.
