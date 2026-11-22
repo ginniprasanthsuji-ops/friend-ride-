@@ -1,4 +1,7 @@
 name: FRIEND RIDE Regression
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches: [main, ui/full-native-dark-gold-2026-11-21, project-arjuna/dark-gold-ui-rollout]
