@@ -59,6 +59,16 @@ QA Supabase project `pqsangtvietawkfgpgfu`:
 10. Signed Android AAB, Play Console internal testing and store-policy checks.
 
 ## Progress
-- Engineering estimate remains approximately **86%** for the previously defined scope (payment provider excluded); this is not release certification. The prior conversational 90% figure was an unsupported estimate; retain the documented 86% until checklist evidence changes it.
-- Estimate reflects 15/15 frontend tables present, all 18 QA public tables RLS-enabled, 18 frontend RPCs implemented, and KYC/TASKO/Laundry workflows added. CI is green; live/real-device gates remain.
+- Prior estimate of **86%** was provisional. A read-only frontend RPC audit uncovered additional core marketplace/order/parcel integration gaps; revised conservative engineering estimate is **80%** (not a mathematically weighted score and not release certification).
+- Current read-only QA catalog snapshot: **23/57 frontend RPCs present; 34/57 absent**. Of the absent, **20 are non-payment core RPCs** and **14 are payment-specific** (payment integration remains deferred; includes two Tasko payment RPCs not currently present in the QA catalog).
+- QA schema parity audit: **15/15 required base tables present**; QA public schema has 21 tables, but marketplace/catalogue/order/parcel data tables are not currently in the QA inventory. The absent core RPCs cannot safely be stubbed; schema/contracts/RLS must be reviewed first.
+- The latest earlier CI on `4912a42` is green; new documentation/audit commits have newer CI runs in progress or queued, so do not claim latest HEAD green until those finish.
 - **NOT RELEASE READY.** Main untouched; no live deployment.
+
+
+## 2026-11-22 RPC catalog audit update
+- Static frontend inventory: 57 unique RPC names.
+- Branch migrations define 25 matching names.
+- QA database catalog read-only check: 23 frontend RPCs present, 34 absent. This differs from the static migration inventory because two Tasko payment RPCs have migration definitions but are not installed in the QA catalog.
+- Detailed audit: `qa/PROJECT-ARJUNA-RPC-MIGRATION-AUDIT.md`.
+- No production or live Supabase writes performed during this audit.
