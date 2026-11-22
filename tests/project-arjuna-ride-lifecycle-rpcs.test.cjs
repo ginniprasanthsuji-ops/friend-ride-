@@ -43,3 +43,13 @@ test('Customer counter-offer accept and decline are owner-bound and state-limite
   assert.match(decline, /customer_id=auth\.uid\(\) and status='counter_offered'/i);
   assert.match(decline, /driver_id\s*=\s*null\s*,\s*agreed_fare\s*=\s*null/i);
 });
+
+
+test('Ride UI calls lifecycle RPCs and does not claim automatic payment verification', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  for (const rpc of ['accept_ride','counter_offer_ride','accept_counter_offer','decline_counter_offer','fr_driver_start_ride','fr_driver_complete_ride','get_driver_requests']) {
+    assert.ok(html.includes("rpc('" + rpc + "'") || html.includes("rpc(\\\"" + rpc + "\\\""), 'UI invokes lifecycle RPC: ' + rpc);
+  }
+  assert.match(html, /Automatic payment verification.*QA scope/i);
+  assert.doesNotMatch(html, /Ride Completed[^.]*Payment.*automatically/i);
+});
