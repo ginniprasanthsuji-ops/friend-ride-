@@ -622,3 +622,22 @@ CI trigger alignment, branch-specific test execution and toolchain decision rema
 
 ### Phase 2 disposition
 Test inventory now records boundaries between source assertions, simulation, isolated/mock behavior and live-only checks. Test execution and current CI status are still not evidenced in this audit. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No runtime/backend/schema/auth/payment/main/live changes made.
+
+
+## Pass 21 — Root runtime source: worker registration and role-gate reconciliation
+
+### Worker registration source findings (root `index.html`)
+- A page-load registration at source line 2276 registers `./service-worker.js`.
+- Notification enablement function `frEnableDeviceAlerts` requests browser notification permission then registers the same worker at line 2271.
+- A separate push-subscription flow around lines 2566–2571 also requests permission, registers `./service-worker.js` with `updateViaCache:'none'`, waits for `navigator.serviceWorker.ready`, and calls update.
+- Thus the root app has multiple source paths for registration of the same worker. Duplicate registration of the same script/scope is usually idempotent, but the paths have different options and UX. Runtime active worker, scope, and delivery behavior are not proven by source inspection.
+- This source links the generic/Firebase worker named `service-worker.js`; other worker files exist in the tree but their active registration is not evidenced in the inspected root source.
+
+### Role-gate source findings
+- `menuGo` maps the four dashboard IDs to customer/driver/partner/admin and defines admin-only and partner-only menu page groups.
+- It checks role before opening protected page for both login callback and already-authenticated user. Admin is explicitly allowed for partner-required pages.
+- Customer and driver dashboards also have explicit role checks. This is client-side UI source evidence only; backend RLS/auth authorization remains unverified.
+- Existing role routing QA asserts these handlers/mappings and source fragments; it does not prove deployed auth or server permission enforcement.
+
+### Phase 2 disposition
+Source audit advances registration and role-gate reconciliation, but runtime worker activation, push subscription delivery, lock-screen/background delivery, role session enforcement and server-side permissions remain open evidence items. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No runtime/backend/schema/auth/payment/main/live changes made.
