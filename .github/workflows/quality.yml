@@ -1,7 +1,4 @@
 name: FRIEND RIDE Quality Gate
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 on:
   push:
     branches: [main, project-arjuna/dark-gold-ui-rollout]
