@@ -53,7 +53,7 @@ with check(user_id=auth.uid() and exists(select 1 from public.rides r where r.id
 drop policy if exists qa_live_locations_update_participants on public.ride_live_locations;
 create policy qa_live_locations_update_participants on public.ride_live_locations for update to authenticated
 using(user_id=auth.uid() and exists(select 1 from public.rides r where r.id=ride_id and (r.customer_id=auth.uid() or r.driver_id=auth.uid())))
-with check(user_id=auth.uid());
+with check(user_id=auth.uid() and exists(select 1 from public.rides r where r.id=ride_id and (r.customer_id=auth.uid() or r.driver_id=auth.uid())));
 drop policy if exists qa_notifications_read_own on public.fr_app_notifications;
 create policy qa_notifications_read_own on public.fr_app_notifications for select to authenticated using(user_id=auth.uid());
 drop policy if exists qa_notifications_update_own on public.fr_app_notifications;
