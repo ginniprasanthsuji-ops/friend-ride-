@@ -930,3 +930,14 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - Updated the route-baseline network allowlist to permit only required Supabase JS, Leaflet and Firebase compat CDN libraries; other external HTTPS remains blocked. No token registration, notification permission, push dispatch, database writes or production calls occur in this test.
 - Test is source-committed to the QA branch and triggered a local-static-server CI run; result pending. It does not verify OS installation prompts, maskable icon artwork/safe zone, background/closed-app push, or actual device notification delivery.
 - Phase 2 remains **IN PROGRESS / NOT ACCEPTED** pending the CI result and remaining runtime/backend/asset/governance evidence.
+
+
+## Pass 41 — PWA smoke CI acceptance evidence
+
+- Quality Gate run `45056922006`, QA commit `d00abcfc369adfee2355a702ca51a3562aa5a5ed`: **SUCCESS**. Typecheck, core typecheck, runtime build, Node unit (`7/7`), Vitest succeeded. Playwright **48 passed in 21.7s**.
+- The new PWA smoke test passed: on the local static server it observed an active `service-worker.js` registration and matching root scope, fetched the linked `manifest.webmanifest`, verified name/start_url/scope/display and 192/512 icon declarations, and successfully fetched every declared icon resource.
+- The immediately preceding run `45056898153` failed only because the test itself used Node-side `location.href` in a Playwright assertion (`ReferenceError: location is not defined`); the assertion was corrected to use `page.url()`. That failed run had 47 other browser tests passing. The corrected commit run above is green; this is a test harness fix, not an app runtime failure.
+- PWA smoke evidence is local/browser CI only: no OS install prompt, installed app, maskable icon safe-zone/visual check, FCM token registration, permission prompt, push delivery, background/closed-app, or device notification matrix was tested. No external API calls are permitted by the active test network allowlist.
+
+### Pass 41 disposition
+- Local PWA registration, manifest and icon HTTP availability verified through isolated Playwright. Phase 2 remains **IN PROGRESS / NOT ACCEPTED** because remaining PWA/device/asset, full security audit and repository governance evidence are incomplete. Phase 3 remains gated. No app runtime/backend/schema/auth/payment/main/deployment changes.

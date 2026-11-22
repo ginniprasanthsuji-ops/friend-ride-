@@ -86,3 +86,8 @@ Source scan confirms four registration call sites all target `service-worker.js`
 ## Pass 40 PWA smoke test
 
 Added isolated Playwright check for active local service-worker registration, manifest and icon HTTP responses. CI result pending. It is not device installability or push delivery evidence; Phase 2 remains gated on these remaining checks.
+
+
+## Pass 41 PWA smoke evidence
+
+CI run `45056922006` passed **48 Playwright tests** and all typecheck/build/unit/core checks. Local browser verified active root service worker, linked manifest, standalone metadata and HTTP access to declared icons. This is not device installability or push-delivery proof. Phase 2 remains in progress.
