@@ -19,6 +19,8 @@
 - Telugu-first notifications; English support; notification center/history, read/unread, categories, sound/vibration, voice announcements where supported, marketing opt-in/out, quiet hours, duplicate prevention, deep links, foreground/background/closed-app QA.
 - Offers/referrals (₹50 offer subject to configured campaign), support, complaints, feedback, ratings, SOS/safety, saved addresses/favorites, order/ride history.
 - Native-app experience: screen transitions, slide/fade, bottom sheets, loading skeletons, touch feedback, success animations, smooth back/navigation, reduced-motion support.
+- **Adaptive light/dark theme:** user-requested ambient-light auto mode for FRIEND RIDE. In a dim room, switch to dark UI; in bright outdoor light, switch to light UI. Prefer ambient-light sensing (Ambient Light Sensor API only when browser/device supports it and permission is granted), with configurable lux thresholds, hysteresis and a debounce/stability window to avoid flicker. If unavailable/denied, fall back to device system theme (prefers-color-scheme) and retain a manual Light/Dark/Auto override. Do not request sensor permission unexpectedly; offer it from theme settings, explain its purpose, and keep the app usable without sensor access. Respect reduced motion and persist user preference.
+
 - Business rules to preserve/verify: platform charge 2.5% single source of truth; TASKO minimum ₹150/day, up to 6 hours, base cap ₹400, extension ₹50/hour, water-assistance reminder after 4 hours; Laundry per KG/per piece; grocery EMI example ₹5,000 limit only as eligibility/configuration example; QR validity 5 minutes; 24-hour order auto-delete requirement subject to safe implementation/data-retention review.
 
 ## Non-Negotiable Safety Rules
