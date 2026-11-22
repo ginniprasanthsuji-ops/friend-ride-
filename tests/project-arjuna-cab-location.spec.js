@@ -51,6 +51,15 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     await expect(page.locator('#pickupCoords')).toHaveText('Coordinates not selected');
   });
 
+  test('GPS button uses browser location and fills selected coordinates', async ({ page }) => {
+    await page.context().grantPermissions(['geolocation']);
+    await page.context().setGeolocation({ latitude: 18.3, longitude: 84.2 });
+    await page.locator('#ride button[onclick="frUseMyLocation()"]').click();
+    await expect(page.locator('#pickup')).toHaveAttribute('data-selected-address', /Tekkali/, { timeout: 5000 });
+    await expect(page.locator('#pickupCoords')).toContainText('18.300000');
+    await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lat', '18.3');
+  });
+
   test('GPS and map-pin handlers are present and booking map is wired', async ({ page }) => {
     const handlers = await page.evaluate(() => ({
       gps: typeof window.frUseMyLocation === 'function',
