@@ -1073,3 +1073,28 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - `npm install` reported **3 vulnerabilities (1 moderate, 2 critical)**; audit JSON totals confirmed `info=0, low=0, moderate=1, high=0, critical=2, total=3`. This run did not remediate them. Artifact package/advisory detail remains unavailable through the connector.
 - No Node 20 action-runtime deprecation warning was found in the filtered logs for this run; the action-v7 update is verified by successful CI. Node `punycode`/`url.parse` tooling deprecation may still be present in dependency output (not a test failure).
 - CI status summary reconciled to run #713. Phase 2 remains **IN PROGRESS / NOT ACCEPTED** due remaining dependency/lockfile, logo/icon, device PWA/push, full security audit, QA environment and branch governance gates. No runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 55 — CI audit advisory visibility + branch asset reconciliation (2026-11-23)
+
+### Actual QA-branch source and comparison review
+- Freshly fetched the active Phase 2 inventory, phase plan, quality workflow, package scripts, Playwright config/safety test, and route-baseline spec.
+- Fresh main vs QA comparison before this pass's workflow commits: QA **88 commits ahead / 1 behind** (diverged). Main-only commit 64845496f22487788aedbcf66b74147add3ab9c1 adds friendride-ui-v1.css; QA branch fetch for that asset returns 404, confirming it is not integrated on QA.
+- Reviewed the main-only CSS patch: it is a 32-line broad selector skin with Navy/Orange/White tokens, but also maps legacy --gold to orange and aliases purple tokens. It is a Phase 3 candidate requiring route-wide visual/accessibility review; no cherry-pick/copy/merge in Phase 2.
+- Freshly fetched the existing Phase 2 route baseline spec: it inventories 58 IDs, asserts 58 page sections/no missing/extra/duplicate IDs, activates all 58 through existing router, and checks local manifest/worker/icon HTTP responses. This is source confirmation; run #713 CI job was verified successful, but this automation did not execute browser tests itself.
+- Fresh job-step lookup for CI run 45072777611 / #713 confirmed both jobs completed success and all expected steps (typecheck/unit and browser regression) succeeded.
+
+### Incremental CI change
+- Commit a49c5ab12672bd8c8e34c61a5ab0c193dcd12834: added a GitHub Actions job-summary step that reports npm audit counts and package-level severity, direct/transitive status, vulnerable range, fix label, and HTTPS advisory links; artifact upload remains.
+- Commit d6cb8c79c1ff5c5bffbfb8137b998b4ad10de0f9: corrected Markdown escape handling in the summary script. Workflow-only change; no app/backend behavior changed.
+- The workflow is push-triggered for the active QA branch, but a push-run listing/status endpoint is unavailable through this connector; these two commits' CI execution is NOT VERIFIED. No local repo checkout/build/test environment exists.
+
+### Isolated checks actually executed
+- Full fetched workflow YAML was copied to an isolated temporary file and parsed with Python PyYAML: PASS; both jobs and the audit-summary step were present.
+- Extracted the exact audit-summary Node script from that parsed workflow and ran it against a synthetic npm-audit JSON fixture: PASS; output included counts, package rows, severity ordering, direct/transitive label, fix status, advisory HTTPS link, and escaped pipe characters.
+- These are isolated workflow-script checks, not FRIEND RIDE runtime/Playwright tests. No npm install, audit against live package registry, app build, or repository test suite was executed here.
+
+### Pass 55 disposition
+- Audit-artifact access blocker improved: future CI job summaries should make package-level details readable without downloading the artifact, pending a successful CI run and review of its actual summary.
+- Dependency vulnerabilities remain unremediated; no lockfile exists. Other Phase 2 blockers remain: official icon/logo visual verification; device PWA install/update/offline and closed-app push; full deployed auth/RLS/SECDEF/Edge-secret audit; isolated QA backend wiring/integration E2E; owner-approved branch protection/required checks.
+- Phase 2 remains IN PROGRESS / NOT ACCEPTED; Phases 3–10 remain gated. No runtime, backend, schema, auth, payment, main branch, or deployment changes.
