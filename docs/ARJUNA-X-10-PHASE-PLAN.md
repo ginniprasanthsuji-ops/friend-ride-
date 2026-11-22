@@ -122,3 +122,12 @@ CI run `45056922006` succeeded but `npm install` reported 3 dependency advisorie
 ## Pass 47 lockfile requirement
 
 The active QA branch has no tracked `package-lock.json` or `npm-shrinkwrap.json` (both fetches returned 404), while package.json contains semver ranges and CI uses `npm install`. Dependency resolution is not fully reproducible. Phase 2 remains gated until a real lockfile is generated in a checkout, reviewed, committed on QA, workflows use lockfile-respecting install, and CI reruns. This pass did not generate lockfile or execute commands.
+
+
+## Pass 48 — Current acceptance and audit evidence status
+
+- Phase 1 remains accepted; Phase 2 is **IN PROGRESS / NOT ACCEPTED**.
+- Latest QA branch head (when recorded) is `c1a9eb33eba3d6d8acc167792bc0393306073c3c`, a documentation reconciliation commit. Quality workflow code changes are at `19fe31e276a1c73d25fec779974b9d910d0c2104`.
+- CI audit report capture is pending: run `45066821254` (first workflow patch) and run `45066833414` (shell-safe follow-up) were both in progress at observation. Previous verified successful CI SHA remains `d00abcfc369adfee2355a702ca51a3562aa5a5ed`; it is not the latest branch head.
+- Exact remaining Phase 2 gates: lockfile + `npm ci` reproducibility (requires checkout/command runner); advisory details/remediation; official icon visual verification; device PWA install/update/offline/background push evidence; complete deployed RLS/SECDEF/Edge-secret/auth review; safe QA project app wiring or authorized integration test environment; owner policy for required checks/branch protection.
+- No runtime/backend/schema/auth/payment changes, main merge or deployment in this pass. Phases 3–10 remain gated.
