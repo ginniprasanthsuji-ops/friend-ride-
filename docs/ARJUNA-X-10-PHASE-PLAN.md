@@ -117,3 +117,8 @@ Top-level Phase 2 inventory/gate/checklist now reflects current verified evidenc
 ## Pass 46 dependency/toolchain risk
 
 CI run `45056922006` succeeded but `npm install` reported 3 dependency advisories (1 moderate, 2 critical); advisory details were not available in the run output. The same run warned that GitHub Actions Node 20 runtime is being deprecated/forced to Node 24, and emitted a `punycode` deprecation warning. This is an unresolved Phase 2 tooling risk; no automatic dependency upgrade was attempted. Phase 2 remains gated.
+
+
+## Pass 47 lockfile requirement
+
+The active QA branch has no tracked `package-lock.json` or `npm-shrinkwrap.json` (both fetches returned 404), while package.json contains semver ranges and CI uses `npm install`. Dependency resolution is not fully reproducible. Phase 2 remains gated until a real lockfile is generated in a checkout, reviewed, committed on QA, workflows use lockfile-respecting install, and CI reruns. This pass did not generate lockfile or execute commands.
