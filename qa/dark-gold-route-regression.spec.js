@@ -12,6 +12,13 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
       return route.abort();
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+    const launcher=page.locator('#roleLauncher');
+    if(await launcher.isVisible()){
+      await launcher.locator('.fr-role-card.customer').click();
+      await expect(page.locator('#authModal')).toHaveClass(/show/);
+      await page.locator('#authModal .close').click();
+    }
+    await expect(launcher).toHaveClass(/hide/);
   });
 
   test('current 56 routes exist; removed VidyaSetu and event services remain absent; theme tokens are applied', async ({ page }) => {
@@ -44,8 +51,20 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     await expect(bell).toBeAttached();
     await expect(bell).toHaveAttribute('aria-label', 'Notifications');
     await expect(bell.locator('svg.fr-bell-svg path')).toBeAttached();
-    await expect(page.locator('#frHomeProfileImage')).toBeHidden();
+    await expect(page.locator('#frHomeProfileImage[hidden]')).toBeHidden();
     await expect(page.locator('#frHomeProfileAvatar img[alt="3D profile avatar"]')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('role launcher has four choices and Customer selection opens locked login', async ({ page }) => {
+    await page.evaluate(()=>document.getElementById('roleLauncher').classList.remove('hide'));
+    const launcher=page.locator('#roleLauncher');
+    await expect(launcher.locator('.fr-role-card')).toHaveCount(4);
+    await launcher.locator('.fr-role-card.customer').click();
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await expect(page.locator('#authModal')).toHaveClass(/fr-role-locked/);
+    await expect(page.locator('#authTitle')).toHaveText('Customer Login');
+    await page.locator('#authModal .close').click();
+    await expect(launcher).toHaveClass(/hide/);
   });
 
   test('home keeps registration entry points and each role opens the matching auth modal', async ({ page }) => {
@@ -119,7 +138,7 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     await page.evaluate(() => window.openAuth('login','customer'));
     await expect(page.locator('#authModal')).toHaveClass(/show/);
     await expect(page.locator('#authTitle')).toHaveText('Customer Login');
-    await expect(page.locator('#sendLoginOtpButton')).toHaveText('Send Customer SMS OTP');
+    await expect(page.locator('#loginForm button[onclick="sendLoginOtp()"]')).toHaveText('Send Customer SMS OTP');
     await expect(page.locator('#authRegisterButton')).toBeVisible();
     await expect(page.locator('#authModal .rolegrid')).toBeHidden();
     await expect(page.locator('#authModal .modalbox')).toBeVisible();
@@ -131,7 +150,7 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     await expect(modal).toHaveClass(/show/);
     await expect(modal).toHaveClass(/fr-role-locked/);
     await expect(page.locator('#authTitle')).toHaveText('Admin Login');
-    await expect(page.locator('#sendLoginOtpButton')).toHaveText('Send Admin SMS OTP');
+    await expect(page.locator('#loginForm button[onclick="sendLoginOtp()"]')).toHaveText('Send Admin SMS OTP');
     await expect(page.locator('#authRegisterButton')).toBeHidden();
     await expect(modal.locator('.rolegrid')).toBeHidden();
   });
@@ -140,7 +159,10 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     await expect(page.locator('#eventServices')).toHaveCount(0);
     await expect(page.locator('#eventServiceType')).toHaveCount(0);
     await expect(page.locator('#learnTeach')).toHaveCount(0);
+    await expect(page.locator('#home .home-pro-service')).toHaveCount(8);
     await expect(page.locator('#home .home-pro-service')).not.toContainText('Beauty Makeover');
+    await page.evaluate(()=>window.showPage('homeServices'));
+    await expect(page.locator('#taskoCategory')).toBeVisible();
     const categories=await page.locator('#taskoCategory option').allTextContents();
     expect(categories).toContain('Beauty Makeover');
     expect(categories).toContain('Halwai – Sweets & Food Preparation');
