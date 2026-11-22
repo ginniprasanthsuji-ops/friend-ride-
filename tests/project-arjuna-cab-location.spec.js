@@ -133,14 +133,15 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     await page.evaluate(() => { window.__qaRideGuardBefore = window.__frArjunaRideSubmitting; });
     expect(await page.evaluate(() => window.__qaRideGuardBefore)).not.toBeTruthy();
     await page.evaluate(() => { saveRideRequest(); });
-    await expect(page.locator('#message')).toContainText('successfully', {
-      timeout: 10000,
-      message: 'Ride submit failed. Diagnostics: ' + JSON.stringify({
-        guard: page.evaluate(() => window.__frArjunaRideSubmitting),
-        message: page.locator('#message').textContent(),
-        payload: page.evaluate(() => window.__qaRidePayload)
-      })
-    });
+    await page.waitForTimeout(250);
+    const submitDiagnostics = await page.evaluate(() => ({
+      guard: window.__frArjunaRideSubmitting,
+      message: document.getElementById('message')?.textContent,
+      payload: window.__qaRidePayload
+    }));
+    console.log('PROJECT_ARJUNA_SUBMIT_DIAGNOSTICS', JSON.stringify(submitDiagnostics));
+    await expect(page.locator('#message'), 'Ride submit diagnostics: ' + JSON.stringify(submitDiagnostics))
+      .toContainText('successfully', { timeout: 10000 });
     submitted = await page.evaluate(() => window.__qaRidePayload?.payload);
     expect(await page.evaluate(() => window.__qaRidePayload?.table)).toBe('rides');
     expect(submitted).toMatchObject({
