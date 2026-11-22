@@ -4,14 +4,15 @@
 - QA branch only; the cancelled Dark+Gold UI override has been removed from `index.html`.
 - Payment Provider/Cashfree integration explicitly deferred by user and excluded from release gate.
 - Main branch and live deployment remain untouched; PR #37 is not merged.
-- Latest verified QA branch head before this status-document refresh: `5d0a6c80443ef2c0e16f66a0ee984b81add43431`.
+- Latest verified engineering QA branch head: `d155d697fcdb68aa0a9a1700e56222548d0f4566`.
 
 ## CI evidence (latest engineering commit)
-- FRIEND RIDE Quality Gate #579: **PASS** — typecheck, core/unit tests, browser E2E.
-- FRIEND RIDE workflow regression #318: **PASS**.
-- TASKO/Laundry regression #268: **PASS**.
-- Browser workflows pinned to Ubuntu 24.04 after runner package instability; Chromium install and Playwright jobs passed.
-- CI green applies to the engineering commit above. A status-document-only commit may trigger another CI cycle.
+- FRIEND RIDE Quality Gate run `45019454329`: **PASS** — typecheck/unit and browser E2E.
+- FRIEND RIDE Quality Gate run `45019449598`: **PASS** — typecheck/unit and browser E2E.
+- FRIEND RIDE Regression run `45019449603`: **PASS** — browser regression.
+- FRIEND RIDE workflow regression run `45019454244`: **PASS** — source regression.
+- TASKO/Laundry regression run `45019454260`: **PASS** — Playwright regression.
+- All five latest runs are green on commit `d155d697fcdb68aa0a9a1700e56222548d0f4566`.
 
 ## Implemented QA work
 - Pickup/drop autocomplete, selected coordinate validation, GPS/map pin, ride payload and duplicate-submit regression guards.
@@ -55,6 +56,6 @@ QA Supabase project `pqsangtvietawkfgpgfu`:
 10. Signed Android AAB, Play Console internal testing and store-policy checks.
 
 ## Progress
-- Engineering estimate remains approximately **86%** for the previously defined scope (payment provider excluded); this is not release certification.
+- Engineering estimate remains approximately **86%** for the previously defined scope (payment provider excluded); this is not release certification. The prior conversational 90% figure was an unsupported estimate; retain the documented 86% until checklist evidence changes it.
 - Estimate reflects 15/15 frontend tables present, all 18 QA public tables RLS-enabled, 18 frontend RPCs implemented, and KYC/TASKO/Laundry workflows added. CI is green; live/real-device gates remain.
 - **NOT RELEASE READY.** Main untouched; no live deployment.
