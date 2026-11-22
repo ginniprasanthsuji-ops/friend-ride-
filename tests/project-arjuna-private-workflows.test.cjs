@@ -15,3 +15,18 @@ test('Project Arjuna QA notification, SOS, and KYC tables have RLS and owner/adm
   assert.ok(sql.includes('exists(select 1 from public.admin_users'), 'admin membership is required for review');
   assert.ok(!/grant .* to anon/i.test(sql), 'no anon grants');
 });
+
+test('KYC owner update policy cannot change review status out of pending', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '202611220005_arjuna_qa_private_workflows.sql'), 'utf8');
+  const ownerPolicy = sql.match(/create policy qa_driver_documents_update_own_pending[\\s\\S]*?;/i)?.[0] || '';
+  assert.match(ownerPolicy, /using\\s*\\(owner_id=auth\\.uid\\(\\)\\s+and\\s+verification_status='pending'\\)/i);
+  assert.match(ownerPolicy, /with check\\s*\\(owner_id=auth\\.uid\\(\\)\\s+and\\s+driver_id=auth\\.uid\\(\\)\\s+and\\s+verification_status='pending'\\)/i);
+  assert.doesNotMatch(ownerPolicy, /verification_status\\s*<>\\s*'pending'/i);
+});
+
+test('KYC review updates require admin membership in both USING and WITH CHECK', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '202611220005_arjuna_qa_private_workflows.sql'), 'utf8');
+  const adminPolicy = sql.match(/create policy qa_driver_documents_admin_review[\\s\\S]*?;/i)?.[0] || '';
+  assert.match(adminPolicy, /using\\s*\\(exists\\s*\\(select 1 from public\\.admin_users a where a\\.user_id=auth\\.uid\\(\\)\\)\\)/i);
+  assert.match(adminPolicy, /with check\\s*\\(exists\\s*\\(select 1 from public\\.admin_users a where a\\.user_id=auth\\.uid\\(\\)\\)\\)/i);
+});
