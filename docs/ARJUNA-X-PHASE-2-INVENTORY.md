@@ -1020,3 +1020,11 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - The first audit-step version's log shows the summary command executed and succeeded. A shell-safe heredoc follow-up was committed at `19fe31e` and its CI run `45066833414` was still in progress when checked. Browser regression on that run was pending Chromium installation.
 - Audit capture is informational/non-blocking; vulnerability count is unchanged and not remediated.
 - No runtime tests executed in this environment; CI is doing the run. Phase 2 remains NOT ACCEPTED.
+
+
+## Pass 50 — Audit-artifact workflow run evidence
+
+- Run `45066821254` (workflow commit `f69e86bb8134d55f90a28ae21da678c28e18ec31`) completed SUCCESS. Both jobs passed; browser regression **48/48**. Typecheck/core typecheck/runtime build, Node unit **7/7**, Vitest **5/5** also passed. The audit artifact was uploaded.
+- This run executed the first audit summary implementation; it was subsequently made shell-safe in commit `19fe31e`. That follow-up run `45066833414` remained IN PROGRESS at this observation, with browser tests running and typecheck/unit job complete-success.
+- CI still used npm install and did not create a committed lockfile. The 1 moderate + 2 critical vulnerabilities remain unresolved. Artifact package-level detail could not be inspected through the available connector.
+- Phase 2 remains NOT ACCEPTED; no app/backend/schema/auth/payment/main/deployment changes.
