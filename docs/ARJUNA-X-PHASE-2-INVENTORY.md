@@ -837,3 +837,15 @@ Source inventory update only. No UI/runtime source was edited; no browser, locat
 
 ### Pass 34 disposition
 - Workflow trigger change committed to QA branch only. No local npm/test/build commands were run; GitHub Actions run query returned zero at check time. Main untouched, no merge/deploy, no app runtime/backend/schema/auth/payment modifications. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
+
+
+## Pass 35 — Main/QA ancestry and source-tree reconciliation
+
+- Fresh GitHub compare by immutable commit SHA: main `64845496f22487788aedbcf66b74147add3ab9c1` versus QA `0f5f3441ab17e7716f37ecd9567848054e14a090`. Git reports `diverged`, QA `ahead_by=51`, `behind_by=1`; this is ancestry divergence and does not imply runtime code differs.
+- Compare file list showed only ARJUNA documentation additions and `playwright.config.cjs` modification; no app runtime source/binary differences in that compare.
+- Independently fetched recursive trees for both commits and SHA-verified equality of these source/PWA files: `index.html`, `manifest.webmanifest`, `manifest.json`, `icons/icon-192.png`, `icons/icon-512.png`, `service-worker.js`, `sw.js`, and `firebase-messaging-sw.js`. These content hashes are identical between main and QA tree snapshots.
+- This narrows the one-commit ancestry gap: the latest main commit is represented in the QA tree content for these key UI/PWA assets, but no merge or cherry-pick is required or performed. Keep ancestry relationship documented; do not infer full tree equality beyond the checked compare file list and explicit hashes.
+- Quality Gate workflow run `45055689330` on QA commit `fbc0b197bf4ccacd6ba60a3525ca698100e835b0`: typecheck-and-unit job completed SUCCESS (npm install, typecheck, core typecheck, runtime build, unit tests, core tests); browser job was still running Playwright when this pass was recorded. Await final result.
+
+### Pass 35 disposition
+Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/auth/payment changes. Phase 2 remains IN PROGRESS / NOT ACCEPTED until all acceptance blockers and browser/runtime evidence are addressed.
