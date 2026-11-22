@@ -1,5 +1,6 @@
-# Clean Restart — Existing App Inventory & Workflow Source
+# ARJUNA Clean Restart — Existing App Inventory & Workflow Source
 
+Project codename: **ARJUNA** (customer product branding remains FRIEND RIDE).
 Repository baseline: main `f1ddca35a576b7ecb34d5130e0cc990709ec4b02`
 Branch: `friendride-clean-restart/2026-11-22`
 This inventory is based on the tracked repository file tree and `BLUEPRINT.md`. It is a scope map, not a claim that every module currently works.
