@@ -3,7 +3,7 @@
 **Project codename:** ARJUNA X  
 **Customer brand/app:** FRIEND RIDE  
 **Website:** friendride.in  
-**Branch:** `arjuna-x/phase-1-scope-lock`  
+**Active working branch:** `arjuna-x/phase-2-repository-assets-inventory`  
 **Baseline branch:** `friendride-clean-restart/2026-11-22`  
 **Baseline commit:** `e983cdcabe74daada7e46eba11be4a7c96698c8e`  
 **Brand identity:** Original user-supplied FRIEND RIDE logo; Navy Blue + Orange + White  
@@ -58,4 +58,4 @@
 - [x] Phase 1 documentation committed and branch content verified.
 
 ## Current Phase Status
-**Phase 1 — IN PROGRESS.** This branch was created from the clean-restart baseline. The scope/roadmap document is being committed as the first project artifact. No app code, backend, schema, authentication, payments, main branch, or live deployment has been changed.
+**Phase 1 — SCOPE LOCKED / DOCUMENTATION COMPLETE. Phase 2 — IN PROGRESS.** The active branch contains source-tree and asset inventory documentation with 14 audit passes recorded. Remaining Phase 2 acceptance gaps include full route/role guard source extraction, visual logo/icon inspection, notification/PWA runtime registration proof, deployed RPC/Edge Function contracts and authorization evidence, and current CI/test evidence. The official logo binary is still not verified in repository assets. No app runtime, backend, schema, authentication, payment, main branch, or live deployment has been changed.
