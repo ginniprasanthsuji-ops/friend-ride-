@@ -41,5 +41,5 @@ test('Customer counter-offer accept and decline are owner-bound and state-limite
   assert.match(accept, /customer_id=auth\.uid\(\) and status='counter_offered'/i);
   assert.match(accept, /driver_id is not null and agreed_fare is not null/i);
   assert.match(decline, /customer_id=auth\.uid\(\) and status='counter_offered'/i);
-  assert.match(decline, /driver_id=null and agreed_fare=null/i);
+  assert.match(decline, /driver_id\s*=\s*null\s*,\s*agreed_fare\s*=\s*null/i);
 });
