@@ -709,3 +709,27 @@ Draft icon pack prepared locally. No app runtime, manifest, backend, schema, aut
 
 ### Pass 25 status
 Manifest integration review is documented; icon binary integration and install verification remain pending. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
+
+
+## Pass 26 — Phase 2 acceptance gate and isolated test execution boundary
+
+### Revalidated branch/test constraints
+- Latest inventory source is on the Phase 2 QA branch. Package scripts provide unit, core, typecheck, runtime-build, and Playwright suites.
+- This connector session can read repository files and make text-file commits, but it does not provide a checkout/command execution environment for the repository. Therefore no npm install, unit test, typecheck, build, Playwright, browser/PWA install, or CI workflow run was executed in this pass.
+- Playwright's configured default baseURL is production; any future local execution must explicitly set FRIEND_RIDE_BASE_URL to an isolated local server. Do not run mutation-capable tests against production.
+
+### Phase 2 acceptance gate — open items ranked
+1. Binary icon pack integration and visual validation: existing icon binaries still not inspected; generated draft pack not committed. Manifest changes remain blocked until binary assets are actually in the branch.
+2. Runtime route/navigation/role verification: source page-ID reconciliation (55 actual IDs, 58 QA IDs, 3 stale) is not runtime coverage. Need browser run against local isolated server and role-specific sessions.
+3. PWA/worker runtime proof: determine active registration/scope, installability, worker update behavior and device-state notification matrix; source registration alone is insufficient.
+4. Backend authorization/integration evidence: deployed RPC/Edge Function contracts and RLS/auth behavior not verified; do not change schema/auth/payment to close this inventory item.
+5. CI alignment: current workflow trigger definitions do not explicitly include active ARJUNA X branch; workflow run evidence unavailable here.
+6. Legacy theme QA: stale Dark+Gold assertions must be carefully replaced by locked Navy/Orange/White checks while retaining route/function checks; do not delete or weaken tests wholesale.
+
+### Safe next actions
+- Continue targeted source extraction and document exact integration placeholders/handlers.
+- Prepare branch-safe CI trigger alignment only after fetching and reviewing full workflow files and confirming triggers do not run live mutation tests.
+- Once binary-capable repo access and isolated execution are available, install the draft icon pack, update manifest purpose/theme fields, run installability and regression checks, and record evidence.
+
+### Pass 26 disposition
+Phase 2 acceptance remains **IN PROGRESS / NOT ACCEPTED**. No runtime app code, binary assets, manifest, backend, schema, auth, payment, main branch, or deployment changed. No tests were run; no test results are claimed.
