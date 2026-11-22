@@ -19,6 +19,7 @@ jobs:
       - name: Validate inline JavaScript and Version 10.1 integrations
         run: node scripts/check-inline-js.mjs
       - run: npm install
+      - run: npm audit --audit-level=moderate
       - run: npx playwright install --with-deps chromium
       - name: Start local static app server
         run: |
