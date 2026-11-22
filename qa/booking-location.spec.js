@@ -79,6 +79,8 @@ test.describe('Ride booking map and location suggestions', () => {
     await expect(page.locator('#pickup')).toHaveValue(/GPS Mock Location, Tekkali/,{timeout:15000});
     await expect(page.locator('#frBookingMap .leaflet-marker-icon')).toHaveCount(1);
     await expect(page.locator('#frPickupHint')).toContainText('18.60500');
+    const coords=await page.evaluate(()=>pickupCoords);
+    expect(coords).toEqual({lat:18.605,lon:84.255});
     await expect(page.locator('#fare')).toHaveValue('100');
     await page.locator('button[onclick="adjustFare(10)"]').click();
     await expect(page.locator('#fare')).toHaveValue('110');
@@ -109,25 +111,6 @@ test.describe('Ride booking map and location suggestions', () => {
     await expect(page.locator('#frBookingMap .leaflet-marker-icon')).toHaveCount(1);
   });
 
-  test('GPS pickup uses the device location, reverse geocodes, and adds the pickup marker', async ({ page }) => {
-    await page.context().grantPermissions(['geolocation']);
-    await page.context().setGeolocation({latitude:18.605,longitude:84.255});
-    await page.route('https://nominatim.openstreetmap.org/**', route => {
-      const url=new URL(route.request().url());
-      const body=url.pathname.includes('/reverse')?{display_name:'GPS mocked location, Tekkali, India'}:[];
-      return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
-    });
-    const transparentTile=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/a7sAAAAASUVORK5CYII=','base64');
-    await page.route('https://*.tile.openstreetmap.org/**',route=>route.fulfill({status:200,contentType:'image/png',body:transparentTile}));
-    await page.route('https://*.basemaps.cartocdn.com/**',route=>route.fulfill({status:200,contentType:'image/png',body:transparentTile}));
-    await page.goto('/');
-    await page.evaluate(()=>window.showPage('ride'));
-    await page.locator('button[onclick="frUseMyLocation()"]').click();
-    await expect(page.locator('#pickup')).toHaveValue(/GPS mocked location, Tekkali/,{timeout:15000});
-    await expect(page.locator('#frBookingMap .leaflet-marker-icon')).toHaveCount(1);
-    const coords=await page.evaluate(()=>pickupCoords);
-    expect(coords).toEqual({lat:18.605,lon:84.255});
-  });
 
   test('OSM tile failures trigger CARTO tile fallback', async ({ page }) => {
     let cartoRequests=0;
