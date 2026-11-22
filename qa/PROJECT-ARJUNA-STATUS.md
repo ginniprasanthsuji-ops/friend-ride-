@@ -4,9 +4,12 @@
 - QA branch only; the cancelled Dark+Gold UI override has been removed from `index.html`.
 - Payment Provider/Cashfree integration explicitly deferred by user and excluded from release gate.
 - Main branch and live deployment remain untouched; PR #37 is not merged.
-- Latest verified engineering QA branch head: `d155d697fcdb68aa0a9a1700e56222548d0f4566`.
+- Latest verified QA branch head (status-doc commit): `a30d57653d80f6739dfc8901016ac5b91e26a6c9`; engineering fix commit remains `d155d697fcdb68aa0a9a1700e56222548d0f4566`.
 
 ## CI evidence (latest engineering commit)
+- Status-doc commit `a30d57653d80f6739dfc8901016ac5b91e26a6c9`: Regression run `45019723898`: **PASS** — browser regression and inline JavaScript/Version 10.1 validation.
+- Status-doc commit `a30d57653d80f6739dfc8901016ac5b91e26a6c9`: Quality Gate run `45019723887`: **PASS** — browser E2E, typecheck, core typecheck, runtime build, unit tests and core tests.
+- Both latest runs are green on `a30d576`; prior engineering runs on `d155d69` remain green.
 - FRIEND RIDE Quality Gate run `45019454329`: **PASS** — typecheck/unit and browser E2E.
 - FRIEND RIDE Quality Gate run `45019449598`: **PASS** — typecheck/unit and browser E2E.
 - FRIEND RIDE Regression run `45019449603`: **PASS** — browser regression.
