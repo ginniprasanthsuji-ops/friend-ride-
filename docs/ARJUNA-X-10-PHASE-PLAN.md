@@ -131,3 +131,8 @@ The active QA branch has no tracked `package-lock.json` or `npm-shrinkwrap.json`
 - CI audit report capture is pending: run `45066821254` (first workflow patch) and run `45066833414` (shell-safe follow-up) were both in progress at observation. Previous verified successful CI SHA remains `d00abcfc369adfee2355a702ca51a3562aa5a5ed`; it is not the latest branch head.
 - Exact remaining Phase 2 gates: lockfile + `npm ci` reproducibility (requires checkout/command runner); advisory details/remediation; official icon visual verification; device PWA install/update/offline/background push evidence; complete deployed RLS/SECDEF/Edge-secret/auth review; safe QA project app wiring or authorized integration test environment; owner policy for required checks/branch protection.
 - No runtime/backend/schema/auth/payment changes, main merge or deployment in this pass. Phases 3–10 remain gated.
+
+
+## Pass 50 — Quality gate result for audit-capture patch
+
+Run `45066821254` on workflow commit `f69e86b` completed SUCCESS (48 Playwright, 7 Node unit, 5 Vitest, typechecks/build). The follow-up shell-safe workflow commit `19fe31e` run `45066833414` was in progress when checked; its typecheck/unit job completed successfully, browser job still running. Audit capture artifact exists but its detailed advisory JSON cannot be downloaded through the current connector. Dependency vulnerabilities remain unresolved; Phase 2 is not accepted.
