@@ -165,4 +165,4 @@ Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-
 - [ ] Phase 2 final review/acceptance.
 
 ## Current status
-**Phase 2 — IN PROGRESS (inventory passes 1–2 committed).** Repository/config/docs, Blueprint workflow source, test specs and notification source files have been reviewed. Open items remain: full SPA routes/API/role permissions, visual logo/icon verification, and exact notification registration/dispatch audit. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
+**Phase 2 — IN PROGRESS (inventory passes 1–3 committed).** Repository/config/docs, Blueprint, notification source, test/CI configuration, migration source, and read-only QA script have been reviewed. Open items remain: complete SPA route/screen and API/RPC/role-permission inventory, visual logo verification, and exact notification registration/dispatch audit. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
