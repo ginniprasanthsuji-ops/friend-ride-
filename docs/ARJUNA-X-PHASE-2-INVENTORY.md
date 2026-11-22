@@ -755,3 +755,18 @@ Workflow definitions were freshly fetched and compared. No CI run was started, n
 ## Pass 28 — Test entry-point inventory re-confirmed
 
 Freshly fetched `package.json` from the active Phase 2 branch. Confirmed test/build/typecheck entry points: `npm test` (Playwright), `npm run test:unit` (Node test runner `tests/*.test.cjs`), `npm run typecheck`, `npm run typecheck:core`, `npm run build:runtime` (TypeScript output to `assets/ride-contact.js`), and `npm run test:core` (Vitest). These commands are inventory only; they were not executed in this continuation because no checkout/command runtime is available through the GitHub text connector. Before any runtime build, verify working tree/branch and generated artifact handling locally or in isolated CI to avoid unreviewed generated-file changes. Phase 2 remains IN PROGRESS / NOT ACCEPTED. No runtime app code, backend, schema, auth, payment, main branch, or deployment changed.
+
+
+## Pass 29 — QA spec coverage and test realism audit
+
+Freshly fetched QA source specs from the active Phase 2 branch:
+- `qa/friend-ride.spec.cjs`: checks page boot/role entry cards, menu role selection, role router self-test, diagnostics, and `test.html` simulation/live-only boundaries. These are source assertions and simulation checks; not live authentication or production runtime evidence.
+- `qa/tasko-laundry.spec.cjs`: checks TASKO/Laundry home entries, pricing labels, service type/unit selection, handler presence, and rejects unauthenticated booking. Handler presence/UI assertions do not prove backend persistence or provider/admin operations end-to-end.
+- `qa/tasko-laundry-main-regression.spec.js`: intentionally mocks user/auth/navigation and blocks external HTTPS requests; useful for isolated UI integration checks but not real Supabase or auth integration evidence.
+- Test files contain assumptions about legacy production-like UI and may need careful retargeting to the locked Navy/Orange/White visual direction without deleting functional checks.
+
+### Safe testing boundary
+Because the repository connector can fetch/edit text but cannot checkout, install dependencies, execute commands, or launch a browser in this session, runtime test execution remains unavailable. Before execution, set `FRIEND_RIDE_BASE_URL` to an isolated local server; do not allow tests to default to the live GitHub Pages URL. The targeted legacy main-regression spec hardcodes localhost 4173 and is intended to be run only with the local server prepared.
+
+### Pass 29 disposition
+Audit findings documented only. No QA tests changed, no tests executed, no live endpoints contacted, no runtime code/backend/schema/auth/payment/main/deployment changed. Phase 2 remains IN PROGRESS / NOT ACCEPTED.
