@@ -27,3 +27,18 @@ test('Project Arjuna marketplace/parcel schema design covers required safety con
     'no production SQL, no deploy, no merge'
   ]) assert.ok(design.includes(phrase), 'schema proposal must cover: ' + phrase);
 });
+
+
+test('Marketplace/parcel fallback plan avoids fake confirmations and unsafe bypasses', () => {
+  const file = path.join(__dirname, '..', 'qa', 'PROJECT-ARJUNA-MARKET-PARCEL-SCHEMA-DESIGN.md');
+  const design = fs.readFileSync(file, 'utf8');
+  for (const phrase of [
+    'Request draft — not submitted',
+    'do not fabricate catalogue, quote, order number, or confirmation',
+    'Draft / Support-assisted — not booked',
+    'No fake order/parcel confirmation or tracking ID',
+    'Sensitive contact/address data is not sent to external messaging without explicit user action',
+    'No unauthenticated partner/admin actions',
+    'No SQL applied, no production changes'
+  ]) assert.ok(design.includes(phrase), 'fallback safety plan must cover: ' + phrase);
+});
