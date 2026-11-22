@@ -145,3 +145,10 @@ Run `45066821254` on workflow commit `f69e86b` completed SUCCESS (48 Playwright,
 - Dependency audit evidence: **1 moderate + 2 critical**; raw artifact `14772085077` exists but package/advisory detail was not retrievable through the available connector. No dependency remediation or lockfile generation was done.
 - `main` and the active QA branch are diverged (QA **79 ahead / 1 behind**). The main-only commit `6484549` adds an unlinked `friendride-ui-v1.css` styling asset; no cherry-pick/merge was performed. It is not a completed Phase 3 rollout.
 - Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. Phase 3–10 remain gated. No runtime/backend/schema/auth/payment/main/deployment changes. No tests executed in this automation environment; only external CI logs were verified.
+
+
+## Latest continuation update (Pass 52 — CI action runtime refresh)
+
+- Updated active QA Quality Gate action references to `actions/checkout@v7`, `actions/setup-node@v7`, and `actions/upload-artifact@v7` in commit `8f74189030b15ac1c8a2785eb0baf436b1bf7843`, to address the Node 20 deprecation warning. Official action docs confirm v7/current Node 24 runtime support; this does not change the app's Node 22 target.
+- The commit is on the active QA branch. No new Actions run is visible for it; last verified success remains run #712 at SHA `19fe31e276a1c73d25fec779974b9d910d0c2104`. Workflow dispatch is not available through the current GitHub connector, and no local command runner exists, so the action refresh is **not runtime-verified**.
+- Phase 2 remains NOT ACCEPTED. Dependency audit counts (1 moderate + 2 critical), absent lockfile, inaccessible artifact detail, asset/device/security/QA-environment/branch-governance gates remain. Phase 3–10 are gated. No runtime/backend/schema/auth/payment/main/deployment changes.
