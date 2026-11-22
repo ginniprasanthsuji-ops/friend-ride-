@@ -261,7 +261,7 @@ body{padding-bottom:105px}
 <header class="topbar home-topbar">
  <button class="iconbtn menu-open" aria-label="Open side menu" onclick="openDrawer()">☰</button>
  <div class="location-head" onclick="useHomeLocation()"><b>📍 Your Location</b><span id="homeLocationText">Tap to detect your location</span></div>
- <button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))">♧<i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
+ <button class="notify-btn fr-home-profile-btn" id="frHomeProfileButton" aria-label="Profile" onclick="currentUser?showPage('profile'):openAuth('login','customer')"><img id="frHomeProfileImage" alt="Profile photo" hidden><span id="frHomeProfileAvatar" aria-hidden="true"></span></button><button class="notify-btn fr-notify-bell" aria-label="Notifications" onclick="requireLogin(()=>showPage('notifications'))"><svg class="fr-bell-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i></i><span id="frRideUnreadBadge" class="fr-ride-unread-badge" hidden>0</span></button>
 </header>
 <main>
 <section id="home" class="page active">
@@ -4451,7 +4451,11 @@ input,textarea,select{box-shadow:0 1px 2px #24104405}
 <style id="fr-home-profile-avatar-style">
 .home-topbar .fr-home-profile-btn{width:44px;height:44px;min-width:44px;padding:3px!important;border-radius:50%!important;display:grid;place-items:center;overflow:hidden;background:#fff!important;border:2px solid #fff!important;box-shadow:0 2px 8px #160b2a20}
 .home-topbar .fr-home-profile-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
-.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{width:100%;height:100%;display:grid;place-items:center}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{width:100%;height:100%;display:grid;place-items:center;overflow:hidden;border-radius:50%;background:linear-gradient(145deg,#fff4df,#e8d7ff)}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.home-topbar .fr-notify-bell{display:grid;place-items:center}
+.home-topbar .fr-notify-bell .fr-bell-svg{width:25px;height:25px;display:block;color:#211044}
+.home-topbar .fr-notify-bell i{right:5px;top:5px}
 .home-topbar .fr-home-profile-btn #frHomeProfileAvatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 </style>
 <script id="fr-home-profile-avatar">
