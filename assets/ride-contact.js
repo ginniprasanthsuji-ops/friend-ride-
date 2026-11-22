@@ -114,13 +114,13 @@ globalThis.FRRideContact = FRRideContact;
 (function frRouteInertSync(){
   const win=window;
   function sync(){
-    const pages=[...document.querySelectorAll<HTMLElement>('main .page')];
+    const pages=[...document.querySelectorAll('main .page')];
     if(!pages.length)return;
     const active=pages.filter(page=>page.classList.contains('active'));
     if(!active.length){pages.forEach(page=>{page.inert=true;page.setAttribute('aria-hidden','true');});return;}
     let target=active[0];
     if(active.length>1){
-      const navId=document.querySelector<HTMLElement>('.premium-bottom button.active[data-page]')?.dataset.page;
+      const navId=document.querySelector('.premium-bottom button.active[data-page]')?.dataset.page;
       target=active.find(page=>page.id===navId)||active[0];
     }
     pages.forEach(page=>{
@@ -143,7 +143,7 @@ globalThis.FRRideContact = FRRideContact;
 })();
 
 (function frSavedRideReadFallback(){
-  const win=window as any;
+  const win=window;
   function install(){
     const previous=win.loadMyRideTracking;
     if(typeof previous!=='function'||previous.__frSavedRideFallback)return;
@@ -159,7 +159,7 @@ globalThis.FRRideContact = FRRideContact;
         if(error)throw error;
         if(!data?.length){box.textContent='ఇంకా Rides లేవు.';return;}
         const trackingAllowed=typeof frCustomerTrackingStatusAllowed==='function' ? (status)=>frCustomerTrackingStatusAllowed(status) : (status)=>['accepted','confirmed','ongoing','in_progress','started'].includes(String(status||'').trim().toLowerCase());
-        const active=data.find((r)=>r.driver_id&&trackingAllowed(r.status))||data.find((r:any)=>!['completed','cancelled','canceled','rejected'].includes(String(r.status||'').toLowerCase()))||data[0];
+        const active=data.find((r)=>r.driver_id&&trackingAllowed(r.status))||data.find((r)=>!['completed','cancelled','canceled','rejected'].includes(String(r.status||'').toLowerCase()))||data[0];
         frActiveRideId=active.id;
         const esc=(value)=>typeof safe==='function'?safe(value):String(value??'');
         box.innerHTML='<b>'+esc(active.vehicle_type)+' • '+esc(active.status)+'</b><p>'+esc(active.pickup||active.pickup_text||'—')+' → '+esc(active.drop||active.drop_text||'—')+'</p><p>మీ Offer ₹'+esc(active.fare_offer)+' | Agreed ₹'+esc(active.agreed_fare??'—')+'</p><small>Ride ID: '+esc(active.id)+'</small>';
