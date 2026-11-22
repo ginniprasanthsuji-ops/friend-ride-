@@ -1,58 +1,55 @@
 # Project Arjuna — QA Status (2026-11-22)
 
-## Scope
+## Scope and safety
 - QA branch only; no Dark+Gold UI rollout.
-- Payment Provider/Cashfree integration explicitly deferred by user and excluded from this gate.
-- Do not merge Main or deploy live without evidence-backed PASS and user approval.
+- Payment Provider/Cashfree integration explicitly deferred by user and excluded from the release gate.
+- Main branch and live deployment remain untouched; PR #37 is not merged.
+- Latest QA branch head: `8a45b371f3c52c2ca690965e0d4fc0f2fa6fc506`.
 
-## Latest QA commit and CI
-- QA HEAD before this status refresh: `a320bb2320e64b8bd83ac8829df323ac9f59c043`.
-- PR #37 open, not merged.
-- Latest commit CI is confirmed **all PASS**:
-  - Quality Gate: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45013632475
-  - Quality Gate (second trigger): https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45013629981
-  - Regression: https://github.com/ginniprasanthsu-ops/friend-ride-/actions/runs/45013629987
-  - Workflow/source regression: https://github.com/ginniprasanthsu-ops/friend-ride-/actions/runs/45013632471
-  - TASKO/Laundry integration: https://github.com/ginniprasanthsu-ops/friend-ride-/actions/runs/45013632476
-- Previously evidenced browser Playwright: 52/52 PASS; TASKO/Laundry 4/4 PASS; typecheck, core tests/build PASS.
+## Latest CI
+- Previous commit `59a2c7e7` had Quality Gate, Regression, Workflow Regression, and TASKO/Laundry Integration PASS.
+- Latest commit `8a45b371` CI is pending at the time of this update:
+  - Regression: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45014608810
+  - Quality Gate: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45014608802
+- Earlier evidenced browser Playwright: 52/52 PASS; TASKO/Laundry 4/4 PASS; typecheck/core tests/build PASS. These are earlier evidence, not a substitute for latest CI.
 
-## Implemented QA fixes
-- Ride pickup/drop autocomplete and selected address/coordinate validation; GPS/map-pin coordinate persistence covered by regression.
-- Duplicate ride submit guard and success/error status.
-- Food page demo restaurant listings removed; honest empty-state plus regression guard.
-- Removed stale Dark+Gold UI test scope; allow OSM map tile requests in runtime diagnostics test.
-- Restored production Supabase config reference on QA branch (no secrets).
-- Registration privacy-policy link, corrected privacy contact and account deletion request page (manual process; not automated).
+## QA implementation completed
+- Pickup/drop autocomplete selection, coordinate validation, GPS/map pin persistence and ride submit payload regression.
+- Duplicate ride-submit guard and success/error state.
+- Food page demo listings removed; honest empty-state.
+- Removed stale Dark+Gold UI test scope; OSM map tile requests allowed in runtime diagnostics.
+- Privacy-policy link, corrected privacy contact and account-deletion request page (manual operational process).
+- QA-only schema migrations created/applied for core profiles, driver GPS, ride live tracking, notifications, SOS, push subscriptions, emergency contacts, driver KYC metadata, bank enquiries, service bookings, service-provider applications and feedback.
+- QA profile trigger blocks non-admin self-promotion of role/driver/partner approval fields.
+- Core ride lifecycle QA RPCs added: get_driver_requests, accept_ride, counter_offer_ride, accept_counter_offer, decline_counter_offer, nearby drivers, start ride, complete ride, and secure customer/driver detail RPCs. Payment provider behavior excluded.
+- Static regression tests added for schema RLS and workflow security conditions.
 
-## QA database parity — BLOCKER (read-only verified)
+## QA backend parity — current verified snapshot
 QA Supabase project `pqsangtvietawkfgpgfu`:
-- Public tables: 5 — `admin_users`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`, `rides`.
-- Public functions: 1 — `fr_create_notification_preferences_for_new_user`.
-- Frontend direct `.from()` inventory: 15 tables; 13 missing from QA. QA is materially behind production schema.
-- Frontend RPC inventory: 57 names; QA currently exposes only 1 public function. Static browser mocks cannot certify authenticated backend workflows.
-- Production metadata confirms many corresponding tables/functions exist, but production schema is **not** copied to QA. No production data was read and no production schema/security changes were made.
-- Next: prepare a reviewed, dependency-ordered QA-only schema/migration plan with ownership/RLS/grants/storage policy tests. Do not wholesale copy production or apply unreviewed migrations.
+- Frontend direct table inventory: **15/15 present** (includes `admin_users` and `rides`).
+- Public QA tables: **18 total; 18/18 have RLS enabled**. Policy metadata verified for all.
+- Frontend RPC inventory: **57 names**; 10 core ride RPCs implemented in QA, plus notification preference and profile guard functions. Approx. **47 frontend RPCs remain unimplemented/missing** in QA.
+- Core schema and RLS migrations are QA-only. Production schema, data, grants and policies were not changed.
+- Authenticated runtime integration tests still need test accounts and role-boundary execution; static checks/mock browser tests do not prove runtime authorization.
 
-## Security audit — findings only
-Production read-only audit previously found 23 RLS-enabled tables without policies, 6 SECURITY DEFINER functions callable by anon, 88 SECURITY DEFINER functions callable by authenticated, leaked-password protection disabled, plus performance warnings. No production changes made.
-A fresh read-only definition check confirmed several anon-executable SECURITY DEFINER RPCs appear intentionally public (approved-store listings, approved catalogue, published homepage feedback). `fr_get_platform_business_details()` also exposes legal name, toll-free number, GSTIN and timestamp; confirm fields are intended public and least-privilege ACLs before release. No grants/functions/settings changed.
+## Production security audit — read-only findings
+- Previously found 23 RLS-enabled tables without policies, 6 SECURITY DEFINER functions executable by anon, 88 SECURITY DEFINER functions executable by authenticated, leaked-password protection disabled, and performance advisor warnings.
+- Several anon-executable SECURITY DEFINER RPCs appear intentionally public (approved-store listings, approved catalogue, published homepage feedback). `fr_get_platform_business_details()` also exposes legal name, toll-free, GSTIN and timestamp; confirm intended public fields and least-privilege ACL before release.
+- No production grants, functions, policies, indexes or settings changed.
 
-## Remaining in-scope gates (payment excluded)
-1. QA schema parity + authenticated integration tests (major blocker).
-2. Live SMS OTP on real phones.
-3. Two-device ride lifecycle, GPS/background tracking.
+## Remaining gates (payment excluded)
+1. Implement/review remaining frontend RPCs and authenticated DB tests.
+2. Live SMS OTP send/verify on real phones.
+3. Two-device ride lifecycle, GPS and background tracking.
 4. Live/background push delivery.
-5. Food trusted server flow and approved partner/menu data (payment provider excluded).
-6. Driver/partner/service-provider KYC upload and admin review.
+5. Food trusted server order flow and approved partner/menu data (payment provider excluded).
+6. KYC storage buckets/private upload, document review, provider/driver approval workflows.
 7. CRM/user/referral/reward approval workflows.
-8. Security review of SECURITY DEFINER/RLS; leaked-password protection.
-9. Account-deletion operational process and legal/privacy review.
-10. Signed Android AAB, Play Console internal testing and store-policy checks.
+8. Production SECURITY DEFINER/RLS review and leaked-password protection.
+9. Account-deletion process and legal/privacy review.
+10. Signed Android AAB, Play Console internal testing and policy checks.
 
-## Progress
-- Approximate engineering progress: 80% for current scope (payment excluded). This is not release certification.
-- Latest CI on commit `a320bb23`: Quality Gate, Regression, Workflow/source Regression, and TASKO/Laundry Integration all PASS.
-- Backend environment parity and external/device/security/legal/store gates remain.
-
-## Release
-**NOT RELEASE READY.** Main untouched and live deployment not performed.
+## Progress estimate
+- Current engineering estimate: **84%** for the defined scope (payment provider excluded). Estimate only; not release certification.
+- Progress increased after QA table parity reached 15/15, all 18 QA public tables had RLS, and 10 core ride lifecycle RPCs were added.
+- Main/live untouched. **NOT RELEASE READY** until remaining gates and latest CI are verified.
