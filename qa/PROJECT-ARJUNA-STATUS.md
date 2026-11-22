@@ -116,3 +116,11 @@ QA Supabase project `pqsangtvietawkfgpgfu`:
 - Food-order read-policy migration statically links delivery assignment by `d.order_id = fr_food_orders.id`, restricts to customer, restaurant owner, assigned delivery partner, or admin, and drops direct client insert policy. Runtime cross-role tests remain required.
 - No production SQL, merge, or live deployment. No UI theme rollout was reintroduced.
 - Progress estimate remains **80% overall / 85% automated QA** (provisional; no increase based on these audits alone). **NOT RELEASE READY** until backend contracts and physical-device/integration release gates are completed.
+
+
+## Continued Project Arjuna — SOS coordinate hardening (2026-11-22)
+- CI on commit `bdddec1e5127ac60d517394d4e1feee55df75940` verified: FRIEND RIDE workflow regression, TASKO/Laundry regression, FRIEND RIDE Regression, and both Quality Gate runs all **PASS**.
+- Added QA-only migration `202611220006_arjuna_qa_sos_coordinate_constraints.sql` with database checks for latitude [-90,90], longitude [-180,180], and all-or-none coordinate pair. This migration is committed to QA branch only and **not applied to any database**.
+- Added static regression test `project-arjuna-sos-coordinate-constraints.test.cjs` to verify the migration guardrails.
+- New commits: migration `5ff7e56d` and test `e8c2c112`; verify CI for the latest commit before marking the new test green.
+- No merge, deployment, production DB change, or Dark+Gold UI work.
