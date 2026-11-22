@@ -27,58 +27,35 @@
 
 ## PROJECT ARJUNA latest recheck (2026-11-22)
 
-### CI evidence (current QA branch)
-- Source regression: **PASS** — run 203, commit `40abfcd` (latest source check at this checkpoint).
-- TASKO / Laundry / Admin integration: **PASS, 4/4** — run 152, commit `eb2b1ed`.
-- Quality Gate typecheck/unit/core/runtime: **PASS** — run 374 typecheck job.
-- Full Browser E2E: **RUNNING** — run 375, commit `40abfcd`; results not yet available.
-- Earlier Browser E2E failure: 46 PASS / 13 FAIL (run 355). The failing 12 UI checks were stale Dark+Gold/native-home expectations; the remaining TASKO count assertion was stale (8 vs 10). Those tests were replaced with current UI/route assertions and a five-tab navigation check. Do not treat the earlier failure as current-pass evidence.
+### CI evidence
+- Source Regression: **PASS** — run 224, commit `32fa1ea`.
+- TASKO / Laundry / Admin integration: **PASS, 4/4** — run 171, commit `c9fec7a`.
+- Dependency audit: **0 vulnerabilities reported** during TASKO CI install on run 171 after Vitest was upgraded to `4.1.11`.
+- Quality Gate: **RERUN QUEUED** — run 398, commit `32fa1ea`; previous runs 395–397 failed at npm install because npm 10.9.9 / flags hit the Arborist `edgesOut` error. CI install was changed to pin npm 10.8.2 without extra flags; new run pending.
+- Full Browser E2E: **PENDING** — the 46 PASS / 13 FAIL result from run 355 is obsolete (stale Dark+Gold/native-home assertions and TASKO option-count). The UI regression tests were rewritten and booking/GPS/TASKO mapping tests added; latest full suite is pending.
 
 ### Implemented on QA branch only
-- Fixed source regression workflow to stop checking deleted `learn-teach.js`; Source Regression now passes.
-- QA-only premium teal/blue theme override and PWA theme colors; primary navigation is reduced to Home / Services / Cart / Orders / Profile (Categories tab removed).
-- Default 3D avatar now renders even when the user is not logged in or has no profile photo; bell SVG is retained.
-- VidyaSetu / event-personal services routes removed; TASKO/GIGGER options retain Beauty Makeover and Halwai.
-- Ride booking submission handler now inserts to `rides` and carries pickup coordinates; browser tests mock Supabase responses to avoid writes.
-- QA branch Supabase URL/key is isolated to the QA project; production project URL is no longer embedded in the QA branch.
+- Source regression no longer checks the deleted `learn-teach.js`; Source Regression passes.
+- QA-only teal/royal-blue theme and PWA colors; five-tab navigation Home / Services / Cart / Orders / Profile; Categories tab removed.
+- Default 3D avatar renders even before login or without a profile photo; notification bell SVG retained.
+- VidyaSetu and event/personal service routes removed; TASKO/GIGGER Beauty Makeover and Halwai categories retained.
+- Ride booking insert carries pickup/drop coordinates; tests mock Supabase requests to prevent any backend writes.
+- QA branch uses the QA Supabase project URL/key, not the production project.
 
-### Booking, TASKO and UI test coverage
-- Pickup/Drop autocomplete: Photon suggestions and Nominatim fallback (mocked) — in Browser E2E.
-- Map initialization, direct pickup/drop pins, markers, GPS reverse-geocoding, fare control, OSM→CARTO tile fallback, and mocked ride submission/tracking transition — in Browser E2E; **latest run pending**.
-- Beauty Makeover/Halwai category options, mocked request-row category persistence, Admin list mapping, and TASKO/Laundry control-centre regression — in Browser E2E; **latest run pending**.
-- Bell SVG/default avatar, five-tab nav, teal-blue theme, removed services, and retained routes — in Browser E2E; **latest run pending**.
+### Added verification coverage (full Browser E2E pending)
+- Pickup/Drop autocomplete (Photon with Nominatim fallback), map resize/visibility, pin/marker coordinate updates, GPS reverse-geocoding, fare controls, OSM→CARTO fallback, booking payload and tracking transition.
+- Beauty Makeover/Halwai selection, request payload persistence, and Admin category display.
+- Notification bell SVG, default avatar, five-tab nav, color theme, removed routes and retained route activation.
 
-### QA backend / security findings (read-only)
+### QA backend / security (read-only)
 - QA Supabase project `pqsangtvietawkfgpgfu` is ACTIVE_HEALTHY but currently has only four public tables: `admin_users`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`. Core `profiles`, `rides`, driver, shop/order, parcel, service-provider and booking tables are absent.
-- All four existing public tables have RLS enabled.
-- Policies observed: `admin_users_self_select` restricts authenticated users to their own row; notification events are own-user SELECT; notification preferences and device tokens are own-user ALL with matching `USING` and `WITH CHECK`.
-- No RLS policies for core ride/order tables can be reviewed in QA because those tables are missing. No live QA ride writes, dispatch/acceptance, driver GPS or role authorization were exercised.
-- npm install reported **3 dependency audit findings (1 moderate, 2 critical)**; severity details have not yet been triaged.
+- RLS is enabled on all four existing tables. Policies reviewed: `admin_users_self_select` (own row), notification events (own-user SELECT), preferences and device tokens (own-user ALL with matching `USING` / `WITH CHECK`).
+- Core-table RLS cannot be reviewed or live booking/dispatch/OTP/push/payment tested against QA until the schema is provisioned. Browser booking tests are mocked and are not production integration certification.
+- `vitest` is now `^4.1.11` (patched for the identified Vitest advisories). CI install audit reported zero vulnerabilities at run 171. No committed lockfile remains a reproducibility gap.
 
 ### Release gate
-- **BLOCKED**: full Browser E2E results pending; QA Supabase schema incomplete for live booking; no real OTP/push/payment/physical GPS tests; security/RLS review for core tables cannot be completed; signed AAB and Play Store validation remain outstanding.
-- Main/live remains untouched. Do not merge/deploy until all required checks pass and live integration/security blockers are resolved.
-
-## PROJECT ARJUNA progress checkpoint (2026-11-22, 06:26 UTC)
-
-| Release work | Evidence/status |
-|---|---|
-| Source regression | PASS on latest checked commit `08320991f69bf8c35c870aa1dbd0f7f781b5063f` |
-| Typecheck / Unit / Core | PASS on latest completed quality run; current latest quality gate queued/running |
-| TASKO/Laundry integration | Earlier PASS; latest run pending |
-| TASKO categories | 10 options expected; Beauty Makeover and Halwai – Sweets & Food Preparation asserted in Playwright |
-| Current premium home UI | Tests updated to actual existing home markup/theme; obsolete Dark Gold selectors removed from this regression spec |
-| Notification bell | Source verified: dedicated SVG bell and accessible Notifications button |
-| Default profile avatar | Source verified: 3D avatar fallback before login and when photo missing; added browser test |
-| Unwanted services | Static source scan: VidyaSetu, Telugu VidyaSetu string, Catering Services, DJ – Sound & Lights, and learn-teach.js all 0 occurrences; Beauty Makeover and Halwai remain only as TASKO/GIGGER categories |
-| Pickup/drop map | Existing Playwright coverage: map init, Photon suggestions, two markers, pin selection, Nominatim fallback |
-| GPS | Added mocked GPS browser test; latest browser result pending |
-| Fare | Fare offer increment test added |
-| Ride insert mapping | Added mocked payload test; pickup/drop text and both coordinate pairs now included in frontend insert row |
-| Real database booking/dispatch | BLOCKED/NOT TESTED: QA Supabase project has only admin_users + notification tables and lacks profiles/rides core schema. The app's mocked insert test does not prove persistence. |
-| Live/main | Untouched; no merge/deployment |
-
-**Frontend ride request mapping correction:** added `pickup_text`, `drop_text`, and `drop_lat/drop_lng` to the ride insert payload while preserving pickup coordinates and fare. Corrected the booking handler to be async and repaired the invoice HTML string that caused inline JavaScript syntax regression. Latest source regression passed after these corrections.
+- **BLOCKED**: full Browser E2E pending; QA Supabase core schema incomplete; no real OTP/push/payment/physical GPS tests; core RLS review incomplete; signed AAB/Play Store checks outstanding.
+- Main/live remains untouched. Merge/deploy is not authorized until all required checks pass and the real booking/backend/security blockers are resolved.
 
 This is a working release gate, not the final release-ready certificate. A feature is not marked PASS merely because a label, button, database table, RPC name, source marker, or mock simulation exists.
 
