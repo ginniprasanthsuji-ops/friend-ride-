@@ -579,3 +579,18 @@ This pass materially reduces the root-HTML inspection gap, but full source remai
 
 ### Phase 2 disposition
 This audit confirms an additional test-authority mismatch. The 58 route IDs remain a provisional source list until runtime DOM IDs, role access, navigation and all route pages are reconciled. The legacy Dark-Gold regression is not authoritative for ARJUNA X. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; Phase 3 implementation cannot be considered complete based on this source audit alone. No runtime/backend/schema/auth/payment/main/live changes made.
+
+
+## Pass 18 — PWA manifests, service-worker and notification opt-in source audit
+
+### Source verified
+- The root HTML links `manifest.webmanifest` (verified in Pass 16). That manifest uses relative `./` start URL/scope, standalone display, portrait orientation, light colors, and icon references to `icons/icon-192.png` and `icons/icon-512.png`.
+- A second `manifest.json` exists with absolute GitHub Pages subpath `/friend-ride-/`, dark colors, standalone display, and no icon declarations. It is not the manifest linked in inspected root HTML; the duplicate is a configuration drift risk.
+- The repository tree contains only two image assets by extension: `icons/icon-192.png` and `icons/icon-512.png`. The official supplied logo binary was not verified; icon image contents were not visually inspected in this pass.
+- `service-worker.js` imports Firebase compat SDK and registers an FCM background handler, plus generic PushEvent handling that skips payloads identified as FCM to avoid duplicate handling. It also includes install/activate behavior.
+- `firebase-messaging-sw.js` is a second FCM worker with its own background handler and notification click handling.
+- `sw.js` is a third service-worker source with generic push notification and click handling, plus cache cleanup. These three worker sources create a potential overlapping-worker/configuration risk; runtime registration scope/active worker was not verified.
+- `fcm-web-push.js` source contains Firebase config, VAPID public key, Supabase URL and publishable/anon client key, and a notification opt-in UI. These are public client configuration values, not private server credentials. Actual token registration, server delivery, locked/background/closed-app behavior and device permission lifecycle remain unverified.
+
+### Phase 2 status
+PWA and push source inventory is more complete, but runtime registration/delivery proof, exact manifest-to-deployment behavior, icon/logo visual verification, and server-side notification contract evidence remain open. Phase 2 is **IN PROGRESS / NOT ACCEPTED**. No runtime code, backend, schema, auth, payment, main or live deployment changed.
