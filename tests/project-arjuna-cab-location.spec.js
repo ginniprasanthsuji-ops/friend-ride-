@@ -42,6 +42,7 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     await expect(page.locator('#frDropSuggestions button').first()).toContainText('Naupada', { timeout: 10000 });
     await page.locator('#frDropSuggestions button').first().click();
     await expect(page.locator('#drop')).toHaveAttribute('data-selected-address', /Naupada/);
+    await expect(page.locator('#drop')).toHaveAttribute('data-selected-address', 'Naupada railway station, Andhra Pradesh');
     await expect(page.locator('#drop')).toHaveAttribute('data-selected-lat', '18.25');
     await expect(page.locator('#drop')).toHaveAttribute('data-selected-lon', '84.35');
   });
@@ -69,6 +70,7 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     await expect(page.locator('#frPickupHint')).toContainText('Manual location saved');
 
     await page.evaluate(() => window.frArjunaManualCoordinates('drop'));
+    await page.locator('#frDropSuggestions .fr-manual-address').fill('Naupada railway station, Andhra Pradesh');
     await page.locator('#frDropSuggestions .fr-manual-lat').fill('18.25');
     await page.locator('#frDropSuggestions .fr-manual-lon').fill('84.35');
     await page.locator('#frDropSuggestions .fr-manual-apply').click();
