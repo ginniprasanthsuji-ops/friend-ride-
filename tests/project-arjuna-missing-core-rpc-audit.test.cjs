@@ -39,5 +39,5 @@ test('Project Arjuna missing core RPC gaps remain explicitly documented until im
       rpc + ' must not be marked implemented without a reviewed migration');
   }
   assert.match(report, /Security \/ design requirements before implementation/i);
-  assert.match(report, /No schema or runtime writes/i);
+  assert.match(report, /No production schema changes/i);
 });
