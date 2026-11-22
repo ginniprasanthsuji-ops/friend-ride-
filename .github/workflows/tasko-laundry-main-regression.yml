@@ -23,8 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install -g npm@10.8.2
-      - name: Install Playwright and audit dependencies
+      - name: Install Playwright
         run: npm install --no-save @playwright/test
       - name: Validate inline JavaScript
         run: node scripts/check-inline-js.mjs
