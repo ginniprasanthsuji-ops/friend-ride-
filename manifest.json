@@ -1,0 +1,9 @@
+{
+  "name": "FRIEND RIDE",
+  "short_name": "FRIEND RIDE",
+  "start_url": "/friend-ride-/",
+  "scope": "/friend-ride-/",
+  "display": "standalone",
+  "background_color": "#101827",
+  "theme_color": "#101827"
+}
