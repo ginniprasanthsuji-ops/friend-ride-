@@ -147,6 +147,31 @@ Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-
 - `index.html` is a very large SPA; connector extraction did not provide reliable complete source for route/screen enumeration. Route IDs, navigation handlers, role visibility and API/RPC calls remain a high-priority gap. Do not guess.
 - Icon files exist but were not rendered/visually inspected. User-supplied logo is authoritative; repo binary equivalence remains unverified.
 
+
+## Pass 4 — SPA route/page IDs and API/RPC inventory (source extraction)
+
+### Actual SPA page IDs
+Source extraction from `index.html` identified **58 page IDs**:
+`home`, `cycleDelivery`, `explore`, `eventServices`, `serviceProviderRegister`, `bankingServices`, `ride`, `scheduled`, `goods`, `parcel`, `food`, `restaurantCatalogue`, `shops`, `shopping`, `homeServices`, `laundryServices`, `storeBrowse`, `customerCatalogue`, `marketCart`, `technicianRegister`, `parcelRelease`, `orders`, `tracking`, `wallet`, `offers`, `customerDashboard`, `driverDashboard`, `partnerDashboard`, `partnerOrders`, `products`, `inventory`, `gst`, `catalogue`, `subscription`, `referrals`, `partnerReports`, `adminDashboard`, `crmDashboard`, `users`, `referralApprovals`, `cashRewardApprovals`, `paymentApprovals`, `partnerPaymentSettings`, `platformBusinessSettings`, `driverApprovals`, `driverDocumentReviews`, `partnerApprovals`, `adminOrders`, `reports`, `settings`, `profile`, `notifications`, `support`, `about`, `cart`, `frSupportFeedback`, `learnTeach`, `frSuperHub`.
+
+### Source-extracted Supabase table names (22 unique)
+`driver-kyc-documents`, `profiles`, `partner-qr`, `provider-payment-qr`, `admin_users`, `fr_driver_documents`, `rides`, `driver-profile-photos`, `driver_locations`, `ride_live_locations`, `customer-profile-photos`, `fr_emergency_contacts`, `fr_ride_sos`, `fr_ride_notifications`, `fr_app_notifications`, `fr_push_subscriptions`, `fr-partner-catalogue`, `fr-service-provider-kyc`, `fr_service_provider_applications`, `fr_service_bookings`, `fr_bank_enquiries`, `fr_support_feedback`.
+
+### Source-extracted RPC functions (58 unique)
+`admin_list_driver_documents`, `admin_review_driver_document`, `fr_admin_list_partner_applications`, `fr_admin_review_partner`, `fr_partner_save_payment_details`, `admin_list_driver_applications`, `admin_review_driver`, `fr_partner_list_market_orders`, `fr_partner_update_market_order`, `fr_get_platform_business_details`, `fr_admin_save_platform_business_details`, `fr_partner_save_location`, `fr_customer_list_approved_stores_geo`, `fr_customer_store_payment_options`, `fr_customer_place_market_order`, `fr_register_driver_partner`, `fr_customer_list_nearby_drivers`, `get_ride_driver_details`, `get_ride_payment_details_v1`, `fr_get_ride_payment_state`, `fr_customer_create_ride_payment`, `fr_customer_submit_ride_transaction`, `fr_driver_confirm_ride_payment`, `get_ride_customer_details_v2`, `accept_counter_offer`, `decline_counter_offer`, `fr_driver_save_payment_qr`, `get_driver_requests`, `fr_driver_start_ride`, `fr_driver_complete_ride`, `accept_ride`, `counter_offer_ride`, `fr_partner_save_catalogue_item`, `fr_partner_list_catalogue`, `fr_customer_list_partner_catalogue`, `fr_partner_quote_market_order`, `fr_customer_list_market_orders`, `fr_customer_accept_market_quote`, `fr_customer_counter_market_order`, `fr_tasko_provider_transition`, `fr_tasko_submit_payment`, `fr_tasko_admin_verify_payment`, `fr_customer_list_approved_service_providers`, `fr_customer_create_parcel_request`, `fr_driver_list_parcel_requests`, `fr_driver_accept_parcel`, `fr_driver_confirm_parcel_payment`, `fr_customer_list_parcel_requests`, `fr_customer_get_parcel_delivery_otp`, `fr_driver_verify_parcel_delivery_otp`, `fr_customer_create_service_request`, `fr_customer_place_multi_market_order`, `fr_public_homepage_feedback`, `fr_partner_confirm_market_payment`, `fr_customer_market_payment_details`, `fr_customer_tick_market_payment`, `fr_laundry_provider_transition`.
+
+### Edge Function / external endpoint findings
+- No direct `supabase.functions.invoke(...)` function names were found in the extraction pattern.
+- Nominatim OpenStreetMap search/reverse-geocode URLs are used.
+- Leaflet and OpenStreetMap tile URLs are present.
+- Supabase URL and client library are referenced in app source.
+- WhatsApp share/contact links are present.
+- Finance services link to FINEDUCATION websites.
+- API inventory is source-call-name inventory only; argument contracts, role authorization and backend definitions still require separate review.
+
+### Role mapping limitation
+Page IDs and headings were extracted. Role-to-page permission rules are not yet fully verified; admin/partner/driver screen names suggest intended ownership but cannot be used as proof of access-control enforcement. Phase 2 must inspect the routing/visibility guards and test role sessions before closing.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
@@ -158,11 +183,11 @@ Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-
 - [x] User Blueprint roles/modules/workflow source reviewed.
 - [x] Notification source files reviewed (registration and duplicate-worker risks recorded).
 - [x] Existing QA specs reviewed for simulated vs actual workflow evidence.\n- [x] CI workflow/test evidence classification and branch-trigger gaps reviewed.\n- [x] Migration files reviewed at source level; none applied.\n- [x] Read-only SQL QA script reviewed; not executed.
-- [ ] Full route/screen inventory from `index.html` (source too large for connector read; needs a safer local/source inspection method).
+- [x] Full SPA page ID inventory (58 screens) source-extracted; role-access verification remains open.
 - [ ] Visual inspection of icon assets and confirmation whether uploaded logo is already present.
-- [ ] Exact API/RPC/Edge Function and role-permission inventory.
+- [x] Supabase tables/RPC/external endpoints source-call inventory extracted; detailed contracts and role-permission verification remain open.
 - [ ] Notification registration/dispatch path audit.
 - [ ] Phase 2 final review/acceptance.
 
 ## Current status
-**Phase 2 — IN PROGRESS (inventory passes 1–3 committed).** Repository/config/docs, Blueprint, notification source, test/CI configuration, migration source, and read-only QA script have been reviewed. Open items remain: complete SPA route/screen and API/RPC/role-permission inventory, visual logo verification, and exact notification registration/dispatch audit. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
+**Phase 2 — IN PROGRESS (inventory passes 1–4 committed).** Repository/config/docs, Blueprint, notification source, test/CI configuration, migration source, and read-only QA script have been reviewed. Open items remain: role-access guard verification and API/RPC contracts, visual logo verification, and exact notification registration/dispatch audit. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
