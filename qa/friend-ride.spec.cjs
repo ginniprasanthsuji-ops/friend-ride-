@@ -490,8 +490,8 @@ test('Home screen exposes separate TASKO / GIGGER and Laundry service tiles and 
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => window.showPage('home'));
-  const tasko = page.locator('#home button[data-fr-native-route="homeServices"]');
-  const laundry = page.locator('#home button[data-fr-native-route="laundryServices"]');
+  const tasko = page.locator('#home .fr-native-service.home-pro-service[data-fr-native-route="homeServices"]');
+  const laundry = page.locator('#home .fr-native-service.home-pro-service[data-fr-native-route="laundryServices"]');
   await expect(tasko).toHaveCount(1);
   await expect(laundry).toHaveCount(1);
   await expect(tasko).toBeVisible();
