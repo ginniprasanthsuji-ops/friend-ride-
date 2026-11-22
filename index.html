@@ -4472,16 +4472,7 @@ window.frRefreshHomeProfileAvatar=async function(){
       return result;
     };
   }
-  // Learning tab must open only its Learning screen, not leave another dashboard active.
-  const learnTab=document.querySelector('.premium-bottom button[data-page="learnTeach"]');
-  if(learnTab){
-    learnTab.onclick=function(){
-      if(typeof window.frLearnTeachOpen==='function') window.frLearnTeachOpen();
-      else window.showPage('learnTeach');
-      isolatePage('learnTeach');
-    };
-  }
-  // Ensure initial state is also isolated and Home remains the default page.
+  // Ensure initial state is isolated and Home remains the default page.
   const active=document.querySelector('main .page.active');
   isolatePage(active&&active.id?active.id:'home');
   // Repair any later script that accidentally marks more than one page active.
