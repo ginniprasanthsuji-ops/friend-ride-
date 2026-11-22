@@ -56,6 +56,32 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lon', '');
   });
 
+
+  test('manual coordinate fallback works when location services are unavailable', async ({ page }) => {
+    await page.evaluate(() => window.frArjunaManualCoordinates('pickup'));
+    await page.locator('#frPickupSuggestions .fr-manual-lat').fill('18.3');
+    await page.locator('#frPickupSuggestions .fr-manual-lon').fill('84.2');
+    await page.locator('#frPickupSuggestions .fr-manual-apply').click();
+    await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lat', '18.3');
+    await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lon', '84.2');
+    await expect(page.locator('#frPickupHint')).toContainText('Manual coordinates saved');
+
+    await page.evaluate(() => window.frArjunaManualCoordinates('drop'));
+    await page.locator('#frDropSuggestions .fr-manual-lat').fill('18.25');
+    await page.locator('#frDropSuggestions .fr-manual-lon').fill('84.35');
+    await page.locator('#frDropSuggestions .fr-manual-apply').click();
+    await expect(page.locator('#drop')).toHaveAttribute('data-selected-lat', '18.25');
+    await expect(page.locator('#drop')).toHaveAttribute('data-selected-lon', '84.35');
+  });
+
+  test('manual coordinate fallback rejects out-of-range coordinates', async ({ page }) => {
+    await page.evaluate(() => window.frArjunaManualCoordinates('pickup'));
+    await page.locator('#frPickupSuggestions .fr-manual-lat').fill('91');
+    await page.locator('#frPickupSuggestions .fr-manual-lon').fill('200');
+    await page.locator('#frPickupSuggestions .fr-manual-apply').click();
+    await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lat', '');
+    await expect(page.locator('#frPickupHint')).toContainText('Valid coordinates required');
+  });
   test('GPS button reverse-geocodes and sets pickup address and coordinates', async ({ page }) => {
     await page.context().grantPermissions(['geolocation']);
     await page.context().setGeolocation({ latitude: 18.3, longitude: 84.2 });
