@@ -26,5 +26,14 @@ const checks=[
  ['Customer active ride contact rendering','frRenderCustomerRideDriverAndPayment(active)']
 ];
 for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
+const retiredModuleMigration=fs.readFileSync('supabase/migrations/20261122000000_remove_vidyasetu_module.sql','utf8');
+const retiredModuleChecks=[
+ ['Legacy Learn-Teach accounts cleanup','DROP TABLE IF EXISTS public.learn_teach_accounts CASCADE;'],
+ ['Legacy Learn-Teach courses cleanup','DROP TABLE IF EXISTS public.learn_teach_courses CASCADE;'],
+ ['Legacy Learn-Teach notifications cleanup','DROP TABLE IF EXISTS public.learn_teach_notifications CASCADE;'],
+ ['Legacy Learn-Teach requests cleanup','DROP TABLE IF EXISTS public.learn_teach_requests CASCADE;'],
+ ['Legacy Learn-Teach admin RPC cleanup','DROP FUNCTION IF EXISTS public.fr_learn_teach_is_admin();']
+];
+for(const [label,token] of retiredModuleChecks){if(retiredModuleMigration.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
 if(failed)process.exit(1);
 console.log(`Checked ${blocks.length} inline scripts.`);
