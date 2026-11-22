@@ -37,7 +37,7 @@
 5. **Ride Lifecycle & Safety:** booking/quote/matching/driver states, authorized customer-driver details, OTP start, tracking, completion, cancellation/retry/duplicate protection, QR/payment regression.
 6. **Customer Service Modules:** food, shops/grocery, catalogs/multi-shop, parcel/goods, home services; regression and module-by-module UI completion.
 7. **TASKO, Laundry & VIDYA SETU:** service pricing/workflows, partner/provider controls, education role isolation, homework/assignment and supported Zoom integration; regression.
-8. **Roles, Admin & Finance/Integrations:** customer/driver/partner/provider/admin permissions, CRM/operations, finance/digital-service integrations and eligibility/redirect disclosures.
+8. **Roles, Admin & Finance/Integrations:** customer/driver/partner/provider/admin permissions, Admin-configurable subscription gateway, GST configuration/invoice tax behavior (disabled until registration), Admin toll-free number shown on homepage, future toll-free provider integration, CRM/operations, finance/digital-service integrations and eligibility/redirect disclosures.
 9. **Notification System:** audit and reconcile push providers/workers, foreground/background/closed-app behavior, Telugu text/voice, settings, categories, deep links, marketing consent/frequency, dedupe, actual-device QA.
 10. **Full Regression & Release Gate:** Playwright, CI, route/role/service regression, accessibility, mobile responsiveness/performance, security checks, release report; only after evidence and user approval consider merge/deployment.
 
