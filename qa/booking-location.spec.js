@@ -57,4 +57,29 @@ test.describe('Ride booking map and location suggestions', () => {
     await map.click({position:{x:200,y:130}});
     await expect(page.locator('#drop')).toHaveValue(/Mock selected map location|\d{2}\.\d+/,{timeout:10000});
   });
+  test('Nominatim fallback appears when Photon returns zero results', async ({ page }) => {
+    await page.route('https://photon.komoot.io/api/**', route =>
+      route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({features:[]})}));
+    await page.route('https://nominatim.openstreetmap.org/**', route => {
+      const url = new URL(route.request().url());
+      const body = url.pathname.includes('/reverse')
+        ? {display_name:'Fallback map point'}
+        : [{lat:'18.605',lon:'84.255',display_name:'Fallback Address, Tekkali, India'}];
+      return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
+    });
+    const transparentTile = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/a7sAAAAASUVORK5CYII=','base64');
+    await page.route('https://*.tile.openstreetmap.org/**', route =>
+      route.fulfill({status:200,contentType:'image/png',body:transparentTile}));
+    await page.route('https://*.basemaps.cartocdn.com/**', route =>
+      route.fulfill({status:200,contentType:'image/png',body:transparentTile}));
+    await page.goto('/');
+    await page.evaluate(() => window.showPage('ride'));
+    await expect(page.locator('#frBookingMap.leaflet-container')).toBeVisible({timeout:15000});
+    await page.locator('#pickup').fill('Fallback Address');
+    await expect(page.locator('#frPickupSuggestions button').first()).toContainText('Fallback Address, Tekkali, India',{timeout:15000});
+    await page.locator('#frPickupSuggestions button').first().click();
+    await expect(page.locator('#pickup')).toHaveValue(/Fallback Address, Tekkali/);
+    await expect(page.locator('#frBookingMap .leaflet-marker-icon')).toHaveCount(1);
+  });
+
 });
