@@ -172,6 +172,35 @@ Source extraction from `index.html` identified **58 page IDs**:
 ### Role mapping limitation
 Page IDs and headings were extracted. Role-to-page permission rules are not yet fully verified; admin/partner/driver screen names suggest intended ownership but cannot be used as proof of access-control enforcement. Phase 2 must inspect the routing/visibility guards and test role sessions before closing.
 
+
+## Pass 5 — Notification pipeline source audit
+
+### Registration and delivery mechanisms found
+- `fcm-web-push.js` creates opt-in UI, registers `service-worker.js`, requests permission from a user click, gets FCM token and calls token-registration Edge endpoint with authenticated session.
+- `service-worker.js` contains Firebase background-message handling plus a generic Web Push `push` listener, classification, Telugu notification text and vibration patterns; it suppresses duplicate generic handling for FCM payloads.
+- `firebase-messaging-sw.js` is another Firebase worker/background handler and click handler, but no registration call was found in inspected source files.
+- `sw.js` is a separate generic push worker with notification click navigation and cache cleanup.
+- `fr-notification-fallback.js` reads `fr_notification_events`, Realtime subscription plus 60-second polling, de-duplicates per active session, displays in-app/browser notifications, and is not push delivery when the app is closed.
+
+### Risks confirmed
+- Multiple worker scripts are present; registration path and scope must be consolidated/confirmed. FCM opt-in code points at `service-worker.js`, while separate Firebase worker exists.
+- Firebase config/token registration contract and Edge Function deployment were not verified; code presence is not proof push delivery works.
+- Closed-app delivery, Android/iOS PWA behavior, voice/TTS announcement, quiet-hours/marketing preferences, notification preferences and cross-path deduplication are not verified.
+- Notification fallback does not guarantee background/closed-app delivery; polling requires active app runtime.
+
+### Notification audit checklist
+- [x] Opt-in/user gesture permission request inspected.
+- [x] Worker registration path inspected in opt-in file.
+- [x] FCM background handler(s) inspected.
+- [x] Generic push handler and duplicate guard inspected.
+- [x] Realtime/poll fallback inspected.
+- [ ] Confirm worker registration sites and active scope in full source.
+- [ ] Confirm deployed token-registration endpoint and storage contract.
+- [ ] Confirm dispatch sender/server path and payload shape.
+- [ ] Verify Telugu TTS/voice and sound behavior (no speechSynthesis found in inspected worker/fallback files).
+- [ ] Verify app foreground/background/closed state on real Android device.
+- [ ] Verify role-specific notification routing, deduplication, quiet hours and consent controls.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
@@ -186,8 +215,8 @@ Page IDs and headings were extracted. Role-to-page permission rules are not yet 
 - [x] Full SPA page ID inventory (58 screens) source-extracted; role-access verification remains open.
 - [ ] Visual inspection of icon assets and confirmation whether uploaded logo is already present.
 - [x] Supabase tables/RPC/external endpoints source-call inventory extracted; detailed contracts and role-permission verification remain open.
-- [ ] Notification registration/dispatch path audit.
+- [x] Notification registration/worker/fallback source audit pass completed; dispatch/deployment/device verification remains open.
 - [ ] Phase 2 final review/acceptance.
 
 ## Current status
-**Phase 2 — IN PROGRESS (inventory passes 1–4 committed).** Repository/config/docs, Blueprint, notification source, test/CI configuration, migration source, and read-only QA script have been reviewed. Open items remain: role-access guard verification and API/RPC contracts, visual logo verification, and exact notification registration/dispatch audit. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
+**Phase 2 — IN PROGRESS (inventory passes 1–4 committed).** Repository/config/docs, Blueprint, notification source, test/CI configuration, migration source, and read-only QA script have been reviewed. Open items remain: role-access guard verification and API/RPC contracts, visual logo verification, and notification dispatch/deployment/device verification. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
