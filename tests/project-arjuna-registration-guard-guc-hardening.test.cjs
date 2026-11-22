@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 test('Project Arjuna registration guard cannot be bypassed with user-settable GUC', () => {
- const sql = fs.readFileSync(path.join(__dirname,'..','supabase','migrations','202611220017_arjuna_registration_guard_guc_hardening.sql'),'utf8');
+ const sql = fs.readFileSync(path.join(__dirname,'..','supabase','migrations','202611220018_arjuna_registration_guard_guc_hardening.sql'),'utf8');
  assert.match(sql,/qa_role_registration_authorizations/);
  assert.match(sql,/transaction_id=pg_catalog\.txid_current\(\)/i);
  assert.match(sql,/revoke all on table public\.qa_role_registration_authorizations from public,anon,authenticated/i);
