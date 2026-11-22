@@ -1127,3 +1127,14 @@ No dependency version was changed. Vitest 5 is a major upgrade; with no lockfile
 CI formatter follow-up: Pass 58 corrected literal escaped-newline output to actual line breaks and simplified Markdown cell escaping. Commit `de245b7` fixes newline rendering; commit `a996817` improved cell/advisory text escaping; commit `07cf768` removes a wrongly escaped newline regex in favor of character-code normalization. The workflow source was fetched after `07cf768` and the exact corrected line verified. Run 716 (on `de245b7`) typecheck/unit job was success and browser job still running at this evidence snapshot. Run 717 (on `a996817`) was in progress; Run 718 for `07cf768` had not yet been verified. Do not claim these follow-up runs PASS until completed.
 
 Phase 2 remains NOT ACCEPTED. No runtime app, backend, Supabase schema/data, auth, payment, main, or deployment changes.
+
+
+## Pass 59 — CI formatter correction, failures and latest run status
+
+- Run 716 (`de245b7`) completed SUCCESS: both CI jobs passed. It verified real-newline summary formatting, but its advisory-cell escaping was subsequently improved.
+- Runs 717 (`a996817`) and 718 (`07cf768`) failed in the audit-summary Node step with `SyntaxError: Unexpected token '?'` because a stale duplicate ternary expression remained after the partial edit. Browser jobs completed PASS in both; typecheck/build/unit/core steps were skipped after summary-step failure. This failure was identified from actual logs and corrected by commit `62d9df5`, which replaced the whole title expression block.
+- Synthetic summary-helper test in this tool runtime (not repository/CI test): 4 checks PASS—real newline output, pipe escaping, bracket escaping, and fixture rows. It used synthetic values and did not execute the workflow script itself.
+- Run 719 on `62d9df5`: audit summary step PASS; typecheck, core typecheck, runtime build PASS; unit tests were still in progress at the last check. Browser job was also in progress. The connector's job-list endpoint returned 404 while run status remained in-progress, so final Run 719 conclusion is not verified yet.
+- Latest QA branch head at this pass: `62d9df585f89a3e54f2ea084df50b9b6d70f5479`; comparison: 101 ahead / 1 behind main, diverged. Documentation commits add to ahead count; do not reconcile again until fresh comparison.
+
+Phase 2 remains NOT ACCEPTED. No app/runtime/backend/schema/auth/payment/main/deployment changes.
