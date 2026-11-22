@@ -61,3 +61,27 @@ drop policy if exists "hs private owner upload" on storage.objects;
 create policy "hs private owner upload" on storage.objects for insert to authenticated with check (bucket_id='home-service-private' and (storage.foldername(name))[1]=auth.uid()::text);
 drop policy if exists "hs private owner read" on storage.objects;
 create policy "hs private owner read" on storage.objects for select to authenticated using (bucket_id='home-service-private' and ((storage.foldername(name))[1]=auth.uid()::text or exists(select 1 from public.admin_users au where au.user_id=auth.uid())));
+
+-- Guard provider updates at DB level: only approved providers may perform valid status transitions.
+create or replace function public.fr_home_service_booking_guard_update()
+returns trigger language plpgsql as $$
+declare is_admin boolean;
+begin
+ is_admin := exists(select 1 from public.admin_users au where au.user_id=auth.uid());
+ if is_admin then return new; end if;
+ if old.provider_id is distinct from auth.uid() or new.provider_id is distinct from old.provider_id then
+  raise exception 'Provider assignment is immutable for provider updates';
+ end if;
+ if exists(select 1 from public.fr_home_service_applications a where a.user_id=auth.uid() and a.status='approved') is false then
+  raise exception 'Approved technician required';
+ end if;
+ if new.customer_id is distinct from old.customer_id or new.profession is distinct from old.profession or new.address is distinct from old.address or new.work_details is distinct from old.work_details or new.preferred_date is distinct from old.preferred_date or new.preferred_time is distinct from old.preferred_time or new.advance_required is distinct from old.advance_required or new.payment_status is distinct from old.payment_status or new.provider_note is distinct from old.provider_note then
+  raise exception 'Provider may only update booking status';
+ end if;
+ if not ((old.status='requested' and new.status in ('accepted','rejected')) or (old.status='accepted' and new.status='started') or (old.status='started' and new.status='completed')) then
+  raise exception 'Invalid booking status transition';
+ end if;
+ return new;
+end; $$;
+drop trigger if exists fr_home_service_booking_guard on public.fr_home_service_bookings;
+create trigger fr_home_service_booking_guard before update on public.fr_home_service_bookings for each row execute function public.fr_home_service_booking_guard_update();
