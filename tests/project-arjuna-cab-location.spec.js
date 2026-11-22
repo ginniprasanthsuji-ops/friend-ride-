@@ -130,8 +130,17 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     expect(diagnostics.drop).not.toBeNull();
     expect(diagnostics.pickup.address).toContain('Tekkali');
     expect(diagnostics.drop.address).toContain('Naupada');
-    await page.evaluate(async () => { await saveRideRequest(); });
-    await expect(page.locator('#message')).toContainText('successfully', { timeout: 10000 });
+    await page.evaluate(() => { window.__qaRideGuardBefore = window.__frArjunaRideSubmitting; });
+    expect(await page.evaluate(() => window.__qaRideGuardBefore)).not.toBeTruthy();
+    await page.evaluate(() => { saveRideRequest(); });
+    await expect(page.locator('#message')).toContainText('successfully', {
+      timeout: 10000,
+      message: 'Ride submit failed. Diagnostics: ' + JSON.stringify({
+        guard: page.evaluate(() => window.__frArjunaRideSubmitting),
+        message: page.locator('#message').textContent(),
+        payload: page.evaluate(() => window.__qaRidePayload)
+      })
+    });
     submitted = await page.evaluate(() => window.__qaRidePayload?.payload);
     expect(await page.evaluate(() => window.__qaRidePayload?.table)).toBe('rides');
     expect(submitted).toMatchObject({
