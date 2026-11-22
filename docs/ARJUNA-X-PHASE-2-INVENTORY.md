@@ -1047,3 +1047,11 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - CI evidence blocker for run #712 is **closed as verified evidence**; the dependency remediation/artifact-detail blocker remains open.
 - Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. Exact open gates: lockfile and `npm ci` reproducibility (requires real checkout/install/commit), package-level advisory review/remediation, official icon/logo visual verification, device PWA install/update/offline and background/closed-app push, full deployed auth/RLS/SECDEF/Edge secret review, safe QA backend wiring/integration E2E, and owner-approved branch protection/required checks.
 - No app/runtime/backend/schema/auth/payment/main/deployment changes. No tests run in this automation environment; CI logs were read-only evidence.
+
+
+## Pass 52 — Active Quality Gate action runtime refresh (CI execution pending)
+
+- Reviewed the active `.github/workflows/quality.yml` after Pass 51. Updated only this QA workflow's `actions/checkout`, `actions/setup-node`, and `actions/upload-artifact` references from major v4 to v7, based on current official action documentation indicating Node 24 runtime support. `package.json` has no `packageManager` field; setup-node v7 automatic npm caching should therefore not be activated by package-manager detection. App Node target remains 22; this action-runtime refresh does not change app runtime.
+- Commit **`8f74189030b15ac1c8a2785eb0baf436b1bf7843`** contains the workflow update.
+- Fresh branch API confirms this commit is the QA head. The Actions runs list still shows latest successful run #712 on `19fe31e`; **no new run for `8f74189` is visible**. The available GitHub connector is read-only for workflow dispatch; cannot manually start a run or execute local commands. Do not claim this workflow upgrade tested. Stop at this access boundary; wait for a push-triggered run/owner action.
+- Pass 52 disposition: safe workflow-only patch committed on QA branch; runtime verification **PENDING / NOT RUN**. Phase 2 remains NOT ACCEPTED. No app/runtime/backend/schema/auth/payment/main/deployment changes.
