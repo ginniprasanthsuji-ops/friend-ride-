@@ -112,3 +112,8 @@ Read-only catalog screen: production 88 authenticated-executable SECURITY DEFINE
 ## Pass 45 summary reconciliation
 
 Top-level Phase 2 inventory/gate/checklist now reflects current verified evidence and open blockers. Latest CI run `45056922006` passed 48 Playwright tests and all typecheck/build/unit/core checks; local PWA registration/manifest/icon HTTP smoke passed. Phase 2 remains not accepted due visual icon/logo, device PWA/push, full security audit, production-vs-QA wiring and branch governance.
+
+
+## Pass 46 dependency/toolchain risk
+
+CI run `45056922006` succeeded but `npm install` reported 3 dependency advisories (1 moderate, 2 critical); advisory details were not available in the run output. The same run warned that GitHub Actions Node 20 runtime is being deprecated/forced to Node 24, and emitted a `punycode` deprecation warning. This is an unresolved Phase 2 tooling risk; no automatic dependency upgrade was attempted. Phase 2 remains gated.
