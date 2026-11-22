@@ -4433,7 +4433,7 @@ async function frAdminAssignLaundry(id){
 (function(){
  const $=id=>document.getElementById(id); let timers={pickup:null,drop:null}, controllers={pickup:null,drop:null}, pinMode=null;
  const fields={pickup:{input:'pickup',list:'frPickupSuggestions',hint:'frPickupHint'},drop:{input:'drop',list:'frDropSuggestions',hint:'frDropHint'}};
- function hint(kind,msg){const el=$(fields[kind].hint);if(el)el.textContent=msg;}
+ function hint(kind,msg){const el=$(fields[kind].hint);if(el)el.textContent=msg;}window.frArjunaLocationHint=hint;
  function clearCoords(kind){if(kind==='pickup'){pickupCoords=null;if(pickupMarker&&rideMap){rideMap.removeLayer(pickupMarker);pickupMarker=null;}}else{dropCoords=null;if(dropMarker&&rideMap){rideMap.removeLayer(dropMarker);dropMarker=null;}}}
  function close(kind){const list=$(fields[kind].list);if(list){list.classList.remove('open');list.innerHTML='';}}
  function render(kind,items){const list=$(fields[kind].list);if(!list)return;list.innerHTML='';if(!items.length){list.innerHTML='<div class="fr-suggestion-status">No places found. మరింత వివరంగా టైప్ చేయండి.</div>';list.classList.add('open');return;}
