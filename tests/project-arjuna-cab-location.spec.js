@@ -76,15 +76,12 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
 
   test('Find Drivers sends selected coordinates in the ride request payload', async ({ page }) => {
     let submitted = null;
-    await page.route('https://pqsangtvietawkfgpgfu.supabase.co/rest/v1/rides**', async route => {
-      if (route.request().method() === 'POST') {
-        submitted = route.request().postDataJSON();
-        await route.fulfill({
-          status: 201,
-          headers: { 'content-type': 'application/json', 'content-range': '0-0/1' },
-          body: JSON.stringify([{ id: 'qa-ride-001' }])
-        });
-      } else await route.continue();
+    await page.evaluate(() => {
+      // Stub Supabase client for deterministic browser QA; no real ride is created.
+      window.sb = { from: (table) => ({ insert: (payload) => ({ select: () => ({ single: async () => {
+        window.__qaRidePayload = { table, payload };
+        return { data: { id: 'qa-ride-001' }, error: null };
+      }})})}) };
     });
     await page.locator('#pickup').fill('Tekkali');
     await expect(page.locator('#frPickupSuggestions button').first()).toContainText('Tekkali', { timeout: 10000 });
@@ -99,6 +96,8 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     });
     await page.locator('#ride button[onclick="saveRideRequest()"]').click();
     await expect(page.locator('#message')).toContainText('successfully', { timeout: 10000 });
+    submitted = await page.evaluate(() => window.__qaRidePayload?.payload);
+    expect(await page.evaluate(() => window.__qaRidePayload?.table)).toBe('rides');
     expect(submitted).toMatchObject({
       customer_id: '11111111-1111-4111-8111-111111111111',
       vehicle_type: 'Auto',
