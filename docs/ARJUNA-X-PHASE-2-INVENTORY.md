@@ -393,3 +393,72 @@ get_ride_payment_details_v1
 - Confirm payment session/QR expiry behavior server-side and align UI text with the locked requirement.
 - Complete role guard/navigation and backend authorization matrix; do not infer security from client code.
 - Continue notification registration/dispatch and logo/icon visual inspection; Phase 2 acceptance remains open.
+
+
+## Pass 12 — RPC definition availability in tracked SQL
+
+### Method and result
+- Reviewed the six tracked SQL files discovered in the repository tree: one ride-contact fix SQL, four service/marketplace migrations plus the provider-policy migration, and the read-only QA SQL was not counted as function-definition source.
+- Extracted **8 function definitions** from the five SQL source files inspected (including one helper not called by the client): `get_ride_driver_details, get_ride_customer_details, get_ride_customer_details_v2, fr_tasko_provider_transition, fr_tasko_submit_payment, fr_tasko_admin_verify_payment, fr_laundry_provider_transition, fr_learn_teach_is_admin`.
+- Only **6 of the 57 client RPC names** have a matching definition in the inspected tracked SQL files: `fr_laundry_provider_transition, fr_tasko_admin_verify_payment, fr_tasko_provider_transition, fr_tasko_submit_payment, get_ride_customer_details_v2, get_ride_driver_details`.
+- **51 client RPC names are not defined in the inspected tracked SQL source**. This is a source-availability gap only. It does not prove the RPCs are missing from the Supabase project; many may be pre-existing deployed functions or maintained elsewhere.
+
+### Names without a definition in the inspected tracked SQL set
+```text
+accept_counter_offer
+accept_ride
+admin_list_driver_applications
+admin_list_driver_documents
+admin_review_driver
+admin_review_driver_document
+counter_offer_ride
+decline_counter_offer
+fr_admin_list_partner_applications
+fr_admin_review_partner
+fr_admin_save_platform_business_details
+fr_customer_accept_market_quote
+fr_customer_counter_market_order
+fr_customer_create_parcel_request
+fr_customer_create_ride_payment
+fr_customer_create_service_request
+fr_customer_get_parcel_delivery_otp
+fr_customer_list_approved_service_providers
+fr_customer_list_approved_stores_geo
+fr_customer_list_market_orders
+fr_customer_list_nearby_drivers
+fr_customer_list_parcel_requests
+fr_customer_list_partner_catalogue
+fr_customer_market_payment_details
+fr_customer_place_market_order
+fr_customer_place_multi_market_order
+fr_customer_store_payment_options
+fr_customer_submit_ride_transaction
+fr_customer_tick_market_payment
+fr_driver_accept_parcel
+fr_driver_complete_ride
+fr_driver_confirm_parcel_payment
+fr_driver_confirm_ride_payment
+fr_driver_list_parcel_requests
+fr_driver_save_payment_qr
+fr_driver_start_ride
+fr_driver_verify_parcel_delivery_otp
+fr_get_platform_business_details
+fr_get_ride_payment_state
+fr_partner_confirm_market_payment
+fr_partner_list_catalogue
+fr_partner_list_market_orders
+fr_partner_quote_market_order
+fr_partner_save_catalogue_item
+fr_partner_save_location
+fr_partner_save_payment_details
+fr_partner_update_market_order
+fr_public_homepage_feedback
+fr_register_driver_partner
+get_driver_requests
+get_ride_payment_details_v1
+```
+
+### Release/security implications
+- The repo alone is insufficient to prove exact argument contracts, deployed function existence, SECURITY DEFINER behavior, grants, or authorization for these RPCs.
+- No live database or deployed function metadata was accessed. No SQL was run or applied.
+- Phase 2 cannot mark the RPC/backend authorization audit complete until the function source/contract evidence is available or this limitation is formally accepted for Phase 2, with live QA still required in Phase 10.
