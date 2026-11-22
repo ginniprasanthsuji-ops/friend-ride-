@@ -910,3 +910,15 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 ### Pass 38 disposition
 - Live project/migration/catalog/security metadata and sampled function contracts were reviewed read-only. Phase 2 remains **IN PROGRESS / NOT ACCEPTED** because icon binaries are not visually verified, PWA worker/install/update/push runtime evidence is incomplete, the full SECDEF/RLS/Edge secret audit is incomplete, full live role/permission E2E is not proven, and QA branch protection/required checks remain disabled (owner approval/policy needed). Phase 3 stays gated. No backend/runtime/schema/auth/payment/main/deployment changes.
+
+
+## Pass 39 — PWA/service-worker registration source reconciliation
+
+- Re-fetched all JavaScript/TypeScript source paths in the tracked tree and scanned for `serviceWorker.register` and worker filename references. Found **3 registration call sites in root `index.html`** and **1 in `fcm-web-push.js`; all four register `./service-worker.js`**. No registration references to `sw.js` or `firebase-messaging-sw.js` were found in the scanned source files. Those two workers appear legacy/unreferenced in source, but runtime registration cannot be proven without browser inspection.
+- Active `service-worker.js` source includes Firebase messaging import, `skipWaiting`, `clients.claim`, generic `push` handling and `notificationclick`. The separate `firebase-messaging-sw.js` also contains an FCM background handler and click handler; `sw.js` has generic push/click and cache cleanup, but neither is referenced by the source scan.
+- `fcm-web-push.js` registers `service-worker.js`, passes the registration to `messaging.getToken`, and POSTs the token to `fr-notification-register-token` using the user's Supabase access token. Deployed token-registration Edge Function has `verify_jwt=true` and calls `auth.getUser()`. This confirms source/deployed contract alignment, not a successful device token or background delivery.
+- `fr-notification-fallback.js` is a separate Realtime + 60-second polling fallback, deduplicates by event ID in memory, displays an in-app card, and can show browser notifications. Permission remains user-gesture-driven. Delivery/duplication/closed-app/device matrix is untested.
+- Active `manifest.webmanifest` is linked and uses relative scope/start_url, standalone portrait, light `#f4f6fb` theme/background. Duplicate `manifest.json` is not linked in root source and has absolute `/friend-ride-/` scope/start_url plus `#101827` colors. The duplicate should be retired/reconciled only in a reviewed Phase 3 PWA/UI patch. PNG icon binary artwork remains unverified.
+
+### Pass 39 disposition
+- Source registration/worker/manifest inventory only. PWA install/update/runtime registration and actual push delivery remain **NOT VERIFIED**. No runtime/backend/schema/auth/payment/main/deployment changes. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.

@@ -76,3 +76,8 @@
 - Read-only Supabase evidence: production and QA projects active/healthy; production 79 migrations, 85 public tables all RLS-enabled (62 policy tables, 23 with no policies); QA 25 migrations, 21 tables all RLS-enabled and all with policies. Security Advisor warns of public/authenticated SECDEF grants and production leaked-password protection disabled. Sampled 18 production SECDEF functions have expected role/ownership checks; full audit remains incomplete. No backend changes.
 - Remaining Phase 2 acceptance: visual icon verification, PWA install/worker/update/push runtime proof, complete RLS/SECDEF/Edge-secret review, full live role/permission E2E, and owner-approved branch protection/required checks.
 - Phases 3–10 remain gated; main merge and live deployment remain prohibited.
+
+
+## Pass 39 PWA source update
+
+Source scan confirms four registration call sites all target `service-worker.js`; `sw.js` and `firebase-messaging-sw.js` appear unreferenced in scanned source. Token registration is JWT-protected in deployed production/QA; dispatch is secret-header protected in source, secret configuration unverified. PWA runtime installability, active worker/scope/update behavior, and actual push/background delivery remain Phase 2 acceptance blockers.
