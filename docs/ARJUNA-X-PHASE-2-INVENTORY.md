@@ -995,3 +995,11 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 ### Pass 46 disposition
 - Recorded as an **open Phase 2 dependency/tooling risk**; no package versions, lockfile, workflow actions, app runtime, backend, schema, auth, payment, main or deployment changed.
 - Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. Next safe step: get an isolated checkout/command runner and run `npm audit --json` against the exact branch/lockfile, then review dependency tree and upgrade candidates in a separate QA patch with tests.
+
+
+## Pass 47 — Lockfile absence and non-reproducible install risk
+
+- Fresh fetch confirmed `package.json` exists and declares Playwright `^1.56.0`, Vitest `^3.2.4`, Node types `^22.15.0`, TypeScript `5.8.3`; repository fetch returned 404 for both `package-lock.json` and `npm-shrinkwrap.json` on this branch (interpreted as absent tracked files, not runtime proof).
+- CI workflows use `npm install`, not `npm ci`. Without a committed lockfile, semver ranges may resolve to different dependency graphs between runs, complicating repeatable test evidence and the Pass 46 advisory triage.
+- Do not fabricate a lockfile or switch workflows to `npm ci` yet: lockfile generation requires a real package install/command environment and then a fresh isolated full CI run. No dependency files/workflows changed in this pass.
+- Phase 2 acceptance adds a reproducible dependency install/lockfile requirement. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; no runtime/backend/schema/auth/payment/main/deployment changes.
