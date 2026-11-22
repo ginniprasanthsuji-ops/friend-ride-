@@ -12,5 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node scripts/check-inline-js.mjs
-      - run: node --check learn-teach.js
+      - name: Validate inline JavaScript
+        run: node scripts/check-inline-js.mjs
+      # learn-teach.js was intentionally removed with VidyaSetu.
+      # Do not require a deleted compatibility stub in regression checks.
