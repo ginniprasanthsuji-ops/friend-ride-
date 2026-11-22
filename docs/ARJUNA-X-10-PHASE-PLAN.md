@@ -91,3 +91,8 @@ Added isolated Playwright check for active local service-worker registration, ma
 ## Pass 41 PWA smoke evidence
 
 CI run `45056922006` passed **48 Playwright tests** and all typecheck/build/unit/core checks. Local browser verified active root service worker, linked manifest, standalone metadata and HTTP access to declared icons. This is not device installability or push-delivery proof. Phase 2 remains in progress.
+
+
+## Pass 42 environment wiring
+
+The app source hardcodes production Supabase ref `fglyplxcczdjtfwobtzh`; the separate QA project `pqsangtvietawkfgpgfu` is not referenced. Current CI blocks external API traffic. Full live QA integration E2E is therefore not available until an approved QA-only environment selector/config is introduced. Phase 2 remains gated; no backend/app configuration change made.

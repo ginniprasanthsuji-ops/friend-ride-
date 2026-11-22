@@ -941,3 +941,13 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 ### Pass 41 disposition
 - Local PWA registration, manifest and icon HTTP availability verified through isolated Playwright. Phase 2 remains **IN PROGRESS / NOT ACCEPTED** because remaining PWA/device/asset, full security audit and repository governance evidence are incomplete. Phase 3 remains gated. No app runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 42 — Production/QA Supabase environment wiring audit
+
+- Fresh source scan confirms root `index.html` and `fcm-web-push.js` hardcode the production Supabase project ref `fglyplxcczdjtfwobtzh`. The separate active/healthy QA project `pqsangtvietawkfgpgfu` is not referenced by these app sources; no environment selector was found in the inspected files.
+- Consequence: unblocked local/manual app tests could target production unless they explicitly block or mock Supabase requests. Current CI test route/network guards abort external API traffic, so these CI browser runs did not mutate backend data. No real auth/payment/ride API integration tests were executed.
+- A future approved QA-only config selector is needed before full live E2E against the QA Supabase project. Do not replace production URL/key or alter auth/payment/backend contracts in Phase 2.
+
+### Pass 42 disposition
+- Source/config audit only. QA backend remains separate and active/healthy but is not wired into app source. This is a Phase 2 acceptance blocker for live integration testing. No runtime/backend/schema/auth/payment/main/deployment changes.
