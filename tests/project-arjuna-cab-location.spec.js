@@ -65,6 +65,22 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lon', '84.2');
   });
 
+  test('map-pin selection reverse-geocodes and writes drop coordinates', async ({ page }) => {
+    await page.route('https://photon.komoot.io/reverse**', async route => {
+      await route.fulfill({ json: { type: 'FeatureCollection', features: [photonFeature(dropResult)] } });
+    });
+    await page.evaluate(() => window.frChooseMapPin('drop'));
+    await expect(page.locator('#frDropHint')).toContainText('tap', { timeout: 5000 }).catch(() => {});
+    const pinReady = await page.evaluate(() => typeof window.__frArjunaPinClick === 'function');
+    expect(pinReady).toBeTruthy();
+    await page.evaluate(async () => {
+      await window.__frArjunaPinClick({ latlng: { lat: 18.25, lng: 84.35 } });
+    });
+    await expect(page.locator('#drop')).toHaveAttribute('data-selected-address', /Naupada/);
+    await expect(page.locator('#drop')).toHaveAttribute('data-selected-lat', '18.25');
+    await expect(page.locator('#drop')).toHaveAttribute('data-selected-lon', '84.35');
+  });
+
   test('GPS/map-pin handlers and booking map are available', async ({ page }) => {
     const handlers = await page.evaluate(() => ({
       gps: typeof window.frUseMyLocation === 'function',
