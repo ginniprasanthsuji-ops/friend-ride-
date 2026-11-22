@@ -4347,35 +4347,7 @@ async function frAdminAssignLaundry(id){
 }
 </script>
 
-<style id="fr-project-arjuna-premium-theme">
-:root{--purple:#1766d8;--purple2:#13a9a2;--navy:#10243e;--orange:#f2a62a;--bg:#f2f8fb;--ink:#142d45;--muted:#61788b;--line:#dce8f0;--green:#16875f;--red:#d94c57;--white:#fff;--gold:#f6c44b}
-body{background:radial-gradient(circle at 10% 0%,#dff7f5 0,transparent 34%),linear-gradient(180deg,#f7fbff 0%,#edf5fa 100%);color:var(--ink)}
-.home-topbar{background:linear-gradient(110deg,#10243e 0%,#174eaa 56%,#11a8a1 100%)!important;color:#f7fbff!important;border:0!important;box-shadow:0 8px 22px #10365b25}
-.home-topbar .location-head b,.home-topbar .location-head span{color:#f7fbff!important}
-.home-topbar .menu-open{background:#ffffff18!important;color:#fff!important;border:1px solid #ffffff28!important}
-.home-topbar .notify-btn{background:#ffffff18!important;color:#fff!important;border:1px solid #ffffff28!important;border-radius:14px}
-.home-topbar .fr-home-profile-btn{background:#f7fbff!important;border:2px solid #fff!important}
-.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{background:linear-gradient(145deg,#bff4ef,#dbe9ff)!important}
-.home-topbar .fr-notify-bell .fr-bell-svg{color:#fff!important}
-#home .home-banner{background:radial-gradient(circle at 82% 10%,#8ce5dc 0,transparent 27%),linear-gradient(125deg,#1455bd 0%,#167fd3 48%,#12a7a0 100%)!important;box-shadow:0 14px 28px #1766d825}
-.home-service,.home-pro-service,.home-catalog-shortcuts button,.store-card,.home-more-grid button,.tile,.fr-category-card{border-color:#d8e8f0!important;box-shadow:0 7px 18px #133d5b0c}
-.home-pro-service{background:linear-gradient(145deg,#f5fbff,#e7f8f6)!important}
-.home-service{background:linear-gradient(145deg,#fff,#f3faff)!important}
-.home-more-grid button{background:linear-gradient(145deg,#fff,#eff8fc)!important}
-.home-section-title h2{color:#12314b}
-.btn.purple,.btn.primary,.purple.btn,.button-primary{background:linear-gradient(105deg,#1766d8,#13a9a2)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 6px 15px #1766d820}
-.btn.light{border-color:#d5e7f0!important;background:linear-gradient(145deg,#fff,#f0f8fb)!important;color:#1a4264!important}
-.home-pro-service .home-pro-art{background:linear-gradient(145deg,#dff5f6,#e5edff)!important}
-.fr-premium-hero{background:radial-gradient(circle at 78% 30%,#50d2c8 0,transparent 30%),linear-gradient(125deg,#10243e 0%,#1756b4 54%,#0d9c97 100%)!important}
-.premium-bottom{grid-template-columns:repeat(5,minmax(0,1fr))!important;background:#fff!important;border-top:1px solid #dbe8f0!important;box-shadow:0 -8px 24px #133d5b12!important}
-.premium-bottom button{color:#506b80!important}
-.premium-bottom button.active{color:#117f91!important}
-.premium-bottom button.active span{background:#dff6f4!important}
-.premium-bottom .cart-tab span{background:linear-gradient(135deg,#1766d8,#13a9a2)!important;border-color:#fff!important}
-.fr-poster{box-shadow:0 10px 22px #173f5b14!important}
-.card,.home-catalog-shortcuts button,.store-card,.feature-box,.offer-card{border-color:#dce8f0!important}
-:focus-visible{outline:3px solid #13a9a255!important;outline-offset:2px}
-</style>
+
 </body>
 </html>
 <style>
@@ -4535,3 +4507,32 @@ window.frRefreshHomeProfileAvatar=async function(){
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
+<style id="fr-project-arjuna-premium-theme">
+:root{--purple:#1766d8;--purple2:#13a9a2;--navy:#10243e;--orange:#f2a62a;--bg:#f2f8fb;--ink:#142d45;--muted:#61788b;--line:#dce8f0;--green:#16875f;--red:#d94c57;--white:#fff;--gold:#f6c44b}
+body{background:radial-gradient(circle at 10% 0%,#dff7f5 0,transparent 34%),linear-gradient(180deg,#f7fbff 0%,#edf5fa 100%);color:var(--ink)}
+.home-topbar{background:linear-gradient(110deg,#10243e 0%,#174eaa 56%,#11a8a1 100%)!important;color:#f7fbff!important;border:0!important;box-shadow:0 8px 22px #10365b25}
+.home-topbar .location-head b,.home-topbar .location-head span{color:#f7fbff!important}
+.home-topbar .menu-open{background:#ffffff18!important;color:#fff!important;border:1px solid #ffffff28!important}
+.home-topbar .notify-btn{background:#ffffff18!important;color:#fff!important;border:1px solid #ffffff28!important;border-radius:14px}
+.home-topbar .fr-home-profile-btn{background:#f7fbff!important;border:2px solid #fff!important}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{background:linear-gradient(145deg,#bff4ef,#dbe9ff)!important}
+.home-topbar .fr-notify-bell .fr-bell-svg{color:#fff!important}
+#home .home-banner{background:radial-gradient(circle at 82% 10%,#8ce5dc 0,transparent 27%),linear-gradient(125deg,#1455bd 0%,#167fd3 48%,#12a7a0 100%)!important;box-shadow:0 14px 28px #1766d825}
+.home-service,.home-pro-service,.home-catalog-shortcuts button,.store-card,.home-more-grid button,.tile,.fr-category-card{border-color:#d8e8f0!important;box-shadow:0 7px 18px #133d5b0c}
+.home-pro-service{background:linear-gradient(145deg,#f5fbff,#e7f8f6)!important}
+.home-service{background:linear-gradient(145deg,#fff,#f3faff)!important}
+.home-more-grid button{background:linear-gradient(145deg,#fff,#eff8fc)!important}
+.home-section-title h2{color:#12314b}
+.btn.purple,.btn.primary,.purple.btn,.button-primary{background:linear-gradient(105deg,#1766d8,#13a9a2)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 6px 15px #1766d820}
+.btn.light{border-color:#d5e7f0!important;background:linear-gradient(145deg,#fff,#f0f8fb)!important;color:#1a4264!important}
+.home-pro-service .home-pro-art{background:linear-gradient(145deg,#dff5f6,#e5edff)!important}
+.fr-premium-hero{background:radial-gradient(circle at 78% 30%,#50d2c8 0,transparent 30%),linear-gradient(125deg,#10243e 0%,#1756b4 54%,#0d9c97 100%)!important}
+.premium-bottom{grid-template-columns:repeat(5,minmax(0,1fr))!important;background:#fff!important;border-top:1px solid #dbe8f0!important;box-shadow:0 -8px 24px #133d5b12!important}
+.premium-bottom button{color:#506b80!important}
+.premium-bottom button.active{color:#117f91!important}
+.premium-bottom button.active span{background:#dff6f4!important}
+.premium-bottom .cart-tab span{background:linear-gradient(135deg,#1766d8,#13a9a2)!important;border-color:#fff!important}
+.fr-poster{box-shadow:0 10px 22px #173f5b14!important}
+.card,.home-catalog-shortcuts button,.store-card,.feature-box,.offer-card{border-color:#dce8f0!important}
+:focus-visible{outline:3px solid #13a9a255!important;outline-offset:2px}
+</style>
