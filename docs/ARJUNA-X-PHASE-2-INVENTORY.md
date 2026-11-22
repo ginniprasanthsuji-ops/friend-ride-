@@ -733,3 +733,20 @@ Manifest integration review is documented; icon binary integration and install v
 
 ### Pass 26 disposition
 Phase 2 acceptance remains **IN PROGRESS / NOT ACCEPTED**. No runtime app code, binary assets, manifest, backend, schema, auth, payment, main branch, or deployment changed. No tests were run; no test results are claimed.
+
+
+## Pass 27 — CI workflow trigger and local-test safety review (fresh fetch)
+
+### Freshly verified workflow facts
+- `.github/workflows/quality.yml`: push/PR only to `main`; Node 22; npm install; typecheck/core typecheck/runtime build/unit/core tests; Chromium Playwright against local server with explicit `FRIEND_RIDE_BASE_URL`.
+- `.github/workflows/friend-ride-regression.yml`: push to `main` and legacy `ui/full-native-dark-gold-2026-11-21`; manual dispatch; scheduled run at 02:17 UTC daily; Node 22; inline-JS check; local server; `npm test`; reports uploaded.
+- `.github/workflows/friend-ride-workflow-regression.yml`: push legacy `pr/workflow-integration-nov08`, PR main; Node 22; inline JS and Learn/Teach syntax checks only.
+- `.github/workflows/tasko-laundry-main-regression.yml`: push legacy `integration/tasko-laundry-main-safe`, PR main with paths; Node 20; targeted TASKO/Laundry/Admin Playwright.
+
+### Branch safety decision
+- Active ARJUNA X Phase 2 branch remains absent from these push trigger lists. The general regression workflow supports manual dispatch and scheduled runs, but no run evidence was retrieved in this pass.
+- Do not broaden push triggers to ARJUNA X yet: the general regression suite includes legacy theme assertions and workflow/test readiness has not been verified against this branch. First retarget the suite preserving functional checks, then align branch triggers as a separate reviewed change.
+- CI Node version inconsistency (20 vs 22) remains; do not change toolchain without checking lockfile/dependency compatibility.
+
+### Pass 27 disposition
+Workflow definitions were freshly fetched and compared. No CI run was started, no workflow file was modified, and no test result is claimed. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No app runtime, backend, schema, auth, payment, main or deployment changed.
