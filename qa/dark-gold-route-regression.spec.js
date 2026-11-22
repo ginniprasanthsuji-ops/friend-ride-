@@ -94,7 +94,8 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     await page.evaluate(() => window.showPage('home'));
     await page.locator('#home .home-pro-service').filter({hasText:'LAUNDRY SERVICES'}).click();
     await expect(page.locator('#laundryServices')).toHaveClass(/active/);
-    await expect(page.locator('#home .home-pro-service')).not.toContainText('Beauty Makeover');
+    const homeServiceLabels=await page.locator('#home .home-pro-service').allTextContents();
+    expect(homeServiceLabels.join(' ')).not.toContain('Beauty Makeover');
   });
 
   test('drawer opens and CRM route has a styled panel surface', async ({ page }) => {
@@ -169,7 +170,8 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     await expect(page.locator('#eventServiceType')).toHaveCount(0);
     await expect(page.locator('#learnTeach')).toHaveCount(0);
     await expect(page.locator('#home .home-pro-service')).toHaveCount(8);
-    await expect(page.locator('#home .home-pro-service')).not.toContainText('Beauty Makeover');
+    const homeServiceLabels=await page.locator('#home .home-pro-service').allTextContents();
+    expect(homeServiceLabels.join(' ')).not.toContain('Beauty Makeover');
     await page.evaluate(()=>window.showPage('homeServices'));
     await expect(page.locator('#taskoCategory')).toBeVisible();
     const categories=await page.locator('#taskoCategory option').allTextContents();
