@@ -226,3 +226,32 @@ test('autocomplete provider outage offers manual coordinate recovery', async ({ 
   await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lon', '84.2');
   await expect(page.locator('#frPickupHint')).toContainText('Manual location saved');
 });
+
+test('pickup autocomplete is a hard booking requirement; typed text alone cannot submit', async ({ page }) => {
+  await page.route('**/rest/v1/rides**', async route => {
+    if(route.request().method()==='POST') {
+      await page.evaluate(()=>{window.__qaPickupAutocompleteBypassed=true;});
+      await route.fulfill({status:201,contentType:'application/json',body:JSON.stringify({id:'should-not-book'})});
+    } else await route.continue();
+  });
+  await page.evaluate(() => {
+    currentUser = { id: '11111111-1111-4111-8111-111111111111' };
+    currentProfile = { role: 'customer' };
+    rideVehicle = 'Auto';
+  });
+  await page.locator('#pickup').fill('Tekkali typed without selecting');
+  await page.locator('#drop').fill('Naupada typed without selecting');
+  await page.evaluate(() => saveRideRequest());
+  await expect(page.locator('#message')).toContainText('Pickup మరియు Drop suggestions రెండింటినీ ఎంచుకోండి', {timeout:5000});
+  expect(await page.evaluate(()=>window.__qaPickupAutocompleteBypassed||false)).toBeFalsy();
+});
+
+test('pickup autocomplete shows explicit no-results and keeps booking blocked until a valid selection', async ({ page }) => {
+  await page.route('https://photon.komoot.io/api/**', async route => {
+    await route.fulfill({json:{type:'FeatureCollection',features:[]}});
+  });
+  await page.locator('#pickup').fill('zzzz no such place');
+  await expect(page.locator('#frPickupSuggestions')).toContainText('No places found', {timeout:10000});
+  await expect(page.locator('#frPickupHint')).toContainText('No matching places');
+  expect(await page.locator('#pickup').getAttribute('data-selected-address')||'').toBe('');
+});
