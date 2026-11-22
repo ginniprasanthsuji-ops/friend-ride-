@@ -34,6 +34,11 @@ test.describe('Ride booking map and location suggestions', () => {
     await page.evaluate(() => window.showPage('ride'));
     // Leaflet applies .leaflet-container to the map element itself, not a child.
     await expect(page.locator('#frBookingMap.leaflet-container')).toBeVisible({timeout:15000});
+    const initialMapSize=await page.evaluate(()=>frBookingMap.getSize().x);
+    expect(initialMapSize).toBeGreaterThan(0);
+    await page.setViewportSize({width:390,height:844});
+    const resizedWidth=await page.locator('#frBookingMap').evaluate(el=>el.clientWidth);
+    await expect.poll(()=>page.evaluate(()=>frBookingMap.getSize().x)).toBe(resizedWidth);
 
     await page.locator('#pickup').fill('Tekkali');
     await expect(page.locator('#frPickupSuggestions button').first()).toContainText('Tekkali',{timeout:10000});
