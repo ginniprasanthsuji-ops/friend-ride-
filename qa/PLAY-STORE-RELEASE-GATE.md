@@ -356,3 +356,33 @@ The prior browser run's seven failures were setup/visibility/test-selector issue
 - The food-order RLS defect, Auth leaked-password setting, and incomplete SECURITY DEFINER review are unresolved. Live smoke-test is also NOT TESTED.
 
 **Release decision remains BLOCKED.** Do not merge or deploy until latest browser suite passes, backend/staging booking is genuinely verified, security blockers are addressed/approved, and required release gates are green. No production DB changes have been made.
+
+
+## PROJECT ARJUNA — latest QA progress (2026-11-22, 12:57 IST)
+
+**Current QA head:** `23bdabc4d71f6db537e5b6137630e87e88602c51` (PR #36 open; main unchanged).
+
+| Gate | Status | Evidence |
+|---|---|---|
+| Source regression / 23 inline scripts / retired Learn-Teach cleanup assertions | PASS | [Run 44995965873](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995965873) |
+| Typecheck, core typecheck, runtime build, unit/core tests | PASS | [Quality Gate 44995965802](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995965802), typecheck-and-unit job success |
+| Quality Gate npm install audit | PASS — 0 vulnerabilities | 44995965802 install output |
+| Node20/npm10.8.2 TASKO/Laundry/Admin regression | PASS — 4/4 | [Run 44995965840](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995965840); toolchain log shows Node v20.20.2 / npm 10.8.2 and 0 vulnerabilities |
+| Full Playwright/browser suite | PASS — 67/67 on previous code commit; current 23bdabc rerun pending | [Run 44995919190](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995919190) completed 67/67; [Run 44995965802](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995965802) browser-e2e is running on the Home Services dashboard syntax fix |
+
+### New fixes verified in the 67/67 run / current QA source
+
+- Home page markup now contains the poster rail, ride cards, home-service cards and TASKO/Laundry shortcuts inside the isolated `#home` page; it no longer leaks content onto other routes.
+- Default 3D avatar generator is exported to the home-avatar fallback, and hidden profile-photo CSS preserves the default avatar when no photo exists.
+- Admin navigation regression tests the role-guarded `menuGo` flow, not direct unguarded `showPage` calls.
+- Multi-locator assertions were changed to aggregate text to avoid Playwright strict-mode errors.
+- Home Services provider dashboard inline JavaScript was rewritten safely; current source-regression PASS confirms 23 inline scripts parse.
+- Map resize/mobile assertion and pickup/drop/GPS/fallback/booking mocked tests are included in the 67-test suite.
+
+### Main/live status (read-only)
+
+- Main Quality Gate [44986976265](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44986976265): typecheck-and-unit PASS, browser-e2e FAIL.
+- Main Regression [44986976255](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44986976255): FAIL; browser report shows 47 passed / 10 failed (old Dark+Gold route/UI tests).
+- Pages build/deploy [44986975945](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44986975945): PASS for main SHA `f1ddca35`. The live domain still could not be verified directly (DNS/web access failure), so live smoke-test is NOT CONFIRMED.
+
+**Release decision remains BLOCKED:** the 67 mocked browser tests do not substitute for a real QA Supabase schema and authenticated booking, OTP, push, payment and device tests. Production food-order partner-read policy, Auth leaked-password protection and incomplete SECURITY DEFINER review remain blockers; no production DB writes or Main merge/deploy have been performed.
