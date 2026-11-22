@@ -34,7 +34,6 @@ test.describe('Ride booking map and location suggestions', () => {
     await page.evaluate(() => window.showPage('ride'));
     // Leaflet applies .leaflet-container to the map element itself, not a child.
     await expect(page.locator('#frBookingMap.leaflet-container')).toBeVisible({timeout:15000});
-    await expect(page.locator('#frBookingMap .leaflet-tile')).toHaveCount(0,{timeout:5000}).catch(()=>{});
 
     await page.locator('#pickup').fill('Tekkali');
     await expect(page.locator('#frPickupSuggestions button').first()).toContainText('Tekkali',{timeout:10000});
@@ -51,7 +50,7 @@ test.describe('Ride booking map and location suggestions', () => {
     // Verify direct map-pin placement works for both points as a fallback.
     await page.locator('button[onclick="frChooseMapPin(\'pickup\')"]').click();
     const map = page.locator('#frBookingMap');
-    await map.click({position:{x:map.boundingBox ? 120 : 120,y:100}});
+    await map.click({position:{x:120,y:100}});
     await expect(page.locator('#frBookingMap .leaflet-marker-icon')).toHaveCount(2);
     await expect(page.locator('#pickup')).toHaveValue(/Mock selected map location|\d{2}\.\d+/,{timeout:10000});
     await page.locator('button[onclick="frChooseMapPin(\'drop\')"]').click();
