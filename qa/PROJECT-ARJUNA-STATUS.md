@@ -3,53 +3,55 @@
 ## Scope guard
 - QA branch only.
 - No Dark+Gold UI rollout.
-- Do not merge Main or deploy live until release gates have evidence-backed PASS and the user approves.
+- Payment provider/Cashfree testing is explicitly deferred by user and excluded from current release-gate scope; user will add a provider later.
+- Do not merge Main or deploy live until remaining release gates have evidence-backed PASS and the user approves.
 
 ## Current QA HEAD
-- Commit: `6f769fd376e189ec42a3a7c6183433f595d9bb1e`
+- Commit: `9d4dbeee1ef694fe43e8f0e060d331e626dfb591`
 - Branch: `project-arjuna/dark-gold-ui-rollout`
-- PR: #37
-- Quality Gate and Regression: PASS.
-- Browser Playwright: **52/52 PASS** on current head.
-- TASKO/Laundry Playwright: **4/4 PASS**.
-- Workflow/source regression: PASS.
-- Unit/core/typecheck/build steps: PASS.
-- Evidence:
-  - Quality Gate: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45012746857
-  - Regression: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45012741339
-  - Workflow/source regression: https://github.com/ginniprasanthsu-ops/friend-ride-/actions/runs/45012746864
-  - TASKO/Laundry: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45012746891
+- PR: #37 (open; not merged)
+- Latest CI on this commit: all verified workflow runs PASS.
+  - Quality Gate: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45013088107
+  - Quality Gate (duplicate trigger): https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45013084092
+  - Regression: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45013084143
+  - Workflow/source regression: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45013088114
+  - TASKO/Laundry Integration: https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45013088119
+- Browser Playwright: 52/52 PASS (latest previously evidenced run).
+- TASKO/Laundry Playwright: 4/4 PASS (latest previously evidenced run).
+- Typecheck, unit/core tests and runtime build: PASS.
 
-## Latest code fix
-- Food page no longer displays fictitious demo restaurant listings.
-- Empty-state message explains that restaurants appear after partner onboarding/admin approval.
-- Added Playwright regression guard against fake restaurant data.
-- Latest browser run confirms 52/52 pass.
+## Latest fixes
+- Ride pickup/drop autocomplete, selected address coordinates, GPS and map-pin coordinates are covered by Arjuna regression tests; payload includes selected coordinates.
+- Food page no longer displays fictitious demo restaurants; honest empty state after partner onboarding/admin approval; regression guard added.
+- Removed stale Dark+Gold UI tests from active Arjuna QA scope.
 
-## QA database mismatch — BLOCKER
-Read-only inspection of QA Supabase project `pqsangtvietawkfgpgfu` found only 5 public tables, `profiles` missing, and only 1 public function. QA is not a full schema mirror of production; browser/static tests do not certify real backend workflows.
+## QA database mismatch — blocker
+Read-only inspection of QA Supabase project `pqsangtvietawkfgpgfu` found only 5 public tables, `profiles` missing, and only 1 public function. QA is not a full schema mirror; static/browser tests do not certify real backend workflows.
 - Do not copy production schema broadly or run unreviewed migrations.
 
-## Production security audit findings — no production changes made
-- 23 RLS-enabled tables without policies (review each; service-only may be intentional).
+## Production security audit — findings only, no production changes
+- 23 RLS-enabled tables without policies (review individually; service-only may be intentional).
 - 6 SECURITY DEFINER functions executable by anon.
 - 88 SECURITY DEFINER functions executable by authenticated; review guards and least privilege.
-- Leaked-password protection disabled (manual Supabase Auth setting).
+- Leaked-password protection disabled (manual Auth setting).
 - Performance Advisor: 86 RLS initplan warnings, 34 multiple-permissive-policy warnings, 68 unindexed FK notices, 52 unused-index notices, 2 duplicate-index warnings.
-- Audit findings only; no production functions/grants/policies/indexes/settings were changed.
+- No production functions, grants, policies, indexes or settings changed.
 
-## Remaining release gates
-1. QA Supabase schema parity and authenticated integration tests.
+## Remaining in-scope release gates (payment excluded)
+1. QA schema parity and authenticated integration tests.
 2. Live SMS OTP send/verify on real phones.
 3. Two-device ride lifecycle, GPS and background tracking.
 4. Live/background push delivery.
-5. Cashfree checkout, webhooks, refunds/settlement, invoices.
-6. Food ordering trusted server flow with approved partner/menu and payment.
-7. Driver/partner/service-provider registration, KYC storage, admin review.
-8. CRM, user management, referral/reward approvals.
-9. Production SECURITY DEFINER/RLS review; enable leaked-password protection.
-10. Privacy/account deletion legal review and functional verification.
-11. Signed Android AAB and Play Console internal testing/policy checks.
+5. Food ordering trusted server flow with approved partner/menu data (payment provider integration excluded).
+6. Driver/partner/service-provider registration, KYC storage and admin review.
+7. CRM, user management, referral/reward approval workflows.
+8. Production SECURITY DEFINER/RLS review and leaked-password protection setting.
+9. Privacy/account-deletion process, functional verification and legal review.
+10. Signed Android AAB, Play Console internal testing and policy checks.
+
+## Progress estimate
+- Project Arjuna is approximately 80% complete for current scope (payment-provider work excluded). This is an engineering progress estimate, not a release certification.
+- Automated QA is green. Remaining work is primarily QA environment/backend validation, real-device/provider verification, security, legal/privacy and Android release gates.
 
 ## Release status
-**NOT RELEASE READY.** Automated QA is green. Backend schema mismatch, security, real-device/provider, legal and Android store gates remain. Main and live deployment are untouched.
+**NOT RELEASE READY.** Main and live deployment remain untouched. Merge/deploy only after all in-scope gates are PASS and user approval.
