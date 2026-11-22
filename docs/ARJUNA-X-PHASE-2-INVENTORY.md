@@ -1113,3 +1113,17 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 - The Pass 56 comparison was made before the two Pass 56 documentation commits. A fresh comparison after those commits reports QA **94 ahead / 1 behind** main (diverged); main-only commit 64845496f22487788aedbcf66b74147add3ab9c1 remains unintegrated. This supersedes the 92-ahead count in the prior note. No merge/cherry-pick.
 - Latest commit verified at this checkpoint: d0a0256959234f08dfbb07cb027237efb7fd5512 (Phase-plan Pass 56 update). No CI status for the workflow audit-summary changes is available through the connector.
+
+
+## Pass 58 — Package-level audit findings and CI summary formatter correction
+
+Freshly inspected Quality Gate push-run jobs/logs, including Run 714 (failed) and Run 715 (success). Run 714's audit-summary Node script failed with a JavaScript SyntaxError (invalid regex flags) before typecheck/unit steps; browser job passed. Run 715 corrected that syntax and completed SUCCESS; npm audit reported **2 critical, 0 high, 1 moderate (3 total)**. The package-level log identifies:
+- `tinypool` — critical, transitive, vulnerable range `<=2.1.1`, fix available `5.1.1`; advisories GHSA-5gmw-xhrv-c9v3 and GHSA-85c8-ppgw-ccpr.
+- `vitest` — critical, direct, vulnerable range `0.0.95 - 4.1.10`, fix available `5.1.1`; advisory GHSA-82fw-gwwq-j7x9.
+- `@vitest/mocker` — moderate, transitive, vulnerable range `<=4.1.11`, fix available `5.1.1`; advisories GHSA-82fw-gwwq-j7x9 and GHSA-qxg6-89mg-rqv8.
+
+No dependency version was changed. Vitest 5 is a major upgrade; with no lockfile and no local checkout/test environment, it is not safe to change or generate a fabricated lockfile. The audit artifact was uploaded, but connector access cannot retrieve/download artifact ZIP bytes; package-level details above came from the CI job log output.
+
+CI formatter follow-up: Pass 58 corrected literal escaped-newline output to actual line breaks and simplified Markdown cell escaping. Commit `de245b7` fixes newline rendering; commit `a996817` improved cell/advisory text escaping; commit `07cf768` removes a wrongly escaped newline regex in favor of character-code normalization. The workflow source was fetched after `07cf768` and the exact corrected line verified. Run 716 (on `de245b7`) typecheck/unit job was success and browser job still running at this evidence snapshot. Run 717 (on `a996817`) was in progress; Run 718 for `07cf768` had not yet been verified. Do not claim these follow-up runs PASS until completed.
+
+Phase 2 remains NOT ACCEPTED. No runtime app, backend, Supabase schema/data, auth, payment, main, or deployment changes.
