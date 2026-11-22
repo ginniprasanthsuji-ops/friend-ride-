@@ -254,6 +254,21 @@ Reviewed the five migration files tracked in this branch (source only; not appli
 - Current deployed table RLS policies, function bodies, grants and schema state were not queried; no live database access was used for this inventory pass.
 - Review is not a penetration test. Direct-navigation UI gaps from Pass 7 must be matched with backend/RLS/function authorization before release.
 
+
+## Pass 9 — PWA manifest / icon metadata review
+
+### Manifest findings
+- `manifest.webmanifest` is the linked manifest in the app head; it defines FRIEND RIDE name/short name, relative `start_url` and `scope`, standalone display, portrait orientation, and references `icons/icon-192.png` and `icons/icon-512.png` for 192/512 and maskable purposes.
+- `manifest.json` is also present but uses GitHub Pages absolute `/friend-ride-/` start/scope, different background/theme colors, and no icons listed.
+- The app head observed in `index.html` links `manifest.webmanifest`; duplicate `manifest.json` remains a legacy/conflicting metadata risk if another consumer/host uses it.
+- Icon binary visual inspection could not be completed through GitHub connector (binary blob decoding failed). File sizes and paths are known; official logo match, padding, maskable safe-zone and visual quality remain unverified.
+
+### PWA acceptance gaps
+- [ ] Confirm one authoritative manifest for both GitHub Pages and custom domain.
+- [ ] Align/remove legacy manifest safely after usage/hosting checks.
+- [ ] Visually inspect 192/512 icons and confirm official FRIEND RIDE logo, safe-zone and colors.
+- [ ] Installability, standalone launch, update behavior, offline behavior and service-worker scopes require isolated browser/device verification.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
