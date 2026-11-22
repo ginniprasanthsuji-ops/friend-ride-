@@ -50,8 +50,6 @@ jobs:
               const title = links.length
                 ? links.slice(0, 2).map(v => `${escapeCell(v.title || v.name || 'Advisory')} — ${escapeCell(v.url)}`).join('; ')
                 : escapeCell(fallbackTitle);
-                ? links.slice(0, 2).map(v => `[${escapeCell(v.title || v.name || 'Advisory')}](${v.url})`).join(' / ')
-                : escapeCell(fallbackTitle);
               return {severity:item.severity||'unknown',name,direct:item.isDirect?'direct':'transitive',range:item.range||'—',fix:fixLabel(item.fixAvailable),title};
             }).sort((a,b) => (rank[a.severity] ?? 5) - (rank[b.severity] ?? 5));
             let md = `### npm audit advisory summary${nl}${nl}`;
