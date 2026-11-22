@@ -820,3 +820,20 @@ Source inventory update only. No UI/runtime source was edited; no browser, locat
 - GitHub branch API reports Phase 2 QA branch protection disabled and required status checks empty. Direct commits to the branch are technically permitted; maintain the project's explicit manual QA discipline and keep all changes on the work branch. Phase 10 should include reviewed branch protection/status-check configuration when authorized.
 - A GitHub compare endpoint request was rejected by the connector allowlist; ahead/behind and full diff relationship remain **unverified**. Do not infer mergeability.
 - No main update, merge, test run, deployment or app/backend changes occurred.
+
+
+## Pass 34 — Enable quality gate on the active ARJUNA X QA branch
+
+### Implemented change
+- Updated `.github/workflows/quality.yml` push trigger to include `arjuna-x/phase-2-repository-assets-inventory` alongside `main`. Pull-request target remains `main` only.
+- Existing quality workflow runs typechecks, runtime build, unit/core tests, and Playwright with an explicit loopback URL. This gives the active QA branch an automatic isolated CI trigger without changing the legacy dark-gold regression workflow.
+- Change commit: `fbc0b197bf4ccacd6ba60a3525ca698100e835b0`.
+
+### Verification / run status
+- Re-fetched the branch and workflow after commit; HEAD is `fbc0b197bf4ccacd6ba60a3525ca698100e835b0`, and the push branch trigger is present.
+- Queried GitHub Actions runs filtered to the active branch immediately after the commit: returned `total_count: 0`. No CI run result is evidenced yet. This may be delayed or unavailable; do not report tests as passed.
+- Branch protection still disabled / required checks absent (verified in branch API earlier this continuation). This is a governance blocker, but we do not enable protection without owner-authorized policy details because the current workflow may fail and required checks are not yet established.
+- Reconciliation correction: Pass 33's recorded HEAD `6ee47ab...` was the pre-documentation commit; the actual resulting Pass 33 doc commit was `0f5f3441ab17e7716f37ecd9567848054e14a090`. The branch history was freshly fetched and confirms both.
+
+### Pass 34 disposition
+- Workflow trigger change committed to QA branch only. No local npm/test/build commands were run; GitHub Actions run query returned zero at check time. Main untouched, no merge/deploy, no app runtime/backend/schema/auth/payment modifications. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
