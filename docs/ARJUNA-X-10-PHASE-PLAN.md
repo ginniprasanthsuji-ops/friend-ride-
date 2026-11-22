@@ -107,3 +107,8 @@ Rulesets query returns 0; branch protection/required status checks previously ob
 ## Pass 44 security-catalog screen
 
 Read-only catalog screen: production 88 authenticated-executable SECURITY DEFINER functions, 87/88 show auth/admin/role/ownership source references by heuristic (one public business-details RPC); QA 25/25 show references. All SECDEF functions have search_path settings; 23 production RLS-enabled tables have no policies (QA none). This is not a full manual authorization audit; owner/security review remains. No backend changes.
+
+
+## Pass 45 summary reconciliation
+
+Top-level Phase 2 inventory/gate/checklist now reflects current verified evidence and open blockers. Latest CI run `45056922006` passed 48 Playwright tests and all typecheck/build/unit/core checks; local PWA registration/manifest/icon HTTP smoke passed. Phase 2 remains not accepted due visual icon/logo, device PWA/push, full security audit, production-vs-QA wiring and branch governance.

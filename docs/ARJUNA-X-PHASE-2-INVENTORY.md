@@ -4,14 +4,14 @@
 **Phase:** 2 — Repository & Assets Inventory  
 **Branch:** `arjuna-x/phase-2-repository-assets-inventory`  
 **Source branch:** `arjuna-x/phase-1-scope-lock`  
-**Inventory date:** 2026-11-22  
+**Inventory date:** 2026-11-23  
 **Repository:** `ginniprasanthsuji-ops/friend-ride-`
 
 ## Scope and safety
 This is a source-tree/config/documentation inventory only. No app runtime code, Supabase schema/data, auth, payment, main branch, or live deployment was changed. Findings describe file/config presence, not feature completion or runtime proof.
 
 ## Repository snapshot
-- Recursive tracked-tree inventory returned **74 paths**.
+- Recursive tracked-tree inventory currently returns **78 paths (62 blobs)**.
 - Root app entry: `index.html` (reported tree size ~1,026,144 bytes; connector cannot reliably provide readable full content due to size).
 - Single-page frontend with modular TS/JS assets and Supabase integrations.
 - PWA manifests: `manifest.webmanifest` and `manifest.json`; service-worker files: `service-worker.js`, `sw.js`, plus `firebase-messaging-sw.js`.
@@ -27,7 +27,7 @@ This is a source-tree/config/documentation inventory only. No app runtime code, 
 | User-uploaded FRIEND RIDE logo (FR/location-pin mark, Navy/Orange/White) | Supplied in conversation | Not yet copied to repo or confirmed as the current icon asset |
 | Other logo/splash/role assets | No dedicated filenames found in listed tree | Need inspect existing icons and image references in HTML |
 
-**Brand lock:** Official logo reference is the user-uploaded image; brand palette Navy Blue + Orange + White. The existing teal/royal-blue UI design document is legacy/conflicting guidance and must not override the locked ARJUNA X brand direction.
+**Brand lock:** Official logo reference is the user-uploaded image; brand palette Navy Blue + Orange + White. The teal/royal-blue design document is legacy; the current root source still has purple legacy theme tokens. Phase 3 UI migration is not yet started.
 
 ## App modules / source footprint
 - `index.html`: large SPA entry; connector cannot return full readable source for a complete route inventory in this pass.
@@ -49,53 +49,46 @@ This is a source-tree/config/documentation inventory only. No app runtime code, 
 - `npm run test:core`: Vitest
 - `npm run typecheck:core`: core TypeScript project check
 
-### Playwright configuration (observed)
-- `testDir: ./qa`
-- Timeout 45s; retries 1; list + HTML reporters.
-- Default `baseURL` points to GitHub Pages production unless `FRIEND_RIDE_BASE_URL` is supplied.
-- Headless Chromium; trace retained on failure.
-- **Safety finding:** For Phase 2/QA, set `FRIEND_RIDE_BASE_URL` explicitly to a local/isolated test server. Never run mutation-oriented tests against production by accidentally using the default.
+### Playwright configuration (current)
+- `testDir: ./qa`; timeout 45s; retries 1; list + HTML reporters; headless Chromium; trace on failure.
+- `FRIEND_RIDE_BASE_URL` is **required** and the config rejects non-loopback hosts. Local CI explicitly uses `http://127.0.0.1:4173`.
+- Active default suite excludes the archived `qa/dark-gold-route-regression.spec.js`; functional specs remain enabled, and ARJUNA X has a 58-route baseline plus PWA smoke test.
+- Browser specs block external HTTPS except the specific library CDNs needed to initialize the app. CI uses a local static server and does not run live backend mutations.
 
-### Existing specs/files (observed)
-- `qa/friend-ride.spec.cjs` — broad browser regression suite.
-- `qa/tasko-laundry.spec.cjs`, `qa/tasko-laundry-main-regression.spec.js`, `tests/tasko-laundry-main-regression.spec.js`.
-- `qa/dark-gold-route-regression.spec.js` and `qa/dark-gold-migration-checklist.md` — legacy theme-specific QA artifacts; not authoritative for the new Navy/Orange/White scope.
-- `tests/learn-teach-marketplace.spec.js`.
-- `tests/ride-contact.test.cjs`.
-- `tests/unit/result.test.ts`, `tests/unit/validation.test.ts`.
-- `qa/read-only-regression.sql` — SQL QA file; must be reviewed before use and remain read-only.
-- `test.html` exists as a QA/demo page; inspect its mode/behavior before using.
+### Existing specs/files (current)
+- Active: `qa/friend-ride.spec.cjs`, `qa/tasko-laundry.spec.cjs`, `qa/tasko-laundry-main-regression.spec.js`, `qa/arjuna-x-phase2-route-baseline.spec.cjs`.
+- `qa/arjuna-x-phase2-route-baseline.spec.cjs` reconciles 58 IDs, verifies route activation, and performs local PWA smoke (worker, manifest, icon HTTP).
+- `qa/dark-gold-route-regression.spec.js` and checklist retained as legacy reference but excluded from default Playwright suite; they are not authoritative for Navy/Orange/White.
+- Node tests include `tests/playwright-config-safety.test.cjs`, `tests/ride-contact.test.cjs`; Vitest core tests in `tests/unit`.
+- `qa/read-only-regression.sql` remains read-only and was not executed. `test.html` remains simulation/live-only QA page.
 
-## CI/workflow inventory
-| Workflow | Trigger observed | Main concern |
+## CI/workflow inventory (current)
+| Workflow | Current trigger | Status |
 |---|---|---|
-| `quality.yml` | push main; PR main | typecheck, unit/core tests, runtime build, Playwright |
-| `friend-ride-regression.yml` | push main and legacy dark-gold branch; manual; scheduled | local server and Playwright; trigger branch list is legacy/incomplete |
-| `friend-ride-workflow-regression.yml` | push to old integration branch; PR main | inline JS and Learn/Teach syntax/source checks |
-| `tasko-laundry-main-regression.yml` | push old integration branch; PR main with paths | targeted TASKO/Laundry/Admin Playwright |
+| `quality.yml` | push main + active ARJUNA X QA branch; PR main; push ignores docs-only paths | Active branch Quality Gate passed run `45056922006` |
+| `friend-ride-regression.yml` | push main + legacy Dark+Gold branch; manual; daily schedule | Legacy suite; theme spec excluded by Playwright config |
+| `friend-ride-workflow-regression.yml` | old integration branch push; PR main | Legacy source checks |
+| `tasko-laundry-main-regression.yml` | old integration branch push; PR main path filters | Legacy targeted checks; Node 20 |
 
-**CI gap candidates:** trigger branch names are not aligned with the ARJUNA X branch; test suite names/coverage and safety controls need consolidation later. No workflows were executed in Phase 2, so no CI result is claimed.
+Active quality workflow uses Node 22, local server, explicit loopback baseURL, typecheck/core typecheck, runtime build, Node unit/core tests and Playwright. CI docs-only commits are ignored on push; app/test/workflow changes trigger the gate. Branch protection/required status checks are not enforced (rulesets query returned 0).
 
-## Notifications / PWA inventory
-Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-fallback.js`, `service-worker.js`, `sw.js`, setup doc and two manifests.
-- Multiple service-worker files create registration/version/scope duplication risk; actual registrations and precedence still need source-level audit.
-- FCM setup document states web config placeholders and token-registration verification are required; background push not considered ready based on file presence.
-- Need inventory registration sites, permission UX, token/subscription storage/cleanup, server dispatch path, fallback polling/realtime, deep links, Telugu voice capability and device-state matrix in dedicated notification audit.
-- PWA manifest duplication and path/scope differences require reconciliation.
+## Notifications / PWA inventory (current)
+- Root source has 3 registrations plus `fcm-web-push.js` registration; all target `service-worker.js`. `sw.js` and `firebase-messaging-sw.js` are not referenced by scanned source.
+- Local CI smoke verified active `service-worker.js`, root scope, linked `manifest.webmanifest`, standalone metadata and icon HTTP responses. Device install/update/offline/push delivery remain untested.
+- FCM token registration source/deployed endpoint alignment verified; dispatch Edge Function source checks secret header, but secret configuration is not verified. Realtime/poll fallback is foreground only.
+- Two manifests remain: linked `manifest.webmanifest` and unlinked `manifest.json` with different paths/colors. Reconciliation is deferred to reviewed PWA/UI patch.
 
-## Integration/config inventory
-- Supabase integration and migrations documented; exact current runtime configuration/contract inventory requires full source access.
-- Google Maps/Places is a requirement, but baseline document says current autocomplete uses Photon/OSM; secure Google Places setup and migration remain future work.
-- SMS/APITXT, payment/Cashfree, maps, Firebase push, Zoom, finance/travel/health external links need integration-by-integration contract audit.
-- Secrets must remain in environment/secret storage; no credentials copied into docs.
+## Integration/config inventory (current)
+- Production Supabase project `fglyplxcczdjtfwobtzh` and QA project `pqsangtvietawkfgpgfu` are both active/healthy. Root `index.html` and `fcm-web-push.js` hardcode production; QA project is not wired into app source. CI blocks external APIs, so no live backend E2E was run.
+- Read-only metadata: production 79 migrations/85 public tables (all RLS; 23 with no policies), QA 25 migrations/21 tables (all RLS and policies). SECDEF/grant/security-linter review remains partial.
+- Maps/Places, SMS/APITXT, payments/Cashfree, Firebase push, Zoom and finance/travel external links need integration-specific runtime/contract review. Preserve existing auth/payment/backend contracts.
 
-## Conflicts / legacy artifacts
-1. Existing `docs/ui/fresh-teal-royal-blue-design.md` says Teal + Royal Blue; ARJUNA X locked branding is Navy + Orange + White. Treat teal doc as legacy and do not apply.
-2. Theme-specific dark/gold tests/checklist are legacy and must not drive UI decisions.
-3. Two manifests and multiple service-worker candidates exist.
-4. Playwright default URL is production; local/isolated target must be explicit.
-5. Root SPA source too large for full route/screen inventory from this connector pass; Phase 2 is not yet fully complete.
-
+## Conflicts / legacy artifacts (current)
+1. Teal/royal-blue design document is legacy; current source still uses purple tokens. ARJUNA X target remains Navy + Orange + White.
+2. Dark+Gold QA assertions are legacy and excluded from active Playwright suite; Phase 3 must add target-theme checks without losing route/function coverage.
+3. Duplicate manifests and worker files remain; source audit identifies active worker but device/runtime matrix is incomplete.
+4. Official logo/icon binary visual verification is unavailable; icons remain unverified against supplied official logo.
+5. QA branch CI now runs and passes, but required checks/branch protection are not enforced.
 
 ## Pass 2 — Blueprint, specs and notification source inspection
 
@@ -264,10 +257,14 @@ Reviewed the five migration files tracked in this branch (source only; not appli
 - Icon binary visual inspection could not be completed through GitHub connector (binary blob decoding failed). File sizes and paths are known; official logo match, padding, maskable safe-zone and visual quality remain unverified.
 
 ### PWA acceptance gaps
-- [ ] Confirm one authoritative manifest for both GitHub Pages and custom domain.
-- [ ] Align/remove legacy manifest safely after usage/hosting checks.
-- [ ] Visually inspect 192/512 icons and confirm official FRIEND RIDE logo, safe-zone and colors.
-- [ ] Installability, standalone launch, update behavior, offline behavior and service-worker scopes require isolated browser/device verification.
+- [x] Active linked manifest identified: `manifest.webmanifest`; relative scope/start_url and standalone mode source-verified.
+- [x] Local CI smoke: active `service-worker.js` scope, manifest response and declared icon HTTP responses verified (Pass 41).
+- [ ] Confirm GitHub Pages/custom-domain installation behavior and manifest paths.
+- [ ] Align/remove duplicate legacy `manifest.json` after usage/hosting checks.
+- [ ] Visually inspect 192/512 PNGs against official logo, maskable safe-zone and Navy/Orange/White palette.
+- [ ] OS install prompt, standalone launch, update/offline behavior and installed-device service-worker scope.
+- [ ] FCM token registration, notification permission UX and foreground/background/closed-app delivery on device.
+- [ ] Telugu voice/sound, role routing, dedupe, quiet hours and consent matrix.
 
 
 ## Pass 10 — CI workflow triggers and environment safety audit
@@ -718,18 +715,24 @@ Manifest integration review is documented; icon binary integration and install v
 - This connector session can read repository files and make text-file commits, but it does not provide a checkout/command execution environment for the repository. Therefore no npm install, unit test, typecheck, build, Playwright, browser/PWA install, or CI workflow run was executed in this pass.
 - Playwright's configured default baseURL is production; any future local execution must explicitly set FRIEND_RIDE_BASE_URL to an isolated local server. Do not run mutation-capable tests against production.
 
-### Phase 2 acceptance gate — open items ranked
-1. Binary icon pack integration and visual validation: existing icon binaries still not inspected; generated draft pack not committed. Manifest changes remain blocked until binary assets are actually in the branch.
-2. Runtime route/navigation/role verification: source page-ID reconciliation (55 actual IDs, 58 QA IDs, 3 stale) is not runtime coverage. Need browser run against local isolated server and role-specific sessions.
-3. PWA/worker runtime proof: determine active registration/scope, installability, worker update behavior and device-state notification matrix; source registration alone is insufficient.
-4. Backend authorization/integration evidence: deployed RPC/Edge Function contracts and RLS/auth behavior not verified; do not change schema/auth/payment to close this inventory item.
-5. CI alignment: current workflow trigger definitions do not explicitly include active ARJUNA X branch; workflow run evidence unavailable here.
-6. Legacy theme QA: stale Dark+Gold assertions must be carefully replaced by locked Navy/Orange/White checks while retaining route/function checks; do not delete or weaken tests wholesale.
+### Phase 2 acceptance gate — current status
+1. **Icon/official logo visual validation — OPEN.** PNG sizes/SHA verified; binary artwork and maskable safe-zone not visually inspected; supplied logo not confirmed in repo.
+2. **Route inventory/runtime baseline — SOURCE + LOCAL CI VERIFIED.** 58 page IDs reconcile (0 missing/extra/duplicate) and all activate via router in isolated Playwright. Role launcher/router tests pass; full authenticated role/permission E2E remains open.
+3. **PWA — PARTIAL.** Local CI verified active root `service-worker.js`, linked manifest and icon HTTP responses. Device install, update/offline and push/background/closed-app matrix remain open.
+4. **Backend authorization — PARTIAL.** Production/QA projects healthy; migration/table/RLS metadata verified; 18 production functions sampled, SECDEF grants heuristic screened. Full function/grant/RLS/Edge secret audit remains open. Production leaked-password protection is disabled (owner review).
+5. **QA environment wiring — OPEN.** App source hardcodes production Supabase; separate QA project not wired. CI blocks external API traffic, so live auth/payment/ride integration E2E is not available safely.
+6. **CI alignment — VERIFIED.** Quality Gate triggers on active QA branch and latest run `45056922006` passed type/build/unit/core and **48 Playwright tests**. Branch protection/required checks are not enforced.
+7. **Legacy theme tests — RETARGETED FOR ACTIVE SUITE.** Dark+Gold spec archived/excluded; functional tests and route baseline retained. Phase 3 must add Navy/Orange/White UI checks.
+8. **Repository governance — OPEN.** Rulesets query 0; required checks/branch protection disabled. Owner policy/approval needed.
+9. **Phase 2 disposition — NOT ACCEPTED.** Remaining evidence above must be closed before Phase 3. No main merge/live deploy.
 
 ### Safe next actions
-- Continue targeted source extraction and document exact integration placeholders/handlers.
-- Prepare branch-safe CI trigger alignment only after fetching and reviewing full workflow files and confirming triggers do not run live mutation tests.
-- Once binary-capable repo access and isolated execution are available, install the draft icon pack, update manifest purpose/theme fields, run installability and regression checks, and record evidence.
+- Obtain binary-capable access/inspection to verify official icon artwork; do not replace icons or manifest without visual evidence.
+- Complete isolated PWA install/update/offline and device notification matrix.
+- Complete RLS/SECDEF grants and Edge secret configuration audit; review leaked-password protection and OTP abuse controls with owner.
+- Introduce an approved QA-only app config to target the separate QA Supabase project; keep production config and auth/payment contracts unchanged.
+- Get owner-approved branch protection/required-check policy.
+- After Phase 2 acceptance, begin Phase 3 App Shell & Design System (Navy/Orange/White) in sequence.
 
 ### Pass 26 disposition
 Phase 2 acceptance remains **IN PROGRESS / NOT ACCEPTED**. No runtime app code, binary assets, manifest, backend, schema, auth, payment, main branch, or deployment changed. No tests were run; no test results are claimed.
@@ -971,3 +974,11 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 ### Pass 44 disposition
 - Catalog/source heuristic review only; Phase 2 remains **IN PROGRESS / NOT ACCEPTED** until the full grant/function/RLS review, QA environment wiring, PWA/device/asset and governance evidence are complete.
+
+
+## Pass 45 — Inventory summary and acceptance checklist reconciliation
+
+- Refreshed stale top-level summaries to current evidence: 78 tree entries/62 blobs; loopback-only Playwright config; active QA branch CI trigger; 48-test green run; PWA local smoke; read-only production/QA Supabase metadata and sampled security review; hardcoded production backend wiring; zero repository rulesets.
+- Corrected the old 55/58 discrepancy: all 58 `.page` IDs reconcile and activate; no missing/extra/stale IDs.
+- Updated PWA checklist and Phase 2 gate: local worker/manifest/icon HTTP smoke is now checked; device install/push, visual icon/logo, full security audit, QA environment wiring and branch governance remain open.
+- Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; Phase 3 remains gated. No app/backend/schema/auth/payment/main/deployment changes.
