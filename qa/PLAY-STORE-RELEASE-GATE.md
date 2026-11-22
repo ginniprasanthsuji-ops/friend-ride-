@@ -1,3 +1,26 @@
+# PROJECT ARJUNA — Current QA status update (2026-11-22)
+
+**QA branch:** `qa/remove-unneeded-services-2026-11-22`  
+**PR:** #36 (open; not merged; main/live untouched)  
+**Last verified source commit before this report update:** `cd556afd0a52cd3960d5372bb15e9b0c3e15865f`
+
+| Gate | Result | Evidence |
+|---|---|---|
+| FRIEND RIDE Quality Gate | PASS | Typecheck/unit/core/runtime and Playwright browser E2E; 67 passed |
+| FRIEND RIDE workflow regression | PASS | Source regression passed; 23 inline scripts and key source checks validated |
+| TASKO Laundry Main Integration Regression | PASS | 4/4 tests passed |
+| Pickup/Drop autocomplete, map/pins, GPS, ride booking | CI PASS / real device NOT TESTED | Mocked browser tests; no real GPS/device or backend booking certification |
+| TASKO/GIGGER Beauty Makeover + Halwai | Category options present; provider/admin end-to-end NOT CERTIFIED | Category options confirmed in QA source; full real integration still pending |
+| Home Services registration, admin approval, booking lifecycle | Source/CI PASS; backend migration NOT APPLIED/TESTED | QA migration and browser/source checks; isolated DB smoke test still required |
+| Home Services ₹50 advance/Cashfree payment | NOT IMPLEMENTED/VERIFIED | UI/database foundation only; payment confirmation must be integrated and tested |
+| Real OTP, push notifications, completed-ride QR/payment, live GPS | NOT TESTED | Requires real provider/device/backend integration |
+| Security/RLS and production schema audit | NOT COMPLETE | Migration policies need isolated database execution and review |
+| Play Store certification | BLOCKED | Release gates above remain; no AAB or live integration certification |
+
+**Release decision: BLOCKED — PROJECT ARJUNA is not complete.** No merge or live deployment was performed. This status section supersedes older “pending/running” notes below only for the three latest CI runs listed above; older historical evidence remains unchanged.
+
+---
+
 # FRIEND RIDE — Play Store Release Gate
 
 **Audit date:** 2026-11-09  
