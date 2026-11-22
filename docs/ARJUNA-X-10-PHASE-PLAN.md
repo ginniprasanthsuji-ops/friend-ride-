@@ -189,3 +189,8 @@ Run `45066821254` on workflow commit `f69e86b` completed SUCCESS (48 Playwright,
 
 - The Pass 56 comparison preceded the two Pass 56 documentation commits. Fresh comparison after those commits reports QA **94 ahead / 1 behind** main, diverged. This supersedes the 92-ahead count in Pass 56; main-only 6484549 remains unintegrated. Latest commit at this checkpoint: d0a0256959234f08dfbb07cb027237efb7fd5512. No merge/cherry-pick/deployment.
 - CI for the workflow audit-summary change remains unverified; current connector cannot list push-triggered runs. Phase 2 remains NOT ACCEPTED and Phase 3–10 are gated.
+
+
+## Pass 58 — Phase 2 dependency audit evidence
+
+CI log evidence now records package-level npm audit details: tinypool critical transitive (fix 5.1.1), vitest critical direct (major fix 5.1.1), and @vitest/mocker moderate transitive (fix 5.1.1). No package changes/lockfile generation were made because checkout/runtime testing is unavailable and Vitest 5 is a major-version upgrade. CI audit summary formatter was corrected across commits de245b7, a996817, and 07cf768; final follow-up run for 07cf768 remains pending verification at this plan update. Phase 2 is not accepted; Phase 3 remains gated. No main merge or deployment.
