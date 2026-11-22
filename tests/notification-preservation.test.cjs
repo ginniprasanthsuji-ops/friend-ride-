@@ -50,6 +50,9 @@ test("first-launch permission request is independent of login and push subscript
   const html = fs.readFileSync("index.html", "utf8");
   assert.ok(html.includes("async function frPushWelcomeAllow()"), "first launch permission handler missing");
   assert.ok(html.includes("await Notification.requestPermission()"), "system permission request missing");
-  assert.ok(html.includes("async function frRideStartAfterLogin()"), "authenticated login push hook missing");
+  assert.ok(html.includes("function frRideStartAfterLogin()"), "authenticated login push hook missing");
+  const loginHook = html.slice(html.indexOf("function frRideStartAfterLogin()"), html.indexOf("function frRideStartAfterLogin()") + 500);
+  assert.ok(loginHook.includes("frRideStartRealtime()"), "login hook should start realtime notifications");
+  assert.ok(loginHook.includes("frEnableDeviceAlerts().catch"), "login hook should trigger push subscription after granted permission");
   assert.ok(html.includes("window.Notification?.permission==='granted'"), "granted permission should auto-subscribe after login");
 });
