@@ -49,7 +49,7 @@
 - [x] Backend/auth/payment/schema preservation rules captured.
 - [x] 10-phase sequence and Phase 1 branch recorded.
 - [ ] Logo binary asset copied into repository and verified — deferred to Phase 2 asset inventory.
-- [ ] Phase 1 documentation commit and review completed.
+- [x] Phase 1 documentation committed and branch content verified.
 
 ## Current Phase Status
 **Phase 1 — IN PROGRESS.** This branch was created from the clean-restart baseline. The scope/roadmap document is being committed as the first project artifact. No app code, backend, schema, authentication, payments, main branch, or live deployment has been changed.
