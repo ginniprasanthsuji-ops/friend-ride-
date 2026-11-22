@@ -18,7 +18,16 @@ jobs:
       - name: Capture dependency audit report (non-blocking while remediation is pending)
         run: |
           npm audit --json > npm-audit.json || true
-          node -e "const r=JSON.parse(require('fs').readFileSync('npm-audit.json','utf8')); const v=r.metadata?.vulnerabilities||{}; console.log('npm audit totals:', JSON.stringify(v)); console.log('Advisory report saved as npm-audit.json artifact for review.')"
+          node <<'NODE'
+          const fs = require('fs');
+          try {
+            const report = JSON.parse(fs.readFileSync('npm-audit.json', 'utf8'));
+            console.log('npm audit totals:', report.metadata?.vulnerabilities ?? 'summary missing');
+            console.log('Detailed advisory report is available in the artifact.');
+          } catch (error) {
+            console.log('Audit report could not be parsed; preserve the raw artifact for investigation.');
+          }
+          NODE
       - name: Upload dependency audit report
         if: always()
         uses: actions/upload-artifact@v4
