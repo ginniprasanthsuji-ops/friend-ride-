@@ -641,3 +641,24 @@ Test inventory now records boundaries between source assertions, simulation, iso
 
 ### Phase 2 disposition
 Source audit advances registration and role-gate reconciliation, but runtime worker activation, push subscription delivery, lock-screen/background delivery, role session enforcement and server-side permissions remain open evidence items. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No runtime/backend/schema/auth/payment/main/live changes made.
+
+
+## Pass 22 — Runtime page IDs versus QA route inventory reconciliation
+
+### Exact source reconciliation
+- Extracted all `<section id="..." class="page">` page IDs from root `index.html` and compared against `allPageIds` in `qa/dark-gold-route-regression.spec.js`.
+- Runtime source contains **55 page sections**; QA spec lists **58 IDs**.
+- Missing from spec: none.
+- Stale spec IDs: home, crmDashboard, frSuperHub.
+- Exact list match: **NO**.
+
+### Scope/limitations
+- The route spec file is named and styled for a Dark + Gold rollout. Its design-system/theme assertions are not authoritative for the currently locked Navy Blue + Orange + White design. Its page-ID list is useful inventory only; tests should be retargeted before being treated as release-gate evidence.
+- Page IDs were source-reconciled only. Visibility, role permissions, real click navigation, backend integration and route activation still require runtime tests.
+
+### Supabase repository inventory
+- Repository tree contains five migration files: TASKO/GIGGER workflow, Laundry workflow, Cycle Delivery pricing, Learn & Teach marketplace, and Learn & Teach provider policies.
+- Migration source inspection confirms these are schema/policy change files; no migrations were applied during this audit. Deployed database state, RPC/Edge Functions and current RLS behavior are not verified through repository source.
+
+### Phase 2 disposition
+Route ID reconciliation is complete at source level (58/58 list match). Design-system test retargeting, asset binary/visual validation, runtime worker/push evidence, deployed Supabase contract/RLS evidence and CI run evidence remain open. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No application or database code changes.
