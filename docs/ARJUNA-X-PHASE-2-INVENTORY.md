@@ -770,3 +770,22 @@ Because the repository connector can fetch/edit text but cannot checkout, instal
 
 ### Pass 29 disposition
 Audit findings documented only. No QA tests changed, no tests executed, no live endpoints contacted, no runtime code/backend/schema/auth/payment/main/deployment changed. Phase 2 remains IN PROGRESS / NOT ACCEPTED.
+
+
+## Pass 30 — Playwright production-target safety guard added
+
+### Verified change
+- Updated `playwright.config.cjs` to require `FRIEND_RIDE_BASE_URL`; removed the former implicit GitHub Pages production fallback.
+- Validates the URL and rejects any hostname except `localhost`, `127.0.0.1`, or `::1`. Error messages explain the local-isolated-server requirement.
+- Retains the existing `testDir`, timeout, retries, reporter, headless mode and failure trace settings.
+- CI workflows reviewed in Pass 27 set local loopback URLs for the generic Playwright suite. The TASKO/Laundry targeted regression spec uses a local server address explicitly.
+
+### Verification limits
+- Config was re-fetched after commit to verify its contents. Static reasoning/source inspection only; no node command or Playwright invocation was possible because this connector is text/API-only.
+- A local command with no env should now fail fast; non-loopback target should fail fast; loopback URL should be accepted by configuration parsing. These three runtime behaviors are NOT executed/verified in this pass.
+- CI branch trigger alignment remains pending; legacy dark-gold tests need retargeting to current Navy/Orange/White palette before a safe broad trigger.
+
+### Pass 30 disposition
+- QA-only configuration safety change committed on `arjuna-x/phase-2-repository-assets-inventory`.
+- No app runtime, backend, schema, auth, payment, main branch, or live deployment changed.
+- Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
