@@ -23,7 +23,9 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
       primary: getComputedStyle(document.documentElement).getPropertyValue('--purple').trim(),
       secondary: getComputedStyle(document.documentElement).getPropertyValue('--purple2').trim(),
       bodyBackground: getComputedStyle(document.body).backgroundImage,
-      themeMeta: document.querySelector('meta[name="theme-color"]')?.content
+      themeMeta: document.querySelector('meta[name="theme-color"]')?.content,
+      qaBackend: document.documentElement.innerHTML.includes('pqsangtvietawkfgpgfu'),
+      productionBackend: document.documentElement.innerHTML.includes('fglyplxcczdjtfwobtzh')
     }), allPageIds);
     expect(result.missing).toEqual([]);
     expect(result.removedStillPresent).toEqual([]);
@@ -33,6 +35,8 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     expect(result.secondary).toBe('#13a9a2');
     expect(result.bodyBackground).not.toBe('none');
     expect(result.themeMeta).toBe('#10243e');
+    expect(result.qaBackend).toBe(true);
+    expect(result.productionBackend).toBe(false);
   });
 
   test('notification bell SVG and 3D default avatar render without a profile photo', async ({ page }) => {
