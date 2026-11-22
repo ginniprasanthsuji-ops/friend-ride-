@@ -121,6 +121,32 @@ Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-
 - Learn/Teach specs assert landing screen/category cards; not complete teacher/student/Zoom/homwork workflow E2E.
 - Existing tests are mixed: browser UI checks, source-marker checks, simulated tests, and limited backend-independent tests. Phase 10 needs coverage labels and test evidence classification.
 
+
+## Pass 3 — Test/CI, migration and contract risk review
+
+### Test evidence classification
+- `qa/friend-ride.spec.cjs` covers SPA boot/role entry points/router self-test, diagnostics hidden from non-admin, QA page deterministic simulation vs live-only blockers, support/feedback wiring, and Friend Mart GPS/map wiring. It is a mixed UI/source-contract suite—not a complete live-backend E2E proof.
+- `test.html` explicitly reports simulation checks and live-only constraints; simulated checks cannot be represented as production integration passes.
+- TASKO/Laundry specs include source/function checks and invalid-state validation; live provider/customer/admin workflow is not demonstrated by this inventory.
+- Learn/Teach spec checks landing/category surfaces; complete student/teacher/admin workflow, assignments and Zoom integration are not proven.
+- Node and Vitest unit tests cover core utilities and ride-contact modules; exact coverage percentages are not configured/verified.
+
+### CI details and risks
+- `quality.yml` runs TypeScript checks, runtime build, Node unit tests, Vitest and Playwright against a local static server on PRs/pushes to main. It cannot by itself exercise authenticated Supabase flows.
+- `friend-ride-regression.yml` runs source checks plus Playwright on main, legacy theme branch, manual trigger and schedule; uploads reports. Legacy branch trigger needs ARJUNA X alignment later.
+- `friend-ride-workflow-regression.yml` source checks trigger on an old branch and PR-to-main; trigger alignment gap.
+- `tasko-laundry-main-regression.yml` targeted suite triggers on old integration branch or relevant main PR paths; Node versions differ (20 vs 22) across workflows.
+- Playwright base URL defaults to production; CI explicitly overrides local server in workflows, but manual runs must set `FRIEND_RIDE_BASE_URL` to avoid accidental live testing.
+
+### Migration/schema review — no changes made
+- Five migration files observed for TASKO/GIGGER, Laundry, cycle-delivery pricing, Learn/Teach marketplace, provider policies. Migration review must remain separate from UI-only work; none applied.
+- Source implements TASKO provider transitions/payment verification, Laundry transitions, cycle pricing config with RLS, and Learn/Teach account/course/request/notification tables and policies. File presence does not prove production migration status.
+- `qa/read-only-regression.sql` is labeled read-only and checks schema/function/storage/policy presence plus a profile test-data count. Reviewed only; not executed.
+
+### Route/screen and logo limitations
+- `index.html` is a very large SPA; connector extraction did not provide reliable complete source for route/screen enumeration. Route IDs, navigation handlers, role visibility and API/RPC calls remain a high-priority gap. Do not guess.
+- Icon files exist but were not rendered/visually inspected. User-supplied logo is authoritative; repo binary equivalence remains unverified.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
@@ -131,7 +157,7 @@ Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-
 - [x] Legacy/conflicting UI and test docs identified.
 - [x] User Blueprint roles/modules/workflow source reviewed.
 - [x] Notification source files reviewed (registration and duplicate-worker risks recorded).
-- [x] Existing QA specs reviewed for simulated vs actual workflow evidence.
+- [x] Existing QA specs reviewed for simulated vs actual workflow evidence.\n- [x] CI workflow/test evidence classification and branch-trigger gaps reviewed.\n- [x] Migration files reviewed at source level; none applied.\n- [x] Read-only SQL QA script reviewed; not executed.
 - [ ] Full route/screen inventory from `index.html` (source too large for connector read; needs a safer local/source inspection method).
 - [ ] Visual inspection of icon assets and confirmation whether uploaded logo is already present.
 - [ ] Exact API/RPC/Edge Function and role-permission inventory.
