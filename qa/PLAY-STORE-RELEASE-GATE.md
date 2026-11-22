@@ -1,9 +1,88 @@
+# PROJECT ARJUNA — Current QA status update (2026-11-22)
+
+**QA branch:** `qa/remove-unneeded-services-2026-11-22`  
+**PR:** #36 (open; not merged; main/live untouched)  
+**Last verified source commit before this report update:** `cd556afd0a52cd3960d5372bb15e9b0c3e15865f`
+
+| Gate | Result | Evidence |
+|---|---|---|
+| FRIEND RIDE Quality Gate | PASS | Typecheck/unit/core/runtime and Playwright browser E2E; 67 passed |
+| FRIEND RIDE workflow regression | PASS | Source regression passed; 23 inline scripts and key source checks validated |
+| TASKO Laundry Main Integration Regression | PASS | 4/4 tests passed |
+| Pickup/Drop autocomplete, map/pins, GPS, ride booking | CI PASS / real device NOT TESTED | Mocked browser tests; no real GPS/device or backend booking certification |
+| TASKO/GIGGER Beauty Makeover + Halwai | Category options present; provider/admin end-to-end NOT CERTIFIED | Category options confirmed in QA source; full real integration still pending |
+| Home Services registration, admin approval, booking lifecycle | Source/CI PASS; backend migration NOT APPLIED/TESTED | QA migration and browser/source checks; isolated DB smoke test still required |
+| Home Services ₹50 advance/Cashfree payment | NOT IMPLEMENTED/VERIFIED | UI/database foundation only; payment confirmation must be integrated and tested |
+| Real OTP, push notifications, completed-ride QR/payment, live GPS | NOT TESTED | Requires real provider/device/backend integration |
+| Security/RLS and production schema audit | NOT COMPLETE | Migration policies need isolated database execution and review |
+| Play Store certification | BLOCKED | Release gates above remain; no AAB or live integration certification |
+
+**Release decision: BLOCKED — PROJECT ARJUNA is not complete.** No merge or live deployment was performed. This status section supersedes older “pending/running” notes below only for the three latest CI runs listed above; older historical evidence remains unchanged.
+
+---
+
 # FRIEND RIDE — Play Store Release Gate
 
 **Audit date:** 2026-11-09  
 **Branch audited:** `main`  
 **Audited commit:** `11269614f66b5ff21c361675a14d4791b0ce6cfa`  
 **Release decision:** **BLOCKED — NOT CERTIFIED FOR PLAY STORE**
+
+## 2026-11-22 QA branch recheck (current evidence)
+
+**QA branch:** `qa/remove-unneeded-services-2026-11-22`  
+**PR:** #36 (open; not merged; main/live untouched)  
+**Latest checked commit:** `1c9a280ccabd3ff76922d3835762dedf5d9634d2`
+
+| Check | Current result | Evidence |
+|---|---|---|
+| Inline JavaScript source check | PASS | Workflow run 234 on commit `988c021` |
+| Typecheck / Unit / Core / Runtime build | PASS | Quality Gate run 405 typecheck-and-unit job |
+| npm audit | PASS | CI install reported 0 vulnerabilities after Vitest 4.1.11 upgrade |
+| TASKO / Laundry / Admin integration | PASS, 4/4 | Run 183 on commit `ef0cf27` |
+| Full Browser E2E | RUNNING | Quality Gate run 408 on commit `988c021` |
+| Pickup/Drop autocomplete, map, pins, GPS, booking submission | TESTS ADDED; pending latest E2E | Mocked Playwright tests; no real QA DB writes |
+| Beauty Makeover / Halwai category + booking/Admin mapping | TESTS ADDED; pending latest E2E | Mocked request/admin rows |
+| Real OTP, push, payment, physical GPS | NOT TESTED | Requires real integrations/device |
+| Play Store/AAB release gate | BLOCKED | QA schema incomplete; release certification not performed |
+
+**Resolved source regression:** the obsolete `learn-teach.js` check was removed after the VidyaSetu module was intentionally deleted. Source Regression passes.  
+**Main/live:** unchanged; no merge/deployment has occurred.
+
+## PROJECT ARJUNA latest recheck (2026-11-22)
+
+### CI evidence
+- Source Regression: **PASS** — run 224, commit `32fa1ea`.
+- TASKO / Laundry / Admin integration: **PASS, 4/4** — run 171, commit `c9fec7a`.
+- Dependency audit: **0 vulnerabilities reported** during TASKO CI install on run 171 after Vitest was upgraded to `4.1.11`.
+- Quality Gate: **Typecheck/unit/core/runtime PASS** — run 405 typecheck-and-unit job. Browser E2E **RUNNING** — run 405, commit `24d5f4e`. CI install is now pinned to npm 11.21.1 on Node 22 to resolve the Arborist `edgesOut` crash; browser job is still executing.
+- Full Browser E2E: **PENDING** — the 46 PASS / 13 FAIL result from run 355 is obsolete (stale Dark+Gold/native-home assertions and TASKO option-count). The UI regression tests were rewritten and booking/GPS/TASKO mapping tests added; latest full suite is pending.
+
+### Implemented on QA branch only
+- Source regression no longer checks the deleted `learn-teach.js`; Source Regression passes.
+- QA-only teal/royal-blue theme and PWA colors; five-tab navigation Home / Services / Cart / Orders / Profile; Categories tab removed.
+- Default 3D avatar renders even before login or without a profile photo; notification bell SVG retained.
+- VidyaSetu and event/personal service routes removed; TASKO/GIGGER Beauty Makeover and Halwai categories retained.
+- Ride booking insert carries pickup/drop coordinates; tests mock Supabase requests to prevent any backend writes.
+- QA branch uses the QA Supabase project URL/key, not the production project.
+
+### Added verification coverage (full Browser E2E pending)
+- Pickup/Drop autocomplete (Photon with Nominatim fallback), map resize/visibility, pin/marker coordinate updates, GPS reverse-geocoding, fare controls, OSM→CARTO fallback, booking payload and tracking transition.
+- Beauty Makeover/Halwai selection, request payload persistence, and Admin category display.
+- Notification bell SVG, default avatar, five-tab nav, color theme, removed routes and retained route activation.
+
+### QA backend / security (read-only)
+- QA Supabase project `pqsangtvietawkfgpgfu` is ACTIVE_HEALTHY but currently has only four public tables: `admin_users`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`. Core `profiles`, `rides`, driver, shop/order, parcel, service-provider and booking tables are absent.
+- RLS is enabled on all four existing tables. Policies reviewed: `admin_users_self_select` (own row), notification events (own-user SELECT), preferences and device tokens (own-user ALL with matching `USING` / `WITH CHECK`).
+- Core-table RLS cannot be live-tested against QA until the schema is provisioned. Browser booking tests are mocked and are not production integration certification.
+- Read-only production metadata audit: **85/85 public tables have RLS enabled** (0 disabled). Key profiles/rides/driver-locations/live-location/service-booking/provider policies are authenticated and user/participant/admin-scoped.
+- Potential functional RLS bug found in production `fr_food_orders_read`: delivery-partner predicate compares `d.order_id = d.id` instead of the parent food order ID; likely prevents assigned delivery partners from reading their order. Source scan found no direct REST calls to food-order tables, so confirm the actual RPC path before fixing. Also sampled `counter_offer_ride` does not enforce the driver UPI-QR precondition used by `accept_ride`; confirm business requirement and add a negative-auth/business-rule test. Both require QA schema/migration coverage before certification.
+- `fr_market_orders`, `fr_parcel_orders`, `fr_service_requests`, and `ride_offers` have RLS enabled but no direct table policies. Source scan found no direct REST `from(...)` calls for these tables; the app uses RPCs for market/parcel/service request flows. Metadata review of selected ride/market/parcel RPCs shows `SECURITY DEFINER` with empty `search_path`; sampled function bodies include authenticated-role, ownership, approved-driver and participant checks. Full function ACL/body review and runtime auth-negative tests remain pending. Duplicate read/update policies exist on some profile/notification/SOS tables and should be consolidated later.
+- `vitest` is now `^4.1.11` (patched for the identified Vitest advisories). CI install audit reported zero vulnerabilities at run 171. No committed lockfile remains a reproducibility gap.
+
+### Release gate
+- **BLOCKED**: full Browser E2E pending; QA Supabase core schema incomplete; no real OTP/push/payment/physical GPS tests; core RLS review incomplete; signed AAB/Play Store checks outstanding.
+- Main/live remains untouched. Merge/deploy is not authorized until all required checks pass and the real booking/backend/security blockers are resolved.
 
 This is a working release gate, not the final release-ready certificate. A feature is not marked PASS merely because a label, button, database table, RPC name, source marker, or mock simulation exists.
 
@@ -254,3 +333,79 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - GitHub Actions after the KYC handler fix: browser regression **29/29 PASS**, browser E2E **29/29 PASS**, TypeScript/core typecheck PASS, unit tests **5/5 PASS**, core tests **2/2 PASS**, Pages build/deploy PASS.
 - The earlier 28/29 failure was a test assertion expecting the bucket name inside the handler function text. The handler was corrected to satisfy that assertion; the next CI run passed 29/29.
 - These are browser/source wiring checks. They do **not** prove an authenticated driver has uploaded real documents or that an Admin has reviewed them. Those remain live staging tests.
+
+
+## PROJECT ARJUNA — current release-gate recheck (2026-11-22, 12:08 IST)
+
+**QA branch:** `qa/remove-unneeded-services-2026-11-22`  
+**Current QA commit:** `6532a1b3b5b27b80f26f4cf63c93a3c47d6eb6d0`  
+**PR #36:** open, mergeable, not merged. Main base SHA remains `f1ddca35a576b7ecb34d5130e0cc990709ec4b02`. Main/live have not been changed.
+
+### Current CI evidence
+
+| Check | Result | Evidence |
+|---|---|---|
+| Inline/source regression | PASS | Run [44995355480](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995355480); 23 inline scripts checked and retired Learn-Teach cleanup assertions pass |
+| Typecheck / core typecheck / runtime build / unit / core | PASS | Run [44995355491](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995355491), typecheck-and-unit job completed success |
+| Dependency audit | PASS, 0 vulnerabilities | Quality Gate install log on run 44995355491 reports `found 0 vulnerabilities` |
+| TASKO / Laundry / Admin integration | RUNNING | Run [44995355441](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995355441) |
+| Full Playwright browser suite | RUNNING | Run [44995355491](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995355491), browser-e2e job |
+| Node 20 TASKO toolchain | npm 10.8.2 pinned; verification pending | Workflow now installs npm 10.8.2 and prints Node/npm versions before dependency install; run [44995349649](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995349649) is still running |
+
+### Changes made on QA since the earlier 59 PASS / 7 FAIL browser run
+
+- Explicit `[hidden]` CSS rule keeps the profile-photo element hidden until a photo is present, so the default 3D avatar is not obscured.
+- Browser tests now select Customer through the role launcher and activate Home before testing visible home controls; Admin login is tested through the role-locked `enterRole('admin')` path.
+- Corrected auth-button locators to match the current OTP button markup and navigated to the visible TASKO booking page before category selection.
+- Added a mobile viewport map-resize assertion in the booking-location regression.
+- QA-only guarded cleanup migration now includes the remaining empty `learn_teach_*` tables and `fr_learn_teach_is_admin()`; source regression checks these cleanup statements.
+- TASKO/Laundry Node 20 workflow explicitly pins npm 10.8.2 and verifies both versions to avoid toolchain drift.
+
+The prior browser run's seven failures were setup/visibility/test-selector issues; rerun on the current commit is still required before treating them as resolved.
+
+### Read-only production RLS/security recheck
+
+- **RLS enabled:** 85/85 public tables.
+- Supabase security advisor lists 23 tables with RLS enabled but no direct policies. Main-source scan found no direct `sb.from()` calls for these no-policy tables. `fr_market_orders`, `fr_market_order_items`, `fr_parcel_orders`, and `fr_service_requests` have authenticated SECURITY DEFINER RPC workflows/grants and are intentionally RPC-mediated. `ride_offers` is not referenced by the frontend and appears legacy/unused; it is not a verified RPC workflow. The remaining no-policy/service tables are not fully function-by-function audited.
+- **Confirmed functional/RLS defect:** `fr_food_orders_read` partner-delivery predicate is `d.order_id=d.id`, but the FK is `fr_food_deliveries.order_id -> fr_food_orders.id`. The order read predicate should join the delivery to the outer food order ID. This likely prevents assigned delivery partners from reading their linked food order. Production was read-only; no fix was applied.
+- Security advisor also reports 6 anon-executable SECURITY DEFINER functions (5 are public read/catalogue functions; `fr_learn_teach_is_admin` is obsolete and is included in QA cleanup), 88 authenticated SECURITY DEFINER functions requiring individual guard review, and leaked-password protection disabled in Supabase Auth.
+- Five legacy `learn_teach_*` tables were read-only counted at 0 rows. The QA migration's guard aborts if any retired learning table contains data before cleanup. The migration has not been applied to production.
+
+### Release blockers / NOT TESTED
+
+- QA Supabase `pqsangtvietawkfgpgfu` is healthy but has only four public tables; `profiles`, `rides`, TASKO, food/shop, parcel, service-provider and booking schema are missing. No live database write/read test is possible in QA.
+- Ride booking, TASKO categories and Admin mapping Playwright tests use mocked REST responses. They verify payload/UI transitions, not authenticated staging DB persistence.
+- Real OTP, Admin SMS OTP delivery, physical-device GPS, background push on a closed app, real payment/QR, live booking/driver assignment and Play Store AAB/device verification remain **NOT TESTED**.
+- The food-order RLS defect, Auth leaked-password setting, and incomplete SECURITY DEFINER review are unresolved. Live smoke-test is also NOT TESTED.
+
+**Release decision remains BLOCKED.** Do not merge or deploy until latest browser suite passes, backend/staging booking is genuinely verified, security blockers are addressed/approved, and required release gates are green. No production DB changes have been made.
+
+
+## PROJECT ARJUNA — latest QA progress (2026-11-22, 12:57 IST)
+
+**Current QA head:** `23bdabc4d71f6db537e5b6137630e87e88602c51` (PR #36 open; main unchanged).
+
+| Gate | Status | Evidence |
+|---|---|---|
+| Source regression / 23 inline scripts / retired Learn-Teach cleanup assertions | PASS | [Run 44995965873](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995965873) |
+| Typecheck, core typecheck, runtime build, unit/core tests | PASS | [Quality Gate 44995965802](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995965802), typecheck-and-unit job success |
+| Quality Gate npm install audit | PASS — 0 vulnerabilities | 44995965802 install output |
+| Node20/npm10.8.2 TASKO/Laundry/Admin regression | PASS — 4/4 | [Run 44995965840](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995965840); toolchain log shows Node v20.20.2 / npm 10.8.2 and 0 vulnerabilities |
+| Full Playwright/browser suite | PASS — 67/67 on previous code commit; current 23bdabc rerun pending | [Run 44995919190](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995919190) completed 67/67; [Run 44995965802](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995965802) browser-e2e is running on the Home Services dashboard syntax fix |
+
+### New fixes verified in the 67/67 run / current QA source
+
+- Home page markup now contains the poster rail, ride cards, home-service cards and TASKO/Laundry shortcuts inside the isolated `#home` page; it no longer leaks content onto other routes.
+- Default 3D avatar generator is exported to the home-avatar fallback, and hidden profile-photo CSS preserves the default avatar when no photo exists.
+- Admin navigation regression tests the role-guarded `menuGo` flow, not direct unguarded `showPage` calls.
+- Multi-locator assertions were changed to aggregate text to avoid Playwright strict-mode errors.
+- Home Services provider dashboard inline JavaScript was rewritten safely; current source-regression PASS confirms 23 inline scripts parse.
+- Map resize/mobile assertion and pickup/drop/GPS/fallback/booking mocked tests are included in the 67-test suite.
+
+### Main/live status (read-only)
+
+- Main Quality Gate [44986976265](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44986976265): typecheck-and-unit PASS, browser-e2e FAIL.
+- Main Regression [44986976255](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44986976255): FAIL; browser report shows 47 passed / 10 failed (old Dark+Gold route/UI tests).
+- Pages build/deploy [44986975945](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44986975945): PASS for main SHA `f1ddca35`. The live domain still could not be verified directly (DNS/web access failure), so live smoke-test is NOT CONFIRMED.
+
+**Release decision remains BLOCKED:** the 67 mocked browser tests do not substitute for a real QA Supabase schema and authenticated booking, OTP, push, payment and device tests. Production food-order partner-read policy, Auth leaked-password protection and incomplete SECURITY DEFINER review remain blockers; no production DB writes or Main merge/deploy have been performed.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#24105f">
+<meta name="theme-color" content="#10243e">
 <meta name="application-version" content="11.1-PRO-category-routing-learning-isolation">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>FRIEND RIDE V11.1 PRO – Friend Mart | Version 10.3</title>
@@ -236,13 +236,12 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 /* V11.1 PRO FIX: Restore top Menu drawer and its full option list. */
 #drawerBackdrop,.drawer-backdrop{display:none}
 #drawerBackdrop.show,.drawer-backdrop.show{display:block!important}
-.premium-bottom{grid-template-columns:repeat(7,minmax(0,1fr))!important}
-.premium-bottom button[data-page="learnTeach"]{font-size:9px;color:#6a43a7;font-weight:900}
+.premium-bottom{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 #home #frHomeRatings{margin-bottom:12px}
 #home #frSupportHomeEntry{margin:12px 16px 28px!important;position:relative}
 body{padding-bottom:105px}
 </style>
-<link rel="stylesheet" href="./learn-teach.css">
+
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -268,8 +267,6 @@ body{padding-bottom:105px}
  <div class="home-banner-wrap"><div class="home-banner" onclick="showPage('explore')"><div><small>WELCOME TO FRIEND RIDE</small><h1>మీ ఊరి ప్రయాణం…<br>మీ చేతిలో!</h1><p>Ride • Shop • Food • Delivery</p><span class="banner-cta">Explore Services ↗</span></div><div class="banner-art">🛵</div></div>
   <div class="banner-dots"><b></b><b></b><b></b><strong>1/4</strong><b></b></div></div>
 <div class="card join-card"><h2>Join FRIEND RIDE</h2><div class="grid"><button class="tile" onclick="openAuth('register','customer')"><span class="emoji">👤</span><b>Customer Registration</b></button><button class="tile" onclick="openAuth('register','driver')"><span class="emoji">🚗</span><b>Driver Registration</b></button><button class="tile" onclick="openAuth('register','partner')"><span class="emoji">🏪</span><b>Partner Registration</b></button></div></div>
-
-</section>
 
 <div class="fr-poster-rail" aria-label="Friend Ride offers and safety posters">
  <button class="fr-poster fr-poster-ins" onclick="showPage('offers')">
@@ -330,11 +327,7 @@ body{padding-bottom:105px}
   <button class="home-pro-service" style="--svc-a:#d8c7ff;--svc-b:#7c3aed" onclick="requireLogin(()=>{showPage('homeServices');document.getElementById('taskoGiggerLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧰</span><b>TASKO / GIGGER</b><small>Daily Helper Booking</small></button>
   <button class="home-pro-service" style="--svc-a:#c8f5ee;--svc-b:#159b86" onclick="requireLogin(()=>{showPage('laundryServices');document.getElementById('laundryServiceLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧺</span><b>LAUNDRY SERVICES</b><small>Wash • Iron • Dry Clean • Pickup</small></button>
  </div>
- <div class="home-pro-services">
-  <button class="home-pro-service" style="--svc-a:#ffe7c2;--svc-b:#f59e0b" onclick="requireLogin(()=>openEventService('Catering Services'))"><span class="home-pro-art">🍽️</span><b>Catering Services</b></button>
-  <button class="home-pro-service" style="--svc-a:#d9eafe;--svc-b:#6288e8" onclick="requireLogin(()=>openEventService('DJ – Sound & Lights'))"><span class="home-pro-art">🎧</span><b>DJ – Sound &amp; Lights</b></button>
-  <button class="home-pro-service" style="--svc-a:#ffe0ec;--svc-b:#ec78a7" onclick="requireLogin(()=>openEventService('Beauty Makeover'))"><span class="home-pro-art">💄</span><b>Beauty Makeover</b></button>
- </div>
+
  <div class="cycle-delivery-home-card" onclick="requireLogin(()=>showPage('cycleDelivery'))" role="button" tabindex="0" aria-label="Cycle Delivery"><div class="cycle-delivery-photo"><span class="cycle-delivery-fallback">🚲</span></div><div class="cycle-delivery-home-copy"><b>🚲 Cycle Delivery</b><small>Eco-friendly local delivery • No bike required</small><span class="cycle-delivery-rate">₹25–₹40 • Distance-based</span></div></div><div class="home-section-title"><h2>More Services</h2><button onclick="showPage('explore')">View All →</button></div>
  <div class="home-more-grid"><button onclick="requireLogin(()=>showPage('parcel'))">📦<b>Parcel</b></button><button onclick="requireLogin(()=>showPage('goods'))">🚚<b>Goods</b></button><button onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b></button><button onclick="requireLogin(()=>showPage('scheduled'))">🗓️<b>Schedule</b></button></div>
  <section id="frHomeRatings" class="card" aria-label="Customer Ratings">
@@ -346,6 +339,7 @@ body{padding-bottom:105px}
  <div class="card fr-support-home-entry" id="frSupportHomeEntry"><h2>💬 Help & Support</h2><p class="muted">మీకు ఏదైనా సమస్య ఉందా? Complaint నమోదు చేయండి లేదా మీ Feedback & Rating ఇవ్వండి.</p><button type="button" class="btn purple" onclick="frOpenSupportPage()">✍️ Complaint / Feedback ఇవ్వండి</button></div>
  </section>
 
+</section>
 <section id="cycleDelivery" class="page"><div class="card cycle-delivery-hero"><div class="cycle-delivery-photo large"><span class="cycle-delivery-fallback">🚲</span></div><h2>🚲 FRIEND RIDE Cycle Delivery</h2><p>Eco-friendly local delivery by bicycle. No motorbike required. Grocery, food, parcel and local-store orders within suitable distance and load limits.</p></div><div class="card"><h2>Cycle Delivery Charges</h2><div class="cycle-price-table"><div><span>0–1 KM</span><b>₹25</b></div><div><span>1–2 KM</span><b>₹30</b></div><div><span>2–3 KM</span><b>₹35</b></div><div><span>Above 3 KM</span><b>₹40</b></div></div><div class="field"><label for="cycleDistanceInput">Delivery distance (KM)</label><input id="cycleDistanceInput" type="number" min="0.1" step="0.1" placeholder="Enter distance in km" oninput="frCycleCalculatePrice()"></div><div id="cyclePriceResult" class="notice">Distance enter చేస్తే delivery charge చూపిస్తుంది.</div><button class="btn purple" onclick="requireLogin(()=>showPage('shops'))">🛒 Shop / Place Order</button><button class="btn light" onclick="requireLogin(()=>menuGo('driverDashboard'))">🚲 Delivery Partner Login</button></div><div class="card"><h3>Available for</h3><div class="grid"><div class="tile"><span class="emoji">🛒</span><b>Grocery</b><small>Daily essentials</small></div><div class="tile"><span class="emoji">🍔</span><b>Food</b><small>Nearby restaurants</small></div><div class="tile"><span class="emoji">📦</span><b>Parcel</b><small>Small parcels</small></div><div class="tile"><span class="emoji">🏪</span><b>Local Stores</b><small>Small orders</small></div></div><div class="notice">Cycle delivery assignment must consider distance, partner availability, order size/weight and safety. Orders unsuitable for cycle will use another eligible delivery vehicle.</div></div><button class="btn light" onclick="showPage('home')">← Back to Home</button></section><section id="explore" class="page"><div class="card"><h2>Explore FRIEND RIDE Services</h2><p class="muted">మీకు కావాల్సిన సేవను ఎంచుకోండి.</p><div class="grid">
 <button class="tile" onclick="showPage('ride')">🛵<b>Ride Booking</b><small>Bike / Auto / Car</small></button>
 <button class="tile" onclick="showPage('parcel')">📦<b>Parcel Delivery</b></button>
@@ -356,47 +350,18 @@ body{padding-bottom:105px}
 <button class="tile" onclick="showPage('shopping')">🛍️<b>Shopping</b></button>
 <button class="tile" onclick="showPage('scheduled')">🗓️<b>Scheduled Booking</b></button>
 <button class="tile" onclick="showPage('bankingServices')">🏦<b>Banking &amp; Financial Services</b><small>Banking • Insurance • Bill payments</small></button>
-<button class="tile" onclick="openEventService('Catering Services')">🍽️<b>Catering Services</b><small>Events & functions</small></button>
-<button class="tile" onclick="openEventService('DJ – Sound & Lights')">🎧<b>DJ – Sound & Lights</b><small>Events & celebrations</small></button>
-<button class="tile" onclick="openEventService('Beauty Makeover')">💄<b>Beauty Makeover</b><small>Makeup & styling</small></button>
+
 </div></div>
 <div class="card"><h3>💳 Service & Delivery Charges</h3><div class="notice"><b>Platform Charge: 2.5%</b><br>Eligible order/service valueపై 2.5% platform charge వర్తిస్తుంది.</div><p class="muted">Delivery charges location, distance, service type మరియు delivery partner quote ఆధారంగా మారవచ్చు. Final delivery charge మరియు total amount booking/checkout confirm చేసే ముందు చూపించాలి.</p></div></section>
-
-<section id="eventServices" class="page">
- <div class="card">
-  <button class="btn light" style="width:auto" onclick="showPage('home')">← Back to Home</button>
-  <h2 id="eventServiceHeading">Event & Personal Services</h2>
-  <p class="muted">Catering, DJ / Sound & Lights, Beauty Makeover — ఇవి Home Technician Services నుండి వేరుగా బుక్ చేయండి.</p>
-  <div class="field"><label>Select Service</label>
-   <select id="eventServiceType" onchange="frUpdateEventServiceHeading()">
-    <option value="Catering Services">🍽️ Catering Services</option>
-    <option value="DJ – Sound & Lights">🎧 DJ – Sound & Lights</option>
-    <option value="Beauty Makeover">💄 Beauty Makeover</option>
-   </select>
-  </div>
-  <div class="field"><label>Event / Service Date</label><input id="eventServiceDate" type="date"></div>
-  <div class="field"><label>Preferred Time</label><input id="eventServiceTime" type="time"></div>
-  <div class="field"><label>Venue / Full Address</label><textarea id="eventServiceAddress" placeholder="Enter function hall, home or service location"></textarea></div>
-  <div class="field"><label>Number of Guests (Catering only)</label><input id="eventServiceGuests" type="number" min="1" placeholder="Approximate guest count"></div>
-  <div class="field"><label>Requirements / Details</label><textarea id="eventServiceDetails" placeholder="Menu and food requirements / DJ setup and lighting / Makeup and styling requirements"></textarea></div>
-  <div class="notice">మీ వివరాలు నమోదు చేసి quote కోసం request చేయవచ్చు. Provider availability, price and booking confirmation backend connection తర్వాత enable అవుతాయి.</div>
-  <button class="btn purple" onclick="showMessage('Event service request form సిద్ధంగా ఉంది. Booking submission కోసం event-service backend table/RPC mapping అవసరం.','good')">Request a Quote</button>
-  <div class="notice"><b>మీరు Service Providerనా?</b> Catering, DJ / Sound &amp; Lights లేదా Beauty Makeover providerగా చేరడానికి registration చేయండి.</div>
-  <button class="btn light" onclick="openServiceProviderRegister(document.getElementById('eventServiceType').value)">Register as Service Provider</button>
- </div>
-</section>
 
 <section id="serviceProviderRegister" class="page">
  <div class="card">
   <button class="btn light" style="width:auto" onclick="showPage('home')">← Back</button>
   <h2>FRIEND RIDE – Service Provider Registration</h2>
-  <p class="muted">TASKO / GIGGER, Laundry, Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
+  <p class="muted">TASKO / GIGGER, Laundry మరియు Home Services providers కోసం registration form.</p>
   <div class="field"><label>Service Category *</label>
    <select id="spCategory">
     <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Laundry Partner">Laundry Services</option><option value="Home Services">Home Services</option>
-    <option value="Catering Services">Catering Services</option>
-    <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
-    <option value="Beauty Makeover">Beauty Makeover</option>
    </select>
   </div>
   <div class="field"><label>Owner / Provider Full Name *</label><input id="spName" placeholder="Enter full name"></div>
@@ -492,7 +457,7 @@ body{padding-bottom:105px}
  <h2>🧰 TASKO – Daily Helper Booking</h2>
  <p class="muted">ఇంటి పనులు, షాపు సహాయం, ప్యాకింగ్, క్లీనింగ్, లోకల్ అసిస్టెన్స్ వంటి పనులకు ధృవీకరించిన Giggerను బుక్ చేయండి.</p>
  <div class="notice"><b>పారితోషికం:</b> 6 గంటల వరకు ₹150–₹400 (పని ఆధారంగా Admin quote). 6 గంటలు దాటితే ₹400 + ప్రతి అదనపు గంటకు ₹50. Final amount పని గంటలు మరియు ఆమోదించిన quote ఆధారంగా నిర్ధారించబడుతుంది.</div>
- <div class="field"><label>Work Category *</label><select id="taskoCategory"><option>General Helper</option><option>House Cleaning</option><option>Shop Assistant</option><option>Packing & Loading</option><option>Office Assistant</option><option>Event Helper</option><option>Delivery Helper</option><option>Other Local Work</option></select></div>
+ <div class="field"><label>Work Category *</label><select id="taskoCategory"><option>General Helper</option><option>House Cleaning</option><option>Shop Assistant</option><option>Packing & Loading</option><option>Office Assistant</option><option>Event Helper</option><option>Delivery Helper</option><option>Beauty Makeover</option><option>Halwai – Sweets & Food Preparation</option><option>Other Local Work</option></select></div>
  <div class="row"><div class="field"><label>Required Hours *</label><select id="taskoHours" onchange="frTaskoPricePreview()"><option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6" selected>6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option><option value="10">10 hours</option><option value="12">12 hours</option></select></div><div class="field"><label>Helper Preference</label><select id="taskoGender"><option value="no_preference">No preference</option><option value="male">Male</option><option value="female">Female</option></select></div></div>
  <div id="taskoPricePreview" class="notice">Estimated rate: ₹150–₹400 for up to 6 hours. Final quote after review.</div>
  <div class="row"><div class="field"><label>Work Date *</label><input id="taskoDate" type="date"></div><div class="field"><label>Start Time *</label><input id="taskoTime" type="time"></div></div>
@@ -506,7 +471,7 @@ body{padding-bottom:105px}
  <div id="taskoAdminPanel" class="hide"><hr><h3>Admin – TASKO Control Centre</h3><button class="btn light" onclick="frAdminLoadTasko()">Refresh Gigger Applications & Bookings</button><div id="taskoAdminApplications"></div><div id="taskoAdminBookings"></div></div>
 </div>
 <div class="card"><h3>Are you a Technician?</h3><button class="btn light" onclick="showPage('technicianRegister')">Technician Registration</button>
-  <button class="btn purple" onclick="openServiceProviderRegister('Home Services')">Register as Home Service Provider</button></div></section>
+  <button class="btn purple" onclick="openServiceProviderRegister('Home Services')">Register as Home Service Provider</button></div><div class="card" id="homeServiceProviderDashboard"><h3>🛠️ Technician Dashboard</h3><div class="notice">Login చేసిన technician తన application status మరియు assigned jobs మాత్రమే చూడగలరు. Admin approval అవసరం.</div><button class="btn light" onclick="frHomeServiceProviderDashboard()">Refresh My Technician Dashboard</button><div id="frHomeTechStatus"></div><div id="frHomeTechJobs"></div></div></section>
 
 <section id="laundryServices" class="page">
  <div class="card" id="laundryServiceLaunch">
@@ -658,17 +623,15 @@ body{padding-bottom:105px}
    <div id="frSupportSubmitStatus" class="notice">మీ వివరాలు Admin Dashboardకు పంపబడతాయి.</div>
   </div>
  </section>
-<section id="learnTeach" class="page"><div class="card lt-shell"><div class="lt-row"><button class="lt-btn alt" onclick="showPage('home')">← FRIEND RIDE</button><button class="lt-btn alt" onclick="frLearnTeachAdmin()">Admin Approvals</button></div><div id="learnTeachRoot"></div></div></section>
+
 </main>
 
-<nav class="bottom premium-bottom">
+<nav class="bottom premium-bottom" aria-label="Primary navigation">
  <button class="active" data-page="home" onclick="showPage('home')"><span>🏠</span>Home</button>
- <button data-page="shops" onclick="showPage('shops')"><span>🛍️</span>Friend<br>Mart</button>
- <button data-page="food" onclick="showPage('food')"><span>🍱</span>Food<br>Delivery</button>
- <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span><small>My Cart</small><b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
- <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Categories</button>
- <button data-page="learnTeach" onclick="frLearnTeachOpen()"><span>🎓</span>విద్యా సేతు</button>
+ <button data-page="explore" onclick="showPage('explore')"><span>✨</span>Services</button>
+ <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span><small>Cart</small><b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
  <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>🧾</span>Orders</button>
+ <button data-page="profile" onclick="requireLogin(()=>showPage('profile'))"><span>👤</span>Profile</button>
 </nav>
 
 <div id="drawerBackdrop" class="drawer-backdrop" onclick="if(event.target===this)closeDrawer()"><aside class="drawer">
@@ -749,8 +712,8 @@ body{padding-bottom:105px}
 </div></div>
 
 <script>
-const SUPABASE_URL='https://fglyplxcczdjtfwobtzh.supabase.co';
-const SUPABASE_ANON_KEY='sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz';
+const SUPABASE_URL='https://pqsangtvietawkfgpgfu.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_tFvhxu087vPefh3gdJ-fuQ_Q-iMHlAo';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:'friend-ride-auth-v1'}});
 let selectedRole=(()=>{try{const r=localStorage.getItem('friendride_selected_role');return ['customer','driver','partner','admin'].includes(r)?r:'customer';}catch(_){return 'customer';}})(),currentUser=null,currentProfile=null,afterLoginAction=null,rideVehicle='Bike',online=false,rideMap=null,trackingMap=null,pickupMarker=null,dropMarker=null,driverMarker=null,pickupCoords=null,dropCoords=null,driverWatchId=null;
 const $=id=>document.getElementById(id);
@@ -918,6 +881,24 @@ async function reviewDriverApplication(driverId,decision){
  }catch(e){const el=$('driverApprovalMessage');if(el)el.textContent='Approval update failed: '+e.message;alert('Driver approval update failed: '+e.message);}
 }
 function frCycleCalculatePrice(){const input=document.getElementById('cycleDistanceInput'),out=document.getElementById('cyclePriceResult');if(!input||!out)return;const km=Number(input.value);if(!Number.isFinite(km)||km<=0){out.textContent='Valid delivery distance enter చేయండి.';return;}const charge=km<=1?25:km<=2?30:km<=3?35:40;out.innerHTML='Estimated Cycle Delivery Charge: <b>₹'+charge+'</b> ('+km.toFixed(1)+' KM)';}
+
+// FRIEND RIDE booking map + location autocomplete recovery (Photon primary, Nominatim fallback).
+let frBookingMap=null,frBookingPickupMarker=null,frBookingDropMarker=null,frLocationMode='pickup',frLocationTimers={},frLocationLastRequest=0,frBookingTileLayer=null,frBookingTileFallbackUsed=false;
+const frLocationCountry='India';
+function frBookingMapEnsure(){
+ const el=$('frBookingMap');if(!el)return;if(!window.L){const h=$('frPickupHint');if(h)h.textContent='Map library load కాలేదు. Refresh చేసి మళ్లీ ప్రయత్నించండి.';return;}
+ if(!frBookingMap){try{frBookingMap=L.map(el,{zoomControl:true}).setView([17.6868,83.2185],12);frBookingTileLayer=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(frBookingMap);let tileErrors=0;frBookingTileLayer.on('tileerror',()=>{tileErrors++;if(tileErrors>=3&&!frBookingTileFallbackUsed){frBookingTileFallbackUsed=true;try{frBookingMap.removeLayer(frBookingTileLayer);frBookingTileLayer=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'}).addTo(frBookingMap);}catch(e){console.warn('FR map tile fallback:',e);}}});frBookingMap.on('click',e=>frBookingReverse(e.latlng,frLocationMode));if(window.ResizeObserver&&!el.dataset.frMapResize){el.dataset.frMapResize='1';new ResizeObserver(()=>frBookingMap&&frBookingMap.invalidateSize()).observe(el);}}catch(e){console.error('FR booking map init failed',e);const h=$('frPickupHint');if(h)h.textContent='Map తెరవలేకపోయింది. Location search/GPS ప్రయత్నించండి.';}}
+ setTimeout(()=>frBookingMap&&frBookingMap.invalidateSize(),180);
+}
+function frBookingSetPoint(kind,lat,lon,label){const pt=[lat,lon];if(!frBookingMap)frBookingMapEnsure();if(!frBookingMap)return;if(kind==='pickup'){pickupCoords={lat,lon};if(frBookingPickupMarker)frBookingMap.removeLayer(frBookingPickupMarker);frBookingPickupMarker=L.marker(pt,{draggable:true}).addTo(frBookingMap).bindPopup('Pickup: '+(label||'Selected location'));frBookingPickupMarker.on('dragend',e=>frBookingReverse(e.target.getLatLng(),'pickup'));pickupMarker=frBookingPickupMarker;}else{dropCoords={lat,lon};if(frBookingDropMarker)frBookingMap.removeLayer(frBookingDropMarker);frBookingDropMarker=L.marker(pt,{draggable:true}).addTo(frBookingMap).bindPopup('Drop: '+(label||'Selected location'));frBookingDropMarker.on('dragend',e=>frBookingReverse(e.target.getLatLng(),'drop'));dropMarker=frBookingDropMarker;}const target=kind==='pickup'?'pickup':'drop';if($(target))$(target).value=label||lat.toFixed(6)+', '+lon.toFixed(6);const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='Selected: '+lat.toFixed(5)+', '+lon.toFixed(5);if(frBookingPickupMarker&&frBookingDropMarker)frBookingMap.fitBounds(L.featureGroup([frBookingPickupMarker,frBookingDropMarker]).getBounds().pad(.18));else frBookingMap.setView(pt,16);}
+async function frBookingReverse(latlng,kind){const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='Address గుర్తిస్తున్నాం…';try{const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(latlng.lat)+'&lon='+encodeURIComponent(latlng.lng);const res=await fetch(url,{headers:{'Accept':'application/json'}});if(!res.ok)throw new Error('Reverse geocoding HTTP '+res.status);const data=await res.json();frBookingSetPoint(kind,latlng.lat,latlng.lng,data.display_name||latlng.lat.toFixed(6)+', '+latlng.lng.toFixed(6));}catch(err){frBookingSetPoint(kind,latlng.lat,latlng.lng,latlng.lat.toFixed(6)+', '+latlng.lng.toFixed(6));if(hint)hint.textContent='Pin set. Address lookup unavailable; coordinates saved.';}}
+function frChooseMapPin(kind){frLocationMode=kind;frBookingMapEnsure();if(frBookingMap){frBookingMap.setView(kind==='pickup'&&pickupCoords?[pickupCoords.lat,pickupCoords.lon]:kind==='drop'&&dropCoords?[dropCoords.lat,dropCoords.lon]:[17.6868,83.2185],kind==='pickup'&&pickupCoords||kind==='drop'&&dropCoords?16:12);frBookingMap.invalidateSize();}const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='మ్యాప్‌పై నొక్కి '+(kind==='pickup'?'Pickup':'Drop')+' pin ఎంచుకోండి.';}
+function frUseMyLocation(){frLocationMode='pickup';frBookingMapEnsure();if(!navigator.geolocation){alert('GPS support లేదు.');return;}const h=$('frPickupHint');if(h)h.textContent='GPS location పొందుతున్నాం…';navigator.geolocation.getCurrentPosition(pos=>frBookingReverse({lat:pos.coords.latitude,lng:pos.coords.longitude},'pickup'),err=>{if(h)h.textContent='GPS error: '+err.message;alert('Location permission allow చేయండి; HTTPSలో GPS పనిచేస్తుంది.');},{enableHighAccuracy:true,timeout:15000,maximumAge:10000});}
+async function frPhotonSearch(q){const url='https://photon.komoot.io/api/?q='+encodeURIComponent(q+' India')+'&limit=6&lang=en';const res=await fetch(url,{headers:{'Accept':'application/json'}});if(!res.ok)throw new Error('Photon HTTP '+res.status);const data=await res.json();return(data.features||[]).map(f=>({lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0],display_name:[f.properties.name,f.properties.street,f.properties.city||f.properties.county,f.properties.state,f.properties.country].filter(Boolean).join(', ')})).filter(x=>x.display_name);}
+async function frNominatimSearch(q){const url='https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=in&q='+encodeURIComponent(q+' India');const res=await fetch(url,{headers:{'Accept':'application/json'}});if(!res.ok)throw new Error('Nominatim HTTP '+res.status);return await res.json();}
+function frLocationSuggest(kind,q){const box=$(kind==='pickup'?'frPickupSuggestions':'frDropSuggestions');if(!box)return;box.innerHTML='';box.classList.remove('open');if(q.trim().length<3)return;clearTimeout(frLocationTimers[kind]);frLocationTimers[kind]=setTimeout(async()=>{const now=Date.now(),wait=Math.max(0,1000-(now-frLocationLastRequest));if(wait)await new Promise(r=>setTimeout(r,wait));frLocationLastRequest=Date.now();try{let rows=[];try{rows=await frPhotonSearch(q);if(!rows.length){console.warn('Photon returned no results; trying Nominatim fallback.');rows=await frNominatimSearch(q);}}catch(e){console.warn('Photon fallback to Nominatim:',e);rows=await frNominatimSearch(q);}box.innerHTML='';rows.forEach(row=>{const b=document.createElement('button');b.type='button';b.textContent=row.display_name;b.onclick=()=>{box.classList.remove('open');frLocationMode=kind;frBookingMapEnsure();frBookingSetPoint(kind,Number(row.lat),Number(row.lon),row.display_name);};box.appendChild(b);});if(!rows.length){const b=document.createElement('button');b.type='button';b.textContent='No locations found. పూర్తి area/address టైప్ చేయండి.';b.disabled=true;box.appendChild(b);}box.classList.add('open');}catch(err){box.innerHTML='';const b=document.createElement('button');b.type='button';b.textContent='Location search unavailable. Location name మార్చి ప్రయత్నించండి లేదా Map pin/GPS ఉపయోగించండి.';b.disabled=true;box.appendChild(b);box.classList.add('open');}},450);}
+function frInitBookingMap(){frBookingMapEnsure();['pickup','drop'].forEach(kind=>{const el=$(kind),box=$(kind==='pickup'?'frPickupSuggestions':'frDropSuggestions');if(!el||el.dataset.frLocationBound==='1')return;el.dataset.frLocationBound='1';el.addEventListener('input',()=>frLocationSuggest(kind,el.value));el.addEventListener('focus',()=>frLocationSuggest(kind,el.value));el.addEventListener('keydown',e=>{if(e.key==='Escape'&&box)box.classList.remove('open');});document.addEventListener('click',e=>{if(box&&!el.contains(e.target)&&!box.contains(e.target))box.classList.remove('open');});});if(pickupCoords&&!frBookingPickupMarker)frBookingSetPoint('pickup',pickupCoords.lat,pickupCoords.lon,$('pickup')?.value||'Pickup');if(dropCoords&&!frBookingDropMarker)frBookingSetPoint('drop',dropCoords.lat,dropCoords.lon,$('drop')?.value||'Drop');}
+
 function showPage(id){if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}if(id==='laundryServices'&&currentProfile?.role==='admin'){const p=document.getElementById('laundryAdminPanel');if(p)p.classList.remove('hide');}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){
@@ -989,7 +970,7 @@ async function register(){return sendRegistrationOtp();}
 /* Legacy OTP placeholder removed; use the APITXT integration handler. */
 /* Legacy OTP placeholder removed; use the APITXT integration handler. */
 function validateProfilePhotoFile(inputId){const el=$(inputId),f=el&&el.files&&el.files[0];if(!f)return false;return ['image/jpeg','image/png','image/webp'].includes(f.type)&&f.size<=3*1024*1024;}
-function validateTechnicianRegistration(){const ids=['techName','techPhone','techExperience','techAddress','techAadhaar','techPhonePe'];if(!validateProfilePhotoFile('techProfilePhoto')){alert('Passport-size photo JPG/PNG/WEBP 3 MB లోపు తప్పనిసరి.');return;}if(ids.some(id=>!$(id).value.trim())||!$('techAadhaarFile').files.length){alert('Technician వివరాలు, Aadhaar file మరియు PhonePe number తప్పనిసరి.');return;}if($('techAadhaarFile').files[0].size>2*1024*1024){alert('Aadhaar file 2 MB లోపు ఉండాలి.');return;}alert('Technician application fields validate అయ్యాయి. Private file storage మరియు Admin approval backend SQL దశలో connect చేయాలి.');}
+async function validateTechnicianRegistration(){try{if(!currentUser)throw Error('Registration కోసం login అవసరం.');const digits=id=>($(id)?.value||'').replace(/\\D/g,'');const phone=digits('techPhone'),aadhaar=digits('techAadhaar'),phonepe=digits('techPhonePe');if(!validateProfilePhotoFile('techProfilePhoto'))throw Error('Passport photo JPG/PNG/WEBP (3MB లోపు) తప్పనిసరి.');if(!['techName','techExperience','techAddress','techAadhaar','techPhonePe'].every(id=>$(id).value.trim())||phone.length!==10||phonepe.length!==10||aadhaar.length!==12||!$('techAadhaarFile').files.length)throw Error('అన్ని వివరాలు, సరైన mobile numbers, 12-digit Aadhaar మరియు document అవసరం.');const photo=$('techProfilePhoto').files[0],aadFile=$('techAadhaarFile').files[0],qr=$('techQR')?.files?.[0];if(aadFile.size>2*1024*1024)throw Error('Aadhaar file 2MB లోపు ఉండాలి.');if(qr&&qr.size>2*1024*1024)throw Error('QR image 2MB లోపు ఉండాలి.');const bucket='home-service-private',folder=currentUser.id+'/'+Date.now();const upload=async(file,path)=>{const {error}=await sb.storage.from(bucket).upload(path,file,{upsert:false});if(error)throw error;return path;};const photoPath=await upload(photo,folder+'/profile-'+photo.name.replace(/[^a-zA-Z0-9._-]/g,'_'));const aadPath=await upload(aadFile,folder+'/aadhaar-'+aadFile.name.replace(/[^a-zA-Z0-9._-]/g,'_'));let qrPath=null;if(qr)qrPath=await upload(qr,folder+'/upi-qr-'+qr.name.replace(/[^a-zA-Z0-9._-]/g,'_'));const {error}=await sb.from('fr_home_service_applications').insert({user_id:currentUser.id,profession:$('techProfession').value,full_name:$('techName').value.trim(),phone,experience_years:Number($('techExperience').value),address:$('techAddress').value.trim(),aadhaar_last4:aadhaar.slice(-4),phonepe_number:phonepe,upi_id:$('techUPI')?.value.trim()||null,profile_photo_path:photoPath,aadhaar_file_path:aadPath,upi_qr_path:qrPath,status:'pending'});if(error)throw error;alert('Registration submit అయింది. Aadhaar పూర్తి నంబర్ databaseలో save చేయలేదు. Admin approval pending.');showPage('homeServices');frHomeServiceProviderDashboard?.();}catch(e){alert('Registration save కాలేదు: '+(e.message||e));}}
 function confirmParcelRelease(){if(!$('parcelTrackingId').value.trim()||$('parcelDeliveryOtp').value.trim().length<4){alert('Tracking ID మరియు recipient OTP నమోదు చేయండి.');return;}if($('parcelReleaseStatus'))$('parcelReleaseStatus').textContent='Release request captured in UI. Server-side verified payment + OTP validation must approve parcel release.';alert('Frontend మాత్రమే ఆధారంగా parcel release చేయలేం. Backend payment verification మరియు OTP validation తర్వాతే release చేయాలి.');}
 async function login(){return verifyLoginOtp();}
 async function acceptSession(user){
@@ -1021,7 +1002,51 @@ function saveRideRequest(){if(!$('pickup').value.trim()||!$('drop').value.trim()
 function validateSchedule(){if(!$('scheduleDate').value||!$('scheduleTime').value||!$('scheduleAddress').value.trim()){alert('Date, Time మరియు Address నమోదు చేయండి.');return;}alert('Schedule వివరాలు validate అయ్యాయి. Database mapping తర్వాత booking save అవుతుంది.');}
 function validateGoods(){if(!$('goodsPickup').value.trim()||!$('goodsDrop').value.trim()||!$('goodsDescription').value.trim()){alert('Pickup, Drop మరియు Goods వివరాలు నమోదు చేయండి.');return;}alert('Goods request వివరాలు validate అయ్యాయి. Live save కోసం database mapping అవసరం.');}
 function submitParcelRequest(){const ids=['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription'];if(ids.some(id=>!$(id).value.trim())||Number($('parcelWeight').value)<=0){alert('పార్సెల్ వివరాలన్నీ నమోదు చేయండి.');return;}const d=v=>v.replace(/\D/g,'');if(d($('parcelSenderPhone').value).length!==10||d($('parcelReceiverPhone').value).length!==10){alert('సరైన 10 digit mobile numbers ఇవ్వండి.');return;}alert('Parcel details validate అయ్యాయి. Live booking కోసం parcel table mapping అవసరం.');}
-function submitServiceRequest(){if(!$('homeServiceTechnician').value||!$('homeServiceAddress').value.trim()||!$('homeServiceNotes').value.trim()||!$('homeServiceDate').value||!$('homeServiceTime').value){alert('Technician, Address, Work Details, Date మరియు Time ఎంచుకోండి.');return;}alert('₹50 minimum advance booking fields validate అయ్యాయి. Secure Cashfree order + webhook verification connect అయిన తర్వాత మాత్రమే booking confirm అవుతుంది.');}
+function frHomeServiceEsc(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+async function frHomeServiceProviderDashboard(){
+ const status=$('frHomeTechStatus'),jobs=$('frHomeTechJobs');
+ if(!status||!jobs)return;
+ if(!currentUser){status.innerHTML='<p>Login required.</p>';return;}
+ status.textContent='Loading…';
+ try{
+  const {data:app,error}=await sb.from('fr_home_service_applications').select('id,profession,full_name,status,created_at').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(5);
+  if(error)throw error;
+  status.innerHTML=(app||[]).map(a=>'<div class="listrow"><div class="grow"><b>'+frHomeServiceEsc(a.profession)+'</b><small>'+frHomeServiceEsc(a.full_name)+'</small></div><span class="pill">'+frHomeServiceEsc(a.status)+'</span></div>').join('')||'<p>No technician application found.</p>';
+  if(currentProfile?.role==='admin'){
+   const {data:pending,error:pe}=await sb.from('fr_home_service_applications').select('id,user_id,profession,full_name,phone,created_at').eq('status','pending').limit(30);
+   if(pe)throw pe;
+   status.innerHTML+='<h4>Admin • Pending Applications</h4>'+(pending||[]).map(a=>'<div class="listrow"><div class="grow"><b>'+frHomeServiceEsc(a.full_name)+' — '+frHomeServiceEsc(a.profession)+'</b><small>'+frHomeServiceEsc(a.phone)+'</small></div><button type="button" onclick="frHomeServiceAdminDecision(\''+frHomeServiceEsc(a.id)+'\',\'approved\')">Approve</button><button type="button" onclick="frHomeServiceAdminDecision(\''+frHomeServiceEsc(a.id)+'\',\'rejected\')">Reject</button></div>').join('');
+  }
+  const {data:bookings,error:be}=await sb.from('fr_home_service_bookings').select('id,profession,work_details,address,preferred_date,preferred_time,status').eq('provider_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
+  if(be)throw be;
+  jobs.innerHTML=(bookings||[]).map(b=>{
+   const id=frHomeServiceEsc(b.id),state=String(b.status||'');
+   let actions='';
+   if(state==='requested')actions='<button type="button" onclick="frHomeServiceJobAction(\''+id+'\',\'accepted\')">Accept</button><button type="button" onclick="frHomeServiceJobAction(\''+id+'\',\'rejected\')">Reject</button>';
+   else if(state==='accepted')actions='<button type="button" onclick="frHomeServiceJobAction(\''+id+'\',\'started\')">Start</button>';
+   else if(state==='started')actions='<button type="button" onclick="frHomeServiceJobAction(\''+id+'\',\'completed\')">Complete</button>';
+   return '<div class="listrow"><div class="grow"><b>'+frHomeServiceEsc(b.profession)+'</b><small>'+frHomeServiceEsc(b.work_details)+' • '+frHomeServiceEsc(b.preferred_date)+' '+frHomeServiceEsc(b.preferred_time)+'</small><small>'+frHomeServiceEsc(b.address)+'</small></div><span class="pill">'+frHomeServiceEsc(state)+'</span>'+actions+'</div>';
+  }).join('')||'<p>No assigned jobs yet.</p>';
+ }catch(e){status.textContent='Dashboard backend unavailable: '+(e.message||e);}
+}
+async function frHomeServiceJobAction(id,next){
+ try{
+  const allowed=['accepted','rejected','started','completed'];
+  if(!allowed.includes(next))throw Error('Invalid status');
+  const {error}=await sb.from('fr_home_service_bookings').update({status:next}).eq('id',id);
+  if(error)throw error;
+  frHomeServiceProviderDashboard();
+ }catch(e){alert('Job update failed: '+(e.message||e));}
+}
+async function frHomeServiceAdminDecision(id,next){
+ try{
+  if(!['approved','rejected'].includes(next))throw Error('Invalid decision');
+  const {error}=await sb.from('fr_home_service_applications').update({status:next}).eq('id',id);
+  if(error)throw error;
+  frHomeServiceProviderDashboard();
+ }catch(e){alert('Admin approval failed: '+(e.message||e));}
+}
+async function submitServiceRequest(){try{if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer login అవసరం.');const provider=$('homeServiceTechnician').value||null,address=$('homeServiceAddress').value.trim(),notes=$('homeServiceNotes').value.trim(),date=$('homeServiceDate').value,time=$('homeServiceTime').value;if(!address||!notes||!date||!time)throw Error('Address, పని వివరాలు, date/time తప్పనిసరి.');if(date<new Date().toISOString().slice(0,10))throw Error('గత తేదీ ఎంచుకోలేరు.');const {data,error}=await sb.from('fr_home_service_bookings').insert({customer_id:currentUser.id,provider_id:provider,profession:$('homeServiceType').value,address,work_details:notes,preferred_date:date,preferred_time:time,advance_required:50,status:'pending_payment'}).select('id').single();if(error)throw error;alert('Service request నమోదు అయింది. Booking ID: '+data.id+' — ₹50 advance payment verification ఇంకా connect/verify చేయాలి; payment లేకుండా confirmed కాదు.');}catch(e){alert('Service request save కాలేదు: '+(e.message||e));}}
 function simpleRequest(label,addressId,itemsId){if(!$(addressId).value.trim()||!$(itemsId).value.trim()){alert('Address మరియు items వివరాలు నమోదు చేయండి.');return;}alert(label+' వివరాలు validate అయ్యాయి. Live save కోసం database mapping అవసరం.');}
 function validateProduct(){if(!$('productName').value.trim()||Number($('productPrice').value)<0||Number($('productStock').value)<0){alert('Product వివరాలు సరిగా నమోదు చేయండి.');return;}alert('Product details validate అయ్యాయి. Live product save కోసం table mapping అవసరం.');}
 function saveDriverDetails(){if(!$('driverReg').value.trim()||!$('driverLicense').value.trim()){alert('Vehicle registration మరియు Driving Licence number నమోదు చేయండి.');return;}alert('Driver వివరాలు validate అయ్యాయి. Private document storage మరియు profiles schema mapping తర్వాత save/upload enable అవుతుంది.');}
@@ -1816,8 +1841,9 @@ async function saveRideRequest(){
     const pickup=$('pickup').value.trim(),drop=$('drop').value.trim(),fare=Number($('fare').value);
     if(!pickup||!drop||!Number.isFinite(fare)||fare<=0)throw Error('Pickup, Drop, సరైన Fare నమోదు చేయండి.');
     const coords=frParsePickupCoords();
-    const row={customer_id:currentUser.id,vehicle_type:rideVehicle,pickup,drop,fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested'};
+    const row={customer_id:currentUser.id,vehicle_type:rideVehicle,pickup,drop,pickup_text:pickup,drop_text:drop,fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested'};
     if(coords){row.pickup_lat=coords[0];row.pickup_lng=coords[1];}
+    if(dropCoords?.lat!=null&&dropCoords?.lon!=null){row.drop_lat=Number(dropCoords.lat);row.drop_lng=Number(dropCoords.lon);}
     const {data,error}=await sb.from('rides').insert(row).select('id,status').single();if(error)throw error;
     frActiveRideId=data.id;frShow('trackingStatus','Ride Request పంపబడింది. దగ్గరలోని Drivers కోసం చూస్తున్నాం…');frShow('liveRideStatus','Active Ride ID: '+data.id+' • Driver response కోసం వేచి ఉంది.');
     showPage('tracking');frEnsureTrackingMap(coords);await refreshNearbyDrivers();if(frNearbyTimer)clearInterval(frNearbyTimer);frNearbyTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id)refreshNearbyDrivers();},10000);
@@ -2207,7 +2233,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentPr
 
 // FRIEND RIDE Super App additions (catalogue and multi-shop cart UI)
 const frSuperCategories=[
- ['🚕','Ride Booking','Bike, Auto, Car'],['🍲','Food & Restaurants','Meals, tiffin, bakery, snacks'],['💊','Medical & Pharmacy','Medicines, medical supplies'],['🛒','General & Grocery','Kirana, household, daily needs'],['📺','Electronics','TV, fridge, washing machine, mixer'],['💡','Electrical','Wires, switches, bulbs, LED, MCB, inverter, batteries'],['💄','Ladies Accessories','Clips, pins, rubber bands, bangles, combs'],['🍗','Chicken & Fresh','Chicken, mushrooms, paneer'],['📦','Parcel','Local parcel pickup and delivery'],['🧰','Home Services','Electrician, plumber, mason, AC mechanic'],['🚽','Septic Tank Service','Cleaning and maintenance'],['🛠️','Tools & Hardware','Tools, fittings, repair items'],['📱','Mobiles & Accessories','Phones, chargers, cables'],['👕','Clothing & Fashion','Clothes, footwear, accessories'],['🧸','Kids & Toys','Toys, school and baby items'],['🐾','Pet Supplies','Food and daily pet needs'],['🌱','Agriculture','Seeds, garden and farm supplies'],['🎁','Gifts & Stationery','Gifts, books, stationery'],['🎓','విద్యా సేతు','Learning • Teacher • Student • Coaching Center']
+ ['🚕','Ride Booking','Bike, Auto, Car'],['🍲','Food & Restaurants','Meals, tiffin, bakery, snacks'],['💊','Medical & Pharmacy','Medicines, medical supplies'],['🛒','General & Grocery','Kirana, household, daily needs'],['📺','Electronics','TV, fridge, washing machine, mixer'],['💡','Electrical','Wires, switches, bulbs, LED, MCB, inverter, batteries'],['💄','Ladies Accessories','Clips, pins, rubber bands, bangles, combs'],['🍗','Chicken & Fresh','Chicken, mushrooms, paneer'],['📦','Parcel','Local parcel pickup and delivery'],['🧰','Home Services','Electrician, plumber, mason, AC mechanic'],['🚽','Septic Tank Service','Cleaning and maintenance'],['🛠️','Tools & Hardware','Tools, fittings, repair items'],['📱','Mobiles & Accessories','Phones, chargers, cables'],['👕','Clothing & Fashion','Clothes, footwear, accessories'],['🧸','Kids & Toys','Toys, school and baby items'],['🐾','Pet Supplies','Food and daily pet needs'],['🌱','Agriculture','Seeds, garden and farm supplies'],['🎁','Gifts & Stationery','Gifts, books, stationery']
 ];
 let frMultiCart=[];
 function frOpenSuperHub(){if(typeof showPage==='function')showPage('frSuperHub');else document.getElementById('frSuperHub')?.scrollIntoView();frRenderSuperHub();}
@@ -2222,9 +2248,6 @@ function frCategoryInfo(i){
   'Tools & Hardware':'shops','Mobiles & Accessories':'shops','Clothing & Fashion':'shops','Kids & Toys':'shops',
   'Pet Supplies':'shops','Agriculture':'shops','Gifts & Stationery':'shops'
  };
- if(c[1]==='విద్యా సేతు'||c[1]==='Learning'){
-   frOpenLearningCategory(); return;
- }
  const target=routeMap[c[1]]||'shops';
  if(target==='shops'&&typeof requireLogin==='function')requireLogin(()=>showPage(target));else showPage(target);
 }
@@ -2796,19 +2819,7 @@ acceptSession=async function(user){const result=await frOldAcceptSessionForMarke
 // Do not present a false completion action: secure payment and delivery-OTP enforcement is a required backend migration.
 </script>
 
-<script id="fr-event-service-navigation">
-function openEventService(serviceName){
- const sel=document.getElementById('eventServiceType');
- if(sel && serviceName) sel.value=serviceName;
- frUpdateEventServiceHeading();
- showPage('eventServices');
-}
-function frUpdateEventServiceHeading(){
- const sel=document.getElementById('eventServiceType');
- const title=document.getElementById('eventServiceHeading');
- if(sel && title) title.textContent=sel.value+' Booking';
-}
-</script>
+
 <script id="fr-provider-banking-navigation">
 function openServiceProviderRegister(category){
  const el=document.getElementById('spCategory');
@@ -3084,17 +3095,7 @@ async function frAdminUpdateBankEnquiry(id,status){
  const notify=(msg)=>{if(typeof showMessage==='function')showMessage(msg,'good');else alert(msg)};
  const fail=(label,e)=>{const m=label+': '+(e?.message||e||'Unknown error');if(typeof showMessage==='function')showMessage(m,'error');else alert(m);};
  const serviceSlug=()=>({'Electrician':'electrician','Plumber':'plumber','AC Technician':'ac-mechanic','Appliance Repair':'appliance-repair','House Cleaning':'house-cleaning','Painting':'painting','Carpenter':'carpenter'}[$('homeServiceType')?.value]||'other');
- window.loadApprovedServiceProviders=async function(){
-  const select=$('homeServiceTechnician');if(!select)return;
-  if(!currentUser||currentProfile?.role!=='customer'){select.innerHTML='<option value="">Customer login required to load technicians</option>';return;}
-  select.innerHTML='<option value="">Any approved technician (Admin will assign)</option>';
-  try{
-   const {data,error}=await sb.rpc('fr_customer_list_approved_service_providers',{p_category_slug:serviceSlug()});
-   if(error)throw error;
-   (data||[]).forEach(p=>{const o=document.createElement('option');o.value=p.provider_id;o.textContent=(p.display_name||'Technician')+(p.service_area?' — '+p.service_area:'');select.appendChild(o);});
-   if(!data?.length){const o=document.createElement('option');o.value='';o.textContent='No approved technician yet — request can still be submitted';select.appendChild(o);}
-  }catch(e){select.innerHTML='<option value="">Technician list unavailable</option>';fail('Technician list',e);}
- };
+ window.loadApprovedServiceProviders=async function(){const select=$('homeServiceTechnician');if(!select)return;if(!currentUser||currentProfile?.role!=='customer'){select.innerHTML='<option value="">Customer login required</option>';return;}select.innerHTML='<option value="">Any approved technician (Admin will assign)</option>';try{const {data,error}=await sb.from('fr_home_service_applications').select('user_id,full_name,profession,address').eq('status','approved').eq('profession',$('homeServiceType').value);if(error)throw error;(data||[]).forEach(p=>{const o=document.createElement('option');o.value=p.user_id;o.textContent=p.full_name+' • '+p.profession;select.appendChild(o);});if(!data?.length)select.innerHTML='<option value="">No approved technician in this category — Admin may assign</option>';}catch(e){select.innerHTML='<option value="">Approved technician list unavailable</option>';fail('Technician list',e);}};
  window.submitParcelRequest=async function(){
   try{
    if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer login అవసరం.');
@@ -3521,6 +3522,7 @@ function frCustomerAvatarData(gender){
  const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8ed8ff"/><stop offset="1" stop-color="#6540bd"/></linearGradient><radialGradient id="skin" cx=".35" cy=".25" r=".8"><stop stop-color="#ffe0bd"/><stop offset="1" stop-color="#c9875f"/></radialGradient><linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+(female?'#ff9fc9':'#4fc8b2')+'"/><stop offset="1" stop-color="'+(female?'#b83e83':'#146c85')+'"/></linearGradient><linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+(female?'#56304a':'#293047')+'"/><stop offset="1" stop-color="'+(female?'#24162f':'#101827')+'"/></linearGradient></defs><rect x="4" y="4" width="192" height="192" rx="42" fill="url(#bg)"/><ellipse cx="100" cy="183" rx="62" ry="12" fill="#1c2455" opacity=".2"/><path d="M42 184c5-40 25-58 58-58s53 18 58 58" fill="url(#shirt)"/><path d="M73 126l27 25 27-25-10-16H83z" fill="url(#skin)"/><ellipse cx="100" cy="77" rx="39" ry="47" fill="url(#skin)"/><path d="'+(female?'M60 83c-7-44 14-62 42-62 34 0 49 22 40 65l-8-17-5-21c-18 17-41 22-68 18z':'M61 67c2-37 22-50 43-50 27 0 42 17 37 47-18-5-32-17-39-28-10 16-24 26-41 31z')+'" fill="url(#hair)"/><ellipse cx="85" cy="80" rx="4" ry="5" fill="#362b36"/><ellipse cx="115" cy="80" rx="4" ry="5" fill="#362b36"/><path d="M91 101q9 8 18 0" fill="none" stroke="#9d4c55" stroke-width="3" stroke-linecap="round"/><path d="M70 63q15-13 30-9M101 54q16-5 29 8" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="5" stroke-linecap="round"/><circle cx="55" cy="45" r="8" fill="#fff" opacity=".5"/><circle cx="151" cy="131" r="10" fill="#fff" opacity=".25"/></svg>';
  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
+window.frCustomerAvatarData=frCustomerAvatarData;
 async function addRideProfilePhoto(card,path,bucket,alt,avatarGender){
   if(!path){if(avatarGender==='male'||avatarGender==='female'){const img=document.createElement('img');img.src=frCustomerAvatarData(avatarGender);img.alt=alt+' 3D Avatar';img.style.cssText='width:100px;height:100px;object-fit:cover;border-radius:24px;border:2px solid #eee;display:block;margin:10px auto;box-shadow:0 8px 20px rgba(30,20,70,.18)';card.append(img);return;}const note=document.createElement('p');note.className='tiny muted';note.textContent='Profile photo is not available in the saved profile.';card.append(note);return;}
 
@@ -4379,54 +4381,7 @@ async function frAdminAssignLaundry(id){
 }
 </script>
 
-<script id="fr-v11.1-pro-category-routing">
-(function(){
- const roleNames=[
-  {key:'teacher',title:'ప్రగతి సేతు (Teacher)',emoji:'👩‍🏫',desc:'Teacher dashboard, classes, learning content and student management.'},
-  {key:'student',title:'సమర్థ సేతు (Student)',emoji:'🎓',desc:'Student dashboard, lessons, progress, assignments and learning.'},
-  {key:'coaching',title:'భవిష్యత్తు సేతు (Coaching Center)',emoji:'🏫',desc:'Coaching center dashboard, batches, students and course management.'}
- ];
- window.frOpenLearningCategory=function(){
-   if(typeof window.showPage==='function')window.showPage('learnTeach');
-   const root=document.getElementById('learnTeachRoot');
-   if(root){
-    root.innerHTML=`<div class="fr-v11-learning-head"><span>🎓 విద్యా సేతు</span><h2>Learning & Education</h2><p>Teacher, Student మరియు Coaching Center కోసం ప్రత్యేక dashboards.</p></div><div class="fr-v11-learning-grid">${roleNames.map(r=>`<button class="fr-v11-learning-card" data-learning-role="${r.key}" onclick="frV11OpenLearningRole('${r.key}')"><span>${r.emoji}</span><b>${r.title}</b><small>${r.desc}</small><i>Open dashboard →</i></button>`).join('')}</div><button class="fr-v11-back" onclick="showPage('home')">← Homeకి తిరిగి వెళ్ళండి</button>`;
-   }
-   if(typeof window.frLearnTeachOpen==='function'){
-     try{window.frLearnTeachOpen();}catch(e){console.warn('Learning module open:',e);}
-     // Restore the standalone role-selection landing if the linked module does not render it.
-     setTimeout(()=>{const r=document.getElementById('learnTeachRoot');if(r&&!r.querySelector('.fr-v11-learning-grid'))window.frOpenLearningCategory();},500);
-   }
- };
- window.frV11OpenLearningRole=function(role){
-   const item=roleNames.find(x=>x.key===role);if(!item)return;
-   const root=document.getElementById('learnTeachRoot');if(!root)return;
-   root.innerHTML=`<div class="fr-v11-learning-head"><span>🎓 విద్యా సేతు</span><h2>${item.title}</h2><p>${item.desc}</p></div><div class="fr-v11-role-dashboard"><div class="fr-v11-role-icon">${item.emoji}</div><h3>${item.title} Dashboard</h3><p>ఈ roleకు సంబంధించిన dashboard తెరవబడింది. Learning module backend / dashboard scripts అందుబాటులో ఉన్నప్పుడు live data మరియు role-specific actions ఇక్కడ render అవుతాయి.</p><button onclick="frOpenLearningCategory()">← విద్యా సేతు Roles</button><button onclick="showPage('home')">Home</button></div>`;
- };
- // Bottom navigation and category/service buttons route to their own page, never Home as a fallback.
- const bottom=document.querySelector('.premium-bottom');
- if(bottom){
-  const learn=bottom.querySelector('[data-page="learnTeach"]');if(learn){learn.innerHTML='<span>🎓</span>విద్యా సేతు';learn.onclick=()=>window.frOpenLearningCategory();}
-  bottom.querySelectorAll('button[data-page]').forEach(btn=>{
-   const id=btn.dataset.page;
-   if(id==='learnTeach')return;
-   btn.onclick=function(){const target=id; if(target==='orders'&&typeof requireLogin==='function')requireLogin(()=>showPage(target));else showPage(target);};
-  });
- }
- // Category grid cards use dedicated page routes; category info dialogs are eliminated.
- const grid=document.getElementById('frCategoryGrid');
- if(grid){grid.dataset.ready='';if(typeof window.frRenderSuperHub==='function')window.frRenderSuperHub();}
- // Ensure only one page is visible after every navigation action.
- const original=window.showPage;
- if(typeof original==='function'&&!window.__frV11ShowPageWrap){
-  window.__frV11ShowPageWrap=true;
-  window.showPage=function(id){const out=original.apply(this,arguments);document.querySelectorAll('main .page').forEach(p=>{const active=p.id===String(id);p.classList.toggle('active',active);p.setAttribute('aria-hidden',active?'false':'true');if('inert' in p)p.inert=!active;});document.querySelectorAll('.premium-bottom button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===String(id)));return out;};
- }
-})();
-</script>
-<style id="fr-v11.1-pro-learning-routing-style">
-.fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
-</style>
+
 </body>
 </html>
 <style>
@@ -4466,7 +4421,12 @@ window.frRefreshHomeProfileAvatar=async function(){
  photo.hidden=true;photo.removeAttribute('src');fallback.replaceChildren();
  const profile=window.currentProfile||currentProfile||{};
  const user=window.currentUser||currentUser||null;
- if(!user?.id||!profile?.role){fallback.hidden=false;return;}
+ const gender=profile.customer_avatar_gender==='female'?'female':'male';
+ const avatar=typeof frCustomerAvatarData==='function'?frCustomerAvatarData(gender):'';
+ if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='3D profile avatar';fallback.append(img);}
+ fallback.hidden=false;
+ // Always show a default avatar before login and whenever a profile photo is missing.
+ if(!user?.id||!profile?.role)return;
  const role=String(profile.role).toLowerCase();
  const column=role==='driver'?'driver_profile_photo_path':role==='partner'?'partner_profile_photo_path':'customer_profile_photo_path';
  const bucket=role==='driver'?'driver-profile-photos':role==='partner'?'partner-profile-photos':'customer-profile-photos';
@@ -4484,9 +4444,6 @@ window.frRefreshHomeProfileAvatar=async function(){
   }catch(error){console.warn('FR home profile image:',error.message);}
  }
  fallback.hidden=false;
- const gender=profile.customer_avatar_gender==='female'?'female':'male';
- const avatar=typeof frCustomerAvatarData==='function'?frCustomerAvatarData(gender):'';
- if(avatar){const img=document.createElement('img');img.src=avatar;img.alt='3D profile avatar';fallback.append(img);}
 };
 (function(){
  const refresh=()=>window.frRefreshHomeProfileAvatar().catch(e=>console.warn(e));
@@ -4549,8 +4506,6 @@ window.frRefreshHomeProfileAvatar=async function(){
   if(select) select.onchange=routeCategory;
 })();
 </script>
-<script src="./learn-teach.js"></script>
-
 <script id="fr-single-dashboard-navigation-isolation">
 (function(){
   // Enforce one visible page/dashboard at a time across all navigation routes.
@@ -4572,16 +4527,7 @@ window.frRefreshHomeProfileAvatar=async function(){
       return result;
     };
   }
-  // Learning tab must open only its Learning screen, not leave another dashboard active.
-  const learnTab=document.querySelector('.premium-bottom button[data-page="learnTeach"]');
-  if(learnTab){
-    learnTab.onclick=function(){
-      if(typeof window.frLearnTeachOpen==='function') window.frLearnTeachOpen();
-      else window.showPage('learnTeach');
-      isolatePage('learnTeach');
-    };
-  }
-  // Ensure initial state is also isolated and Home remains the default page.
+  // Ensure initial state is isolated and Home remains the default page.
   const active=document.querySelector('main .page.active');
   isolatePage(active&&active.id?active.id:'home');
   // Repair any later script that accidentally marks more than one page active.
@@ -4595,3 +4541,35 @@ window.frRefreshHomeProfileAvatar=async function(){
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
+<style id="fr-project-arjuna-premium-theme">
+:root{--purple:#1766d8;--purple2:#13a9a2;--navy:#10243e;--orange:#f2a62a;--bg:#f2f8fb;--ink:#142d45;--muted:#61788b;--line:#dce8f0;--green:#16875f;--red:#d94c57;--white:#fff;--gold:#f6c44b}
+body{background:radial-gradient(circle at 10% 0%,#dff7f5 0,transparent 34%),linear-gradient(180deg,#f7fbff 0%,#edf5fa 100%);color:var(--ink)}
+.home-topbar{background:linear-gradient(110deg,#10243e 0%,#174eaa 56%,#11a8a1 100%)!important;color:#f7fbff!important;border:0!important;box-shadow:0 8px 22px #10365b25}
+.home-topbar .location-head b,.home-topbar .location-head span{color:#f7fbff!important}
+.home-topbar .menu-open{background:#ffffff18!important;color:#fff!important;border:1px solid #ffffff28!important}
+.home-topbar .notify-btn{background:#ffffff18!important;color:#fff!important;border:1px solid #ffffff28!important;border-radius:14px}
+.home-topbar .fr-home-profile-btn{background:#f7fbff!important;border:2px solid #fff!important}
+.home-topbar .fr-home-profile-btn #frHomeProfileAvatar{background:linear-gradient(145deg,#bff4ef,#dbe9ff)!important}
+.home-topbar .fr-notify-bell .fr-bell-svg{color:#fff!important}
+#home .home-banner{background:radial-gradient(circle at 82% 10%,#8ce5dc 0,transparent 27%),linear-gradient(125deg,#1455bd 0%,#167fd3 48%,#12a7a0 100%)!important;box-shadow:0 14px 28px #1766d825}
+.home-service,.home-pro-service,.home-catalog-shortcuts button,.store-card,.home-more-grid button,.tile,.fr-category-card{border-color:#d8e8f0!important;box-shadow:0 7px 18px #133d5b0c}
+.home-pro-service{background:linear-gradient(145deg,#f5fbff,#e7f8f6)!important}
+.home-service{background:linear-gradient(145deg,#fff,#f3faff)!important}
+.home-more-grid button{background:linear-gradient(145deg,#fff,#eff8fc)!important}
+.home-section-title h2{color:#12314b}
+.btn.purple,.btn.primary,.purple.btn,.button-primary{background:linear-gradient(105deg,#1766d8,#13a9a2)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 6px 15px #1766d820}
+.btn.light{border-color:#d5e7f0!important;background:linear-gradient(145deg,#fff,#f0f8fb)!important;color:#1a4264!important}
+.home-pro-service .home-pro-art{background:linear-gradient(145deg,#dff5f6,#e5edff)!important}
+.fr-premium-hero{background:radial-gradient(circle at 78% 30%,#50d2c8 0,transparent 30%),linear-gradient(125deg,#10243e 0%,#1756b4 54%,#0d9c97 100%)!important}
+.premium-bottom{grid-template-columns:repeat(5,minmax(0,1fr))!important;background:#fff!important;border-top:1px solid #dbe8f0!important;box-shadow:0 -8px 24px #133d5b12!important}
+.premium-bottom button{color:#506b80!important}
+.premium-bottom button.active{color:#117f91!important}
+.premium-bottom button.active span{background:#dff6f4!important}
+.premium-bottom .cart-tab span{background:linear-gradient(135deg,#1766d8,#13a9a2)!important;border-color:#fff!important}
+.fr-poster{box-shadow:0 10px 22px #173f5b14!important}
+.card,.home-catalog-shortcuts button,.store-card,.feature-box,.offer-card{border-color:#dce8f0!important}
+:focus-visible{outline:3px solid #13a9a255!important;outline-offset:2px}
+</style>
+<style id="fr-project-arjuna-avatar-hidden-fix">
+#frHomeProfileImage[hidden]{display:none!important}
+</style>

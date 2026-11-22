@@ -430,7 +430,9 @@ test('Driver KYC form loads the private upload handler and persists profile/docu
 test('TASKO booking form exposes helper categories, hours, date, time, address and work instructions', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#taskoGiggerLaunch')).toBeAttached();
-  await expect(page.locator('#taskoCategory option')).toHaveCount(8);
+  await expect(page.locator('#taskoCategory option')).toHaveCount(10);
+  await expect(page.locator('#taskoCategory')).toContainText('Beauty Makeover');
+  await expect(page.locator('#taskoCategory')).toContainText('Halwai – Sweets & Food Preparation');
   await expect(page.locator('#taskoHours')).toBeAttached();
   await expect(page.locator('#taskoDate')).toHaveAttribute('type', 'date');
   await expect(page.locator('#taskoTime')).toHaveAttribute('type', 'time');

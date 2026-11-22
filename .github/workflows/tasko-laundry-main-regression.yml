@@ -23,6 +23,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Pin npm 10.8.2 for Node 20 regression
+        run: npm install -g npm@10.8.2
+      - name: Verify Node and npm versions
+        run: node --version && npm --version
       - name: Install Playwright
         run: npm install --no-save @playwright/test
       - name: Validate inline JavaScript

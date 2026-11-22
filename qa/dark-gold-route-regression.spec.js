@@ -1,85 +1,115 @@
 const { test, expect } = require('@playwright/test');
 
-const allPageIds = ["home","cycleDelivery","explore","eventServices","serviceProviderRegister","bankingServices","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","technicianRegister","parcelRelease","orders","tracking","wallet","offers","customerDashboard","driverDashboard","partnerDashboard","partnerOrders","products","inventory","gst","catalogue","subscription","referrals","partnerReports","adminDashboard","crmDashboard","users","referralApprovals","cashRewardApprovals","paymentApprovals","partnerPaymentSettings","platformBusinessSettings","driverApprovals","driverDocumentReviews","partnerApprovals","adminOrders","reports","settings","profile","notifications","support","about","cart","frSupportFeedback","learnTeach","frSuperHub"];
-const sharedCustomerRoutes = ["home","explore","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","orders","tracking","wallet","offers","profile","notifications","support","about","cart","frSupportFeedback","learnTeach","cycleDelivery","eventServices","serviceProviderRegister","bankingServices","technicianRegister","parcelRelease","frSuperHub"];
+const allPageIds = ["home","cycleDelivery","explore","serviceProviderRegister","bankingServices","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","technicianRegister","parcelRelease","orders","tracking","wallet","offers","customerDashboard","driverDashboard","partnerDashboard","partnerOrders","products","inventory","gst","catalogue","subscription","referrals","partnerReports","adminDashboard","crmDashboard","users","referralApprovals","cashRewardApprovals","paymentApprovals","partnerPaymentSettings","platformBusinessSettings","driverApprovals","driverDocumentReviews","partnerApprovals","adminOrders","reports","settings","profile","notifications","support","about","cart","frSupportFeedback","frSuperHub"];
+const sharedCustomerRoutes = ["home","explore","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","orders","tracking","wallet","offers","profile","notifications","support","about","cart","frSupportFeedback","cycleDelivery","serviceProviderRegister","bankingServices","technicianRegister","parcelRelease","frSuperHub"];
 
-test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
+test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
   test.beforeEach(async ({ page }) => {
     await page.route('https://**/*', route => {
       const url = route.request().url();
-      // Allow required CDN libraries so the app initializes; block external APIs/maps.
       if (url.includes('cdn.jsdelivr.net/npm/@supabase/supabase-js@2') ||
           url.includes('unpkg.com/leaflet@1.9.4/')) return route.continue();
       return route.abort();
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+    const launcher=page.locator('#roleLauncher');
+    if(await launcher.isVisible()){
+      await launcher.locator('.fr-role-card.customer').click();
+      await expect(page.locator('#authModal')).toHaveClass(/show/);
+      await page.locator('#authModal .close').click();
+    }
+    await expect(launcher).toHaveClass(/hide/);
+    await page.evaluate(()=>window.showPage('home'));
+    await expect(page.locator('#home')).toHaveClass(/active/);
+    await expect(page.locator('#home .cab-feature')).toBeAttached();
+    await expect(page.locator('#home .home-pro-service')).toHaveCount(8);
   });
 
-  test('every registered screen remains present and uses the shared design system', async ({ page }) => {
+  test('current 56 routes exist; removed VidyaSetu and event services remain absent; theme tokens are applied', async ({ page }) => {
     const result = await page.evaluate(ids => ({
       missing: ids.filter(id => !document.getElementById(id)),
-      designSystem: !!document.getElementById('fr-dark-gold-design-system'),
-      themeMeta: document.querySelector('meta[name="theme-color"]')?.content,
+      removedStillPresent: ['eventServices','learnTeach'].filter(id => document.getElementById(id)),
+      pageCount: document.querySelectorAll('.page').length,
+      themeStyle: !!document.getElementById('fr-project-arjuna-premium-theme'),
+      primary: getComputedStyle(document.documentElement).getPropertyValue('--purple').trim(),
+      secondary: getComputedStyle(document.documentElement).getPropertyValue('--purple2').trim(),
       bodyBackground: getComputedStyle(document.body).backgroundImage,
-      pageCount: document.querySelectorAll('.page').length
+      themeMeta: document.querySelector('meta[name="theme-color"]')?.content,
+      qaBackend: document.documentElement.innerHTML.includes('pqsangtvietawkfgpgfu'),
+      productionBackend: document.documentElement.innerHTML.includes('fglyplxcczdjtfwobtzh')
     }), allPageIds);
     expect(result.missing).toEqual([]);
-    expect(result.designSystem).toBe(true);
-    expect(result.themeMeta).toBe('#050b17');
+    expect(result.removedStillPresent).toEqual([]);
+    expect(result.pageCount).toBe(56);
+    expect(result.themeStyle).toBe(true);
+    expect(result.primary).toBe('#1766d8');
+    expect(result.secondary).toBe('#13a9a2');
     expect(result.bodyBackground).not.toBe('none');
-    expect(result.pageCount).toBe(allPageIds.length);
+    expect(result.themeMeta).toBe('#10243e');
+    expect(result.qaBackend).toBe(true);
+    expect(result.productionBackend).toBe(false);
   });
 
-  test('new home replaces the old home presentation and mirrors live location', async ({ page }) => {
-    await expect(page.locator('#home .fr-native-home')).toBeAttached();
-    await expect(page.locator('#home .fr-native-home')).toBeVisible();
-    await expect(page.locator('#home .home-banner')).toHaveCount(0);
-    await expect(page.locator('#home .fr-native-location')).toBeAttached();
-    await page.locator('#homeLocationText').evaluate(el => { el.textContent = 'QA GPS location'; });
-    await expect(page.locator('#frNativeLocationText')).toHaveText('QA GPS location');
+  test('notification bell SVG and 3D default avatar render without a profile photo', async ({ page }) => {
+    const bell = page.locator('#frHomeProfileButton + .fr-notify-bell');
+    await expect(bell).toBeAttached();
+    await expect(bell).toHaveAttribute('aria-label', 'Notifications');
+    await expect(bell.locator('svg.fr-bell-svg path')).toBeAttached();
+    await expect(page.locator('#frHomeProfileImage[hidden]')).toBeHidden();
+    await expect(page.locator('#frHomeProfileAvatar img[alt="3D profile avatar"]')).toBeVisible({ timeout: 10000 });
   });
 
-  test('native home preserves customer, driver and partner registration entry points', async ({ page }) => {
-    const registrations = page.locator('#home .fr-native-register-grid button[data-fr-native-register]');
+  test('role launcher has four choices and Customer selection opens locked login', async ({ page }) => {
+    await page.evaluate(()=>document.getElementById('roleLauncher').classList.remove('hide'));
+    const launcher=page.locator('#roleLauncher');
+    await expect(launcher.locator('.fr-role-card')).toHaveCount(4);
+    await launcher.locator('.fr-role-card.customer').click();
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await expect(page.locator('#authModal')).toHaveClass(/fr-role-locked/);
+    await expect(page.locator('#authTitle')).toHaveText('Customer Login');
+    await page.locator('#authModal .close').click();
+    await expect(launcher).toHaveClass(/hide/);
+  });
+
+  test('home keeps registration entry points and each role opens the matching auth modal', async ({ page }) => {
+    const roles = ['customer','driver','partner'];
+    const registrations = page.locator('#home .join-card button');
     await expect(registrations).toHaveCount(3);
-    for (const role of ['customer', 'driver', 'partner']) {
-      // Re-activate Home after closing the previous role's auth modal and wait for its transition.
+    for (let i=0;i<roles.length;i++) {
       await page.evaluate(() => window.showPage('home'));
-      const entry = page.locator('#home [data-fr-native-register="' + role + '"]');
-      await expect(page.locator('#home')).toHaveClass(/active/);
-      await expect(entry).toBeVisible({ timeout: 10000 });
-      await entry.click();
+      await registrations.nth(i).click();
       await expect(page.locator('#authModal')).toHaveClass(/show/);
-      await expect(page.locator('#authModal')).toHaveAttribute('data-active-role', role);
+      await expect(page.locator('#authModal')).toHaveAttribute('data-active-role', roles[i]);
       await page.locator('#authModal .close').click();
       await expect(page.locator('#authModal')).not.toHaveClass(/show/);
     }
   });
 
-  test('native home service cards navigate through real click handlers', async ({ page }) => {
-    const routeButtons = page.locator('#home .fr-native-home [data-fr-native-route]');
-    const expectedRoutes = ['ride','goods','shopping','food','homeServices','homeServices','shopping','laundryServices','homeServices','shops','learnTeach'];
-    await expect(routeButtons).toHaveCount(expectedRoutes.length);
-    for (let i = 0; i < expectedRoutes.length; i++) {
-      await page.evaluate(() => window.showPage('home'));
-      const button = routeButtons.nth(i);
-      await expect(button).toBeVisible();
-      await button.click();
-      await expect(page.locator('#' + expectedRoutes[i])).toHaveClass(/active/);
-    }
+  test('home service cards route to Ride, TASKO/GIGGER and Laundry screens', async ({ page }) => {
+    await page.evaluate(() => { requireLogin = callback => callback(); });
+    await page.locator('#home .cab-feature').click();
+    await expect(page.locator('#ride')).toHaveClass(/active/);
+    await page.evaluate(() => window.showPage('home'));
+    await page.locator('#home .home-pro-service').filter({hasText:'TASKO / GIGGER'}).click();
+    await expect(page.locator('#homeServices')).toHaveClass(/active/);
+    await page.evaluate(() => window.showPage('home'));
+    await page.locator('#home .home-pro-service').filter({hasText:'LAUNDRY SERVICES'}).click();
+    await expect(page.locator('#laundryServices')).toHaveClass(/active/);
+    const homeServiceLabels=await page.locator('#home .home-pro-service').allTextContents();
+    expect(homeServiceLabels.join(' ')).not.toContain('Beauty Makeover');
   });
 
-  test('drawer and CRM surfaces use the shared dark surfaces', async ({ page }) => {
+  test('drawer opens and CRM route has a styled panel surface', async ({ page }) => {
+    await page.evaluate(() => { currentProfile={role:'admin'}; selectedRole='admin'; currentUser={id:'qa-admin'}; });
     await page.evaluate(() => window.openDrawer());
     await expect(page.locator('.drawer-backdrop')).toHaveClass(/show/);
-    const drawerBg = await page.locator('.drawer').evaluate(el => getComputedStyle(el).backgroundImage);
-    expect(drawerBg).not.toBe('none');
-    await page.evaluate(() => { window.currentProfile = { role: 'admin' }; window.showPage('crmDashboard'); });
-    const crmBg = await page.locator('#crmDashboard .fr-crm-panel').first().evaluate(el => getComputedStyle(el).backgroundImage).catch(() => '');
-    expect(crmBg).not.toBe('none');
+    await expect(page.locator('.drawer')).toBeVisible();
+    await page.evaluate(() => { closeDrawer(); window.showPage('crmDashboard'); });
+    await expect(page.locator('#crmDashboard')).toHaveClass(/active/);
+    await expect(page.locator('#crmDashboard .fr-crm-panel').first()).toBeAttached();
   });
 
-  test('primary navigation has no duplicate legacy service tabs', async ({ page }) => {
+  test('primary navigation is five tabs and removes the legacy Categories tab', async ({ page }) => {
     const nav = page.locator('.premium-bottom');
     await expect(nav.locator('button')).toHaveCount(5);
     await expect(nav).toContainText('Home');
@@ -87,77 +117,77 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     await expect(nav).toContainText('Cart');
     await expect(nav).toContainText('Orders');
     await expect(nav).toContainText('Profile');
+    await expect(nav).not.toContainText('Categories');
     await expect(nav).not.toContainText('Friend Mart');
     await expect(nav).not.toContainText('Food Delivery');
     await expect(nav).not.toContainText('విద్యా సేతు');
+    const fraiButtonCount = await page.evaluate(() => [...document.querySelectorAll('button')].filter(button => /FRAI|FR AI|AI Assistant/i.test(button.textContent || button.getAttribute('aria-label') || '')).length);
+    expect(fraiButtonCount).toBe(0);
   });
 
-  test('shared customer routes activate their existing destination screens', async ({ page }) => {
+  test('all retained customer routes activate their destination screens', async ({ page }) => {
     for (const route of sharedCustomerRoutes) {
       await page.evaluate(id => window.showPage(id), route);
       await expect(page.locator('#' + route)).toHaveClass(/active/);
     }
   });
 
-  test('Admin dashboard role guard blocks non-admin and permits verified admin role', async ({ page }) => {
-    await page.evaluate(() => { window.currentProfile = null; window.showPage('adminDashboard'); });
+  test('Admin dashboard menu guard blocks non-admin and permits verified admin', async ({ page }) => {
+    await page.evaluate(() => { currentProfile=null; currentUser=null; selectedRole='customer'; window.menuGo('adminDashboard'); });
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await expect(page.locator('#authTitle')).toHaveText('Admin Login');
+    await page.locator('#authModal .close').click();
+    await page.evaluate(() => { currentProfile={role:'customer'}; currentUser={id:'qa-customer'}; selectedRole='customer'; window.alert=message=>window.__qaAdminGuardMessage=String(message); window.menuGo('adminDashboard'); });
     await expect(page.locator('#home')).toHaveClass(/active/);
-    await page.evaluate(() => { window.currentProfile = { role: 'admin' }; window.showPage('adminDashboard'); });
+    const guardMessage=await page.evaluate(()=>window.__qaAdminGuardMessage||'');
+    expect(guardMessage).toMatch(/ADMIN account/);
+    await page.evaluate(() => { currentProfile={role:'admin'}; currentUser={id:'qa-admin'}; selectedRole='admin'; window.menuGo('adminDashboard'); });
     await expect(page.locator('#adminDashboard')).toHaveClass(/active/);
   });
 
-  test('customer OTP login modal is rendered with dark surfaces', async ({ page }) => {
-    await page.evaluate(() => window.openAuth('login', 'customer'));
+  test('Customer login keeps OTP flow and registration entry', async ({ page }) => {
+    await page.evaluate(() => window.openAuth('login','customer'));
     await expect(page.locator('#authModal')).toHaveClass(/show/);
-    const modal = page.locator('#authModal .modalbox');
-    await expect(modal).toBeVisible();
-    const style = await modal.evaluate(el => ({ bg: getComputedStyle(el).backgroundImage, color: getComputedStyle(el).color }));
-    expect(style.bg).not.toBe('none');
-    expect(style.color).toMatch(/rgb\(246, 248, 255\)|rgb\(255, 255, 255\)/);
+    await expect(page.locator('#authTitle')).toHaveText('Customer Login');
+    await expect(page.locator('#loginForm button[onclick="sendLoginOtp()"]')).toHaveText('Send Customer SMS OTP');
+    await expect(page.locator('#authRegisterButton')).toBeVisible();
+    await expect(page.locator('#authModal .rolegrid')).toBeHidden();
+    await expect(page.locator('#authModal .modalbox')).toBeVisible();
   });
 
-  test('Admin login modal is role-locked and uses the Dark + Gold authentication UI', async ({ page }) => {
-    await page.evaluate(() => window.openAuth('login', 'admin'));
-    const modal = page.locator('#authModal');
+  test('Admin login is role locked and hides registration and role chooser', async ({ page }) => {
+    await page.evaluate(() => window.enterRole('admin'));
+    const modal=page.locator('#authModal');
     await expect(modal).toHaveClass(/show/);
     await expect(modal).toHaveClass(/fr-role-locked/);
     await expect(page.locator('#authTitle')).toHaveText('Admin Login');
-    await expect(page.locator('#sendLoginOtpButton')).toHaveText('Send Admin SMS OTP');
+    await expect(page.locator('#loginForm button[onclick="sendLoginOtp()"]')).toHaveText('Send Admin SMS OTP');
     await expect(page.locator('#authRegisterButton')).toBeHidden();
     await expect(modal.locator('.rolegrid')).toBeHidden();
-    const surfaces = await modal.locator('.modalbox').evaluate(el => ({
-      background: getComputedStyle(el).backgroundColor,
-      text: getComputedStyle(el).color
-    }));
-    expect(surfaces.background).not.toBe('rgb(255, 255, 255)');
-    expect(surfaces.text).toMatch(/rgb\(/);
   });
 
-  test('Customer login modal shows Customer OTP flow and registration option', async ({ page }) => {
-    await page.evaluate(() => window.openAuth('login', 'customer'));
-    await expect(page.locator('#authModal')).toHaveClass(/show/);
-    await expect(page.locator('#authTitle')).toHaveText('Customer Login');
-    await expect(page.locator('#sendLoginOtpButton')).toHaveText('Send Customer SMS OTP');
-    await expect(page.locator('#authRegisterButton')).toBeVisible();
-    await expect(page.locator('#authModal .rolegrid')).toBeHidden();
+  test('unwanted event/personal service booking UI is removed but TASKO categories remain', async ({ page }) => {
+    await expect(page.locator('#eventServices')).toHaveCount(0);
+    await expect(page.locator('#eventServiceType')).toHaveCount(0);
+    await expect(page.locator('#learnTeach')).toHaveCount(0);
+    await expect(page.locator('#home .home-pro-service')).toHaveCount(8);
+    const homeServiceLabels=await page.locator('#home .home-pro-service').allTextContents();
+    expect(homeServiceLabels.join(' ')).not.toContain('Beauty Makeover');
+    await page.evaluate(()=>window.showPage('homeServices'));
+    await expect(page.locator('#taskoCategory')).toBeVisible();
+    const categories=await page.locator('#taskoCategory option').allTextContents();
+    expect(categories).toContain('Beauty Makeover');
+    expect(categories).toContain('Halwai – Sweets & Food Preparation');
+    expect(categories).not.toContain('Catering Services');
+    expect(categories).not.toContain('DJ – Sound & Lights');
   });
 
-  test('all inventoried route IDs can activate their destination screen without route loss', async ({ page }) => {
-    const routeResults = await page.evaluate(ids => {
-      window.currentProfile = { role: 'admin' };
-      const results = [];
-      for (const id of ids) {
-        try {
-          window.showPage(id);
-          const target = document.getElementById(id);
-          results.push({ id, exists: !!target, active: !!target?.classList.contains('active') });
-        } catch (error) {
-          results.push({ id, exists: !!document.getElementById(id), active: false, error: String(error) });
-        }
-      }
-      return results;
-    }, allPageIds);
-    expect(routeResults.filter(r => !r.exists).map(r => r.id)).toEqual([]);
-    expect(routeResults.filter(r => !r.active).map(r => ({ id: r.id, error: r.error || null }))).toEqual([]);
+  test('all inventoried routes can activate without route loss', async ({ page }) => {
+    const results=await page.evaluate(ids=>{
+      currentProfile={role:'admin'};currentUser={id:'qa-admin'};selectedRole='admin';
+      return ids.map(id=>{try{window.showPage(id);const el=document.getElementById(id);return {id,exists:!!el,active:!!el?.classList.contains('active')}}catch(error){return {id,exists:!!document.getElementById(id),active:false,error:String(error)}}});
+    },allPageIds);
+    expect(results.filter(r=>!r.exists).map(r=>r.id)).toEqual([]);
+    expect(results.filter(r=>!r.active).map(r=>({id:r.id,error:r.error||null}))).toEqual([]);
   });
 });
