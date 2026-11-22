@@ -52,7 +52,7 @@ test('Admin regression: all operational review panels and approval pages are pre
   const missing = await page.evaluate(ids => ids.filter(id => !document.getElementById(id)), ids);
   expect(missing, 'Admin operational panels missing').toEqual([]);
   const adminText = await page.locator('#adminDashboard').innerText();
-  expect(adminText).toMatch(/KYC Verification/i);
+  expect(adminText).toMatch(/KYC\s*Verification/i);
   expect(adminText).toMatch(/Complaints/i);
   await expect(page.locator('#driverDocumentReviews')).toContainText(/Driver KYC Documents/i);
 });
