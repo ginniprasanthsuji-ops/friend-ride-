@@ -20,15 +20,15 @@ test('KYC owner update policy cannot change review status out of pending', () =>
   const sql = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '202611220005_arjuna_qa_private_workflows.sql'), 'utf8');
   const ownerStart = sql.indexOf('create policy qa_driver_documents_update_own_pending');
   const ownerPolicy = ownerStart >= 0 ? sql.slice(ownerStart, sql.indexOf(';', ownerStart) + 1) : '';
-  assert.match(ownerPolicy, /using\\s*\\(owner_id=auth\\.uid\\(\\)\\s+and\\s+verification_status='pending'\\)/i);
-  assert.match(ownerPolicy, /with check\\s*\\(owner_id=auth\\.uid\\(\\)\\s+and\\s+driver_id=auth\\.uid\\(\\)\\s+and\\s+verification_status='pending'\\)/i);
-  assert.doesNotMatch(ownerPolicy, /verification_status\\s*<>\\s*'pending'/i);
+  assert.ok(ownerPolicy.includes("using(owner_id=auth.uid() and verification_status='pending')"));
+  assert.ok(ownerPolicy.includes("with check(owner_id=auth.uid() and driver_id=auth.uid() and verification_status='pending')"));
+  assert.ok(!ownerPolicy.includes("verification_status<>'pending'"));
 });
 
 test('KYC review updates require admin membership in both USING and WITH CHECK', () => {
   const sql = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '202611220005_arjuna_qa_private_workflows.sql'), 'utf8');
   const adminStart = sql.indexOf('create policy qa_driver_documents_admin_review');
   const adminPolicy = adminStart >= 0 ? sql.slice(adminStart, sql.indexOf(';', adminStart) + 1) : '';
-  assert.match(adminPolicy, /using\\s*\\(exists\\s*\\(select 1 from public\\.admin_users a where a\\.user_id=auth\\.uid\\(\\)\\)\\)/i);
-  assert.match(adminPolicy, /with check\\s*\\(exists\\s*\\(select 1 from public\\.admin_users a where a\\.user_id=auth\\.uid\\(\\)\\)\\)/i);
+  assert.ok(adminPolicy.includes("using(exists(select 1 from public.admin_users a where a.user_id=auth.uid()))"));
+  assert.ok(adminPolicy.includes("with check(exists(select 1 from public.admin_users a where a.user_id=auth.uid()))"));
 });
