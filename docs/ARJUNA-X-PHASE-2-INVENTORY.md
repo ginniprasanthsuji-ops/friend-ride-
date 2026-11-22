@@ -789,3 +789,18 @@ Audit findings documented only. No QA tests changed, no tests executed, no live 
 - QA-only configuration safety change committed on `arjuna-x/phase-2-repository-assets-inventory`.
 - No app runtime, backend, schema, auth, payment, main branch, or live deployment changed.
 - Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
+
+
+## Pass 31 — Root SPA visual/theme source confirmation (targeted line ranges)
+
+Freshly fetched targeted ranges from `index.html` to work around the 1 MB source limit:
+- Root `<meta name=theme-color>` is `#24105f` (purple), application-version is `11.1-PRO-category-routing-learning-isolation`; title also has legacy V11.1/V10.3 text.
+- Initial root CSS variables include purple `#5420b8` / `#7b35df`, dark-purple navy-like `#211044`, orange `#ff8a24`, light-purple background `#f6f4fb`, purple text `#201936`, and gold `#ffc65a`; body/topbar/buttons/drawer/catalogue contain numerous purple-gradient treatments. Navy/Orange/White locked direction is not yet consistently applied at the root.
+- The home source includes a role launcher for customer/driver/partner/admin and a home location label initially showing “Tap to detect your location”; this is source presence only, not proof of GPS permission/location resolution.
+- Legacy page source includes purple theme and multiple additive style blocks. This confirms UI consolidation/theme migration work is still outstanding; preserve the current page IDs and feature contracts when implementing.
+
+### Phase 2 boundary
+Targeted source snippets are sufficient to confirm the theme mismatch and role launcher, but not a full runtime route/role/location audit. Do not mark these features accepted from source snippets. Record theme implementation and full route visual/behavioral validation as Phase 3+ work after inventory gate.
+
+### Pass 31 disposition
+Source inventory update only. No UI/runtime source was edited; no browser, location/GPS, auth, database or live API testing performed. Phase 2 remains IN PROGRESS / NOT ACCEPTED.
