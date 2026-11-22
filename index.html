@@ -1813,17 +1813,24 @@ function frDistanceKm(a,b){const rad=x=>x*Math.PI/180,R=6371,dLat=rad(b[0]-a[0])
 function frParsePickupCoords(){if(pickupCoords?.lat!=null&&pickupCoords?.lon!=null)return [Number(pickupCoords.lat),Number(pickupCoords.lon)];const m=String($('pickup')?.value||'').match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);return m?[Number(m[1]),Number(m[2])]:null;}
 function frEnsureTrackingMap(center){initTrackingMap();if(trackingMap&&center)trackingMap.setView(center,14);return trackingMap;}
 async function saveRideRequest(){
+  if(window.__frArjunaRideSubmitting)return;
+  window.__frArjunaRideSubmitting=true;
   try{
     if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer OTP Login అవసరం.');
-    const pickup=$('pickup').value.trim(),drop=$('drop').value.trim(),fare=Number($('fare').value);
+    const pickupEl=$('pickup'),dropEl=$('drop'),pickup=pickupEl.value.trim(),drop=dropEl.value.trim(),fare=Number($('fare').value);
+    const pickupCoords=[Number(pickupEl.dataset.selectedLat),Number(pickupEl.dataset.selectedLon)];
+    const dropCoords=[Number(dropEl.dataset.selectedLat),Number(dropEl.dataset.selectedLon)];
     if(!pickup||!drop||!Number.isFinite(fare)||fare<=0)throw Error('Pickup, Drop, సరైన Fare నమోదు చేయండి.');
-    const coords=frParsePickupCoords();
-    const row={customer_id:currentUser.id,vehicle_type:rideVehicle,pickup,drop,fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested'};
-    if(coords){row.pickup_lat=coords[0];row.pickup_lng=coords[1];}
+    if(!pickupEl.dataset.selectedAddress||!dropEl.dataset.selectedAddress||![...pickupCoords,...dropCoords].every(Number.isFinite))throw Error('Pickup మరియు Drop suggestions రెండింటినీ ఎంచుకోండి లేదా GPS/Map pin ఉపయోగించండి.');
+    showMessage('Ride request పంపిస్తున్నాం…','info');
+    const row={customer_id:currentUser.id,vehicle_type:rideVehicle||'Bike',pickup:pickupEl.dataset.selectedAddress,drop:dropEl.dataset.selectedAddress,pickup_lat:pickupCoords[0],pickup_lng:pickupCoords[1],drop_lat:dropCoords[0],drop_lng:dropCoords[1],fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested'};
     const {data,error}=await sb.from('rides').insert(row).select('id,status').single();if(error)throw error;
-    frActiveRideId=data.id;frShow('trackingStatus','Ride Request పంపబడింది. దగ్గరలోని Drivers కోసం చూస్తున్నాం…');frShow('liveRideStatus','Active Ride ID: '+data.id+' • Driver response కోసం వేచి ఉంది.');
-    showPage('tracking');frEnsureTrackingMap(coords);await refreshNearbyDrivers();if(frNearbyTimer)clearInterval(frNearbyTimer);frNearbyTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id)refreshNearbyDrivers();},10000);
-  }catch(e){alert('Ride Booking Error: '+e.message);}
+    frActiveRideId=data.id;
+    showMessage('Ride request successfully పంపించాం. Ride ID: '+data.id,'success');
+    frShow('trackingStatus','Ride Request పంపబడింది. దగ్గరలోని Drivers కోసం చూస్తున్నాం…');frShow('liveRideStatus','Active Ride ID: '+data.id+' • Driver response కోసం వేచి ఉంది.');
+    showPage('tracking');frEnsureTrackingMap(pickupCoords);await refreshNearbyDrivers();if(frNearbyTimer)clearInterval(frNearbyTimer);frNearbyTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id)refreshNearbyDrivers();},10000);
+  }catch(e){showMessage('Ride Booking Error: '+e.message,'error');}
+  finally{window.__frArjunaRideSubmitting=false;}
 }
 async function refreshNearbyDrivers(){
   try{
