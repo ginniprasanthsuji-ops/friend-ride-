@@ -79,3 +79,11 @@ QA Supabase project `pqsangtvietawkfgpgfu`:
 - Added `qa/PROJECT-ARJUNA-MISSING-CORE-RPC-CONTRACTS.md` with exact frontend call contracts and security/acceptance requirements for the 20 missing non-payment core RPCs.
 - Latest new documentation commit `430fa87` triggers its own CI; verify those runs before claiming latest HEAD green.
 - Progress remains **80%** pending implementation/testing of missing core RPC/schema gaps and real-device release gates.
+
+
+## Continued QA session — 2026-11-22 (schema design checkpoint)
+- Verified commit `3685359a`: FRIEND RIDE Regression, FRIEND RIDE Quality Gate (both runs), Workflow Regression, and TASKO/Laundry Regression all **PASS**.
+- Added `qa/PROJECT-ARJUNA-MARKET-PARCEL-SCHEMA-DESIGN.md`: proposed normalized marketplace/parcel tables, RLS role matrix, transaction boundaries, security constraints, and acceptance test matrix. **Design only; not applied.**
+- Added `tests/project-arjuna-market-parcel-schema-design.test.cjs` to guard required safety/design coverage; latest commit `55ce79bf`.
+- CI for newer commits `b934154c` and `55ce79bf` is running/queued; results not yet verified.
+- Progress stays **80%**. No production SQL, no live deploy, no main merge.
