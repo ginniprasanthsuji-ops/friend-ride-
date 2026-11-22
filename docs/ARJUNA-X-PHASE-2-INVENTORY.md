@@ -269,6 +269,23 @@ Reviewed the five migration files tracked in this branch (source only; not appli
 - [ ] Visually inspect 192/512 icons and confirm official FRIEND RIDE logo, safe-zone and colors.
 - [ ] Installability, standalone launch, update behavior, offline behavior and service-worker scopes require isolated browser/device verification.
 
+
+## Pass 10 — CI workflow triggers and environment safety audit
+
+Four workflows inspected:
+
+- `quality.yml`: push main and PR to main; Node 22; typechecks, runtime build, Node/Vitest tests and Playwright using local static server. No trigger for the Phase 2 ARJUNA X branch.
+- `friend-ride-regression.yml`: push main and legacy dark-gold branch, manual dispatch, scheduled run; Node 22; inline-JS check and Playwright local server; uploads report artifacts. No trigger for Phase 2 branch.
+- `friend-ride-workflow-regression.yml`: push legacy `pr/workflow-integration-nov08` and PR to main; source checks only. Does not trigger on current ARJUNA X branch.
+- `tasko-laundry-main-regression.yml`: push legacy integration branch and PR to main with selected file path filters; Node 20 (other main workflows use Node 22); local server and targeted Playwright. Does not trigger on current ARJUNA X branch.
+
+### CI findings
+- Existing workflows run locally served app targets for Playwright, which avoids accidental production target in those workflows.
+- Branch trigger coverage is legacy/main-focused; current ARJUNA X QA branch does not automatically receive all existing CI workflows.
+- Node version drift (20 vs 22) exists across workflows.
+- Workflow run results for this branch were not fetched/executed in this inventory pass. Source inspection only.
+- CI trigger alignment and safe QA branch workflow need a separate approved implementation task; no workflow changed in Phase 2.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
