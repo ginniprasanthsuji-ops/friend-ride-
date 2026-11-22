@@ -1,7 +1,16 @@
 const {test,expect}=require('@playwright/test');
+async function openCustomerApp(page){
+ await openCustomerApp(page);
+ const launcher=page.locator('#roleLauncher');
+ if(await launcher.isVisible()){
+  await launcher.locator('.fr-role-card.customer').click();
+  await page.locator('#authModal .close').click();
+ }
+ await expect(launcher).toHaveClass(/hide/);
+}
 test('TASKO and Laundry services appear as separate home entries and banners',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('./',{waitUntil:'domcontentloaded'});
+ await openCustomerApp(page);
  await expect(page.locator('.home-pro-service').filter({hasText:'TASKO / GIGGER'})).toBeAttached();
  await expect(page.locator('.home-pro-service').filter({hasText:'LAUNDRY SERVICES'})).toBeAttached();
  await expect(page.locator('.fr-poster').filter({hasText:'TASKO / GIGGER'})).toBeAttached();
@@ -9,7 +18,9 @@ test('TASKO and Laundry services appear as separate home entries and banners',as
  expect(errors).toEqual([]);
 });
 test('TASKO booking dropdown retains Beauty Makeover and Halwai categories',async({page})=>{
- await page.goto('./',{waitUntil:'domcontentloaded'});
+ await openCustomerApp(page);
+ await page.evaluate(()=>window.showPage('homeServices'));
+ await expect(page.locator('#taskoCategory')).toBeVisible();
  const options=await page.locator('#taskoCategory option').allTextContents();
  expect(options).toHaveLength(10);
  expect(options).toContain('Beauty Makeover');
@@ -26,7 +37,8 @@ test('Beauty Makeover and Halwai booking selections persist to TASKO request row
   }
   return route.fulfill({status:200,contentType:'application/json',body:'[]'});
  });
- await page.goto('./',{waitUntil:'domcontentloaded'});
+ await openCustomerApp(page);
+ await page.evaluate(()=>window.showPage('homeServices'));
  await page.evaluate(()=>{currentUser={id:'qa-customer'};currentProfile={role:'customer'};selectedRole='customer';});
  const tomorrow=await page.evaluate(()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toISOString().slice(0,10);});
  for(const category of ['Beauty Makeover','Halwai – Sweets & Food Preparation']){
@@ -51,21 +63,21 @@ test('Admin TASKO control centre displays Beauty Makeover and Halwai request cat
  ];
  await page.route('https://*.supabase.co/rest/v1/fr_service_provider_applications**',route=>route.fulfill({status:200,contentType:'application/json',headers:{'content-range':'0-0/0'},body:'[]'}));
  await page.route('https://*.supabase.co/rest/v1/fr_service_bookings**',route=>route.fulfill({status:200,contentType:'application/json',headers:{'content-range':'0-1/2'},body:JSON.stringify(bookingRows)}));
- await page.goto('./',{waitUntil:'domcontentloaded'});
- await page.evaluate(()=>{currentProfile={role:'admin'};currentUser={id:'qa-admin'};selectedRole='admin';});
+ await openCustomerApp(page);
+ await page.evaluate(()=>{currentProfile={role:'admin'};currentUser={id:'qa-admin'};selectedRole='admin';window.showPage('adminDashboard');});
  await page.evaluate(()=>frAdminLoadTasko());
  await expect(page.locator('#taskoAdminBookings')).toContainText('Beauty Makeover',{timeout:15000});
  await expect(page.locator('#taskoAdminBookings')).toContainText('Halwai – Sweets & Food Preparation');
 });
 test('TASKO helper pricing and customer/partner/admin workflow remain intact',async({page})=>{
- await page.goto('./',{waitUntil:'domcontentloaded'});
+ await openCustomerApp(page);
  await expect(page.locator('#taskoGiggerLaunch')).toContainText('₹150–₹400');
  await expect(page.locator('#taskoGiggerLaunch')).toContainText('₹50');
  await expect(page.locator('#taskoAdminPanel')).toBeAttached();
  for(const name of ['frSubmitTaskoBooking','frLoadMyTaskoBookings','frTaskoProviderAction','frAdminLoadTasko','frAdminAssignTasko','frAdminVerifyTaskoPayment'])expect(await page.evaluate(n=>typeof window[n],name)).toBe('function');
 });
 test('Laundry has per KG/per piece booking, pickup, partner registration and admin panel',async({page})=>{
- await page.goto('./',{waitUntil:'domcontentloaded'});
+ await openCustomerApp(page);
  await page.evaluate(()=>window.showPage('laundryServices'));
  const p=page.locator('#laundryServices');
  await expect(p).toContainText('Washing');
@@ -83,7 +95,7 @@ test('Laundry has per KG/per piece booking, pickup, partner registration and adm
  for(const name of ['frSubmitLaundryBooking','frLoadMyLaundryBookings','frLaundryProviderAction','frAdminLoadLaundry','frAdminReviewLaundryApplication','frAdminAssignLaundry'])expect(await page.evaluate(n=>typeof window[n],name)).toBe('function');
 });
 test('Laundry invalid booking is rejected without database writes',async({page})=>{
- await page.goto('./',{waitUntil:'domcontentloaded'});
+ await openCustomerApp(page);
  await page.evaluate(()=>window.frSubmitLaundryBooking());
  await expect(page.locator('#laundryBookingStatus')).toContainText('Customer login');
 });
