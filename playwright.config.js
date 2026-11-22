@@ -11,9 +11,7 @@ module.exports = defineConfig({
   workers: process.env.CI ? 2 : undefined,
   timeout: 45_000,
   expect: { timeout: 10_000 },
-  reporter: process.env.CI
-    ? [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]
-    : [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
+  reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }], ['json', { outputFile: 'playwright-report/results.json' }],
   outputDir: 'test-results',
   use: {
     baseURL,
