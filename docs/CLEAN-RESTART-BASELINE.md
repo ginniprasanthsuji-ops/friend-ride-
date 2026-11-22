@@ -1,4 +1,4 @@
-# FRIEND RIDE Clean Restart — Baseline
+# ARJUNA Clean Restart — Baseline
 
 Date: 2026-11-22
 
@@ -8,6 +8,10 @@ Date: 2026-11-22
 - Existing root `index.html` backup/baseline tracked in main: blob SHA `6b18c4ae088c733c6d9b64139ad688573e3875e6` (large single-page frontend; fetched and verified).
 - Project Arjuna QA branch preserved: `project-arjuna/dark-gold-ui-rollout`, commit `6e6f1a65d3111f9ea6d66cfadce6428b21b1dba0`. Do not delete or merge automatically.
 - No production deployment, main merge, database/schema mutation, or destructive deletion performed.
+
+## Project naming
+- Clean restart engineering project codename: **ARJUNA**.
+- Customer-facing product name remains **FRIEND RIDE** unless a separate branding decision is approved.
 
 ## Restart direction
 Rebuild/clean up the frontend experience in controlled milestones while preserving backend contracts, Supabase schema/auth, payments, and working business logic unless a separately approved change requires otherwise. The Dark+Gold rollout is cancelled and is not part of this restart.
