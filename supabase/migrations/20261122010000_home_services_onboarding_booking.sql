@@ -40,19 +40,19 @@ create index if not exists fr_hs_book_provider_idx on public.fr_home_service_boo
 alter table public.fr_home_service_applications enable row level security;
 alter table public.fr_home_service_bookings enable row level security;
 drop policy if exists "hs applications owner read" on public.fr_home_service_applications;
-create policy "hs applications owner read" on public.fr_home_service_applications for select to authenticated using (user_id=auth.uid() or (auth.jwt()->'app_metadata'->>'role'='admin'));
+create policy "hs applications owner read" on public.fr_home_service_applications for select to authenticated using (user_id=auth.uid() or (exists(select 1 from public.admin_users au where au.user_id=auth.uid())));
 drop policy if exists "hs applications owner insert" on public.fr_home_service_applications;
 create policy "hs applications owner insert" on public.fr_home_service_applications for insert to authenticated with check (user_id=auth.uid() and status='pending');
 drop policy if exists "hs applications admin update" on public.fr_home_service_applications;
-create policy "hs applications admin update" on public.fr_home_service_applications for update to authenticated using (auth.jwt()->'app_metadata'->>'role'='admin') with check (auth.jwt()->'app_metadata'->>'role'='admin');
+create policy "hs applications admin update" on public.fr_home_service_applications for update to authenticated using (exists(select 1 from public.admin_users au where au.user_id=auth.uid())) with check (exists(select 1 from public.admin_users au where au.user_id=auth.uid()));
 drop policy if exists "hs bookings customer read" on public.fr_home_service_bookings;
-create policy "hs bookings customer read" on public.fr_home_service_bookings for select to authenticated using (customer_id=auth.uid() or provider_id=auth.uid() or auth.jwt()->'app_metadata'->>'role'='admin');
+create policy "hs bookings customer read" on public.fr_home_service_bookings for select to authenticated using (customer_id=auth.uid() or provider_id=auth.uid() or exists(select 1 from public.admin_users au where au.user_id=auth.uid()));
 drop policy if exists "hs bookings customer insert" on public.fr_home_service_bookings;
 create policy "hs bookings customer insert" on public.fr_home_service_bookings for insert to authenticated with check (customer_id=auth.uid() and status='pending_payment' and payment_status='unpaid');
 drop policy if exists "hs provider status update" on public.fr_home_service_bookings;
 create policy "hs provider status update" on public.fr_home_service_bookings for update to authenticated using (provider_id=auth.uid() and exists(select 1 from public.fr_home_service_applications a where a.user_id=auth.uid() and a.status='approved')) with check (provider_id=auth.uid() and exists(select 1 from public.fr_home_service_applications a where a.user_id=auth.uid() and a.status='approved'));
 drop policy if exists "hs admin booking update" on public.fr_home_service_bookings;
-create policy "hs admin booking update" on public.fr_home_service_bookings for update to authenticated using (auth.jwt()->'app_metadata'->>'role'='admin') with check (auth.jwt()->'app_metadata'->>'role'='admin');
+create policy "hs admin booking update" on public.fr_home_service_bookings for update to authenticated using (exists(select 1 from public.admin_users au where au.user_id=auth.uid())) with check (exists(select 1 from public.admin_users au where au.user_id=auth.uid()));
 -- Private KYC bucket: no public access. User can upload only within their UID folder.
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('home-service-private','home-service-private',false,3145728,array['image/jpeg','image/png','image/webp','application/pdf'])
@@ -60,4 +60,4 @@ on conflict(id) do update set public=false,file_size_limit=3145728,allowed_mime_
 drop policy if exists "hs private owner upload" on storage.objects;
 create policy "hs private owner upload" on storage.objects for insert to authenticated with check (bucket_id='home-service-private' and (storage.foldername(name))[1]=auth.uid()::text);
 drop policy if exists "hs private owner read" on storage.objects;
-create policy "hs private owner read" on storage.objects for select to authenticated using (bucket_id='home-service-private' and ((storage.foldername(name))[1]=auth.uid()::text or auth.jwt()->'app_metadata'->>'role'='admin'));
+create policy "hs private owner read" on storage.objects for select to authenticated using (bucket_id='home-service-private' and ((storage.foldername(name))[1]=auth.uid()::text or exists(select 1 from public.admin_users au where au.user_id=auth.uid())));
