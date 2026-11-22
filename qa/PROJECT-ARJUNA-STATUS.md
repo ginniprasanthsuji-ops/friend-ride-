@@ -124,3 +124,5 @@ QA Supabase project `pqsangtvietawkfgpgfu`:
 - Added static regression test `project-arjuna-sos-coordinate-constraints.test.cjs` to verify the migration guardrails.
 - New commits: migration `5ff7e56d` and test `e8c2c112`; verify CI for the latest commit before marking the new test green.
 - No merge, deployment, production DB change, or Dark+Gold UI work.
+
+- Added stricter static regression checks in `tests/project-arjuna-private-workflows.test.cjs` verifying driver-owned KYC updates remain limited to pending status and admin review policies require admin membership in both USING and WITH CHECK. CI for this follow-up commit is still running/queued at the time of this update.
