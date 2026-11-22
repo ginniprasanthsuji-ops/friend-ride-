@@ -77,3 +77,34 @@ globalThis.FRRideContact = FRRideContact;
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
 })();
+
+
+/* QA recovery: if the tracking/contact wrapper only returns driver identifiers,
+   restore the existing My Active Ride route/details read without touching backend. */
+(function frSavedRideReadFallback(){
+  function install(){
+    const previous=window.loadMyRideTracking;
+    if(typeof previous!=='function'||previous.__frSavedRideFallback)return;
+    const wrapped=async function(){
+      await previous.apply(this,arguments);
+      if(!currentUser||currentProfile?.role!=='customer')return;
+      const box=document.getElementById('liveRideStatus');
+      if(!box)return;
+      const shown=box.textContent||'';
+      if(shown.includes('→')&&shown.includes('Ride ID:'))return;
+      try{
+        const {data,error}=await sb.from('rides').select('*').eq('customer_id',currentUser.id).order('created_at',{ascending:false}).limit(10);
+        if(error)throw error;
+        if(!data?.length){box.textContent='ఇంకా Rides లేవు.';return;}
+        const active=data.find(r=>r.driver_id&&frCustomerTrackingStatusAllowed(r.status))||data.find(r=>!['completed','cancelled','canceled','rejected'].includes(String(r.status||'').toLowerCase()))||data[0];
+        frActiveRideId=active.id;
+        box.innerHTML='<b>'+safe(active.vehicle_type)+' • '+safe(active.status)+'</b><p>'+safe(active.pickup||active.pickup_text||'—')+' → '+safe(active.drop||active.drop_text||'—')+'</p><p>మీ Offer ₹'+safe(active.fare_offer)+' | Agreed ₹'+safe(active.agreed_fare??'—')+'</p><small>Ride ID: '+safe(active.id)+'</small>';
+        if(active.driver_id&&typeof frRenderCustomerRideDriverAndPayment==='function')await frRenderCustomerRideDriverAndPayment(active);
+      }catch(e){box.textContent='My Rides Error: '+(e.message||e);}
+    };
+    wrapped.__frSavedRideFallback=true;
+    window.loadMyRideTracking=wrapped;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
+  else install();
+})();

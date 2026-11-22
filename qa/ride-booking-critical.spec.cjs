@@ -104,7 +104,7 @@ test('Ride insert succeeds and saved booking is retrievable in My Ride using moc
   await expect(page.locator('#trackingStatus')).toContainText('Ride Request');
   expect(insertedRow).toMatchObject({ customer_id: 'qa-user-1', pickup: savedRide.pickup, drop: savedRide.drop, fare_offer: 125, status: 'requested' });
   await page.evaluate(() => { currentUser = { id: 'qa-user-1' }; currentProfile = { role: 'customer' }; return window.loadMyRideTracking(); });
-  expect(getUrls.some(url => url.includes('select=*')), 'saved ride retrieval must query the full row').toBe(true);
+  expect(getUrls.some(url => /select=(\\*|%2A)/i.test(url)), 'saved ride retrieval must query the full row').toBe(true);
   await expect(page.locator('#liveRideStatus')).toContainText('QA Pickup, Tekkali');
   await expect(page.locator('#liveRideStatus')).toContainText('QA Drop, Srikakulam');
   await expect(page.locator('#liveRideStatus')).toContainText('qa-ride-001');
