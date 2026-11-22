@@ -242,7 +242,7 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 #home #frSupportHomeEntry{margin:12px 16px 28px!important;position:relative}
 body{padding-bottom:105px}
 </style>
-<link rel="stylesheet" href="./learn-teach.css">
+
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -330,11 +330,7 @@ body{padding-bottom:105px}
   <button class="home-pro-service" style="--svc-a:#d8c7ff;--svc-b:#7c3aed" onclick="requireLogin(()=>{showPage('homeServices');document.getElementById('taskoGiggerLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧰</span><b>TASKO / GIGGER</b><small>Daily Helper Booking</small></button>
   <button class="home-pro-service" style="--svc-a:#c8f5ee;--svc-b:#159b86" onclick="requireLogin(()=>{showPage('laundryServices');document.getElementById('laundryServiceLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧺</span><b>LAUNDRY SERVICES</b><small>Wash • Iron • Dry Clean • Pickup</small></button>
  </div>
- <div class="home-pro-services">
-  <button class="home-pro-service" style="--svc-a:#ffe7c2;--svc-b:#f59e0b" onclick="requireLogin(()=>openEventService('Catering Services'))"><span class="home-pro-art">🍽️</span><b>Catering Services</b></button>
-  <button class="home-pro-service" style="--svc-a:#d9eafe;--svc-b:#6288e8" onclick="requireLogin(()=>openEventService('DJ – Sound & Lights'))"><span class="home-pro-art">🎧</span><b>DJ – Sound &amp; Lights</b></button>
-  <button class="home-pro-service" style="--svc-a:#ffe0ec;--svc-b:#ec78a7" onclick="requireLogin(()=>openEventService('Beauty Makeover'))"><span class="home-pro-art">💄</span><b>Beauty Makeover</b></button>
- </div>
+
  <div class="cycle-delivery-home-card" onclick="requireLogin(()=>showPage('cycleDelivery'))" role="button" tabindex="0" aria-label="Cycle Delivery"><div class="cycle-delivery-photo"><span class="cycle-delivery-fallback">🚲</span></div><div class="cycle-delivery-home-copy"><b>🚲 Cycle Delivery</b><small>Eco-friendly local delivery • No bike required</small><span class="cycle-delivery-rate">₹25–₹40 • Distance-based</span></div></div><div class="home-section-title"><h2>More Services</h2><button onclick="showPage('explore')">View All →</button></div>
  <div class="home-more-grid"><button onclick="requireLogin(()=>showPage('parcel'))">📦<b>Parcel</b></button><button onclick="requireLogin(()=>showPage('goods'))">🚚<b>Goods</b></button><button onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b></button><button onclick="requireLogin(()=>showPage('scheduled'))">🗓️<b>Schedule</b></button></div>
  <section id="frHomeRatings" class="card" aria-label="Customer Ratings">
@@ -356,47 +352,18 @@ body{padding-bottom:105px}
 <button class="tile" onclick="showPage('shopping')">🛍️<b>Shopping</b></button>
 <button class="tile" onclick="showPage('scheduled')">🗓️<b>Scheduled Booking</b></button>
 <button class="tile" onclick="showPage('bankingServices')">🏦<b>Banking &amp; Financial Services</b><small>Banking • Insurance • Bill payments</small></button>
-<button class="tile" onclick="openEventService('Catering Services')">🍽️<b>Catering Services</b><small>Events & functions</small></button>
-<button class="tile" onclick="openEventService('DJ – Sound & Lights')">🎧<b>DJ – Sound & Lights</b><small>Events & celebrations</small></button>
-<button class="tile" onclick="openEventService('Beauty Makeover')">💄<b>Beauty Makeover</b><small>Makeup & styling</small></button>
+
 </div></div>
 <div class="card"><h3>💳 Service & Delivery Charges</h3><div class="notice"><b>Platform Charge: 2.5%</b><br>Eligible order/service valueపై 2.5% platform charge వర్తిస్తుంది.</div><p class="muted">Delivery charges location, distance, service type మరియు delivery partner quote ఆధారంగా మారవచ్చు. Final delivery charge మరియు total amount booking/checkout confirm చేసే ముందు చూపించాలి.</p></div></section>
-
-<section id="eventServices" class="page">
- <div class="card">
-  <button class="btn light" style="width:auto" onclick="showPage('home')">← Back to Home</button>
-  <h2 id="eventServiceHeading">Event & Personal Services</h2>
-  <p class="muted">Catering, DJ / Sound & Lights, Beauty Makeover — ఇవి Home Technician Services నుండి వేరుగా బుక్ చేయండి.</p>
-  <div class="field"><label>Select Service</label>
-   <select id="eventServiceType" onchange="frUpdateEventServiceHeading()">
-    <option value="Catering Services">🍽️ Catering Services</option>
-    <option value="DJ – Sound & Lights">🎧 DJ – Sound & Lights</option>
-    <option value="Beauty Makeover">💄 Beauty Makeover</option>
-   </select>
-  </div>
-  <div class="field"><label>Event / Service Date</label><input id="eventServiceDate" type="date"></div>
-  <div class="field"><label>Preferred Time</label><input id="eventServiceTime" type="time"></div>
-  <div class="field"><label>Venue / Full Address</label><textarea id="eventServiceAddress" placeholder="Enter function hall, home or service location"></textarea></div>
-  <div class="field"><label>Number of Guests (Catering only)</label><input id="eventServiceGuests" type="number" min="1" placeholder="Approximate guest count"></div>
-  <div class="field"><label>Requirements / Details</label><textarea id="eventServiceDetails" placeholder="Menu and food requirements / DJ setup and lighting / Makeup and styling requirements"></textarea></div>
-  <div class="notice">మీ వివరాలు నమోదు చేసి quote కోసం request చేయవచ్చు. Provider availability, price and booking confirmation backend connection తర్వాత enable అవుతాయి.</div>
-  <button class="btn purple" onclick="showMessage('Event service request form సిద్ధంగా ఉంది. Booking submission కోసం event-service backend table/RPC mapping అవసరం.','good')">Request a Quote</button>
-  <div class="notice"><b>మీరు Service Providerనా?</b> Catering, DJ / Sound &amp; Lights లేదా Beauty Makeover providerగా చేరడానికి registration చేయండి.</div>
-  <button class="btn light" onclick="openServiceProviderRegister(document.getElementById('eventServiceType').value)">Register as Service Provider</button>
- </div>
-</section>
 
 <section id="serviceProviderRegister" class="page">
  <div class="card">
   <button class="btn light" style="width:auto" onclick="showPage('home')">← Back</button>
   <h2>FRIEND RIDE – Service Provider Registration</h2>
-  <p class="muted">TASKO / GIGGER, Laundry, Home Services, Catering, DJ / Sound &amp; Lights మరియు Beauty Makeover providers కోసం ఒకే registration form.</p>
+  <p class="muted">TASKO / GIGGER, Laundry మరియు Home Services providers కోసం registration form.</p>
   <div class="field"><label>Service Category *</label>
    <select id="spCategory">
     <option value="TASKO / QUICKMATE Assistant">TASKO / GIGGER</option><option value="Laundry Partner">Laundry Services</option><option value="Home Services">Home Services</option>
-    <option value="Catering Services">Catering Services</option>
-    <option value="DJ – Sound & Lights">DJ – Sound & Lights</option>
-    <option value="Beauty Makeover">Beauty Makeover</option>
    </select>
   </div>
   <div class="field"><label>Owner / Provider Full Name *</label><input id="spName" placeholder="Enter full name"></div>
@@ -658,7 +625,7 @@ body{padding-bottom:105px}
    <div id="frSupportSubmitStatus" class="notice">మీ వివరాలు Admin Dashboardకు పంపబడతాయి.</div>
   </div>
  </section>
-<section id="learnTeach" class="page"><div class="card lt-shell"><div class="lt-row"><button class="lt-btn alt" onclick="showPage('home')">← FRIEND RIDE</button><button class="lt-btn alt" onclick="frLearnTeachAdmin()">Admin Approvals</button></div><div id="learnTeachRoot"></div></div></section>
+
 </main>
 
 <nav class="bottom premium-bottom">
@@ -667,7 +634,6 @@ body{padding-bottom:105px}
  <button data-page="food" onclick="showPage('food')"><span>🍱</span>Food<br>Delivery</button>
  <button class="cart-tab" data-page="marketCart" onclick="showPage('marketCart')"><span>🛒</span><small>My Cart</small><b id="frBottomCartCount" class="fr-bottom-cart-count">0</b></button>
  <button data-page="explore" onclick="showPage('explore')"><span>▦</span>Categories</button>
- <button data-page="learnTeach" onclick="frLearnTeachOpen()"><span>🎓</span>విద్యా సేతు</button>
  <button data-page="orders" onclick="requireLogin(()=>showPage('orders'))"><span>🧾</span>Orders</button>
 </nav>
 
@@ -2207,7 +2173,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentPr
 
 // FRIEND RIDE Super App additions (catalogue and multi-shop cart UI)
 const frSuperCategories=[
- ['🚕','Ride Booking','Bike, Auto, Car'],['🍲','Food & Restaurants','Meals, tiffin, bakery, snacks'],['💊','Medical & Pharmacy','Medicines, medical supplies'],['🛒','General & Grocery','Kirana, household, daily needs'],['📺','Electronics','TV, fridge, washing machine, mixer'],['💡','Electrical','Wires, switches, bulbs, LED, MCB, inverter, batteries'],['💄','Ladies Accessories','Clips, pins, rubber bands, bangles, combs'],['🍗','Chicken & Fresh','Chicken, mushrooms, paneer'],['📦','Parcel','Local parcel pickup and delivery'],['🧰','Home Services','Electrician, plumber, mason, AC mechanic'],['🚽','Septic Tank Service','Cleaning and maintenance'],['🛠️','Tools & Hardware','Tools, fittings, repair items'],['📱','Mobiles & Accessories','Phones, chargers, cables'],['👕','Clothing & Fashion','Clothes, footwear, accessories'],['🧸','Kids & Toys','Toys, school and baby items'],['🐾','Pet Supplies','Food and daily pet needs'],['🌱','Agriculture','Seeds, garden and farm supplies'],['🎁','Gifts & Stationery','Gifts, books, stationery'],['🎓','విద్యా సేతు','Learning • Teacher • Student • Coaching Center']
+ ['🚕','Ride Booking','Bike, Auto, Car'],['🍲','Food & Restaurants','Meals, tiffin, bakery, snacks'],['💊','Medical & Pharmacy','Medicines, medical supplies'],['🛒','General & Grocery','Kirana, household, daily needs'],['📺','Electronics','TV, fridge, washing machine, mixer'],['💡','Electrical','Wires, switches, bulbs, LED, MCB, inverter, batteries'],['💄','Ladies Accessories','Clips, pins, rubber bands, bangles, combs'],['🍗','Chicken & Fresh','Chicken, mushrooms, paneer'],['📦','Parcel','Local parcel pickup and delivery'],['🧰','Home Services','Electrician, plumber, mason, AC mechanic'],['🚽','Septic Tank Service','Cleaning and maintenance'],['🛠️','Tools & Hardware','Tools, fittings, repair items'],['📱','Mobiles & Accessories','Phones, chargers, cables'],['👕','Clothing & Fashion','Clothes, footwear, accessories'],['🧸','Kids & Toys','Toys, school and baby items'],['🐾','Pet Supplies','Food and daily pet needs'],['🌱','Agriculture','Seeds, garden and farm supplies'],['🎁','Gifts & Stationery','Gifts, books, stationery']
 ];
 let frMultiCart=[];
 function frOpenSuperHub(){if(typeof showPage==='function')showPage('frSuperHub');else document.getElementById('frSuperHub')?.scrollIntoView();frRenderSuperHub();}
@@ -2222,9 +2188,6 @@ function frCategoryInfo(i){
   'Tools & Hardware':'shops','Mobiles & Accessories':'shops','Clothing & Fashion':'shops','Kids & Toys':'shops',
   'Pet Supplies':'shops','Agriculture':'shops','Gifts & Stationery':'shops'
  };
- if(c[1]==='విద్యా సేతు'||c[1]==='Learning'){
-   frOpenLearningCategory(); return;
- }
  const target=routeMap[c[1]]||'shops';
  if(target==='shops'&&typeof requireLogin==='function')requireLogin(()=>showPage(target));else showPage(target);
 }
@@ -2796,19 +2759,7 @@ acceptSession=async function(user){const result=await frOldAcceptSessionForMarke
 // Do not present a false completion action: secure payment and delivery-OTP enforcement is a required backend migration.
 </script>
 
-<script id="fr-event-service-navigation">
-function openEventService(serviceName){
- const sel=document.getElementById('eventServiceType');
- if(sel && serviceName) sel.value=serviceName;
- frUpdateEventServiceHeading();
- showPage('eventServices');
-}
-function frUpdateEventServiceHeading(){
- const sel=document.getElementById('eventServiceType');
- const title=document.getElementById('eventServiceHeading');
- if(sel && title) title.textContent=sel.value+' Booking';
-}
-</script>
+
 <script id="fr-provider-banking-navigation">
 function openServiceProviderRegister(category){
  const el=document.getElementById('spCategory');
@@ -4424,9 +4375,7 @@ async function frAdminAssignLaundry(id){
  }
 })();
 </script>
-<style id="fr-v11.1-pro-learning-routing-style">
-.fr-v11-learning-head{padding:20px 16px;border-radius:22px;background:linear-gradient(135deg,#21143d,#58328f);color:#fff;margin:12px 0}.fr-v11-learning-head>span{font-weight:900;color:#dbc8ff;font-size:11px;letter-spacing:1px}.fr-v11-learning-head h2{margin:8px 0 5px;font-size:24px}.fr-v11-learning-head p{font-size:12px;color:#e7dcf7;margin:0}.fr-v11-learning-grid{display:grid;grid-template-columns:1fr;gap:12px}.fr-v11-learning-card{border:1px solid #e8ddf4;border-radius:18px;background:linear-gradient(145deg,#fff,#f8f3ff);padding:16px;text-align:left;color:#39204f;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px #2410440b}.fr-v11-learning-card>span{font-size:30px}.fr-v11-learning-card b{font-size:16px}.fr-v11-learning-card small{font-size:11px;color:#7d718b;line-height:1.4}.fr-v11-learning-card i{font-style:normal;color:#6c42a5;font-weight:900;font-size:11px}.fr-v11-role-dashboard{padding:18px;border:1px solid #e8ddf4;border-radius:20px;background:#fff;text-align:center}.fr-v11-role-icon{font-size:45px}.fr-v11-role-dashboard button,.fr-v11-back{border:0;border-radius:12px;background:#eee5f8;color:#512f82;padding:11px 14px;font-weight:900;margin:6px}.fr-v11-role-dashboard p{font-size:12px;color:#756b82;line-height:1.5}
-</style>
+
 </body>
 </html>
 <style>
