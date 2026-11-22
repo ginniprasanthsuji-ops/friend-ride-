@@ -1,7 +1,7 @@
 name: FRIEND RIDE Quality Gate
 on:
   push:
-    branches: [main]
+    branches: [main, project-arjuna/dark-gold-ui-rollout]
   pull_request:
     branches: [main]
 jobs:
