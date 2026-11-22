@@ -1,4 +1,12 @@
 const {test,expect}=require('@playwright/test');
+test.beforeEach(async ({ page }) => {
+  await page.route('https://**/*', route => {
+    const url = route.request().url();
+    if (url.includes('cdn.jsdelivr.net/npm/@supabase/supabase-js@2') || url.includes('unpkg.com/leaflet@1.9.4/')) return route.continue();
+    return route.abort();
+  });
+});
+
 test('TASKO and Laundry services appear as separate home entries and banners',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('./',{waitUntil:'domcontentloaded'});

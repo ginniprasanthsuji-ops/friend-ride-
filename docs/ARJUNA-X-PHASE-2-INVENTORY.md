@@ -867,3 +867,25 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 ### Pass 36 disposition
 - Combined test/config correction committed on QA branch only. CI triggered for this commit; final browser result is pending. No app runtime/backend/schema/auth/payment/main/live changes. Phase 2 remains **IN PROGRESS / NOT ACCEPTED** until current CI and remaining PWA/backend/runtime evidence are complete.
+
+
+## Pass 37 — CI isolation hardening and current gate evidence
+
+### Verified latest CI evidence before this patch
+- Run `45056228462`, commit `bfce6331605b927d6efd336772eadd7dfef3e374`: overall **SUCCESS**. Type/unit job succeeded (typecheck, core typecheck, runtime build, Node unit tests `7/7`, Vitest); browser job succeeded with **47 passed in 28.0s**.
+- Run `45056138040`, commit `8faf72849ba223747bb9daa1ff1d6d84e8eafc2f`: overall **SUCCESS**, browser **47 passed in 23.5s**. The newer run above additionally verifies the network-isolated route baseline spec revision.
+- Earlier run `45055689330` failed only in legacy Dark+Gold theme spec (47 pass / 10 fail); after excluding that obsolete spec and adding ARJUNA X route baseline, the two full-gate runs passed. Keep legacy spec as reference; do not count it as target theme acceptance.
+
+### Additional isolation improvement
+- Added a shared beforeEach interception in active `qa/friend-ride.spec.cjs` and `qa/tasko-laundry.spec.cjs`: external HTTPS is blocked except the Supabase JS CDN and Leaflet library CDN needed for app initialization. Supabase API endpoints and other external services are aborted during these QA browser specs. The route-baseline and targeted TASKO/Laundry integration specs already block external requests.
+- Combined with Playwright loopback-only baseURL guard, active suite is intended to run against the local static server with external API traffic blocked. CI is triggered for this QA/test change; results pending.
+
+### Remaining Phase 2 acceptance blockers
+- PNG icon binary visual/official-brand verification remains blocked by binary fetch/inspection capability; file SHA/size only.
+- PWA installability, active worker/scope, update behavior and push/background notification runtime evidence remain unverified.
+- Deployed Supabase RPC/Edge Function/auth/RLS contract and permission evidence not retrieved; do not change backend.
+- Full live role/permission integration E2E is not proven by local static browser tests.
+- QA branch protection and required checks remain disabled/unconfigured; owner approval/policy required before changing repository governance.
+
+### Pass 37 disposition
+- Test isolation source edits and status documentation committed on QA branch only; CI for this patch pending. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. Phase 3 is still gated. No app runtime/backend/schema/auth/payment/main/deployment changes.
