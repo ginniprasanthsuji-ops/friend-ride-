@@ -146,7 +146,7 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
   });
 
   test('Admin login is role locked and hides registration and role chooser', async ({ page }) => {
-    await page.evaluate(() => window.openAuth('login','admin'));
+    await page.evaluate(() => window.enterRole('admin'));
     const modal=page.locator('#authModal');
     await expect(modal).toHaveClass(/show/);
     await expect(modal).toHaveClass(/fr-role-locked/);
