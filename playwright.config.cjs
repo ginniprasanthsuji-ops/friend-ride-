@@ -21,6 +21,7 @@ if (!['localhost', '127.0.0.1', '::1', '[::1]'].includes(baseURL.hostname)) {
 
 module.exports = defineConfig({
   testDir: './qa',
+  testIgnore: ['**/dark-gold-route-regression.spec.js'],
   timeout: 45000,
   retries: 1,
   reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],

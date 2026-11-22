@@ -849,3 +849,21 @@ Source inventory update only. No UI/runtime source was edited; no browser, locat
 
 ### Pass 35 disposition
 Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/auth/payment changes. Phase 2 remains IN PROGRESS / NOT ACCEPTED until all acceptance blockers and browser/runtime evidence are addressed.
+
+
+## Pass 36 — Correct route count and retarget active browser baseline
+
+### Route-count correction to Pass 23
+- Re-fetched the current `index.html` and legacy route array. Counting every DOM source element whose class list contains the `page` token gives **58 runtime page sections**, matching **58 unique IDs** in the legacy array, **0 missing**, and **0 stale**. The previous 55 count used exact `class="page"` and excluded 3 valid routes that carry extra classes: `home` (`page active`), `crmDashboard` (`page fr-crm-page`), and `frSuperHub` (`page fr-premium-hub`). Pass 23's 55/3-stale statement is superseded by this extraction.
+
+### CI regression findings
+- Quality Gate run `45055689330` on `fbc0b197...`: typecheck/core typecheck/runtime build/unit/core tests succeeded; Playwright browser suite ended **47 passed / 10 failed**. The 10 failures are in the obsolete `qa/dark-gold-route-regression.spec.js` suite, whose design markers, native-home/drawer/CRM/navigation/auth selectors and dark-gold assertions do not match the current app. Other Playwright specs passed in that run. Do not mislabel these as application regression findings without retargeting the test.
+- New Playwright config safety unit tests on run `45055830357`: **7 passed, 0 failed** in Node unit job, including missing-env fail-closed, production-host rejection and localhost/IPv4/IPv6 loopback acceptance. Typecheck, core typecheck, runtime build and Vitest also succeeded in that job. Browser run on that commit was still pending at this note.
+
+### Test-suite correction
+- Preserve the obsolete Dark+Gold spec file as historical evidence but exclude it from the default Playwright suite; it is not an ARJUNA X theme authority. Keep all other functional QA specs enabled.
+- Added `qa/arjuna-x-phase2-route-baseline.spec.cjs` with static route registry reconciliation (58 IDs; no missing/extra/duplicate IDs) and activation of each route via the existing router as Admin. This retargets route coverage to current scope without altering app code.
+- Added push `paths-ignore: docs/**` to quality workflow to avoid redundant test runs for documentation-only commits. Application, QA test, and workflow changes still trigger the branch quality gate; PR-to-main trigger remains unchanged.
+
+### Pass 36 disposition
+- Combined test/config correction committed on QA branch only. CI triggered for this commit; final browser result is pending. No app runtime/backend/schema/auth/payment/main/live changes. Phase 2 remains **IN PROGRESS / NOT ACCEPTED** until current CI and remaining PWA/backend/runtime evidence are complete.

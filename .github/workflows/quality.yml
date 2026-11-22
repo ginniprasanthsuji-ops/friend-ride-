@@ -2,6 +2,8 @@ name: FRIEND RIDE Quality Gate
 on:
   push:
     branches: [main, arjuna-x/phase-2-repository-assets-inventory]
+    paths-ignore:
+      - 'docs/**'
   pull_request:
     branches: [main]
 jobs:
