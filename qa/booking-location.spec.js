@@ -182,7 +182,7 @@ test.describe('Ride booking map and location suggestions', () => {
     await expect(page.locator('#tracking')).toHaveClass(/active/,{timeout:15000});
     await expect(page.locator('#trackingStatus')).toContainText('15 KM పరిధిలో ప్రస్తుతం Online Drivers లేరు',{timeout:15000});
     await expect.poll(()=>submittedRide).not.toBeNull();
-    expect(submittedRide).toMatchObject({customer_id:'qa-customer-123',vehicle_type:'Bike',pickup:'Pickup QA, Tekkali',drop:'Drop QA, Srikakulam',fare_offer:120,status:'requested',pickup_lat:18.605,pickup_lng:84.255});
+    expect(submittedRide).toMatchObject({customer_id:'qa-customer-123',vehicle_type:'Bike',pickup:'Pickup QA, Tekkali',drop:'Drop QA, Srikakulam',pickup_text:'Pickup QA, Tekkali',drop_text:'Drop QA, Srikakulam',fare_offer:120,status:'requested',pickup_lat:18.605,pickup_lng:84.255,drop_lat:18.615,drop_lng:84.265});
     await expect(page.locator('#liveRideStatus')).toContainText('qa-ride-123');
   });
 
