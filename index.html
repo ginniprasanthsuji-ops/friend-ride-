@@ -1319,12 +1319,7 @@ const FR_DEMO_STORES=[
  {id:'s8',name:'Ravi Hardware & Plumbing',type:'hardware',category:'Hardware & Plumbing',area:'Your Local Area',art:'🛠️',a:'#dcecff',b:'#7aa7d8'},
  {id:'s9',name:'Coastal Fish & Seafood',type:'fish',category:'Fish & Seafood',area:'Your Local Area',art:'🐟',a:'#d9f4f4',b:'#68b9bd'}
 ];
-const FR_DEMO_RESTAURANTS=[
- {id:'r1',name:'Spice Garden Restaurant',area:'Your Local Area',cuisine:'Biryani • Meals • Curries',art:'🍛',a:'#ffd5a3',b:'#f18b3d'},
- {id:'r2',name:'South Indian Tiffins',area:'Your Local Area',cuisine:'Idli • Dosa • Vada',art:'🥞',a:'#fff0b8',b:'#e6ad45'},
- {id:'r3',name:'Urban Pizza & Fast Food',area:'Your Local Area',cuisine:'Pizza • Burgers • Snacks',art:'🍕',a:'#ffd5dc',b:'#ec7791'},
- {id:'r4',name:'Family Meals & Andhra Kitchen',area:'Your Local Area',cuisine:'Meals • Thali • Specials',art:'🍱',a:'#ffe2ba',b:'#dc9651'}
-];
+const FR_DEMO_RESTAURANTS=[];
 const FR_FOOD_MENU=[
  ['Breakfast','Idli (2 pcs)','🥘'],['Breakfast','Plain Dosa','🥞'],['Breakfast','Masala Dosa','🥞'],['Breakfast','Vada (2 pcs)','🍩'],['Breakfast','Pongal','🍚'],['Breakfast','Poori (2 pcs)','🫓'],
  ['Meals','South Indian Meals','🍱'],['Meals','Veg Meals','🍛'],['Meals','Mini Meals','🍱'],['Meals','Curd Rice','🍚'],['Meals','Lemon Rice','🍋'],
@@ -1408,11 +1403,7 @@ function renderCustomerCatalogue(){
   return `<article class="market-product market-product-3d"><div class="market-product-art market-product-art-3d"><span class="product-art-glow"></span><span class="product-art-object">${art}</span><small>FR 3D CATALOGUE</small></div><div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small><div class="market-price">Partner price: confirm with store</div><span class="stock-mark no">Availability: confirm with store</span></div><button class="btn purple" onclick="addMarketCart('${name.replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','request')">＋ Add / Ask Price</button></article>`;
  }).join('')||'<div class="market-empty">ఈ కేటగిరీలో వస్తువులు లేవు.</div>';
 }
-function renderRestaurantList(){
- const q=($('restaurantSearch')?.value||'').toLowerCase(),el=$('restaurantVisualList');if(!el)return;
- const items=FR_DEMO_RESTAURANTS.filter(x=>(x.name+' '+x.cuisine).toLowerCase().includes(q));
- el.innerHTML=items.map(x=>`<button class="market-store" onclick="openRestaurant('${x.id}')"><div class="market-store-art" style="--a:${x.a};--b:${x.b}">${x.art}</div><div class="market-store-info"><b>${safe(x.name)}</b><small>${safe(x.cuisine)}</small><small>${safe(x.area)} • View Menu →</small></div></button>`).join('')||'<div class="market-empty">Restaurants not found.</div>';
-}
+function renderRestaurantList(){ const el=$('restaurantVisualList');if(!el)return;el.innerHTML='<div class="market-empty" role="status">ప్రస్తుతం రెస్టారెంట్లు అందుబాటులో లేవు. Partner registration మరియు Admin approval పూర్తయ్యాక ఇక్కడ కనిపిస్తాయి.</div>'; }
 function openRestaurant(id){
  frActiveRestaurant=FR_DEMO_RESTAURANTS.find(x=>x.id===id);if(!frActiveRestaurant)return;
  frRestaurantCategory='All';$('restaurantCatalogueTitle').textContent=frActiveRestaurant.name;$('restaurantMenuSearch').value='';
