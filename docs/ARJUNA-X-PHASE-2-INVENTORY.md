@@ -509,3 +509,29 @@ get_ride_payment_details_v1
 
 ### Phase 2 status
 Inventory has been extended through Pass 14. Still open: reliable full route/guard source extraction, actual logo/icon visual verification, notification and PWA runtime registration proof, deployed RPC/Edge Function contracts and authorization, and actual CI/test evidence. Phase 2 remains IN PROGRESS; no runtime changes or live deployment.
+
+
+## Pass 15 — Route registry evidence and QA spec scope audit
+
+### Route/page IDs found in the legacy Dark-Gold route QA spec
+The spec declares **58 route/page IDs** (including the newer `frSuperHub`) and **30 shared-customer route IDs**. The declared list includes home, rides/scheduled, goods/parcel/food/catalogue, shops/shopping/market cart, home services/laundry, orders/tracking/wallet/offers, role dashboards, partner orders/products/inventory/catalogue/reports/subscription/referrals, GST, Admin dashboards/CRM/users/approvals/reports/settings, profile/notifications/support/about/cart, feedback, Learn/Teach, banking/event/cycle-delivery/service registration, parcel release and Super Hub. This is a spec-derived list only; a complete live DOM reconciliation is not yet possible from the oversized root HTML through the current connector.
+
+### Test evidence vs authority
+- `qa/friend-ride.spec.cjs` tests role launcher (four cards), role routing self-test, local diagnostics, simulated QA page, support/feedback, partner GPS/store map, bank enquiries, and includes additional tests later in the file. Source inspection only; no test executed in this pass.
+- `qa/tasko-laundry.spec.cjs` tests service entries, pricing UI and handler presence, Laundry types/unit mapping and unauthenticated guard. It does not prove authenticated backend writes.
+- `qa/tasko-laundry-main-regression.spec.js` stubs navigation/auth and blocks external requests; verifies category routing and admin panel handler presence. It is explicitly isolated/mock-oriented.
+- `tests/learn-teach-marketplace.spec.js` uses a hard-coded localhost URL and checks landing/category labels; current Playwright config baseURL override does not change its hard-coded URL. This test's server requirement/target must be verified in the CI workflow before execution.
+- `qa/dark-gold-route-regression.spec.js` contains a 58-route list and UI checks asserting Dark-Gold theme variables and native-home markers. **These assertions are legacy Dark-Gold artifacts and conflict with the ARJUNA X Navy/Orange/White scope lock.** Do not treat this suite as authoritative for ARJUNA X acceptance; it must be replaced/retargeted later, not used to force Dark-Gold runtime changes.
+
+### Source access limitation
+- The root `index.html` is about 1 MB and current GitHub file connector retrieval is unreliable for full-source route/role-guard analysis. The 58 route names are from an existing QA spec, not independently verified against the actual root DOM.
+- Binary icon files are listed in the tree, but the current GitHub connector cannot visually render/inspect PNG binaries in this inventory pass.
+
+### Phase 2 open blockers reaffirmed
+1. Complete source extraction or a safe local clone/readable slice of `index.html` to verify every page ID, role guard, registration form fields, and profile photo logic.
+2. Visual inspection of official logo/icon files and app asset mapping.
+3. Reconcile legacy Dark-Gold QA artifacts with the locked Navy/Orange/White direction without changing app runtime in Phase 2.
+4. Current CI workflow run evidence and branch trigger coverage.
+5. Live/deployed RPC/Edge Function contracts, authorization, push delivery and PWA registration evidence.
+
+No runtime code, Supabase, schema, auth, payment, main branch or live deployment was changed. Phase 2 remains IN PROGRESS.
