@@ -158,3 +158,17 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     });
   });
 });
+
+
+test('selected pickup/drop coordinates persist when booking map is unavailable', async ({ page }) => {
+  // Simulate a Leaflet/map loading failure; address selection must still retain valid coordinates.
+  await page.evaluate(() => { window.L = null; rideMap = null; });
+  await page.locator('#pickup').fill('Tekkali');
+  await expect(page.locator('#frPickupSuggestions button').first()).toContainText('Tekkali', { timeout: 10000 });
+  await page.locator('#frPickupSuggestions button').first().click();
+  await page.locator('#drop').fill('Naupada');
+  await expect(page.locator('#frDropSuggestions button').first()).toContainText('Naupada', { timeout: 10000 });
+  await page.locator('#frDropSuggestions button').first().click();
+  const coords = await page.evaluate(() => ({ pickup: pickupCoords, drop: dropCoords }));
+  expect(coords).toEqual({ pickup: { lat: 18.3, lon: 84.2 }, drop: { lat: 18.25, lon: 84.35 } });
+});
