@@ -204,3 +204,19 @@ test('selected pickup/drop coordinates persist when booking map is unavailable',
   const coords = await page.evaluate(() => ({ pickup: pickupCoords, drop: dropCoords }));
   expect(coords).toEqual({ pickup: { lat: 18.3, lon: 84.2 }, drop: { lat: 18.25, lon: 84.35 } });
 });
+
+
+test('autocomplete provider outage offers manual coordinate recovery', async ({ page }) => {
+  await page.route('https://photon.komoot.io/**', async route => route.fulfill({ status: 503, body: 'provider unavailable' }));
+  await page.locator('#pickup').fill('Tekkali');
+  await expect(page.locator('#frPickupSuggestions')).toContainText('Suggestions load కాలేదు. మళ్లీ ప్రయత్నించండి.', { timeout: 10000 });
+  await expect(page.locator('#frPickupHint')).toContainText('Location search temporarily unavailable.');
+  await expect(page.locator('#ride button[onclick="frArjunaManualCoordinates(\'pickup\')"]')).toBeVisible();
+  await page.evaluate(() => window.frArjunaManualCoordinates('pickup'));
+  await page.locator('#frPickupSuggestions .fr-manual-lat').fill('18.3');
+  await page.locator('#frPickupSuggestions .fr-manual-lon').fill('84.2');
+  await page.locator('#frPickupSuggestions .fr-manual-apply').click();
+  await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lat', '18.3');
+  await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lon', '84.2');
+  await expect(page.locator('#frPickupHint')).toContainText('Manual coordinates saved');
+});
