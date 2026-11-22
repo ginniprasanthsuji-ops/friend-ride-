@@ -679,3 +679,16 @@ Route ID reconciliation is complete at source level (58/58 list match). Design-s
 
 ### Phase 2 disposition
 The page-ID inventory is source reconciled with corrected counts; asset visual validation and design-system implementation/test alignment remain blockers. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No runtime, backend, schema, auth, payment, main or deployment changes.
+
+
+## Pass 24 — FRIEND RIDE icon direction and asset pack prepared
+
+### Design direction applied to a new draft asset
+- Prepared a new draft icon artwork using the locked Navy Blue + Orange + White palette.
+- Visual concept: FR lettermark, location-pin/road motif and mobility silhouettes; branded FRIEND RIDE text/tagline are included in the full draft image.
+- Generated and exported resized PNG variants: 192×192, 512×512, 1024×1024, plus a 512×512 maskable variant with centered safe-area padding.
+- These assets are prepared for review and are **not yet installed into the app or committed as binary assets**. The GitHub text-file connector used in this audit does not support binary PNG commits, so existing manifest references are deliberately unchanged to avoid broken PWA icon paths.
+- Existing repository icon artwork still needs direct visual comparison and binary replacement through a binary-capable Git workflow; final browser/PWA install validation is pending.
+
+### Pass 24 disposition
+Draft icon pack prepared locally. No app runtime, manifest, backend, schema, auth, payment, main branch or live deployment changed. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
