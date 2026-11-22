@@ -298,10 +298,14 @@ Four workflows inspected:
 - [x] Notification source files reviewed (registration and duplicate-worker risks recorded).
 - [x] Existing QA specs reviewed for simulated vs actual workflow evidence.\n- [x] CI workflow/test evidence classification and branch-trigger gaps reviewed.\n- [x] Migration files reviewed at source level; none applied.\n- [x] Read-only SQL QA script reviewed; not executed.
 - [x] Full SPA page ID inventory (58 screens) source-extracted; role-access verification remains open.
-- [ ] Visual inspection of icon assets and confirmation whether uploaded logo is already present.
+- [ ] Visual inspection of icon assets and confirmation whether uploaded logo is already present (binary fetch inspection blocked).
 - [x] Supabase tables/RPC/external endpoints source-call inventory extracted; detailed contracts and role-permission verification remain open.
 - [x] Notification registration/worker/fallback source audit pass completed; dispatch/deployment/device verification remains open.
 - [ ] Phase 2 final review/acceptance.
+- [x] Pass 7: role navigation guard gaps and homepage toll-free rendering absence documented.
+- [x] Pass 8: migration authorization policy source review documented.
+- [x] Pass 9: PWA manifest conflicts and icon visual-inspection limitation documented.
+- [x] Pass 10: CI trigger and Node-version drift documented.
 
 ## Current status
-**Phase 2 — IN PROGRESS (inventory passes 1–4 committed).** Repository/config/docs, Blueprint, notification source, test/CI configuration, migration source, and read-only QA script have been reviewed. Open items remain: role-access guard verification and API/RPC contracts, visual logo verification, and notification dispatch/deployment/device verification. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
+**Phase 2 — IN PROGRESS (inventory passes 1–10 committed).** Repository/config/docs, 58 SPA page IDs, source-call table/RPC inventory, notification pipeline source, role navigation checks, migration-policy source review, PWA manifests, and CI trigger/environment audit have been documented. Remaining items: role/backend permission and RPC contract verification, visual logo/icon verification, homepage toll-free confirmation/fix planning, notification server dispatch/deployment/device testing, and Phase 2 final acceptance. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
