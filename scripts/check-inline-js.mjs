@@ -6,6 +6,7 @@ if(!blocks.length)throw new Error('No inline JavaScript blocks found.');
 let failed=false;
 for(let i=0;i<blocks.length;i++){try{new vm.Script(blocks[i][2],{filename:`index.html:inline-script-${i+1}`});console.log(`PASS inline script ${i+1}`);}catch(e){failed=true;console.error(`FAIL inline script ${i+1}: ${e.message}`);console.error(e.stack);}}
 const checks=[
+ ['3D default avatar generator export','window.frCustomerAvatarData=frCustomerAvatarData'],
  ['Customer photo bucket','customer-profile-photos'],
  ['Customer photo DB path','customer_profile_photo_path'],
  ['Assigned ride customer details','get_ride_customer_details_v2'],
