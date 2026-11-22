@@ -1138,3 +1138,14 @@ Phase 2 remains NOT ACCEPTED. No runtime app, backend, Supabase schema/data, aut
 - Latest QA branch head at this pass: `62d9df585f89a3e54f2ea084df50b9b6d70f5479`; comparison: 101 ahead / 1 behind main, diverged. Documentation commits add to ahead count; do not reconcile again until fresh comparison.
 
 Phase 2 remains NOT ACCEPTED. No app/runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 60 — Final audit-summary workflow CI acceptance
+
+Freshly verified Quality Gate Run 719 on workflow commit `62d9df5`: overall SUCCESS; both check-runs completed SUCCESS.
+- `typecheck-and-unit`: audit capture and summary steps PASS; typecheck PASS; core typecheck PASS; runtime build PASS; Node unit tests **7/7 PASS**; Vitest **5/5 PASS**.
+- `browser-e2e`: Playwright **48/48 PASS** (24.8s); Chromium install and local server steps PASS.
+- Audit summary now displays real Markdown rows and package/advisory details in CI logs. Vulnerability counts remain **2 critical, 1 moderate, 0 high (3 total)**. Run 719 log confirms tinypool critical transitive, vitest critical direct, @vitest/mocker moderate transitive, all reported fix target 5.1.1.
+- Runs 717 and 718 remain recorded as failed formatter iterations; corrected commit 62d9df5 is the verified successful run. Isolated formatter fixture: 4/4 checks PASS (not an app test).
+
+Run 719 is CI workflow evidence only, not production/live Supabase/device test evidence. Phase 2 remains NOT ACCEPTED; dependency remediation + lockfile, visual assets, mobile PWA/offline, background push, complete RLS/SECDEF/Edge secret review, QA backend wiring, and branch protection/required checks remain open. No runtime/backend/schema/auth/payment/main/deployment changes.
