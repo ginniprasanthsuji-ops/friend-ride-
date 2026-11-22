@@ -25,6 +25,18 @@
 
 **Latest TASKO/Laundry evidence:** 4 Playwright tests passed: store category exposes TASKO/GIGGER and Laundry; TASKO page opens; Laundry page opens; Admin control centres remain available.
 
+## PROJECT ARJUNA latest recheck (2026-11-22)
+
+- Latest Quality Gate run before the test correction: **FAIL, 46 passed / 13 failed**.
+- Failure diagnosis: `qa/dark-gold-route-regression.spec.js` asserted selectors/classes for a Dark+Gold native-home implementation that is absent from the current app source (also absent on main). This is an obsolete test suite, not evidence that those specific expected elements are broken in the app.
+- Replaced obsolete selectors with current-home assertions (existing premium purple theme, banner, Join registration buttons, service shortcuts, TASKO/Laundry/Cycle Delivery) and retained route wiring coverage.
+- TASKO test updated from 8 to 10 categories and asserts **Beauty Makeover** and **Halwai – Sweets & Food Preparation** are present.
+- Source regression for the latest test commits: **PASS**. Quality Gate and TASKO/Laundry runs are still **IN PROGRESS** at this update; no new browser PASS claim.
+- Critical backend finding: QA Supabase project `pqsangtvietawkfgpgfu` currently has only four public tables: `admin_users`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`. No ride/order/driver/partner/profile tables are present in this QA project.
+- `saveRideRequest()` currently only validates pickup/drop/fare and shows a message that a live booking insert requires existing rides-table mapping. It does **not** create a database ride request. Therefore genuine ride booking submission, driver dispatch/acceptance and authenticated data persistence are **BLOCKED / NOT TESTED** until a safe QA schema + role authorization model and integration are implemented.
+- Map UI test coverage currently includes map initialization, Photon suggestions, marker placement, direct pickup/drop map-pin placement, and Nominatim fallback. GPS, fare calculation and actual booking persistence still need dedicated tests.
+- Live/main remains untouched. Release remains blocked.
+
 This is a working release gate, not the final release-ready certificate. A feature is not marked PASS merely because a label, button, database table, RPC name, source marker, or mock simulation exists.
 
 ## Release rule
