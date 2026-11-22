@@ -97,8 +97,8 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     await expect(nav).not.toContainText('Friend Mart');
     await expect(nav).not.toContainText('Food Delivery');
     await expect(nav).not.toContainText('విద్యా సేతు');
-    const fraiButtons = [...document.querySelectorAll('button')].filter(button => /FRAI|FR AI|AI Assistant/i.test(button.textContent || button.getAttribute('aria-label') || ''));
-    expect(fraiButtons).toHaveLength(0);
+    const fraiButtonCount = await page.evaluate(() => [...document.querySelectorAll('button')].filter(button => /FRAI|FR AI|AI Assistant/i.test(button.textContent || button.getAttribute('aria-label') || '')).length);
+    expect(fraiButtonCount).toBe(0);
   });
 
   test('all retained customer routes activate their destination screens', async ({ page }) => {
