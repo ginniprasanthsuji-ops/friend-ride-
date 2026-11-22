@@ -99,11 +99,12 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
       if (route.request().method() !== 'POST') return route.continue();
       const payload = route.request().postDataJSON();
       await page.evaluate(p => { window.__qaRidePayload = { table: 'rides', payload: p }; }, payload);
+      // PostgREST .single() returns one JSON object, not an array.
       await route.fulfill({
         status: 201,
         contentType: 'application/json',
         headers: { 'content-range': '0-0/1' },
-        body: JSON.stringify([{ id: 'qa-ride-001' }])
+        body: JSON.stringify({ id: 'qa-ride-001' })
       });
     });
     await page.locator('#pickup').fill('Tekkali');
