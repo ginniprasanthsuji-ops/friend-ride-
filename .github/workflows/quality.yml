@@ -36,7 +36,7 @@ jobs:
           const summaryPath = process.env.GITHUB_STEP_SUMMARY;
           const nl = String.fromCharCode(10);
           const backslash = String.fromCharCode(92);
-          const escapeCell = value => String(value ?? '').replaceAll(backslash, backslash + backslash).replaceAll('|', backslash + '|').replaceAll(/\\r?\\n/g, ' ').replaceAll('[', backslash + '[').replaceAll(']', backslash + ']').replaceAll('`', backslash + '`').replaceAll('*', backslash + '*').replaceAll('_', backslash + '_');
+          const escapeCell = value => String(value ?? '').replaceAll(backslash, backslash + backslash).replaceAll('|', backslash + '|').replaceAll(String.fromCharCode(10), ' ').replaceAll(String.fromCharCode(13), ' ').replaceAll('[', backslash + '[').replaceAll(']', backslash + ']').replaceAll('`', backslash + '`').replaceAll('*', backslash + '*').replaceAll('_', backslash + '_');
           const fixLabel = fix => fix === false ? 'No fix reported' : fix === true ? 'Fix available' : fix && typeof fix === 'object' ? (fix.version ? `Version ${fix.version}` : 'Fix available') : 'Unknown';
           const rank = {critical:0, high:1, moderate:2, low:3, info:4};
           try {
