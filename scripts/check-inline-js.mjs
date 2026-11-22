@@ -31,6 +31,7 @@ const retiredModuleChecks=[
  ['Legacy Learn-Teach accounts cleanup','DROP TABLE IF EXISTS public.learn_teach_accounts CASCADE;'],
  ['Legacy Learn-Teach courses cleanup','DROP TABLE IF EXISTS public.learn_teach_courses CASCADE;'],
  ['Legacy Learn-Teach notifications cleanup','DROP TABLE IF EXISTS public.learn_teach_notifications CASCADE;'],
+ ['Legacy Learn-Teach notification settings cleanup','DROP TABLE IF EXISTS public.learn_teach_notification_settings CASCADE;'],
  ['Legacy Learn-Teach requests cleanup','DROP TABLE IF EXISTS public.learn_teach_requests CASCADE;'],
  ['Legacy Learn-Teach admin RPC cleanup','DROP FUNCTION IF EXISTS public.fr_learn_teach_is_admin();']
 ];
