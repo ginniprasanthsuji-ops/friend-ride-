@@ -309,3 +309,87 @@ Four workflows inspected:
 
 ## Current status
 **Phase 2 — IN PROGRESS (inventory passes 1–10 committed).** Repository/config/docs, 58 SPA page IDs, source-call table/RPC inventory, notification pipeline source, role navigation checks, migration-policy source review, PWA manifests, and CI trigger/environment audit have been documented. Remaining items: role/backend permission and RPC contract verification, visual logo/icon verification, homepage toll-free confirmation/fix planning, notification server dispatch/deployment/device testing, and Phase 2 final acceptance. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
+
+
+## Pass 11 — Client RPC contract inventory (source extraction)
+
+### Scope and method
+- Extracted direct `.rpc('name', ...)` call sites from the branch's `index.html` source.
+- This is a client-call inventory only. It does **not** prove deployed function existence, SQL argument/signature compatibility, grants, RLS, or runtime success.
+- **57 unique RPC names** were found in the current source extraction. Repeated call sites were deduplicated.
+
+### RPC names (alphabetical)
+```text
+accept_counter_offer
+accept_ride
+admin_list_driver_applications
+admin_list_driver_documents
+admin_review_driver
+admin_review_driver_document
+counter_offer_ride
+decline_counter_offer
+fr_admin_list_partner_applications
+fr_admin_review_partner
+fr_admin_save_platform_business_details
+fr_customer_accept_market_quote
+fr_customer_counter_market_order
+fr_customer_create_parcel_request
+fr_customer_create_ride_payment
+fr_customer_create_service_request
+fr_customer_get_parcel_delivery_otp
+fr_customer_list_approved_service_providers
+fr_customer_list_approved_stores_geo
+fr_customer_list_market_orders
+fr_customer_list_nearby_drivers
+fr_customer_list_parcel_requests
+fr_customer_list_partner_catalogue
+fr_customer_market_payment_details
+fr_customer_place_market_order
+fr_customer_place_multi_market_order
+fr_customer_store_payment_options
+fr_customer_submit_ride_transaction
+fr_customer_tick_market_payment
+fr_driver_accept_parcel
+fr_driver_complete_ride
+fr_driver_confirm_parcel_payment
+fr_driver_confirm_ride_payment
+fr_driver_list_parcel_requests
+fr_driver_save_payment_qr
+fr_driver_start_ride
+fr_driver_verify_parcel_delivery_otp
+fr_get_platform_business_details
+fr_get_ride_payment_state
+fr_laundry_provider_transition
+fr_partner_confirm_market_payment
+fr_partner_list_catalogue
+fr_partner_list_market_orders
+fr_partner_quote_market_order
+fr_partner_save_catalogue_item
+fr_partner_save_location
+fr_partner_save_payment_details
+fr_partner_update_market_order
+fr_public_homepage_feedback
+fr_register_driver_partner
+fr_tasko_admin_verify_payment
+fr_tasko_provider_transition
+fr_tasko_submit_payment
+get_driver_requests
+get_ride_customer_details_v2
+get_ride_driver_details
+get_ride_payment_details_v1
+````
+
+### Source-level security observations
+- Some admin/role call sites have explicit client-side role checks before invoking RPCs (driver/partner approvals, platform business settings, TASKO admin actions, Laundry admin).
+- Client-side checks are **not** authorization controls by themselves. Backend authorization, grants, SECURITY DEFINER function checks, ownership validation and RLS must be independently checked against deployed SQL.
+- Direct page navigation handlers can bypass menu role mapping in some cases (Pass 7); do not treat the UI as the security boundary.
+- This inventory did not execute any RPC or query the live Supabase project.
+
+### Requirements mismatch found for later verification
+- The source UI text for ride QR payment currently says the QR/payment session is valid for **15 minutes**. The scope lock earlier requires **5-minute QR validity**. This is a source-level mismatch; server expiry and deployed behavior are not verified. Record as a release blocker for Phase 5/10 until the intended duration is confirmed and tested.
+
+### Next audit items
+- Match all 57 client RPC calls against SQL migrations/functions and deployed function signatures/grants (deployed status remains unavailable in this audit).
+- Confirm payment session/QR expiry behavior server-side and align UI text with the locked requirement.
+- Complete role guard/navigation and backend authorization matrix; do not infer security from client code.
+- Continue notification registration/dispatch and logo/icon visual inspection; Phase 2 acceptance remains open.
