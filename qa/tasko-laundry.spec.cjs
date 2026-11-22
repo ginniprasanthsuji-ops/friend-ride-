@@ -35,9 +35,10 @@ test('Beauty Makeover and Halwai booking selections persist to TASKO request row
   await page.locator('#taskoTime').fill('10:30');
   await page.locator('#taskoAddress').fill('Tekkali Main Road, Srikakulam, Andhra Pradesh');
   await page.locator('#taskoNotes').fill('QA verify category registration and admin mapping');
-  await page.locator('#taskoGiggerLaunch button[onclick="frSubmitTaskoBooking()"]').click();
+  const expectedCount=submitted.length+1;
+  await page.locator('#taskoGiggerLaunch button[onclick="frSubmitTaskoBooking()"]')?.click();
   await expect(page.locator('#taskoBookingStatus')).toContainText('TASKO request submitted',{timeout:15000});
-  await expect.poll(()=>submitted.length).toBe(submitted.length+1);
+  await expect.poll(()=>submitted.length).toBe(expectedCount);
  }
  expect(submitted).toHaveLength(2);
  expect(submitted.map(row=>row.category)).toEqual(['Beauty Makeover','Halwai – Sweets & Food Preparation']);
