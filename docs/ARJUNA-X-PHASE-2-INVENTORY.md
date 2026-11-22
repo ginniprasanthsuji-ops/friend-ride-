@@ -535,3 +535,35 @@ The spec declares **58 route/page IDs** (including the newer `frSuperHub`) and *
 5. Live/deployed RPC/Edge Function contracts, authorization, push delivery and PWA registration evidence.
 
 No runtime code, Supabase, schema, auth, payment, main branch or live deployment was changed. Phase 2 remains IN PROGRESS.
+
+
+## Pass 16 — Root SPA source chunk extraction (registration, role routes, notification UI)
+
+The GitHub connector successfully returned targeted line ranges of `index.html` for this pass, enabling source verification beyond the earlier full-file limitation.
+
+### Verified root HTML facts
+- Root `index.html` declares `lang="te"`, links `manifest.webmanifest`, and its current title/version marker is `FRIEND RIDE V11.1 PRO` / `11.1-PRO-category-routing-learning-isolation`.
+- The source currently uses legacy purple theme variables (`--purple`, `--purple2`, purple backgrounds) and a light lavender body. This is source evidence; ARJUNA X Navy/Orange/White is not yet implemented in runtime.
+- Existing role route sections `customerDashboard`, `driverDashboard`, `partnerDashboard`, and `adminDashboard` are present in the inspected source ranges. The customer dashboard has Book Ride, My Orders, Wallet and My Profile entry points.
+- `showPage(id)` toggles `.active` on page sections and bottom-nav buttons; the extracted implementation has admin-specific UI handling for TASKO/Laundry panels, map initializers and several page-specific loaders. This is a navigation/source observation, not an authorization audit.
+- `notifications` screen contains Enable Notifications, sound-preview buttons for order/ride/customer, permission status and recent activity feed. It does not by itself prove locked/closed-app delivery.
+
+### Existing registration fields — source verified
+**Customer:** optional profile photo (JPG/PNG/WEBP, maximum 3 MB, camera capture hint), complete address, SMS registration OTP.
+
+**Driver registration group:** required driver photo, Driving Licence, Aadhaar, Vehicle RC; optional UPI ID and payment QR; registration OTP. The dashboard separately exposes vehicle type, model, registration number, licence number, experience and document upload controls. Source text says Aadhaar number is not stored in profile in the driver dashboard upload path.
+
+**Partner registration group:** required owner photo, business category, business/store name, business address, GPS capture (latitude/longitude read-only), optional business proof, catalogue note and registration OTP. Categories include grocery/general, electrical, electrician, hardware/plumbing, chicken, meat, fish, produce, medical, dairy, mobile/accessories, bakery, stationery, restaurant/tiffin, other.
+
+**Technician registration:** required passport photo, profession, full name, mobile, work experience, complete address, Aadhaar number/file, mandatory PhonePe number; optional UPI and QR. The inspected validator explicitly alerts that private storage and Admin approval backend mapping are not connected.
+
+**Admin:** registration button is hidden for Admin role in the extracted auth source. Admin access text says verification is against `admin_users`.
+
+### Registration implementation gap (confirmed in source)
+- Customer photo preview validation is present (JPG/PNG/WEBP, 3 MB max).
+- Driver dashboard save handler `saveDriverDetails()` currently validates registration/licence number then shows an alert saying private document storage/profile schema mapping is not yet connected in that path. This is distinct from the previously inventoried registration upload handler and KYC upload asset; do not assume every driver-details UI path is wired.
+- Technician registration validator checks fields/files and then shows an alert explicitly saying private storage/Admin approval backend SQL still needs connection.
+- Partner GPS capture and dashboard save functions exist and are tested for handler presence; actual authenticated writes still need live evidence.
+
+### Phase 2 update
+This pass materially reduces the root-HTML inspection gap, but full source remains too large to reliably retrieve in one pass. Continue targeted chunk extraction for customer/driver/partner auth verification, route list reconciliation, customer photo/avatar rendering, role checks, notification tone assets, and the remaining UI-to-backend placeholder alerts. No runtime code/backend/schema/auth/payment/main/live changes made.
