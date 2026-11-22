@@ -15,3 +15,31 @@ test('Project Arjuna QA ride lifecycle RPC migration includes authenticated role
   assert.match(sql, /grant execute on function .* to authenticated/i);
   assert.ok(sql.includes('Payment-provider integration is deferred'));
 });
+
+test('Ride workflow is guarded by state, ownership, driver approval, proximity and freshness', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '202611220007_arjuna_qa_ride_lifecycle_rpcs.sql'), 'utf8');
+  const accept = sql.match(/create or replace function public\.accept_ride[\s\S]*?end \$;/i)?.[0] || '';
+  const counter = sql.match(/create or replace function public\.counter_offer_ride[\s\S]*?end \$;/i)?.[0] || '';
+  const start = sql.match(/create or replace function public\.fr_driver_start_ride[\s\S]*?end \$\$;/i)?.[0] || '';
+  const complete = sql.match(/create or replace function public\.fr_driver_complete_ride[\s\S]*?end \$\$;/i)?.[0] || '';
+  assert.match(accept, /driver_id is null and r\.status='requested'/i, 'accept only unassigned requested rides');
+  assert.match(accept, /updated_at>=now\(\)-interval '5 minutes'/i, 'driver GPS freshness enforced');
+  assert.match(accept, /<=15/i, '15km proximity enforced');
+  assert.match(accept, /advisory_xact_lock/i, 'driver active-ride concurrency lock');
+  assert.match(counter, /r\.status='requested'/i, 'counter-offer only from requested ride');
+  assert.match(counter, /agreed_fare=p_counter_fare/i, 'counter fare recorded');
+  assert.match(start, /driver_id=auth\.uid\(\) and status='accepted'/i, 'only assigned driver starts accepted ride');
+  assert.match(complete, /driver_id=auth\.uid\(\) and status='ongoing'/i, 'only assigned driver completes ongoing ride');
+  assert.match(complete, /completed_at=now\(\)/i, 'completion timestamp set');
+  assert.match(complete, /delete from public\.ride_live_locations/i, 'live location cleanup after completion');
+});
+
+test('Customer counter-offer accept and decline are owner-bound and state-limited', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '202611220007_arjuna_qa_ride_lifecycle_rpcs.sql'), 'utf8');
+  const accept = sql.match(/create or replace function public\.accept_counter_offer[\s\S]*?end \$\$;/i)?.[0] || '';
+  const decline = sql.match(/create or replace function public\.decline_counter_offer[\s\S]*?end \$\$;/i)?.[0] || '';
+  assert.match(accept, /customer_id=auth\.uid\(\) and status='counter_offered'/i);
+  assert.match(accept, /driver_id is not null and agreed_fare is not null/i);
+  assert.match(decline, /customer_id=auth\.uid\(\) and status='counter_offered'/i);
+  assert.match(decline, /driver_id=null and agreed_fare=null/i);
+});
