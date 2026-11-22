@@ -180,7 +180,7 @@ test.describe('Ride booking map and location suggestions', () => {
     await page.locator('#rideNotes').fill('Project Arjuna booking flow smoke');
     await page.locator('#ride button[onclick="saveRideRequest()"]').click();
     await expect(page.locator('#tracking')).toHaveClass(/active/,{timeout:15000});
-    await expect(page.locator('#trackingStatus')).toContainText('Ride Request పంపబడింది',{timeout:15000});
+    await expect(page.locator('#trackingStatus')).toContainText('15 KM పరిధిలో ప్రస్తుతం Online Drivers లేరు',{timeout:15000});
     await expect.poll(()=>submittedRide).not.toBeNull();
     expect(submittedRide).toMatchObject({customer_id:'qa-customer-123',vehicle_type:'Bike',pickup:'Pickup QA, Tekkali',drop:'Drop QA, Srikakulam',fare_offer:120,status:'requested',pickup_lat:18.605,pickup_lng:84.255});
     await expect(page.locator('#liveRideStatus')).toContainText('qa-ride-123');
