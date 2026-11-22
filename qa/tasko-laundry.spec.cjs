@@ -7,6 +7,7 @@ async function openCustomerApp(page){
   await page.locator('#authModal .close').click();
  }
  await expect(launcher).toHaveClass(/hide/);
+ await page.evaluate(()=>window.showPage('home'));
 }
 test('TASKO and Laundry services appear as separate home entries and banners',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
