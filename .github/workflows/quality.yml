@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --no-save @playwright/test
+      - run: npm install -g npm@10.8.2\n      - run: npm install --no-save @playwright/test --no-audit --no-fund
       - run: npm audit --audit-level=moderate
       - run: npm run typecheck
       - run: npm run typecheck:core
