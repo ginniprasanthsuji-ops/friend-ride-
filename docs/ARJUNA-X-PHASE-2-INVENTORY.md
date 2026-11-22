@@ -218,6 +218,26 @@ User confirmed: payment gateway is not yet integrated for collecting subscriptio
 - Admin toll-free number configuration already appears in source; verify homepage visibility and add/repair only if missing. Future call/IVR provider integration is separate and not implemented.
 - Detailed user-confirmed requirements are in `docs/ARJUNA-X-ADMIN-PAYMENT-GST-TOLLFREE-REQUIREMENTS.md`.
 
+
+## Pass 7 — Role navigation guards and homepage toll-free verification
+
+### Role access/navigation source findings
+- `menuGo()` has role mapping for dashboards, admin-only page list, partner-only page list, login intent and post-login role validation. Admin is allowed through partner-required destinations.
+- Driver and customer dashboard checks are explicitly enforced inside `menuGo()`.
+- Many in-app buttons call `showPage(id)` directly (including admin-dashboard quick-action buttons). `showPage()` is a page visibility/navigation function, not an access guard. This means menuGo role checks are not consistently applied to all navigation paths at the UI layer. Backend RPC/RLS enforcement must still be audited and is not inferred from this finding.
+- Driver document review and platform business save functions include explicit Admin checks in source. Other sensitive screens/functions require a per-function guard review.
+
+### Toll-free homepage finding
+- Admin Platform Business Settings has Toll-Free input, validates the expected 1800 number format and calls `fr_admin_save_platform_business_details` with the number/GSTIN fields.
+- `loadPlatformDetails()` loads the settings and updates Admin fields plus an existing `gstPlatformDetails` text area/notice.
+- Source search found no homepage reference to `toll_free_number`, `platformTollFree`, or a toll-free display element. Therefore homepage display is **not currently source-confirmed and appears absent**. This is an identified implementation gap for the planned Phase 8 work, not fixed in Phase 2.
+
+### Phase 2 risk list updated
+- Role-specific UI access checks may be bypassed by direct `showPage()` navigation; inventory exact sensitive pages and backend authorization before fixing.
+- Toll-free number is Admin-configurable in source but homepage rendering appears absent.
+- Subscription gateway is placeholder-only; no server order/webhook verification demonstrated.
+- GST configuration exists but statutory invoice behavior is not runtime verified.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
