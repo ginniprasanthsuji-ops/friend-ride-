@@ -57,6 +57,41 @@ test.describe('Ride booking map and location suggestions', () => {
     await map.click({position:{x:200,y:130}});
     await expect(page.locator('#drop')).toHaveValue(/Mock selected map location|\d{2}\.\d+/,{timeout:10000});
   });
+  test('booking payload maps pickup and drop text, coordinates and fare to rides insert', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => window.showPage('ride'));
+    await expect(page.locator('#frBookingMap.leaflet-container')).toBeVisible({timeout:15000});
+    const captured = await page.evaluate(async () => {
+      currentUser={id:'qa-customer-id'};
+      currentProfile={role:'customer'};
+      rideVehicle='Bike';
+      frBookingSetPoint('pickup',18.605,84.255,'QA Pickup');
+      frBookingSetPoint('drop',18.61,84.26,'QA Drop');
+      document.querySelector('#pickup').value='QA Pickup';
+      document.querySelector('#drop').value='QA Drop';
+      document.querySelector('#fare').value='125';
+      window.showPage=()=>{};
+      window.frEnsureTrackingMap=()=>{};
+      window.refreshNearbyDrivers=async()=>{};
+      sb.from=(table)=>({
+        insert(row){window.__qaRideInsert={table,row};return {select(){return {single:async()=>({data:{id:'qa-ride-id',status:'requested'},error:null})}}};}
+      });
+      await window.saveRideRequest();
+      return window.__qaRideInsert;
+    });
+    expect(captured.table).toBe('rides');
+    expect(captured.row.pickup).toBe('QA Pickup');
+    expect(captured.row.drop).toBe('QA Drop');
+    expect(captured.row.pickup_text).toBe('QA Pickup');
+    expect(captured.row.drop_text).toBe('QA Drop');
+    expect(captured.row.pickup_lat).toBe(18.605);
+    expect(captured.row.pickup_lng).toBe(84.255);
+    expect(captured.row.drop_lat).toBe(18.61);
+    expect(captured.row.drop_lng).toBe(84.26);
+    expect(captured.row.fare_offer).toBe(125);
+    expect(captured.row.status).toBe('requested');
+  });
+
   test('GPS pickup selection updates address and map marker; fare controls adjust offer', async ({ page }) => {
     await page.context().grantPermissions(['geolocation']);
     await page.context().setGeolocation({latitude:18.605,longitude:84.255});
