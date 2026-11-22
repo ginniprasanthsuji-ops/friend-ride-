@@ -87,3 +87,14 @@ QA Supabase project `pqsangtvietawkfgpgfu`:
 - Added `tests/project-arjuna-market-parcel-schema-design.test.cjs` to guard required safety/design coverage; latest commit `55ce79bf`.
 - CI for newer commits `b934154c` and `55ce79bf` is running/queued; results not yet verified.
 - Progress stays **80%**. No production SQL, no live deploy, no main merge.
+
+
+## Continued Project Arjuna QA — latest verified CI and QA advisor snapshot (2026-11-22)
+- Latest checked commit `6731241b351480f19a1a58246e5cf63ed744b464`: FRIEND RIDE Quality Gate, FRIEND RIDE Regression, workflow regression, and TASKO/Laundry integration regression all **PASS**.
+- Quality Gate: typecheck, core typecheck, runtime build, 24 Node unit tests (0 failures), 5 Vitest core tests, and browser E2E **53/53 passed**.
+- Cab-location E2E passed: autocomplete address/coordinates, stale-coordinate clearing after edit, GPS reverse-geocode pickup, map-pin drop, handler/map availability, ride payload, and fallback when map unavailable.
+- Read-only Supabase QA advisor snapshot (project `pqsangtvietawkfgpgfu`, no writes): advisor flags 1 anon-executable SECURITY DEFINER RPC (`fr_public_homepage_feedback`) and 25 authenticated-executable SECURITY DEFINER RPCs. This is a review queue, not automatically a vulnerability; role/ownership checks must be verified for each. Do not change public feedback permissions without deciding whether anonymous feedback is intended.
+- Performance advisor reports unindexed foreign keys, RLS auth-function per-row evaluation warnings, 12 unused-index notices, and 5 multiple-permissive-policy warnings. Unused-index notices are not removal recommendations without workload evidence.
+- Marketplace/parcel remains blocked: QA catalog inventory does not contain its tables or the 20 non-payment RPC contracts. Design documents and test guard exist, but no marketplace/parcel schema or functions were applied.
+- Latest overall CI remains green; real-phone OTP, multi-device ride, live/background push, live payment (deferred), food backend flow, KYC storage/runtime, Android signed build/store tests, and production security review are not verified.
+- **Release readiness remains NOT READY.** Main untouched; no merge/deploy. This session made read-only QA catalog/advisor checks only and no database writes.
