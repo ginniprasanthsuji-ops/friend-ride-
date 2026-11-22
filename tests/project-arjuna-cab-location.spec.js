@@ -211,6 +211,8 @@ test('selected pickup/drop coordinates persist when booking map is unavailable',
 
 
 test('autocomplete provider outage offers manual coordinate recovery', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => showPage('ride'));
   await page.route('https://photon.komoot.io/**', async route => route.fulfill({ status: 503, body: 'provider unavailable' }));
   await page.locator('#pickup').fill('Tekkali');
   await expect(page.locator('#frPickupSuggestions')).toContainText('Suggestions load కాలేదు. మళ్లీ ప్రయత్నించండి.', { timeout: 10000 });
