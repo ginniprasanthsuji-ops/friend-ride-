@@ -34,7 +34,7 @@ jobs:
           node <<'NODE'
           const fs = require('fs');
           const summaryPath = process.env.GITHUB_STEP_SUMMARY;
-          const escapeCell = value => String(value ?? '').replace(/\\|/g, '\\\\').replace(/\|/g, '\\|').replace(/[\r\n]+/g, ' ');
+          const escapeCell = value => String(value ?? '').replaceAll('\\', '\\\\').replaceAll('|', '\\|').replaceAll(/\r?\n/g, ' ');
           const fixLabel = fix => fix === false ? 'No fix reported' : fix === true ? 'Fix available' : fix && typeof fix === 'object' ? (fix.version ? `Version ${fix.version}` : 'Fix available') : 'Unknown';
           try {
             const report = JSON.parse(fs.readFileSync('npm-audit.json', 'utf8'));
@@ -43,7 +43,7 @@ jobs:
               const via = Array.isArray(item.via) ? item.via : [];
               const advisories = via.filter(v => v && typeof v === 'object');
               const titles = advisories.map(v => v.title || v.name).filter(Boolean).join('; ') || (via.length ? via.map(String).join('; ') : 'No advisory title');
-              const links = advisories.map(v => v.url).filter(url => typeof url === 'string' && /^https:\\/\\//.test(url));
+              const links = advisories.map(v => v.url).filter(url => typeof url === 'string' && url.startsWith('https://'));
               const title = links.length ? links.slice(0, 2).map(url => `[${escapeCell(titles)}](${url})`).join(' / ') : escapeCell(titles);
               return { severity: item.severity || 'unknown', name, direct: item.isDirect ? 'direct' : 'transitive', range: item.range || '—', fix: fixLabel(item.fixAvailable), title };
             }).sort((a,b) => ({critical:0,high:1,moderate:2,low:3,info:4}[a.severity] ?? 5) - ({critical:0,high:1,moderate:2,low:3,info:4}[b.severity] ?? 5));
