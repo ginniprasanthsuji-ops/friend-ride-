@@ -86,7 +86,7 @@ declare const frRenderCustomerRideDriverAndPayment: any;
   function install(){
     const previous=win.loadMyRideTracking;
     if(typeof previous!=='function'||previous.__frSavedRideFallback)return;
-    const wrapped=async function(this:any,...args:any[]){
+    const wrapped:any=async function(this:any,...args:any[]){
       try{await previous.apply(this,args);}catch(_){}
       if(!currentUser||currentProfile?.role!=='customer')return;
       const box=document.getElementById('liveRideStatus');
