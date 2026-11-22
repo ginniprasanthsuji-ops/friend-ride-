@@ -1,0 +1,77 @@
+/* FRIEND RIDE Fresh Teal + Royal Blue UI tokens and reusable components.
+   Integration-safe stylesheet: scoped under .fr-fresh-ui until adopted in index.html. */
+.fr-fresh-ui {
+  --fr-primary: #0f766e;
+  --fr-primary-hover: #115e59;
+  --fr-primary-soft: #ccfbf1;
+  --fr-secondary: #2563eb;
+  --fr-secondary-soft: #dbeafe;
+  --fr-bg: #f8fafc;
+  --fr-surface: #ffffff;
+  --fr-text: #0f172a;
+  --fr-muted: #64748b;
+  --fr-border: #e2e8f0;
+  --fr-success: #16a34a;
+  --fr-warning: #f59e0b;
+  --fr-danger: #dc2626;
+  --fr-radius-card: 20px;
+  --fr-radius-control: 14px;
+  --fr-shadow-card: 0 6px 24px rgba(15, 23, 42, .06);
+  color: var(--fr-text);
+  background: var(--fr-bg);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.fr-fresh-ui .fr-card {
+  background: var(--fr-surface);
+  border: 1px solid var(--fr-border);
+  border-radius: var(--fr-radius-card);
+  box-shadow: var(--fr-shadow-card);
+}
+.fr-fresh-ui .fr-btn-primary {
+  color: #fff;
+  background: var(--fr-primary);
+  border: 1px solid var(--fr-primary);
+  border-radius: var(--fr-radius-control);
+  font-weight: 700;
+}
+.fr-fresh-ui .fr-btn-primary:hover,
+.fr-fresh-ui .fr-btn-primary:focus-visible {
+  background: var(--fr-primary-hover);
+}
+.fr-fresh-ui .fr-btn-secondary {
+  color: var(--fr-secondary);
+  background: var(--fr-secondary-soft);
+  border: 1px solid transparent;
+  border-radius: var(--fr-radius-control);
+  font-weight: 650;
+}
+.fr-fresh-ui .fr-service-card {
+  border-radius: 18px;
+  border: 1px solid var(--fr-border);
+  background: var(--fr-surface);
+  box-shadow: var(--fr-shadow-card);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.fr-fresh-ui .fr-service-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, .09);
+}
+.fr-fresh-ui .fr-service-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--fr-primary-soft);
+  color: var(--fr-primary);
+}
+.fr-fresh-ui .fr-input {
+  background: var(--fr-surface);
+  color: var(--fr-text);
+  border: 1px solid var(--fr-border);
+  border-radius: var(--fr-radius-control);
+}
+.fr-fresh-ui .fr-muted { color: var(--fr-muted); }
+@media (prefers-reduced-motion: reduce) {
+  .fr-fresh-ui .fr-service-card { transition: none; }
+}
