@@ -1,6 +1,6 @@
 const {test,expect}=require('@playwright/test');
 async function openCustomerApp(page){
- await openCustomerApp(page);
+ await page.goto('./',{waitUntil:'domcontentloaded'});
  const launcher=page.locator('#roleLauncher');
  if(await launcher.isVisible()){
   await launcher.locator('.fr-role-card.customer').click();
