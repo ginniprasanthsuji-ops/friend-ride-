@@ -490,3 +490,22 @@ get_ride_payment_details_v1
 ### Phase 2 status update
 - This pass adds source-backed reconciliation only. No runtime code, PWA manifest, worker, Supabase, auth, payment, main branch or live deployment changed.
 - Inventory acceptance remains OPEN because full HTML route/role guard inspection, visual logo/icon verification, deployed backend contract/authorization evidence, and notification runtime/device behavior are outstanding.
+
+
+## Pass 14 — CI workflow branch triggers and safe test-target review
+
+### Workflow trigger matrix (confirmed from current branch source)
+- `.github/workflows/quality.yml`: runs only on push to `main` and PRs targeting `main`; Node 22; starts local static server for Playwright and sets `FRIEND_RIDE_BASE_URL` to localhost.
+- `friend-ride-regression.yml`: push to `main` or legacy `ui/full-native-dark-gold-2026-11-21`, manual dispatch, and daily schedule; Node 22; local server and explicit localhost base URL; uploads report artifacts.
+- `friend-ride-workflow-regression.yml`: push to legacy `pr/workflow-integration-nov08`, PRs to `main`; source checks only; no full browser workflow.
+- `tasko-laundry-main-regression.yml`: push to legacy `integration/tasko-laundry-main-safe`, PRs to `main` with scoped paths; Node 20; local server; targeted Playwright.
+
+### Findings
+1. None of the inspected workflow push triggers explicitly include the ARJUNA X Phase 2 branch.
+2. Browser workflows use local static-server targets in CI, which is safer than the Playwright production default. Manual local runs still need an explicit `FRIEND_RIDE_BASE_URL` override.
+3. Node version inconsistency remains: three workflows use Node 22, targeted TASKO/Laundry uses Node 20.
+4. The Play Store release gate is an older main-branch audit (2026-11-09) and its stated CI/backend inventory must not be treated as current Phase 2 verification.
+5. Workflows were source-inspected only. No Actions run was started, no test result is claimed.
+
+### Phase 2 status
+Inventory has been extended through Pass 14. Still open: reliable full route/guard source extraction, actual logo/icon visual verification, notification and PWA runtime registration proof, deployed RPC/Edge Function contracts and authorization, and actual CI/test evidence. Phase 2 remains IN PROGRESS; no runtime changes or live deployment.
