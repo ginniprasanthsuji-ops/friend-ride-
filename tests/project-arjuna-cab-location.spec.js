@@ -59,12 +59,14 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
 
   test('manual coordinate fallback works when location services are unavailable', async ({ page }) => {
     await page.evaluate(() => window.frArjunaManualCoordinates('pickup'));
+    await page.locator('#frPickupSuggestions .fr-manual-address').fill('Tekkali bus stand, Andhra Pradesh');
     await page.locator('#frPickupSuggestions .fr-manual-lat').fill('18.3');
     await page.locator('#frPickupSuggestions .fr-manual-lon').fill('84.2');
     await page.locator('#frPickupSuggestions .fr-manual-apply').click();
     await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lat', '18.3');
     await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lon', '84.2');
-    await expect(page.locator('#frPickupHint')).toContainText('Manual coordinates saved');
+    await expect(page.locator('#pickup')).toHaveAttribute('data-selected-address', 'Tekkali bus stand, Andhra Pradesh');
+    await expect(page.locator('#frPickupHint')).toContainText('Manual location saved');
 
     await page.evaluate(() => window.frArjunaManualCoordinates('drop'));
     await page.locator('#frDropSuggestions .fr-manual-lat').fill('18.25');
@@ -218,5 +220,5 @@ test('autocomplete provider outage offers manual coordinate recovery', async ({ 
   await page.locator('#frPickupSuggestions .fr-manual-apply').click();
   await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lat', '18.3');
   await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lon', '84.2');
-  await expect(page.locator('#frPickupHint')).toContainText('Manual coordinates saved');
+  await expect(page.locator('#frPickupHint')).toContainText('Manual location saved');
 });
