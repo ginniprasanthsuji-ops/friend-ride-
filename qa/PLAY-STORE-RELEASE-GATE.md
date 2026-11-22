@@ -5,6 +5,26 @@
 **Audited commit:** `11269614f66b5ff21c361675a14d4791b0ce6cfa`  
 **Release decision:** **BLOCKED — NOT CERTIFIED FOR PLAY STORE**
 
+## 2026-11-22 QA branch recheck (current evidence)
+
+**QA branch:** `qa/remove-unneeded-services-2026-11-22`  
+**PR:** #36 (open; not merged; live/main untouched)  
+**Latest checked commit:** `87d4921b922ade93991749a88ef8470577948fa8`
+
+| Check | Current result | Evidence |
+|---|---|---|
+| Inline JavaScript source check | PASS | Latest workflow run 182 passed |
+| Typecheck + unit/core tests + runtime build | PASS | Quality Gate run 354 typecheck-and-unit job passed |
+| TASKO / Laundry / Admin Playwright | PASS | 4/4 passed in integration run 132 |
+| Main browser E2E suite | RUNNING | Quality Gate run 354 browser-e2e job still executing |
+| Booking pickup/drop/map/location tests | NOT YET CONFIRMED | Included in browser E2E; results pending |
+| Live OTP, push, payments, physical-device GPS | NOT TESTED | Requires real-device/live integration tests |
+| Play Store/AAB release gate | BLOCKED | No release certification; live deployment not authorized/undertaken |
+
+**Resolved CI regression:** source-regression previously failed because workflow ran `node --check learn-teach.js` after the VidyaSetu compatibility file was intentionally deleted. Removed the obsolete check (did not restore the deleted stub). The latest source-regression run now passes.
+
+**Latest TASKO/Laundry evidence:** 4 Playwright tests passed: store category exposes TASKO/GIGGER and Laundry; TASKO page opens; Laundry page opens; Admin control centres remain available.
+
 This is a working release gate, not the final release-ready certificate. A feature is not marked PASS merely because a label, button, database table, RPC name, source marker, or mock simulation exists.
 
 ## Release rule
