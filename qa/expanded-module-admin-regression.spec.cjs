@@ -29,7 +29,11 @@ test('All customer, partner, service and admin routes exist and navigation isola
   expect(result.missing, 'Required route/page sections missing').toEqual([]);
   for (const route of result.navigation) {
     const canonical = route.id === 'frSuperHub' ? 'learnTeach' : route.id;
-    expect(route.active, 'Navigation must activate only '+canonical).toEqual([canonical]);
+    const adminOnly = ['adminDashboard','users','referralApprovals','cashRewardApprovals','paymentApprovals','partnerPaymentSettings','platformBusinessSettings','driverApprovals','driverDocumentReviews','partnerApprovals','adminOrders','reports','settings','crmDashboard'];
+    // Unauthenticated browser smoke tests should verify the admin guard redirects to Home,
+    // not falsely require privileged screens to activate without an admin session.
+    const expectedActive = adminOnly.includes(route.id) ? ['home'] : [canonical];
+    expect(route.active, 'Navigation must activate only '+expectedActive.join(',')).toEqual(expectedActive);
   }
 });
 
@@ -48,8 +52,9 @@ test('Admin regression: all operational review panels and approval pages are pre
   const missing = await page.evaluate(ids => ids.filter(id => !document.getElementById(id)), ids);
   expect(missing, 'Admin operational panels missing').toEqual([]);
   const adminText = await page.locator('#adminDashboard').innerText();
-  expect(adminText).toMatch(/Driver KYC Documents/i);
-  expect(adminText).toMatch(/Complaint|Feedback/i);
+  expect(adminText).toMatch(/KYC Verification/i);
+  expect(adminText).toMatch(/Complaints/i);
+  await expect(page.locator('#driverDocumentReviews')).toContainText(/Driver KYC Documents/i);
 });
 
 // Admin action wiring smoke coverage; this verifies handlers exist, not live DB success.
