@@ -76,12 +76,17 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
 
   test('Find Drivers sends selected coordinates in the ride request payload', async ({ page }) => {
     let submitted = null;
-    await page.evaluate(() => {
-      // Stub Supabase client for deterministic browser QA; no real ride is created.
-      window.sb = { from: (table) => ({ insert: (payload) => ({ select: () => ({ single: async () => {
-        window.__qaRidePayload = { table, payload };
-        return { data: { id: 'qa-ride-001' }, error: null };
-      }})})}) };
+    // Intercept the real Supabase REST insert request. The app's Supabase client
+    // is a lexical const, so replacing window.sb does not mock it.
+    await page.route('**/rest/v1/rides**', async route => {
+      const payload = route.request().postDataJSON();
+      await page.evaluate(p => { window.__qaRidePayload = { table: 'rides', payload: p }; }, payload);
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        headers: { 'content-range': '0-0/1' },
+        body: JSON.stringify([{ id: 'qa-ride-001' }])
+      });
     });
     await page.locator('#pickup').fill('Tekkali');
     await expect(page.locator('#frPickupSuggestions button').first()).toContainText('Tekkali', { timeout: 10000 });
