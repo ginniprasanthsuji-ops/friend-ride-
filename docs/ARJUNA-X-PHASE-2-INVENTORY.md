@@ -922,3 +922,11 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 ### Pass 39 disposition
 - Source registration/worker/manifest inventory only. PWA install/update/runtime registration and actual push delivery remain **NOT VERIFIED**. No runtime/backend/schema/auth/payment/main/deployment changes. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
+
+
+## Pass 40 — Add isolated local PWA smoke test
+
+- Added Playwright smoke coverage to the ARJUNA X baseline suite: fetch linked `manifest.webmanifest`, verify name/start_url/scope/display and declared 192/512 icons, fetch icon resources, and wait for an active local `service-worker.js` registration with the expected localhost scope.
+- Updated the route-baseline network allowlist to permit only required Supabase JS, Leaflet and Firebase compat CDN libraries; other external HTTPS remains blocked. No token registration, notification permission, push dispatch, database writes or production calls occur in this test.
+- Test is source-committed to the QA branch and triggered a local-static-server CI run; result pending. It does not verify OS installation prompts, maskable icon artwork/safe zone, background/closed-app push, or actual device notification delivery.
+- Phase 2 remains **IN PROGRESS / NOT ACCEPTED** pending the CI result and remaining runtime/backend/asset/governance evidence.

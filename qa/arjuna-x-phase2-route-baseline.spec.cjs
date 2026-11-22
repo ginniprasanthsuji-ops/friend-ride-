@@ -64,7 +64,7 @@ const routeIds = [
 test.beforeEach(async ({ page }) => {
   await page.route('https://**/*', route => {
     const url = route.request().url();
-    if (url.includes('cdn.jsdelivr.net/npm/@supabase/supabase-js@2') || url.includes('unpkg.com/leaflet@1.9.4/')) return route.continue();
+    if (url.includes('cdn.jsdelivr.net/npm/@supabase/supabase-js@2') || url.includes('unpkg.com/leaflet@1.9.4/') || url.includes('www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js') || url.includes('www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js')) return route.continue();
     return route.abort();
   });
 });
@@ -102,4 +102,34 @@ test('ARJUNA X baseline: every inventoried page can be activated by the existing
     });
   }, routeIds);
   expect(result.filter(item => !item.active)).toEqual([]);
+});
+
+
+test('ARJUNA X PWA smoke: manifest, icons and service worker resolve on isolated localhost', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'load' });
+  await page.waitForFunction(async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    return registrations.some(reg => reg.active?.scriptURL.endsWith('/service-worker.js'));
+  }, null, { timeout: 20000 });
+
+  const registration = await page.evaluate(async () => {
+    const reg = await navigator.serviceWorker.ready;
+    return { scope: reg.scope, activeScript: reg.active?.scriptURL };
+  });
+  expect(registration.activeScript).toMatch(/\/service-worker\.js$/);
+  expect(registration.scope).toBe(new URL('./', location.href).toString());
+
+  const manifestLink = await page.locator('link[rel="manifest"]').getAttribute('href');
+  expect(manifestLink).toBe('./manifest.webmanifest');
+  const response = await page.request.get(manifestLink);
+  expect(response.ok()).toBeTruthy();
+  const manifest = await response.json();
+  expect(manifest.name).toBe('FRIEND RIDE');
+  expect(manifest.start_url).toBe('./');
+  expect(manifest.scope).toBe('./');
+  expect(manifest.display).toBe('standalone');
+  expect(manifest.icons.some(icon => icon.sizes === '192x192')).toBeTruthy();
+  expect(manifest.icons.some(icon => icon.sizes === '512x512')).toBeTruthy();
+  const iconResponses = await Promise.all(manifest.icons.map(icon => page.request.get(icon.src)));
+  expect(iconResponses.every(icon => icon.ok())).toBeTruthy();
 });

@@ -81,3 +81,8 @@
 ## Pass 39 PWA source update
 
 Source scan confirms four registration call sites all target `service-worker.js`; `sw.js` and `firebase-messaging-sw.js` appear unreferenced in scanned source. Token registration is JWT-protected in deployed production/QA; dispatch is secret-header protected in source, secret configuration unverified. PWA runtime installability, active worker/scope/update behavior, and actual push/background delivery remain Phase 2 acceptance blockers.
+
+
+## Pass 40 PWA smoke test
+
+Added isolated Playwright check for active local service-worker registration, manifest and icon HTTP responses. CI result pending. It is not device installability or push delivery evidence; Phase 2 remains gated on these remaining checks.
