@@ -94,7 +94,20 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
       currentProfile = { role: 'customer' };
       rideVehicle = 'Auto';
     });
-    await page.locator('#ride button[onclick="saveRideRequest()"]').click();
+    const diagnostics = await page.evaluate(() => ({
+      saveFunction: typeof saveRideRequest,
+      userId: currentUser?.id,
+      role: currentProfile?.role,
+      pickup: { address: $('#pickup').dataset.selectedAddress, lat: $('#pickup').dataset.selectedLat, lon: $('#pickup').dataset.selectedLon },
+      drop: { address: $('#drop').dataset.selectedAddress, lat: $('#drop').dataset.selectedLat, lon: $('#drop').dataset.selectedLon },
+      fare: $('#fare').value,
+      buttonExists: !!document.querySelector('#ride button[onclick="saveRideRequest()"]')
+    }));
+    expect(diagnostics.saveFunction).toBe('function');
+    expect(diagnostics.userId).toBeTruthy();
+    expect(diagnostics.pickup.address).toContain('Tekkali');
+    expect(diagnostics.drop.address).toContain('Naupada');
+    await page.evaluate(async () => { await saveRideRequest(); });
     await expect(page.locator('#message')).toContainText('successfully', { timeout: 10000 });
     submitted = await page.evaluate(() => window.__qaRidePayload?.payload);
     expect(await page.evaluate(() => window.__qaRidePayload?.table)).toBe('rides');
