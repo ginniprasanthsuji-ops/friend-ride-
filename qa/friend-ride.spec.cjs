@@ -273,7 +273,8 @@ test('Admin Driver KYC document review page is wired to protected review RPCs', 
     review: typeof window.reviewDriverDocument
   }));
   expect(functions).toEqual({ load: 'function', review: 'function' });
-  await expect(page.locator('#adminDashboard')).toContainText('Driver KYC Documents');
+  await expect(page.locator('#adminDashboard')).toContainText(/KYC Verification/i);
+  await expect(page.locator('#driverDocumentReviews')).toContainText(/Driver KYC Documents/i);
 });
 
 test('Role-specific order, ride and customer alert preview controls have audio and voice handlers', async ({ page }) => {
@@ -493,8 +494,8 @@ test('Home screen exposes separate TASKO / GIGGER and Laundry service tiles and 
   const laundry = page.locator('.home-pro-services .home-pro-service').filter({ hasText: 'LAUNDRY SERVICES' });
   await expect(tasko).toHaveCount(1);
   await expect(laundry).toHaveCount(1);
-  await expect(page.locator('.fr-poster-rail')).toContainText('TASKO / GIGGER');
-  await expect(page.locator('.fr-poster-rail')).toContainText('FRIEND RIDE LAUNDRY');
+  await expect(page.locator('.fr-poster-rail')).toBeAttached();
+  // TASKO and Laundry are separate home service tiles, not poster-rail promotions.
   expect(errors, 'Home page JavaScript errors').toEqual([]);
 });
 
