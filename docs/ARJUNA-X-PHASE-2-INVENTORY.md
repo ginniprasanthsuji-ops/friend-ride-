@@ -96,6 +96,31 @@ Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-
 4. Playwright default URL is production; local/isolated target must be explicit.
 5. Root SPA source too large for full route/screen inventory from this connector pass; Phase 2 is not yet fully complete.
 
+
+## Pass 2 — Blueprint, specs and notification source inspection
+
+### Blueprint-confirmed workflows
+- Single unified app with role-specific dashboards for Customer, Driver/Rider, Partner/Merchant/Shop Owner, Service Provider/Gigger, Admin.
+- Customer service scope includes Bike/Auto/Car, cycle delivery, parcel/goods, food, grocery/local shops, pharmacy marketplace under controls, shopping/catalogue, home services, laundry, TASKO/GIGGER, Education/Vidya Setu, authorized recharge/bill-pay and travel integrations, wallet/offers/referral, notifications/profile/support/complaints/feedback/ratings.
+- Driver workflow includes onboarding/KYC/admin approval, online/offline, ride actions, navigation, tracking, earnings/history/wallet/settlement, SOS/support/notifications.
+- Partner workflow includes onboarding/KYC/approval, catalog/product/stock/pricing/offers/orders, preparation/ready/pickup/delivery, earnings/settlement, subscriptions and reviews.
+- Ride lifecycle in blueprint: Requested → Searching Driver → Driver Assigned → Accepted → Arriving → Arrived → Started → In Progress → Completed → Payment Pending/Completed, or Cancelled; valid transitions and authorization must be enforced.
+
+### Notification code observations
+- `fcm-web-push.js` registers `service-worker.js`, requests permission on button click, obtains an FCM token, and POSTs to `fr-notification-register-token` using an authenticated session.
+- `service-worker.js` has both Firebase background handler and generic PushEvent handling; notification classification contains Telugu text and vibration patterns.
+- `firebase-messaging-sw.js` also imports Firebase and handles background messages/notification click.
+- `sw.js` is another generic push/caching worker.
+- `fr-notification-fallback.js` uses Supabase notification events, Realtime insert subscription and 60-second polling; it displays a sticky in-app fallback card and browser notification if permission is granted.
+- **Confirmed risk:** multiple worker files and registration paths need a unified registration/scope audit. The notification setup doc describes placeholders/contract verification; source presence alone is not proof of deployed token registration or background delivery. Voice announcement, closed-app delivery, deduplication across push/fallback, quiet hours and marketing consent are not verified in this source pass.
+- Source uses public Firebase web config and Supabase publishable key; never expose service-role/private credentials. Public client config is not itself a privileged secret, but server-side authorization and abuse/rate controls must be reviewed.
+
+### Test specification observations
+- Main QA Playwright spec includes role entry points/router, runtime diagnostics visibility, and a QA test-page simulated/live-only distinction; not all tests represent real backend workflow E2E.
+- TASKO/Laundry specs include source/function checks and invalid-booking validation; complete real customer-provider-admin workflow remains unproven.
+- Learn/Teach specs assert landing screen/category cards; not complete teacher/student/Zoom/homwork workflow E2E.
+- Existing tests are mixed: browser UI checks, source-marker checks, simulated tests, and limited backend-independent tests. Phase 10 needs coverage labels and test evidence classification.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
@@ -104,6 +129,9 @@ Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-
 - [x] PWA/manifests/service-worker files identified.
 - [x] Branding/logo assets filenames inventoried; visual identity binary verification pending.
 - [x] Legacy/conflicting UI and test docs identified.
+- [x] User Blueprint roles/modules/workflow source reviewed.
+- [x] Notification source files reviewed (registration and duplicate-worker risks recorded).
+- [x] Existing QA specs reviewed for simulated vs actual workflow evidence.
 - [ ] Full route/screen inventory from `index.html` (source too large for connector read; needs a safer local/source inspection method).
 - [ ] Visual inspection of icon assets and confirmation whether uploaded logo is already present.
 - [ ] Exact API/RPC/Edge Function and role-permission inventory.
@@ -111,4 +139,4 @@ Observed files: `fcm-web-push.js`, `firebase-messaging-sw.js`, `fr-notification-
 - [ ] Phase 2 final review/acceptance.
 
 ## Current status
-**Phase 2 — IN PROGRESS (inventory pass 1 committed).** This report records confirmed tree/config/doc findings and open inspection items. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
+**Phase 2 — IN PROGRESS (inventory passes 1–2 committed).** Repository/config/docs, Blueprint workflow source, test specs and notification source files have been reviewed. Open items remain: full SPA routes/API/role permissions, visual logo/icon verification, and exact notification registration/dispatch audit. No runtime app code, backend, database, auth, payments, main, or live deployment was changed.
