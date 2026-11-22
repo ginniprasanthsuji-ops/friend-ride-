@@ -1,6 +1,8 @@
--- Fix food-order read access for assigned delivery partners.
+-- Fix food-order read access for assigned delivery partners and disable unsafe direct client inserts.
+-- Orders must be created by a trusted server flow after validating menu items and totals.
 -- Previously the EXISTS predicate compared d.order_id to d.id (the delivery row's own id),
 -- which never correctly linked an assignment to its order.
+drop policy if exists fr_food_orders_insert on public.fr_food_orders;
 drop policy if exists fr_food_orders_read on public.fr_food_orders;
 
 create policy fr_food_orders_read
