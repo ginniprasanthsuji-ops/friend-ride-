@@ -479,11 +479,7 @@ main .page{padding-bottom:36px!important}
   <button class="home-pro-service" style="--svc-a:#d8c7ff;--svc-b:#7c3aed" onclick="requireLogin(()=>{showPage('homeServices');document.getElementById('taskoGiggerLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧰</span><b>TASKO / GIGGER</b><small>Daily Helper Booking</small></button>
   <button class="home-pro-service" style="--svc-a:#c8f5ee;--svc-b:#159b86" onclick="requireLogin(()=>{showPage('laundryServices');document.getElementById('laundryServiceLaunch')?.scrollIntoView({behavior:'smooth',block:'start'});})"><span class="home-pro-art">🧺</span><b>LAUNDRY SERVICES</b><small>Wash • Iron • Dry Clean • Pickup</small></button>
  </div>
- <div class="home-pro-services">
-  <button class="home-pro-service" style="--svc-a:#ffe7c2;--svc-b:#f59e0b" onclick="requireLogin(()=>openEventService('Catering Services'))"><span class="home-pro-art">🍽️</span><b>Catering Services</b></button>
-  <button class="home-pro-service" style="--svc-a:#d9eafe;--svc-b:#6288e8" onclick="requireLogin(()=>openEventService('DJ – Sound & Lights'))"><span class="home-pro-art">🎧</span><b>DJ – Sound &amp; Lights</b></button>
-  <button class="home-pro-service" style="--svc-a:#ffe0ec;--svc-b:#ec78a7" onclick="requireLogin(()=>openEventService('Beauty Makeover'))"><span class="home-pro-art">💄</span><b>Beauty Makeover</b></button>
- </div>
+ 
  <div class="cycle-delivery-home-card" onclick="requireLogin(()=>showPage('cycleDelivery'))" role="button" tabindex="0" aria-label="Cycle Delivery"><div class="cycle-delivery-photo"><span class="cycle-delivery-fallback">🚲</span></div><div class="cycle-delivery-home-copy"><b>🚲 Cycle Delivery</b><small>Eco-friendly local delivery • No bike required</small><span class="cycle-delivery-rate">₹25–₹40 • Distance-based</span></div></div><div class="home-section-title"><h2>More Services</h2><button onclick="showPage('explore')">View All →</button></div>
  <div class="home-more-grid"><button onclick="requireLogin(()=>showPage('parcel'))">📦<b>Parcel</b></button><button onclick="requireLogin(()=>showPage('goods'))">🚚<b>Goods</b></button><button onclick="requireLogin(()=>showPage('homeServices'))">🧰<b>Home Services</b></button><button onclick="requireLogin(()=>showPage('scheduled'))">🗓️<b>Schedule</b></button></div>
  <section id="frHomeRatings" class="card" aria-label="Customer Ratings">
@@ -505,9 +501,7 @@ main .page{padding-bottom:36px!important}
 <button class="tile" onclick="showPage('shopping')">🛍️<b>Shopping</b></button>
 <button class="tile" onclick="showPage('scheduled')">🗓️<b>Scheduled Booking</b></button>
 <button class="tile" onclick="showPage('bankingServices')">🏦<b>Banking &amp; Financial Services</b><small>Banking • Insurance • Bill payments</small></button>
-<button class="tile" onclick="openEventService('Catering Services')">🍽️<b>Catering Services</b><small>Events & functions</small></button>
-<button class="tile" onclick="openEventService('DJ – Sound & Lights')">🎧<b>DJ – Sound & Lights</b><small>Events & celebrations</small></button>
-<button class="tile" onclick="openEventService('Beauty Makeover')">💄<b>Beauty Makeover</b><small>Makeup & styling</small></button>
+
 </div></div>
 <div class="card"><h3>💳 Service & Delivery Charges</h3><div class="notice"><b>Platform Charge: 2.5%</b><br>Eligible order/service valueపై 2.5% platform charge వర్తిస్తుంది.</div><p class="muted">Delivery charges location, distance, service type మరియు delivery partner quote ఆధారంగా మారవచ్చు. Final delivery charge మరియు total amount booking/checkout confirm చేసే ముందు చూపించాలి.</p></div></section>
 
@@ -641,7 +635,7 @@ main .page{padding-bottom:36px!important}
  <h2>🧰 TASKO – Daily Helper Booking</h2>
  <p class="muted">ఇంటి పనులు, షాపు సహాయం, ప్యాకింగ్, క్లీనింగ్, లోకల్ అసిస్టెన్స్ వంటి పనులకు ధృవీకరించిన Giggerను బుక్ చేయండి.</p>
  <div class="notice"><b>పారితోషికం:</b> 6 గంటల వరకు ₹150–₹400 (పని ఆధారంగా Admin quote). 6 గంటలు దాటితే ₹400 + ప్రతి అదనపు గంటకు ₹50. Final amount పని గంటలు మరియు ఆమోదించిన quote ఆధారంగా నిర్ధారించబడుతుంది.</div>
- <div class="field"><label>Work Category *</label><select id="taskoCategory"><option>General Helper</option><option>House Cleaning</option><option>Shop Assistant</option><option>Packing & Loading</option><option>Office Assistant</option><option>Event Helper</option><option>Delivery Helper</option><option>Other Local Work</option></select></div>
+ <div class="field"><label>Work Category *</label><select id="taskoCategory"><option>General Helper</option><option>House Cleaning</option><option>Shop Assistant</option><option>Packing & Loading</option><option>Office Assistant</option><option>Event Helper</option><option>Catering / Halwai</option><option>DJ / Sound & Lights</option><option>Beauty Makeover</option><option>Delivery Helper</option><option>Other Local Work</option></select></div>
  <div class="row"><div class="field"><label>Required Hours *</label><select id="taskoHours" onchange="frTaskoPricePreview()"><option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6" selected>6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option><option value="10">10 hours</option><option value="12">12 hours</option></select></div><div class="field"><label>Helper Preference</label><select id="taskoGender"><option value="no_preference">No preference</option><option value="male">Male</option><option value="female">Female</option></select></div></div>
  <div id="taskoPricePreview" class="notice">Estimated rate: ₹150–₹400 for up to 6 hours. Final quote after review.</div>
  <div class="row"><div class="field"><label>Work Date *</label><input id="taskoDate" type="date"></div><div class="field"><label>Start Time *</label><input id="taskoTime" type="time"></div></div>
