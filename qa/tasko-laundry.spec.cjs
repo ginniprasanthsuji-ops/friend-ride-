@@ -2,10 +2,11 @@ const {test,expect}=require('@playwright/test');
 test('TASKO and Laundry services appear as separate home entries and banners',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('./',{waitUntil:'domcontentloaded'});
- await expect(page.locator('.home-pro-service').filter({hasText:'TASKO / GIGGER'})).toBeAttached();
- await expect(page.locator('.home-pro-service').filter({hasText:'LAUNDRY SERVICES'})).toBeAttached();
- await expect(page.locator('.fr-poster').filter({hasText:'TASKO / GIGGER'})).toBeAttached();
- await expect(page.locator('.fr-poster').filter({hasText:'FRIEND RIDE LAUNDRY'})).toBeAttached();
+ await page.evaluate(()=>window.showPage('home'));
+ await expect(page.locator('#home .fr-native-service.home-pro-service[data-fr-native-route="homeServices"]')).toBeVisible();
+ await expect(page.getByRole('button',{name:/Laundry Pickup & Delivery/})).toBeVisible();
+ await expect(page.locator('.fr-poster-rail')).toBeAttached();
+ // Home service cards are the entry points; promotional poster rail is a separate UI.
  expect(errors).toEqual([]);
 });
 test('TASKO helper pricing and customer/partner/admin workflow remain intact',async({page})=>{

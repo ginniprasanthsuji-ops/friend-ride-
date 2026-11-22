@@ -1,0 +1,44 @@
+name: FRIEND RIDE Regression
+on:
+  push:
+    branches: [main, qa/navigation-isolation-fix-2026-11-21, qa/ui-regression-recovery-2026-11-22]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 2 * * *'
+permissions:
+  contents: read
+jobs:
+  browser-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate inline JavaScript and Version 10.1 integrations
+        run: node scripts/check-inline-js.mjs
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - name: Start local static app server
+        run: |
+          npx --yes http-server@14.1.1 . -p 4173 -s > /tmp/friend-ride-server.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/friend-ride-server.log
+          exit 1
+      - name: Run browser regression tests
+        env:
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
+        run: npm test
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: friend-ride-regression-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore

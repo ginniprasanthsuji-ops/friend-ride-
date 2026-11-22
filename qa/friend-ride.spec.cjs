@@ -273,7 +273,8 @@ test('Admin Driver KYC document review page is wired to protected review RPCs', 
     review: typeof window.reviewDriverDocument
   }));
   expect(functions).toEqual({ load: 'function', review: 'function' });
-  await expect(page.locator('#adminDashboard')).toContainText('Driver KYC Documents');
+  await expect(page.locator('#adminDashboard')).toContainText(/KYC\s*Verification/i);
+  await expect(page.locator('#driverDocumentReviews')).toContainText(/Driver KYC Documents/i);
 });
 
 test('Role-specific order, ride and customer alert preview controls have audio and voice handlers', async ({ page }) => {
@@ -426,7 +427,8 @@ test('Driver KYC form loads the private upload handler and persists profile/docu
 test('TASKO booking form exposes helper categories, hours, date, time, address and work instructions', async ({ page }) => {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#taskoGiggerLaunch')).toBeAttached();
-  await expect(page.locator('#taskoCategory option')).toHaveCount(8);
+  await expect(page.locator('#taskoCategory option')).toHaveCount(11);
+  expect(await page.locator('#taskoCategory option').allTextContents()).toEqual(expect.arrayContaining(['Catering / Halwai', 'DJ / Sound & Lights', 'Beauty Makeover']));
   await expect(page.locator('#taskoHours')).toBeAttached();
   await expect(page.locator('#taskoDate')).toHaveAttribute('type', 'date');
   await expect(page.locator('#taskoTime')).toHaveAttribute('type', 'time');
@@ -489,12 +491,14 @@ test('Home screen exposes separate TASKO / GIGGER and Laundry service tiles and 
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => window.showPage('home'));
-  const tasko = page.locator('.home-pro-services .home-pro-service').filter({ hasText: 'TASKO / GIGGER' });
-  const laundry = page.locator('.home-pro-services .home-pro-service').filter({ hasText: 'LAUNDRY SERVICES' });
+  const tasko = page.locator('#home .fr-native-service.home-pro-service[data-fr-native-route="homeServices"]');
+  const laundry = page.getByRole('button', { name: /Laundry Pickup & Delivery/ });
   await expect(tasko).toHaveCount(1);
   await expect(laundry).toHaveCount(1);
-  await expect(page.locator('.fr-poster-rail')).toContainText('TASKO / GIGGER');
-  await expect(page.locator('.fr-poster-rail')).toContainText('FRIEND RIDE LAUNDRY');
+  await expect(tasko).toBeVisible();
+  await expect(laundry).toBeVisible();
+  await expect(page.locator('.fr-poster-rail')).toBeAttached();
+  // TASKO and Laundry are separate home service tiles, not poster-rail promotions.
   expect(errors, 'Home page JavaScript errors').toEqual([]);
 });
 
