@@ -390,6 +390,8 @@ main .page{padding-bottom:36px!important}
 #frHomeProfileAvatar:empty{position:relative!important;display:grid!important;place-items:center!important;background:radial-gradient(circle at 35% 25%,#7db8e8 0,#345d87 34%,#17263c 70%)!important;overflow:hidden!important}
 #frHomeProfileAvatar:empty:before{content:""!important;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#ffe5c5,#d79a66 65%,#8b5735);box-shadow:0 2px 5px #0007;position:absolute;top:8px}
 #frHomeProfileAvatar:empty:after{content:""!important;width:27px;height:17px;border-radius:15px 15px 7px 7px;background:linear-gradient(145deg,#c9e8ff,#5791c9 55%,#2d507b);box-shadow:0 3px 5px #0007;position:absolute;bottom:4px}
+
+#frHomeProfileImage[hidden]{display:none!important}
 </style></head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
@@ -2168,27 +2170,7 @@ async function frDownloadRideInvoice(rideId,kind){
   const x=await frGetInvoiceData(rideId),r=x.ride,p=x.pay;
   const who=kind==='driver'?'DRIVER COPY':'CUSTOMER COPY',name=kind==='driver'?(x.driver.full_name||'Driver'):(x.customer.full_name||'Customer');
   const other=kind==='driver'?(x.customer.full_name||'Customer'):(x.driver.full_name||'Driver');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button><style id="fr-user-request-ui-removal-and-avatar">
-/* Requested: remove bottom navigation, menu button and floating FR-AI launcher */
-.premium-bottom,.bottom.premium-bottom{display:none!important}
-.home-topbar .menu-open{display:none!important}
-body{padding-bottom:24px!important}
-.fr-ai-floating,.fr-ai-float,#frAiFloat,#frAIFloat,#frAiFloating,#frAiFloatingButton,#frAIButton,#frAiButton,.fr-ai-widget,.fr-ai-launcher,.fr-floating-ai,.floating-ai-button{display:none!important}
-/* Premium neutral 3D default profile avatar */
-#frHomeProfileAvatar:empty:before{content:"";display:block;width:100%;height:100%;background:radial-gradient(circle at 32% 26%,#f5d8bd 0 15%,transparent 16%),radial-gradient(ellipse at 50% 39%,#eac4a3 0 23%,transparent 24%),radial-gradient(ellipse at 50% 62%,#d9e5f6 0 29%,transparent 30%),linear-gradient(145deg,#3e638f,#17263c);border-radius:50%;filter:drop-shadow(0 2px 3px #0005)}
-#frHomeProfileImage[hidden]{display:none!important}
-</style>
-<script id="fr-avatar-broken-image-recovery">
-(function(){
- function fixAvatar(){
-  const img=document.getElementById('frHomeProfileImage'),avatar=document.getElementById('frHomeProfileAvatar');
-  if(!img||!avatar)return;
-  img.addEventListener('error',function(){img.hidden=true;img.removeAttribute('src');avatar.style.display='grid';avatar.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';},{once:true});
-  if(img.complete&&img.naturalWidth===0&&img.src){img.hidden=true;avatar.style.display='grid';avatar.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';}
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fixAvatar);else fixAvatar();
-})();
-</script></body></html>'; 
+  const html='<!doctype html><html><head><meta charset="utf-8"><title>FRIEND RIDE V11.1 PRO Invoice</title><style>body{font:14px Arial;color:#222;padding:28px;max-width:760px;margin:auto}h1{color:#54228a}table{width:100%;border-collapse:collapse;margin:18px 0}td{padding:10px;border-bottom:1px solid #ddd}.total{font-size:22px;font-weight:bold}.ok{color:#13875b;font-weight:bold}.muted{color:#666}@media print{button{display:none}}</style></head><body><h1>FRIEND RIDE</h1><h2>Ride Payment Invoice – '+safe(who)+'</h2><p>Invoice / Ride ID: '+safe(r.id)+'</p><p>Issued: '+safe(new Date().toLocaleString())+'</p><table><tr><td>Bill To</td><td>'+safe(name)+'</td></tr><tr><td>Other Party</td><td>'+safe(other)+'</td></tr><tr><td>Vehicle</td><td>'+safe(r.vehicle_type)+'</td></tr><tr><td>Pickup</td><td>'+safe((r.pickup||r.pickup_text)||'—')+'</td></tr><tr><td>Drop</td><td>'+safe((r.drop||r.drop_text)||'—')+'</td></tr><tr><td>Payment Method</td><td>UPI QR</td></tr><tr><td>UPI Transaction ID</td><td>'+safe(p.transaction_id)+'</td></tr><tr><td>Payment Confirmed</td><td>'+safe(new Date(p.confirmed_at).toLocaleString())+'</td></tr></table><p class="total">Total Paid: ₹'+Number(p.amount).toFixed(2)+'</p><p class="ok">PAYMENT SUCCESS – CONFIRMED BY DRIVER</p><button onclick="window.print()">Download / Save as PDF</button></body></html>'; 
   w.document.write(html);w.document.close();
  }catch(e){w.document.body.innerHTML='<p style="padding:24px;color:#b00">Invoice generation failed: '+safe(e.message||e)+'</p>';}
 }
@@ -4744,7 +4726,18 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script id="fr-native-navigation-transition-qa">
 (function(){function install(){if(typeof window.showPage!=='function'||window.showPage.__frWrapped)return;const original=window.showPage;function wrapped(id){const current=document.querySelector('.page.active');if(current&&current.id!==id){current.classList.remove('fr-screen-enter');}const result=original.apply(this,arguments);const next=document.getElementById(id);if(next){next.classList.remove('fr-screen-enter');void next.offsetWidth;next.classList.add('fr-screen-enter');}return result;}wrapped.__frWrapped=true;window.showPage=wrapped;}document.addEventListener('DOMContentLoaded',install);if(document.readyState!=='loading')install();})();
 </script>
-<script id="fr-bottom-nav-cart-zero-fix">(function(){function update(){const el=document.getElementById('frBottomCartCount');if(!el)return;const n=parseInt((el.textContent||'0').replace(/\\D/g,''),10)||0;el.hidden=n===0;el.style.display=n===0?'none':'inline-flex';el.setAttribute('aria-label',n+' items in cart');}document.addEventListener('DOMContentLoaded',update);if(document.readyState!=='loading')update();const target=document.getElementById('frBottomCartCount');if(target)new MutationObserver(update).observe(target,{childList:true,characterData:true,subtree:true});})();</script></body>
+<script id="fr-bottom-nav-cart-zero-fix">(function(){function update(){const el=document.getElementById('frBottomCartCount');if(!el)return;const n=parseInt((el.textContent||'0').replace(/\\D/g,''),10)||0;el.hidden=n===0;el.style.display=n===0?'none':'inline-flex';el.setAttribute('aria-label',n+' items in cart');}document.addEventListener('DOMContentLoaded',update);if(document.readyState!=='loading')update();const target=document.getElementById('frBottomCartCount');if(target)new MutationObserver(update).observe(target,{childList:true,characterData:true,subtree:true});})();</script><script id="fr-avatar-broken-image-recovery">
+(function(){
+ function fixAvatar(){
+  const img=document.getElementById('frHomeProfileImage'),avatar=document.getElementById('frHomeProfileAvatar');
+  if(!img||!avatar)return;
+  img.addEventListener('error',function(){img.hidden=true;img.removeAttribute('src');avatar.style.display='grid';avatar.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';},{once:true});
+  if(img.complete&&img.naturalWidth===0&&img.src){img.hidden=true;avatar.style.display='grid';avatar.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';}
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fixAvatar);else fixAvatar();
+})();
+</script>
+</body>
 <!-- FRIEND RIDE FCM Web Push integration -->
 <script src="./fcm-web-push.js"></script>
 <script src="./fr-notification-fallback.js"></script>
