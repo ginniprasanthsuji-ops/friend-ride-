@@ -594,3 +594,18 @@ This audit confirms an additional test-authority mismatch. The 58 route IDs rema
 
 ### Phase 2 status
 PWA and push source inventory is more complete, but runtime registration/delivery proof, exact manifest-to-deployment behavior, icon/logo visual verification, and server-side notification contract evidence remain open. Phase 2 is **IN PROGRESS / NOT ACCEPTED**. No runtime code, backend, schema, auth, payment, main or live deployment changed.
+
+
+## Pass 19 — CI workflow triggers, test-target and toolchain audit
+
+### Verified workflow configuration
+- `.github/workflows/quality.yml`: push and PR targeting `main`; Node 22; typecheck/core typecheck/runtime build/unit/core tests; Playwright Chromium E2E; static local server with `FRIEND_RIDE_BASE_URL=http://127.0.0.1:4173`.
+- `.github/workflows/friend-ride-regression.yml`: push branches `main` and legacy `ui/full-native-dark-gold-2026-11-21`, manual dispatch, daily schedule; Node 22; inline JS check, npm install, local static server, `npm test`, report artifacts.
+- `.github/workflows/friend-ride-workflow-regression.yml`: push to legacy `pr/workflow-integration-nov08`, PR targeting main; source checks only (inline JS and learn-teach JS syntax).
+- `.github/workflows/tasko-laundry-main-regression.yml`: push to legacy `integration/tasko-laundry-main-safe`, PR to main with specified path filters; Node 20; inline JS check and isolated TASKO/Laundry/Admin Playwright spec.
+
+### ARJUNA X CI gap
+None of the four inspected workflow trigger lists explicitly includes the active `arjuna-x/phase-2-repository-assets-inventory` branch. Therefore these workflow definitions do not provide automatic push regression coverage for this active branch. Node 20 vs 22 toolchain inconsistency also remains. No workflow was run in this audit; no run status is claimed.
+
+### Phase 2 disposition
+CI trigger alignment, branch-specific test execution and toolchain decision remain open acceptance items. No runtime/backend/schema/auth/payment/main/live changes made.
