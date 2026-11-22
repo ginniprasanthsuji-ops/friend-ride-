@@ -889,3 +889,24 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 ### Pass 37 disposition
 - Test isolation source edits and status documentation committed on QA branch only; CI for this patch pending. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. Phase 3 is still gated. No app runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 38 — Live Supabase project/migration/security metadata review (read-only)
+
+### Project and migration evidence
+- Production project `friend-ride` (`fglyplxcczdjtfwobtzh`) and QA project `FRIEND RIDE QA` (`pqsangtvietawkfgpgfu`) both reported `ACTIVE_HEALTHY`. Production region: `ap-northeast-2`; QA: `ap-south-1`.
+- Production: **79 recorded migrations**, latest `fr_notification_remove_duplicate_order_triggers`; **85 public tables**, all 85 with RLS enabled, 62 with at least one policy and 23 with no policies (RLS denies access unless privileged/service role). QA: **25 recorded migrations**, latest `arjuna_qa_rides_rls_policy_performance`; **21 public tables**, all 21 RLS enabled and all 21 have policies.
+- Public function metadata: production 103 functions / 102 SECURITY DEFINER; all 102 have a search_path setting; 6 are executable by `anon`, 88 by `authenticated`. QA: 27 functions / 27 SECURITY DEFINER; all have a search_path setting; 1 anon-executable, 25 authenticated-executable. Counts come from read-only catalog queries; do not interpret all SECDEF grants as vulnerabilities without function-level review.
+
+### Read-only sampled function and Edge Function review
+- Reviewed 18 production SECDEF functions across admin driver/partner/provider operations, platform GST/toll-free settings, ride acceptance/counter-offer/start/complete, nearby drivers, service booking, TASKO/Laundry provider transitions, registration and ride participant detail RPCs. Sampled functions contained expected role/ownership/approval checks (admin checks via `admin_users`/`is_friend_ride_admin`, approved-driver checks, customer-role checks, assigned-provider checks, and ride participant/status constraints). This is a **sample**, not a full audit of 88 authenticated-executable functions.
+- Public anon-executable functions were inspected: approved store/catalogue listing, platform business details, admin-check boolean, and published homepage feedback. Their code returns public/approved/published data or a boolean; grant purpose still requires owner review. QA has one public `fr_public_homepage_feedback` function.
+- Production `fr-notification-register-token` and QA counterpart have `verify_jwt=true` and validate the user session before upsert. `fr-notification-dispatch` is `verify_jwt=false`, but deployed handler checks `FR_NOTIFICATION_DISPATCH_SECRET` in `x-dispatch-secret`; whether the secret is present/strong/configured was not read. `Sms-otp` is `verify_jwt=false`; source has a 60-second per-phone send cooldown and five verification attempts; IP-based throttling was not observed in this source.
+- Security Advisor warnings: production reports 23 RLS-enabled tables with no policies (informational), 6 anon-executable SECDEF, 88 authenticated-executable SECDEF, and **Leaked Password Protection disabled**. QA reports 1 anon-executable and 25 authenticated-executable SECDEF. The warnings require owner/security review; no settings, grants, policies or backend code were changed.
+
+### Current CI evidence
+- QA branch commit `ee3422dcaf107d6b15df6fc9aa0a35e8224137af`; Quality Gate run `45056419922` **SUCCESS**. Typecheck, core typecheck, runtime build, Node unit tests, Vitest succeeded; Playwright **47 passed (22.3s)**. The active suite now blocks external HTTPS except required CDN libraries in the friend-ride and TASKO/Laundry specs. No live backend mutations were run.
+- Main remains `64845496f22487788aedbcf66b74147add3ab9c1`; no merge/deployment.
+
+### Pass 38 disposition
+- Live project/migration/catalog/security metadata and sampled function contracts were reviewed read-only. Phase 2 remains **IN PROGRESS / NOT ACCEPTED** because icon binaries are not visually verified, PWA worker/install/update/push runtime evidence is incomplete, the full SECDEF/RLS/Edge secret audit is incomplete, full live role/permission E2E is not proven, and QA branch protection/required checks remain disabled (owner approval/policy needed). Phase 3 stays gated. No backend/runtime/schema/auth/payment/main/deployment changes.

@@ -67,3 +67,12 @@
 - Phase 2: still **IN PROGRESS / NOT ACCEPTED**. Route baseline reconciled to 58 existing page IDs and tested by local Playwright CI. Latest verified quality run `45056228462` passed type/unit/build and browser regression (**47 passed**). Legacy Dark+Gold spec excluded from active suite; new tests follow Navy/Orange/White scope. External API isolation patch is pending CI.
 - Remaining Phase 2 evidence: visually inspect official icon binaries; verify PWA installability/worker scope/update and push runtime; retrieve deployed Supabase RPC/Edge Function/auth/RLS contract evidence without backend edits; full role permission live E2E; owner-approved branch protection/required checks.
 - Phases 3–10 remain pending until Phase 2 acceptance. Main merge and live deployment are prohibited in this workstream.
+
+
+## Latest ARJUNA X status update (Pass 38)
+
+- Phase 1: accepted.
+- Phase 2: **IN PROGRESS / NOT ACCEPTED**. QA branch has 58-route source reconciliation and local Playwright route activation baseline. Quality Gate run `45056419922` passed (**47 browser tests**, typecheck/core typecheck/runtime build, Node unit 7/7, Vitest). Test environment blocks external HTTPS except required library CDNs.
+- Read-only Supabase evidence: production and QA projects active/healthy; production 79 migrations, 85 public tables all RLS-enabled (62 policy tables, 23 with no policies); QA 25 migrations, 21 tables all RLS-enabled and all with policies. Security Advisor warns of public/authenticated SECDEF grants and production leaked-password protection disabled. Sampled 18 production SECDEF functions have expected role/ownership checks; full audit remains incomplete. No backend changes.
+- Remaining Phase 2 acceptance: visual icon verification, PWA install/worker/update/push runtime proof, complete RLS/SECDEF/Edge-secret review, full live role/permission E2E, and owner-approved branch protection/required checks.
+- Phases 3–10 remain gated; main merge and live deployment remain prohibited.
