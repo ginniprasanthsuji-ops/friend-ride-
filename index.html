@@ -5028,3 +5028,53 @@ body .fr-avatar-pick,body .fr-feedback-card{background:linear-gradient(145deg,#1
 body .fr-avatar-pick.active{background:linear-gradient(145deg,#332514,#14223a)!important;border-color:#f5b84c!important}
 body .fr-ride-notification{background:#121e32!important;color:#f6f8ff!important;border-color:#263b59!important}body .fr-ride-notification.unread{background:#332514!important;border-color:#8c6125!important}
 </style>
+
+<!-- FRIEND RIDE requested UI refinements: hide bottom menu/FRAI floating controls; promote VidyaSetu and cycle delivery; repair bell/avatar -->
+<style id="fr-user-ui-requested-fixes">
+.premium-bottom{display:none!important}
+body{padding-bottom:0!important}
+#frMasterScopeFab{display:none!important}
+.fr-notify-bell{font-size:0!important}
+.fr-notify-bell .fr-bell-icon{display:block!important;width:24px!important;height:24px!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.fr-notify-bell:before{display:none!important}
+#frHomeProfileAvatar:empty:before{content:none!important}
+#frHomeProfileAvatar{display:grid!important;place-items:center;overflow:hidden!important}
+.fr-default-avatar{width:100%;height:100%;display:grid;place-items:center}
+.fr-avatar-3d{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 35% 25%,#9ed9ff,#456d9e 52%,#182b49 100%);box-shadow:inset 0 2px 8px #ffffff60,inset 0 -5px 10px #0005}
+.fr-avatar-3d svg{width:34px;height:34px;filter:drop-shadow(0 3px 3px #0005)}
+</style>
+<script id="fr-user-ui-requested-fixes-script">
+(function(){
+function repairAvatar(){
+ const avatar=document.getElementById('frHomeProfileAvatar');
+ const image=document.getElementById('frHomeProfileImage');
+ if(avatar&&!avatar.dataset.frAvatarFixed){
+  avatar.dataset.frAvatarFixed='1';
+  avatar.innerHTML='<span class="fr-avatar-3d" aria-label="Default profile avatar"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="frAvatarFace" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffe4c4"/><stop offset="1" stop-color="#d59a69"/></linearGradient></defs><path d="M13 58c2-14 12-21 19-21s17 7 19 21" fill="#f5c66b"/><ellipse cx="32" cy="25" rx="16" ry="18" fill="url(#frAvatarFace)"/><path d="M16 24c-2-14 7-21 17-20 11 1 17 9 15 22l-4-8-7-7-12 4-7 9z" fill="#293448"/><circle cx="26" cy="26" r="2" fill="#293448"/><circle cx="38" cy="26" r="2" fill="#293448"/><path d="M27 33q5 4 10 0" fill="none" stroke="#9b5e47" stroke-width="2" stroke-linecap="round"/></svg></span>';
+ }
+ if(image){
+  image.addEventListener('error',function(){image.hidden=true;image.removeAttribute('src');if(avatar)avatar.style.display='grid';},{once:false});
+  if(!image.getAttribute('src'))image.hidden=true;
+ }
+}
+function ensureLearningCycle(){
+ const grid=document.querySelector('#home .fr-native-service-grid');
+ if(!grid)return;
+ const hasLearning=[...grid.querySelectorAll('[data-fr-native-route]')].some(x=>/learnTeach/.test(x.dataset.frNativeRoute));
+ if(!hasLearning){
+  const b=document.createElement('button');b.type='button';b.className='fr-native-service purple';b.dataset.frNativeRoute='learnTeach';
+  b.innerHTML='<span class="fr-icon">🎓</span><b>విద్యాసేతు</b><small>Student • Teacher • Learning</small>';
+  grid.appendChild(b);
+ }else{
+  const item=[...grid.querySelectorAll('[data-fr-native-route]')].find(x=>x.dataset.frNativeRoute==='learnTeach');
+  if(item){item.querySelector('b').textContent='విద్యాసేతు';item.querySelector('small').textContent='Student • Teacher • Learning';}
+ }
+ // Cycle Delivery uses the existing cycleDelivery page/workflow, never a new parallel flow.
+ const cycle=[...grid.querySelectorAll('[data-fr-native-route]')].find(x=>x.dataset.frNativeRoute==='cycleDelivery');
+ if(cycle){cycle.querySelector('b').textContent='Cycle Delivery';cycle.querySelector('small').textContent='Eco-friendly bicycle delivery';}
+}
+function apply(){repairAvatar();ensureLearningCycle();}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);else apply();
+new MutationObserver(apply).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
