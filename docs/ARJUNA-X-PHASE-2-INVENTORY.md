@@ -982,3 +982,16 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - Corrected the old 55/58 discrepancy: all 58 `.page` IDs reconcile and activate; no missing/extra/stale IDs.
 - Updated PWA checklist and Phase 2 gate: local worker/manifest/icon HTTP smoke is now checked; device install/push, visual icon/logo, full security audit, QA environment wiring and branch governance remain open.
 - Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; Phase 3 remains gated. No app/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 46 — CI dependency audit warning and runner deprecation risk
+
+### Fresh evidence from workflow run 45056922006
+- Browser job log is tied to checkout commit `d00abcfc369adfee2355a702ca51a3562aa5a5ed` and confirms 48 Playwright tests passed in 21.7 seconds. Job-level checks succeeded; artifacts were not published for this run.
+- `npm install` emitted **3 dependency audit advisories (1 moderate, 2 critical)**. This run did not execute `npm audit` as a separate report, so package identities, dependency paths, fix versions, exploitability, and whether advisories affect production runtime remain unknown. Do not blindly run `npm audit fix --force` or upgrade dependencies without a lockfile-aware review and regression.
+- Runner log also emitted a Node.js 20 deprecation warning: `actions/checkout@v4` and `actions/setup-node@v4` were run under the runner's forced Node 24 compatibility transition. This is an action/runtime warning, not a test failure. Review newer action major versions in a dedicated compatibility change.
+- CI output included Node `punycode` deprecation warning from the tooling chain. No attribution/remediation verified.
+
+### Pass 46 disposition
+- Recorded as an **open Phase 2 dependency/tooling risk**; no package versions, lockfile, workflow actions, app runtime, backend, schema, auth, payment, main or deployment changed.
+- Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. Next safe step: get an isolated checkout/command runner and run `npm audit --json` against the exact branch/lockfile, then review dependency tree and upgrade candidates in a separate QA patch with tests.
