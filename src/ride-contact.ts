@@ -53,7 +53,7 @@ declare const frRenderCustomerRideDriverAndPayment: any;
 (function frRouteInertSync(){
   const win=window as any;
   function sync(){
-    const pages=[...document.querySelectorAll<HTMLElement>('main .page')];
+    const pages=Array.from(document.querySelectorAll<HTMLElement>('main .page'));
     if(!pages.length)return;
     const active=pages.filter(page=>page.classList.contains('active'));
     if(!active.length){pages.forEach(page=>{page.inert=true;page.setAttribute('aria-hidden','true');});return;}
@@ -105,7 +105,7 @@ declare const frRenderCustomerRideDriverAndPayment: any;
         const esc=(value:any)=>typeof safe==='function'?safe(value):String(value??'');
         box.innerHTML='<b>'+esc(active.vehicle_type)+' • '+esc(active.status)+'</b><p>'+esc(active.pickup||active.pickup_text||'—')+' → '+esc(active.drop||active.drop_text||'—')+'</p><p>మీ Offer ₹'+esc(active.fare_offer)+' | Agreed ₹'+esc(active.agreed_fare??'—')+'</p><small>Ride ID: '+esc(active.id)+'</small>';
         if(active.driver_id&&typeof frRenderCustomerRideDriverAndPayment==='function')await frRenderCustomerRideDriverAndPayment(active);
-      }catch(e){box.textContent='My Rides Error: '+(e.message||e);}
+      }catch(e:any){box.textContent='My Rides Error: '+(e.message||e);}
     };
     wrapped.__frSavedRideFallback=true;
     win.loadMyRideTracking=wrapped;
