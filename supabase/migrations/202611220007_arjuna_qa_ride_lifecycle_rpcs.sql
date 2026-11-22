@@ -1,34 +1,54 @@
 -- Project Arjuna QA-only ride lifecycle RPCs. Payment-provider behavior intentionally excluded.
 create or replace function public.get_driver_requests()
 returns setof public.rides language plpgsql security definer set search_path=''
-as $$
+as $
+declare v_driver uuid:=auth.uid();
 begin
- if auth.uid() is null or not exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='driver' and p.driver_approval_status='approved') then raise exception 'Driver is not approved'; end if;
- return query select r.* from public.rides r where r.status='requested' and r.driver_id is null order by r.created_at desc;
-end $$;
+ if v_driver is null or not exists(select 1 from public.profiles p where p.id=v_driver and p.role='driver' and p.driver_approval_status='approved') then raise exception 'Driver is not approved'; end if;
+ return query select r.* from public.rides r
+ where r.status='requested' and r.driver_id is null
+ and r.pickup_lat is not null and r.pickup_lng is not null
+ and exists(
+  select 1 from public.driver_locations d
+  where d.driver_id=v_driver and d.is_online=true and d.updated_at>=now()-interval '5 minutes'
+  and 6371*2*asin(sqrt(least(1.0,
+   power(sin(radians(d.latitude-r.pickup_lat)/2),2)+
+   cos(radians(r.pickup_lat))*cos(radians(d.latitude))*power(sin(radians(d.longitude-r.pickup_lng)/2),2)
+  ))))<=15
+ )
+ order by r.created_at desc;
+end $;
 create or replace function public.accept_ride(p_ride_id uuid)
 returns boolean language plpgsql security definer set search_path=''
-as $$
+as $
 declare v_driver uuid:=auth.uid(); v_updated int;
 begin
  if v_driver is null or not exists(select 1 from public.profiles p where p.id=v_driver and p.role='driver' and p.driver_approval_status='approved') then raise exception 'Driver is not approved'; end if;
  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('arjuna_accept:'||v_driver::text,0));
  if exists(select 1 from public.rides r where r.driver_id=v_driver and lower(coalesce(r.status,'')) not in ('completed','complete','cancelled','canceled','rejected','declined','expired')) then raise exception 'Driver already has an active ride'; end if;
- update public.rides set driver_id=v_driver,status='accepted',updated_at=now() where id=p_ride_id and driver_id is null and status='requested';
+ update public.rides r set driver_id=v_driver,status='accepted',updated_at=now()
+ where r.id=p_ride_id and r.driver_id is null and r.status='requested'
+ and r.pickup_lat is not null and r.pickup_lng is not null
+ and exists(select 1 from public.driver_locations d where d.driver_id=v_driver and d.is_online=true and d.updated_at>=now()-interval '5 minutes'
+ and 6371*2*asin(sqrt(least(1.0,power(sin(radians(d.latitude-r.pickup_lat)/2),2)+cos(radians(r.pickup_lat))*cos(radians(d.latitude))*power(sin(radians(d.longitude-r.pickup_lng)/2),2)))))<=15);
  get diagnostics v_updated=row_count; return v_updated>0;
-end $$;
+end $;
 create or replace function public.counter_offer_ride(p_ride_id uuid,p_counter_fare numeric)
 returns boolean language plpgsql security definer set search_path=''
-as $$
+as $
 declare v_driver uuid:=auth.uid(); v_updated int;
 begin
  if v_driver is null or not exists(select 1 from public.profiles p where p.id=v_driver and p.role='driver' and p.driver_approval_status='approved') then raise exception 'Driver is not approved'; end if;
  if p_counter_fare is null or p_counter_fare<=0 then raise exception 'Enter a valid counter offer'; end if;
  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('arjuna_accept:'||v_driver::text,0));
  if exists(select 1 from public.rides r where r.driver_id=v_driver and lower(coalesce(r.status,'')) not in ('completed','complete','cancelled','canceled','rejected','declined','expired')) then raise exception 'Driver has an active ride'; end if;
- update public.rides set driver_id=v_driver,agreed_fare=p_counter_fare,status='counter_offered',updated_at=now() where id=p_ride_id and driver_id is null and status='requested';
- get diagnostics v_updated=row_count; if v_updated=0 then raise exception 'Ride is no longer available'; end if; return true;
-end $$;
+ update public.rides r set driver_id=v_driver,agreed_fare=p_counter_fare,status='counter_offered',updated_at=now()
+ where r.id=p_ride_id and r.driver_id is null and r.status='requested'
+ and r.pickup_lat is not null and r.pickup_lng is not null
+ and exists(select 1 from public.driver_locations d where d.driver_id=v_driver and d.is_online=true and d.updated_at>=now()-interval '5 minutes'
+ and 6371*2*asin(sqrt(least(1.0,power(sin(radians(d.latitude-r.pickup_lat)/2),2)+cos(radians(r.pickup_lat))*cos(radians(d.latitude))*power(sin(radians(d.longitude-r.pickup_lng)/2),2)))))<=15);
+ get diagnostics v_updated=row_count; if v_updated=0 then raise exception 'Ride is no longer available or outside 15 KM'; end if; return true;
+end $;
 create or replace function public.accept_counter_offer(p_ride_id uuid)
 returns boolean language plpgsql security definer set search_path=''
 as $$
