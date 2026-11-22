@@ -238,6 +238,22 @@ User confirmed: payment gateway is not yet integrated for collecting subscriptio
 - Subscription gateway is placeholder-only; no server order/webhook verification demonstrated.
 - GST configuration exists but statutory invoice behavior is not runtime verified.
 
+
+## Pass 8 — Supabase migration policy/security source review
+
+Reviewed the five migration files tracked in this branch (source only; not applied):
+
+- TASKO/GIGGER workflow migration: functions use `SECURITY DEFINER`; reviewed function bodies include authentication checks and provider/customer ownership checks, plus Admin membership check for payment verification. Explicit execute grants to `authenticated` found for the three workflow RPCs. This is a source review only; deployed function versions and table RLS status not verified.
+- Laundry workflow migration: provider transition function is `SECURITY DEFINER`, checks authenticated user and booking assignment; explicit execute grant to authenticated. No RLS policy definitions were present in this migration file itself.
+- Cycle-delivery pricing migration: table has RLS enabled and a SELECT policy for authenticated users where `active=true`. No admin write policy was found in this migration file; the app contains static price calculation and this pricing table's live usage/configuration was not verified.
+- Learn/Teach marketplace migration: policies were observed for account self-insert/read and admin update; published-course read/provider own/admin; student request insert/read and admin update; own notification settings and notifications; admin notification insertion. Admin helper checks profile role.
+- Learn/Teach provider-policy migration: approved teacher/institute can insert own unpublished course drafts and update own courses while keeping published=false; provider request read policy limits to assigned provider or unassigned requests for approved teacher/institute accounts.
+
+### Security verification limitations
+- Migration source is not proof migrations have been applied to the Supabase project.
+- Current deployed table RLS policies, function bodies, grants and schema state were not queried; no live database access was used for this inventory pass.
+- Review is not a penetration test. Direct-navigation UI gaps from Pass 7 must be matched with backend/RLS/function authorization before release.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
