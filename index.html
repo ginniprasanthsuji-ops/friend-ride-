@@ -884,94 +884,22 @@ async function reviewDriverApplication(driverId,decision){
 }
 function frCycleCalculatePrice(){const input=document.getElementById('cycleDistanceInput'),out=document.getElementById('cyclePriceResult');if(!input||!out)return;const km=Number(input.value);if(!Number.isFinite(km)||km<=0){out.textContent='Valid delivery distance enter చేయండి.';return;}const charge=km<=1?25:km<=2?30:km<=3?35:40;out.innerHTML='Estimated Cycle Delivery Charge: <b>₹'+charge+'</b> ('+km.toFixed(1)+' KM)';}
 
-// FRIEND RIDE booking map + location autocomplete recovery.
-let frBookingMap=null,frBookingPickupMarker=null,frBookingDropMarker=null,frLocationMode='pickup',frLocationTimers={},frLocationLastRequest=0;
+// FRIEND RIDE booking map + location autocomplete recovery (Photon primary, Nominatim fallback).
+let frBookingMap=null,frBookingPickupMarker=null,frBookingDropMarker=null,frLocationMode='pickup',frLocationTimers={},frLocationLastRequest=0,frBookingTileLayer=null,frBookingTileFallbackUsed=false;
 const frLocationCountry='India';
 function frBookingMapEnsure(){
- const el=$('frBookingMap'); if(!el||!window.L)return;
- if(!frBookingMap){
-  frBookingMap=L.map(el,{zoomControl:true}).setView([17.6868,83.2185],12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(frBookingMap);
-  frBookingMap.on('click',e=>frBookingReverse(e.latlng,frLocationMode));
- }
+ const el=$('frBookingMap');if(!el)return;if(!window.L){const h=$('frPickupHint');if(h)h.textContent='Map library load కాలేదు. Refresh చేసి మళ్లీ ప్రయత్నించండి.';return;}
+ if(!frBookingMap){try{frBookingMap=L.map(el,{zoomControl:true}).setView([17.6868,83.2185],12);frBookingTileLayer=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(frBookingMap);let tileErrors=0;frBookingTileLayer.on('tileerror',()=>{tileErrors++;if(tileErrors>=3&&!frBookingTileFallbackUsed){frBookingTileFallbackUsed=true;try{frBookingMap.removeLayer(frBookingTileLayer);frBookingTileLayer=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'}).addTo(frBookingMap;}catch(e){console.warn('FR map tile fallback:',e);}}});frBookingMap.on('click',e=>frBookingReverse(e.latlng,frLocationMode));if(window.ResizeObserver&&!el.dataset.frMapResize){el.dataset.frMapResize='1';new ResizeObserver(()=>frBookingMap&&frBookingMap.invalidateSize()).observe(el);}}catch(e){console.error('FR booking map init failed',e);const h=$('frPickupHint');if(h)h.textContent='Map తెరవలేకపోయింది. Location search/GPS ప్రయత్నించండి.';}}
  setTimeout(()=>frBookingMap&&frBookingMap.invalidateSize(),180);
 }
-function frBookingSetPoint(kind,lat,lon,label){
- const pt=[lat,lon];
- if(!frBookingMap)frBookingMapEnsure();
- if(!frBookingMap)return;
- const markerVar=kind==='pickup'?'frBookingPickupMarker':'frBookingDropMarker';
- if(kind==='pickup'){
-  pickupCoords={lat,lon};
-  if(frBookingPickupMarker)frBookingMap.removeLayer(frBookingPickupMarker);
-  frBookingPickupMarker=L.marker(pt,{draggable:true}).addTo(frBookingMap).bindPopup('Pickup: '+(label||'Selected location'));
-  frBookingPickupMarker.on('dragend',e=>frBookingReverse(e.target.getLatLng(),'pickup'));
-  pickupMarker=frBookingPickupMarker;
- }else{
-  dropCoords={lat,lon};
-  if(frBookingDropMarker)frBookingMap.removeLayer(frBookingDropMarker);
-  frBookingDropMarker=L.marker(pt,{draggable:true}).addTo(frBookingMap).bindPopup('Drop: '+(label||'Selected location'));
-  frBookingDropMarker.on('dragend',e=>frBookingReverse(e.target.getLatLng(),'drop'));
-  dropMarker=frBookingDropMarker;
- }
- const target=kind==='pickup'?'pickup':'drop';
- if($(target))$(target).value=label||lat.toFixed(6)+', '+lon.toFixed(6);
- const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');
- if(hint)hint.textContent='Selected: '+lat.toFixed(5)+', '+lon.toFixed(5);
- if(frBookingPickupMarker&&frBookingDropMarker)frBookingMap.fitBounds(L.featureGroup([frBookingPickupMarker,frBookingDropMarker]).getBounds().pad(.18));
- else frBookingMap.setView(pt,16);
-}
-async function frBookingReverse(latlng,kind){
- const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');
- if(hint)hint.textContent='Address గుర్తిస్తున్నాం…';
- try{
-  const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(latlng.lat)+'&lon='+encodeURIComponent(latlng.lng);
-  const res=await fetch(url,{headers:{'Accept':'application/json'}});
-  if(!res.ok)throw new Error('Reverse geocoding HTTP '+res.status);
-  const data=await res.json();
-  frBookingSetPoint(kind,latlng.lat,latlng.lng,data.display_name||latlng.lat.toFixed(6)+', '+latlng.lng.toFixed(6));
- }catch(err){frBookingSetPoint(kind,latlng.lat,latlng.lng,latlng.lat.toFixed(6)+', '+latlng.lng.toFixed(6));if(hint)hint.textContent='Map pin set. Address lookup temporarily unavailable; coordinates saved.';}
-}
+function frBookingSetPoint(kind,lat,lon,label){const pt=[lat,lon];if(!frBookingMap)frBookingMapEnsure();if(!frBookingMap)return;if(kind==='pickup'){pickupCoords={lat,lon};if(frBookingPickupMarker)frBookingMap.removeLayer(frBookingPickupMarker);frBookingPickupMarker=L.marker(pt,{draggable:true}).addTo(frBookingMap).bindPopup('Pickup: '+(label||'Selected location'));frBookingPickupMarker.on('dragend',e=>frBookingReverse(e.target.getLatLng(),'pickup'));pickupMarker=frBookingPickupMarker;}else{dropCoords={lat,lon};if(frBookingDropMarker)frBookingMap.removeLayer(frBookingDropMarker);frBookingDropMarker=L.marker(pt,{draggable:true}).addTo(frBookingMap).bindPopup('Drop: '+(label||'Selected location'));frBookingDropMarker.on('dragend',e=>frBookingReverse(e.target.getLatLng(),'drop'));dropMarker=frBookingDropMarker;}const target=kind==='pickup'?'pickup':'drop';if($(target))$(target).value=label||lat.toFixed(6)+', '+lon.toFixed(6);const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='Selected: '+lat.toFixed(5)+', '+lon.toFixed(5);if(frBookingPickupMarker&&frBookingDropMarker)frBookingMap.fitBounds(L.featureGroup([frBookingPickupMarker,frBookingDropMarker]).getBounds().pad(.18));else frBookingMap.setView(pt,16);}
+async function frBookingReverse(latlng,kind){const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='Address గుర్తిస్తున్నాం…';try{const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(latlng.lat)+'&lon='+encodeURIComponent(latlng.lng);const res=await fetch(url,{headers:{'Accept':'application/json'}});if(!res.ok)throw new Error('Reverse geocoding HTTP '+res.status);const data=await res.json();frBookingSetPoint(kind,latlng.lat,latlng.lng,data.display_name||latlng.lat.toFixed(6)+', '+latlng.lng.toFixed(6));}catch(err){frBookingSetPoint(kind,latlng.lat,latlng.lng,latlng.lat.toFixed(6)+', '+latlng.lng.toFixed(6));if(hint)hint.textContent='Pin set. Address lookup unavailable; coordinates saved.';}}
 function frChooseMapPin(kind){frLocationMode=kind;frBookingMapEnsure();if(frBookingMap){frBookingMap.setView(kind==='pickup'&&pickupCoords?[pickupCoords.lat,pickupCoords.lon]:kind==='drop'&&dropCoords?[dropCoords.lat,dropCoords.lon]:[17.6868,83.2185],kind==='pickup'&&pickupCoords||kind==='drop'&&dropCoords?16:12);frBookingMap.invalidateSize();}const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='మ్యాప్‌పై నొక్కి '+(kind==='pickup'?'Pickup':'Drop')+' pin ఎంచుకోండి.';}
-function frUseMyLocation(){frLocationMode='pickup';frBookingMapEnsure();if(!navigator.geolocation){alert('GPS support లేదు.');return;}const h=$('frPickupHint');if(h)h.textContent='GPS location పొందుతున్నాం…';navigator.geolocation.getCurrentPosition(pos=>frBookingReverse({lat:pos.coords.latitude,lng:pos.coords.longitude},'pickup'),err=>{if(h)h.textContent='GPS error: '+err.message;alert('Location permission ఇవ్వండి; HTTPSలో GPS పనిచేస్తుంది.');},{enableHighAccuracy:true,timeout:15000,maximumAge:10000});}
-function frLocationSuggest(kind,q){
- const box=$(kind==='pickup'?'frPickupSuggestions':'frDropSuggestions');if(!box)return;
- box.innerHTML='';box.classList.remove('open');
- if(q.trim().length<3)return;
- clearTimeout(frLocationTimers[kind]);
- frLocationTimers[kind]=setTimeout(async()=>{
-  const now=Date.now();const wait=Math.max(0,1000-(now-frLocationLastRequest));if(wait)await new Promise(r=>setTimeout(r,wait));
-  frLocationLastRequest=Date.now();
-  try{
-   const url='https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=in&q='+encodeURIComponent(q+' India');
-   const res=await fetch(url,{headers:{'Accept':'application/json'}});
-   if(!res.ok)throw new Error('Location search HTTP '+res.status);
-   const rows=await res.json();
-   box.innerHTML='';
-   rows.forEach(row=>{
-    const b=document.createElement('button');b.type='button';b.textContent=row.display_name;
-    b.onclick=()=>{box.classList.remove('open');frLocationMode=kind;frBookingMapEnsure();frBookingSetPoint(kind,Number(row.lat),Number(row.lon),row.display_name);};
-    box.appendChild(b);
-   });
-   if(rows.length)box.classList.add('open');
-   else {const b=document.createElement('button');b.type='button';b.textContent='No matching locations found';b.disabled=true;box.appendChild(b);box.classList.add('open');}
-  }catch(err){box.innerHTML='';const b=document.createElement('button');b.type='button';b.textContent='Suggestions unavailable. Try full address or map pin.';b.disabled=true;box.appendChild(b);box.classList.add('open');}
- },550);
-}
-function frInitBookingMap(){
- frBookingMapEnsure();
- ['pickup','drop'].forEach(kind=>{
-  const el=$(kind),box=$(kind==='pickup'?'frPickupSuggestions':'frDropSuggestions');
-  if(!el||el.dataset.frLocationBound==='1')return;
-  el.dataset.frLocationBound='1';
-  el.addEventListener('input',()=>frLocationSuggest(kind,el.value));
-  el.addEventListener('focus',()=>frLocationSuggest(kind,el.value));
-  el.addEventListener('keydown',e=>{if(e.key==='Escape'&&box){box.classList.remove('open');}});
-  document.addEventListener('click',e=>{if(box&&!el.contains(e.target)&&!box.contains(e.target))box.classList.remove('open');});
- });
- if(pickupCoords&& !frBookingPickupMarker)frBookingSetPoint('pickup',pickupCoords.lat,pickupCoords.lon,$('pickup')?.value||'Pickup');
- if(dropCoords&& !frBookingDropMarker)frBookingSetPoint('drop',dropCoords.lat,dropCoords.lon,$('drop')?.value||'Drop');
-}
+function frUseMyLocation(){frLocationMode='pickup';frBookingMapEnsure();if(!navigator.geolocation){alert('GPS support లేదు.');return;}const h=$('frPickupHint');if(h)h.textContent='GPS location పొందుతున్నాం…';navigator.geolocation.getCurrentPosition(pos=>frBookingReverse({lat:pos.coords.latitude,lng:pos.coords.longitude},'pickup'),err=>{if(h)h.textContent='GPS error: '+err.message;alert('Location permission allow చేయండి; HTTPSలో GPS పనిచేస్తుంది.');},{enableHighAccuracy:true,timeout:15000,maximumAge:10000});}
+async function frPhotonSearch(q){const url='https://photon.komoot.io/api/?q='+encodeURIComponent(q+' India')+'&limit=6&lang=en';const res=await fetch(url,{headers:{'Accept':'application/json'}});if(!res.ok)throw new Error('Photon HTTP '+res.status);const data=await res.json();return(data.features||[]).map(f=>({lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0],display_name:[f.properties.name,f.properties.street,f.properties.city||f.properties.county,f.properties.state,f.properties.country].filter(Boolean).join(', ')})).filter(x=>x.display_name);}
+async function frNominatimSearch(q){const url='https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=in&q='+encodeURIComponent(q+' India');const res=await fetch(url,{headers:{'Accept':'application/json'}});if(!res.ok)throw new Error('Nominatim HTTP '+res.status);return await res.json();}
+function frLocationSuggest(kind,q){const box=$(kind==='pickup'?'frPickupSuggestions':'frDropSuggestions');if(!box)return;box.innerHTML='';box.classList.remove('open');if(q.trim().length<3)return;clearTimeout(frLocationTimers[kind]);frLocationTimers[kind]=setTimeout(async()=>{const now=Date.now(),wait=Math.max(0,1000-(now-frLocationLastRequest));if(wait)await new Promise(r=>setTimeout(r,wait));frLocationLastRequest=Date.now();try{let rows=[];try{rows=await frPhotonSearch(q);}catch(e){console.warn('Photon fallback to Nominatim:',e);rows=await frNominatimSearch(q);}box.innerHTML='';rows.forEach(row=>{const b=document.createElement('button');b.type='button';b.textContent=row.display_name;b.onclick=()=>{box.classList.remove('open');frLocationMode=kind;frBookingMapEnsure();frBookingSetPoint(kind,Number(row.lat),Number(row.lon),row.display_name);};box.appendChild(b);});if(!rows.length){const b=document.createElement('button');b.type='button';b.textContent='No locations found. పూర్తి area/address టైప్ చేయండి.';b.disabled=true;box.appendChild(b);}box.classList.add('open');}catch(err){box.innerHTML='';const b=document.createElement('button');b.type='button';b.textContent='Location search unavailable. Map pin/GPS ప్రయత్నించండి.';b.disabled=true;box.appendChild(b);box.classList.add('open');}},450);}
+function frInitBookingMap(){frBookingMapEnsure();['pickup','drop'].forEach(kind=>{const el=$(kind),box=$(kind==='pickup'?'frPickupSuggestions':'frDropSuggestions');if(!el||el.dataset.frLocationBound==='1')return;el.dataset.frLocationBound='1';el.addEventListener('input',()=>frLocationSuggest(kind,el.value));el.addEventListener('focus',()=>frLocationSuggest(kind,el.value));el.addEventListener('keydown',e=>{if(e.key==='Escape'&&box)box.classList.remove('open');});document.addEventListener('click',e=>{if(box&&!el.contains(e.target)&&!box.contains(e.target))box.classList.remove('open');});});if(pickupCoords&&!frBookingPickupMarker)frBookingSetPoint('pickup',pickupCoords.lat,pickupCoords.lon,$('pickup')?.value||'Pickup');if(dropCoords&&!frBookingDropMarker)frBookingSetPoint('drop',dropCoords.lat,dropCoords.lon,$('drop')?.value||'Drop');}
 
 function showPage(id){if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}if(id==='laundryServices'&&currentProfile?.role==='admin'){const p=document.getElementById('laundryAdminPanel');if(p)p.classList.remove('hide');}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
