@@ -1,0 +1,32 @@
+/* FRIEND RIDE — selected Navy / Orange / White UI skin, non-functional styling only */
+:root{
+ --fr-navy:#071c46;--fr-navy-2:#102b63;--fr-orange:#ff6b00;--fr-orange-2:#ff8b24;
+ --fr-bg:#f3f6fb;--fr-card:#fff;--fr-ink:#13213a;--fr-muted:#5b6880;--fr-border:#dbe4f0;
+ --purple:#102b63;--purple2:#234d91;--navy:#071c46;--orange:#ff6b00;--bg:#f3f6fb;--ink:#13213a;--muted:#5b6880;--line:#dbe4f0;--gold:#ff8b24;
+}
+body{background:linear-gradient(180deg,#f4f7fc,#edf2f9)!important;color:var(--fr-ink)!important}
+.topbar,.home-topbar,.premium-topbar{background:linear-gradient(110deg,var(--fr-navy),var(--fr-navy-2))!important;color:#fff!important;box-shadow:0 5px 18px #071c4625!important}
+.iconbtn,.notify-btn{background:#ffffff18!important;border:1px solid #ffffff2a!important;color:#fff!important}
+.location-head b{color:#fff!important}.location-head span{color:#e4ecff!important}
+.card,.feature-box,.stat,.kpi,.offer-card,.listrow,.fr-payment-method{background:#fff!important;border-color:var(--fr-border)!important;box-shadow:0 5px 18px #112b5b0b!important;color:var(--fr-ink)!important}
+.hero,.fr-role-launcher .fr-launcher-inner,.drawer-head{background:linear-gradient(120deg,var(--fr-navy),var(--fr-navy-2))!important;color:#fff!important}
+.hero p,.hero .eyebrow{color:#e4ecff!important}
+.tile,.home-more-grid button{background:linear-gradient(145deg,#fff,#f7f9fc)!important;border-color:var(--fr-border)!important;color:var(--fr-ink)!important}
+.tile .emoji{background:linear-gradient(145deg,#e8eef8,#fff1e6)!important}
+.tile b,.home-more-grid b{color:var(--fr-ink)!important}
+.btn,.top-action{background:linear-gradient(100deg,var(--fr-orange),var(--fr-orange-2))!important;color:#fff!important;box-shadow:0 5px 14px #ff6b0028!important}
+.btn.purple,.btn.dark{background:linear-gradient(100deg,var(--fr-navy),var(--fr-navy-2))!important;color:#fff!important}
+.btn.light{background:#eaf0fa!important;color:var(--fr-navy)!important}
+.status,.pill,.tag{background:#eaf0fa!important;color:var(--fr-navy)!important}
+.field input,.field textarea,.field select,input,textarea,select{border-color:var(--fr-border)!important;background:#fff!important;color:var(--fr-ink)!important}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--fr-orange)!important;box-shadow:0 0 0 3px #ff6b0018!important}
+.bottom,.premium-bottom{background:#fff!important;border-top:1px solid var(--fr-border)!important;box-shadow:0 -6px 18px #071c4610!important}
+.premium-bottom button{color:#6b7890!important}.premium-bottom button.active{color:var(--fr-orange)!important}.premium-bottom button.active span{background:#fff0e4!important}
+.menu-item:hover,.menu-item:active{background:#fff0e4!important;color:var(--fr-orange)!important}
+.fr-launcher-logo,.logo{background:linear-gradient(135deg,var(--fr-navy),var(--fr-orange))!important;color:#fff!important;border:1px solid #ffffff35!important}
+.fr-launcher-kicker{color:#ffb46d!important}
+.fr-role-launcher .fr-launcher-title h2{color:var(--fr-navy)!important}
+.fr-role-launcher .fr-launcher-grid button{border-color:var(--fr-border)!important}
+.fr-role-launcher .fr-launcher-grid button:active{border-color:var(--fr-orange)!important}
+#message.error{background:#fff0f0!important}#message.good{background:#eaf8f1!important}
+@media(prefers-reduced-motion:no-preference){.tile,.btn,.premium-bottom button{transition:all .16s ease}.tile:active{transform:scale(.985)}}
