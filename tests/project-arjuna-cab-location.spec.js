@@ -95,6 +95,8 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     // Intercept the real Supabase REST insert request. The app's Supabase client
     // is a lexical const, so replacing window.sb does not mock it.
     await page.route('**/rest/v1/rides**', async route => {
+      // The app may read the rides table before booking. Only mock the INSERT POST.
+      if (route.request().method() !== 'POST') return route.continue();
       const payload = route.request().postDataJSON();
       await page.evaluate(p => { window.__qaRidePayload = { table: 'rides', payload: p }; }, payload);
       await route.fulfill({
