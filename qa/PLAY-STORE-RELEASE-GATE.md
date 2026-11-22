@@ -310,3 +310,49 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - GitHub Actions after the KYC handler fix: browser regression **29/29 PASS**, browser E2E **29/29 PASS**, TypeScript/core typecheck PASS, unit tests **5/5 PASS**, core tests **2/2 PASS**, Pages build/deploy PASS.
 - The earlier 28/29 failure was a test assertion expecting the bucket name inside the handler function text. The handler was corrected to satisfy that assertion; the next CI run passed 29/29.
 - These are browser/source wiring checks. They do **not** prove an authenticated driver has uploaded real documents or that an Admin has reviewed them. Those remain live staging tests.
+
+
+## PROJECT ARJUNA — current release-gate recheck (2026-11-22, 12:08 IST)
+
+**QA branch:** `qa/remove-unneeded-services-2026-11-22`  
+**Current QA commit:** `6532a1b3b5b27b80f26f4cf63c93a3c47d6eb6d0`  
+**PR #36:** open, mergeable, not merged. Main base SHA remains `f1ddca35a576b7ecb34d5130e0cc990709ec4b02`. Main/live have not been changed.
+
+### Current CI evidence
+
+| Check | Result | Evidence |
+|---|---|---|
+| Inline/source regression | PASS | Run [44995355480](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995355480); 23 inline scripts checked and retired Learn-Teach cleanup assertions pass |
+| Typecheck / core typecheck / runtime build / unit / core | PASS | Run [44995355491](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995355491), typecheck-and-unit job completed success |
+| Dependency audit | PASS, 0 vulnerabilities | Quality Gate install log on run 44995355491 reports `found 0 vulnerabilities` |
+| TASKO / Laundry / Admin integration | RUNNING | Run [44995355441](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995355441) |
+| Full Playwright browser suite | RUNNING | Run [44995355491](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995355491), browser-e2e job |
+| Node 20 TASKO toolchain | npm 10.8.2 pinned; verification pending | Workflow now installs npm 10.8.2 and prints Node/npm versions before dependency install; run [44995349649](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/44995349649) is still running |
+
+### Changes made on QA since the earlier 59 PASS / 7 FAIL browser run
+
+- Explicit `[hidden]` CSS rule keeps the profile-photo element hidden until a photo is present, so the default 3D avatar is not obscured.
+- Browser tests now select Customer through the role launcher and activate Home before testing visible home controls; Admin login is tested through the role-locked `enterRole('admin')` path.
+- Corrected auth-button locators to match the current OTP button markup and navigated to the visible TASKO booking page before category selection.
+- Added a mobile viewport map-resize assertion in the booking-location regression.
+- QA-only guarded cleanup migration now includes the remaining empty `learn_teach_*` tables and `fr_learn_teach_is_admin()`; source regression checks these cleanup statements.
+- TASKO/Laundry Node 20 workflow explicitly pins npm 10.8.2 and verifies both versions to avoid toolchain drift.
+
+The prior browser run's seven failures were setup/visibility/test-selector issues; rerun on the current commit is still required before treating them as resolved.
+
+### Read-only production RLS/security recheck
+
+- **RLS enabled:** 85/85 public tables.
+- Supabase security advisor lists 23 tables with RLS enabled but no direct policies. Main-source scan found no direct `sb.from()` calls for these no-policy tables. `fr_market_orders`, `fr_market_order_items`, `fr_parcel_orders`, and `fr_service_requests` have authenticated SECURITY DEFINER RPC workflows/grants and are intentionally RPC-mediated. `ride_offers` is not referenced by the frontend and appears legacy/unused; it is not a verified RPC workflow. The remaining no-policy/service tables are not fully function-by-function audited.
+- **Confirmed functional/RLS defect:** `fr_food_orders_read` partner-delivery predicate is `d.order_id=d.id`, but the FK is `fr_food_deliveries.order_id -> fr_food_orders.id`. The order read predicate should join the delivery to the outer food order ID. This likely prevents assigned delivery partners from reading their linked food order. Production was read-only; no fix was applied.
+- Security advisor also reports 6 anon-executable SECURITY DEFINER functions (5 are public read/catalogue functions; `fr_learn_teach_is_admin` is obsolete and is included in QA cleanup), 88 authenticated SECURITY DEFINER functions requiring individual guard review, and leaked-password protection disabled in Supabase Auth.
+- Five legacy `learn_teach_*` tables were read-only counted at 0 rows. The QA migration's guard aborts if any retired learning table contains data before cleanup. The migration has not been applied to production.
+
+### Release blockers / NOT TESTED
+
+- QA Supabase `pqsangtvietawkfgpgfu` is healthy but has only four public tables; `profiles`, `rides`, TASKO, food/shop, parcel, service-provider and booking schema are missing. No live database write/read test is possible in QA.
+- Ride booking, TASKO categories and Admin mapping Playwright tests use mocked REST responses. They verify payload/UI transitions, not authenticated staging DB persistence.
+- Real OTP, Admin SMS OTP delivery, physical-device GPS, background push on a closed app, real payment/QR, live booking/driver assignment and Play Store AAB/device verification remain **NOT TESTED**.
+- The food-order RLS defect, Auth leaked-password setting, and incomplete SECURITY DEFINER review are unresolved. Live smoke-test is also NOT TESTED.
+
+**Release decision remains BLOCKED.** Do not merge or deploy until latest browser suite passes, backend/staging booking is genuinely verified, security blockers are addressed/approved, and required release gates are green. No production DB changes have been made.
