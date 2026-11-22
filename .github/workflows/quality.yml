@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 22
       - run: npm install -g npm@10.8.2
-      - run: npm install --no-save @playwright/test --audit-level=moderate
+      - run: npm install --no-save @playwright/test --no-audit --no-fund
       - run: npm run typecheck
       - run: npm run typecheck:core
       - run: npm run build:runtime
@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 22
       - run: npm install -g npm@10.8.2
-      - run: npm install --no-save @playwright/test --audit-level=moderate
+      - run: npm install --no-save @playwright/test --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
       - name: Start local app server
         run: |
