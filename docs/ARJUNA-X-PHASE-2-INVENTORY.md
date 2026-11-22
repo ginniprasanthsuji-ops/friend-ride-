@@ -804,3 +804,11 @@ Targeted source snippets are sufficient to confirm the theme mismatch and role l
 
 ### Pass 31 disposition
 Source inventory update only. No UI/runtime source was edited; no browser, location/GPS, auth, database or live API testing performed. Phase 2 remains IN PROGRESS / NOT ACCEPTED.
+
+
+## Pass 32 — Loopback guard correction and branch CI evidence
+
+- Freshly re-fetched Playwright config after follow-up correction: loopback allowlist includes `localhost`, `127.0.0.1`, `::1`, and bracketed IPv6 `[::1]` URL hostname representation. Config still rejects absent env, invalid URL and non-loopback hostnames. This is source verification only; no Node execution.
+- Queried GitHub Actions runs filtered to active Phase 2 branch `arjuna-x/phase-2-repository-assets-inventory`; API returned `total_count: 0`. No workflow run is currently evidenced on this branch. This aligns with Pass 27 trigger review.
+- Latest documentation blob re-fetched before update. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; test execution and route/PWA/runtime verification blocked by lack of checkout/browser runtime in this session.
+- No app runtime, backend, schema, auth, payment, main branch, or deployment changed.
