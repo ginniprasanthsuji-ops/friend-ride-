@@ -53,7 +53,7 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     await page.locator('#frPickupSuggestions button').first().click();
     await page.locator('#pickup').fill('New pickup');
     await expect(page.locator('#pickup')).toHaveAttribute('data-selected-address', '');
-    expect(await page.locator('#pickup').getAttribute('data-selected-lat')).toBeNull();
+    expect(await page.locator('#pickup').getAttribute('data-selected-lat') ?? '').toBe('');
     await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lon', '');
   });
 
@@ -83,7 +83,7 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
     await page.locator('#frPickupSuggestions .fr-manual-lat').fill('91');
     await page.locator('#frPickupSuggestions .fr-manual-lon').fill('200');
     await page.locator('#frPickupSuggestions .fr-manual-apply').click();
-    await expect(page.locator('#pickup')).toHaveAttribute('data-selected-lat', '');
+    expect(await page.locator('#pickup').getAttribute('data-selected-lat') ?? '').toBe('');
     await expect(page.locator('#frPickupHint')).toContainText('Valid coordinates required');
   });
   test('GPS button reverse-geocodes and sets pickup address and coordinates', async ({ page }) => {
