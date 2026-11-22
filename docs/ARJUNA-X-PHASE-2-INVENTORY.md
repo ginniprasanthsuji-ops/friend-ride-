@@ -609,3 +609,16 @@ None of the four inspected workflow trigger lists explicitly includes the active
 
 ### Phase 2 disposition
 CI trigger alignment, branch-specific test execution and toolchain decision remain open acceptance items. No runtime/backend/schema/auth/payment/main/live changes made.
+
+
+## Pass 20 — Existing QA specs: coverage boundaries and mock/live separation
+
+### Source verified from the test files
+- `qa/friend-ride.spec.cjs` includes role launcher (4 cards), role menu-to-OTP routing, self-test role mapping, local runtime diagnostics, automated QA simulation/live-only separation, complaint/feedback UI, and partner GPS/store-map handler-presence checks.
+- The QA page test explicitly expects simulated results (`SIM ·`), at least 10 deterministic simulation entries, 15 source audit entries, and separate LIVE ONLY coverage. It checks that simulated Cashfree/KYC constraints remain blocked. This does not validate real payment/KYC backend behavior.
+- The partner GPS/map test verifies element and handler presence; this alone does not prove geolocation permission, real GPS acquisition, persisted coordinates or map tiles.
+- `qa/tasko-laundry.spec.cjs` checks visible service entries/pricing, service-type unit changes (kg/piece), handler presence, and an unauthenticated booking guard. No authenticated booking write is exercised in the inspected spec.
+- `qa/tasko-laundry-main-regression.spec.js` is intentionally isolated: blocks external requests, overrides current user/login and `showPage` navigation, and checks shop category route intent/entry panel presence. It is a mocked navigation regression, not a production-auth/backend test.
+
+### Phase 2 disposition
+Test inventory now records boundaries between source assertions, simulation, isolated/mock behavior and live-only checks. Test execution and current CI status are still not evidenced in this audit. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No runtime/backend/schema/auth/payment/main/live changes made.
