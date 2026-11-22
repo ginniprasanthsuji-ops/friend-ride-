@@ -278,6 +278,28 @@ body{background:linear-gradient(180deg,#f5f8ff 0%,#edf2fa 100%);color:#101d39}
 #message.error{background:#fde9e7;color:#ad2b26}#message.good{background:#e1f5ec;color:#116d49}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none!important;animation:none!important}}
 </style>
+
+<style id="friendride-native-motion">
+/* App-like interaction polish: native-style transitions, touch feedback and safe-area layout. */
+:root{--fr-motion-fast:160ms;--fr-motion:240ms;--fr-motion-slow:360ms}
+html{scroll-behavior:smooth;scroll-padding-top:78px}
+body{padding-top:0;padding-bottom:calc(105px + env(safe-area-inset-bottom));overscroll-behavior-y:contain;-webkit-tap-highlight-color:transparent}
+main{padding:12px 13px calc(20px + env(safe-area-inset-bottom))}
+.page{display:none;opacity:0;transform:translateX(10px)}
+.page.active{display:block;animation:frPageEnter var(--fr-motion) cubic-bezier(.2,.7,.2,1) both}
+@keyframes frPageEnter{from{opacity:0;transform:translateX(12px) scale(.992)}to{opacity:1;transform:translateX(0) scale(1)}}
+button,.tile,.home-pro-service,.market-store,.market-product,.feature-box,.listrow,.card{transition:transform var(--fr-motion-fast) ease,box-shadow var(--fr-motion-fast) ease,border-color var(--fr-motion-fast) ease,background-color var(--fr-motion-fast) ease}
+button:active,.tile:active,.home-pro-service:active,.market-store:active,.market-product:active{transform:scale(.975)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f45b1670;outline-offset:2px}
+.topbar{padding-top:calc(11px + env(safe-area-inset-top));backdrop-filter:blur(16px)}
+.bottom,.premium-bottom{padding-bottom:calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(18px)}
+.modal.show .modalbox{animation:frSheetEnter 260ms cubic-bezier(.2,.7,.2,1) both}
+@keyframes frSheetEnter{from{transform:translateY(30px);opacity:.6}to{transform:translateY(0);opacity:1}}
+.drawer-backdrop.show .drawer{animation:frDrawerEnter 240ms ease both}
+@keyframes frDrawerEnter{from{transform:translateX(-20px);opacity:.8}to{transform:translateX(0);opacity:1}}
+.status,.pill,.tag{transition:background-color 160ms ease,color 160ms ease}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.page.active,.modal.show .modalbox,.drawer-backdrop.show .drawer{animation:none!important}button,.tile,.home-pro-service,.market-store,.market-product,.feature-box,.listrow,.card{transition:none!important}}
+</style>
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
