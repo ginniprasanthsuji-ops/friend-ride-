@@ -20,6 +20,8 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     }
     await expect(launcher).toHaveClass(/hide/);
     await page.evaluate(()=>window.showPage('home'));
+    const homeState=await page.evaluate(()=>({url:location.href,homeClass:document.getElementById('home')?.className,homeAria:document.getElementById('home')?.getAttribute('aria-hidden'),homeHtmlLength:document.getElementById('home')?.innerHTML.length,cabCount:document.querySelectorAll('#home .cab-feature').length,proCount:document.querySelectorAll('#home .home-pro-service').length,activePages:[...document.querySelectorAll('main .page.active')].map(x=>x.id),selectedRole,launcher:document.getElementById('roleLauncher')?.className,showPageType:typeof window.showPage}));
+    console.log('PROJECT ARJUNA UI setup',JSON.stringify(homeState));
   });
 
   test('current 56 routes exist; removed VidyaSetu and event services remain absent; theme tokens are applied', async ({ page }) => {
@@ -128,10 +130,16 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
     }
   });
 
-  test('Admin dashboard role guard blocks non-admin and permits verified admin', async ({ page }) => {
-    await page.evaluate(() => { currentProfile=null; currentUser=null; selectedRole='customer'; window.showPage('adminDashboard'); });
+  test('Admin dashboard menu guard blocks non-admin and permits verified admin', async ({ page }) => {
+    await page.evaluate(() => { currentProfile=null; currentUser=null; selectedRole='customer'; window.menuGo('adminDashboard'); });
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await expect(page.locator('#authTitle')).toHaveText('Admin Login');
+    await page.locator('#authModal .close').click();
+    await page.evaluate(() => { currentProfile={role:'customer'}; currentUser={id:'qa-customer'}; selectedRole='customer'; window.alert=message=>window.__qaAdminGuardMessage=String(message); window.menuGo('adminDashboard'); });
     await expect(page.locator('#home')).toHaveClass(/active/);
-    await page.evaluate(() => { currentProfile={role:'admin'}; currentUser={id:'qa-admin'}; selectedRole='admin'; window.showPage('adminDashboard'); });
+    const guardMessage=await page.evaluate(()=>window.__qaAdminGuardMessage||'');
+    expect(guardMessage).toMatch(/ADMIN account/);
+    await page.evaluate(() => { currentProfile={role:'admin'}; currentUser={id:'qa-admin'}; selectedRole='admin'; window.menuGo('adminDashboard'); });
     await expect(page.locator('#adminDashboard')).toHaveClass(/active/);
   });
 
