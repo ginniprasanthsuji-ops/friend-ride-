@@ -15,13 +15,14 @@ const dropResult = {
 
 test.describe('Project Arjuna cab pickup/drop regression', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('https://nominatim.openstreetmap.org/**', async route => {
+    await page.route('https://photon.komoot.io/**', async route => {
       const url = new URL(route.request().url());
-      if (url.pathname.endsWith('/search')) {
-        const q = url.searchParams.get('q') || '';
-        await route.fulfill({ json: [q.toLowerCase().includes('nau') ? dropResult : pickupResult] });
+      const result = url.searchParams.get('q')?.toLowerCase().includes('nau') ? dropResult : pickupResult;
+      const feature = { type: 'Feature', geometry: { type: 'Point', coordinates: [Number(result.lon), Number(result.lat)] }, properties: { name: result.display_name, city: 'Tekkali', state: 'Andhra Pradesh', country: 'India' } };
+      if (url.pathname.endsWith('/reverse')) {
+        await route.fulfill({ json: { type: 'FeatureCollection', features: [feature] } });
       } else {
-        await route.fulfill({ json: { display_name: pickupResult.display_name } });
+        await route.fulfill({ json: { type: 'FeatureCollection', features: [feature] } });
       }
     });
     await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });
