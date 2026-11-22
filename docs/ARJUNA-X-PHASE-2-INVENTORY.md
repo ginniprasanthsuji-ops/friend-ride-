@@ -662,3 +662,20 @@ Source audit advances registration and role-gate reconciliation, but runtime wor
 
 ### Phase 2 disposition
 Route ID reconciliation is complete at source level (58/58 list match). Design-system test retargeting, asset binary/visual validation, runtime worker/push evidence, deployed Supabase contract/RLS evidence and CI run evidence remain open. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No application or database code changes.
+
+
+## Pass 23 — Corrected runtime page count and asset/theme verification boundary
+
+### Correction to Pass 22 wording
+- The Pass 22 comparison correctly identified three stale IDs (`home`, `crmDashboard`, `frSuperHub`) and zero runtime IDs missing from the QA list, but its summary incorrectly called the runtime count 58.
+- Re-extraction using exact `<section id="..." class="page"` pattern confirms **55 actual runtime page sections**, **58 IDs in the legacy QA spec**, **0 runtime page IDs missing from spec**, and **3 stale IDs**.
+- Exact list match is **NO**. The spec contains 55 matching IDs plus the 3 stale IDs. This correction supersedes the inaccurate runtime count in Pass 22.
+
+### Asset inventory status
+- Git tree confirms two PNG files: `icons/icon-192.png` (2,852 bytes) and `icons/icon-512.png` (3,392 bytes), with tracked SHA values recorded in tree metadata.
+- Binary retrieval/visual inspection could not be completed through the available GitHub fetch path. Therefore, whether they are official FRIEND RIDE branded assets, correct artwork, transparent, correctly sized, or visually suitable remains **UNVERIFIED**. No image claims are made.
+- Root `index.html` source does not contain the old QA spec's `fr-dark-gold-design-system` or `#050b17` assertions. The source inspected has theme-color `#24105f`; this confirms the legacy Dark+Gold QA assertions are stale relative to current source, and the intended locked Navy Blue + Orange + White design is not verified/implemented by this audit.
+- The inspected root source includes legacy location text `Tap to detect your location` and `useHomeLocation()`; this is source evidence only, not a runtime GPS proof.
+
+### Phase 2 disposition
+The page-ID inventory is source reconciled with corrected counts; asset visual validation and design-system implementation/test alignment remain blockers. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. No runtime, backend, schema, auth, payment, main or deployment changes.
