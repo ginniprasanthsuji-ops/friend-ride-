@@ -25,6 +25,8 @@ jobs:
           node-version: 20
       - name: Install Playwright
         run: npm install --no-save @playwright/test
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate
       - name: Validate inline JavaScript
         run: node scripts/check-inline-js.mjs
       - name: Install Chromium
