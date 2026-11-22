@@ -65,7 +65,7 @@ This is a source-tree/config/documentation inventory only. No app runtime code, 
 ## CI/workflow inventory (current)
 | Workflow | Current trigger | Status |
 |---|---|---|
-| `quality.yml` | push main + active ARJUNA X QA branch; PR main; push ignores docs-only paths | Active branch Quality Gate passed run `45056922006` |
+| `quality.yml` | push main + active ARJUNA X QA branch; PR main; push ignores docs-only paths | Run #713 on action-v7 workflow commit `8f74189` is in progress: type/unit job passed; browser job running. Latest completed run #712 passed 48 Playwright tests. |
 | `friend-ride-regression.yml` | push main + legacy Dark+Gold branch; manual; daily schedule | Legacy suite; theme spec excluded by Playwright config |
 | `friend-ride-workflow-regression.yml` | old integration branch push; PR main | Legacy source checks |
 | `tasko-laundry-main-regression.yml` | old integration branch push; PR main path filters | Legacy targeted checks; Node 20 |
@@ -721,7 +721,7 @@ Manifest integration review is documented; icon binary integration and install v
 3. **PWA — PARTIAL.** Local CI verified active root `service-worker.js`, linked manifest and icon HTTP responses. Device install, update/offline and push/background/closed-app matrix remain open.
 4. **Backend authorization — PARTIAL.** Production/QA projects healthy; migration/table/RLS metadata verified; 18 production functions sampled, SECDEF grants heuristic screened. Full function/grant/RLS/Edge secret audit remains open. Production leaked-password protection is disabled (owner review).
 5. **QA environment wiring — OPEN.** App source hardcodes production Supabase; separate QA project not wired. CI blocks external API traffic, so live auth/payment/ride integration E2E is not available safely.
-6. **CI alignment — VERIFIED.** Quality Gate triggers on active QA branch and latest run `45056922006` passed type/build/unit/core and **48 Playwright tests**. Branch protection/required checks are not enforced.
+6. **CI alignment — PARTIAL / current evidence.** Active QA branch trigger is present. Latest completed run #712 (`19fe31e`) passed 48 Playwright tests, typecheck/core typecheck, runtime build, Node unit 7/7 and Vitest 5/5. Run #713 on action-v7 patch `8f74189` is in progress; typecheck/unit job passed and browser job is running. Branch protection/required checks remain disabled.
 7. **Legacy theme tests — RETARGETED FOR ACTIVE SUITE.** Dark+Gold spec archived/excluded; functional tests and route baseline retained. Phase 3 must add Navy/Orange/White UI checks.
 8. **Repository governance — OPEN.** Rulesets query 0; required checks/branch protection disabled. Owner policy/approval needed.
 9. **Phase 2 disposition — NOT ACCEPTED.** Remaining evidence above must be closed before Phase 3. No main merge/live deploy.
@@ -1055,3 +1055,11 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - Commit **`8f74189030b15ac1c8a2785eb0baf436b1bf7843`** contains the workflow update.
 - Fresh branch API confirms this commit is the QA head. The Actions runs list still shows latest successful run #712 on `19fe31e`; **no new run for `8f74189` is visible**. The available GitHub connector is read-only for workflow dispatch; cannot manually start a run or execute local commands. Do not claim this workflow upgrade tested. Stop at this access boundary; wait for a push-triggered run/owner action.
 - Pass 52 disposition: safe workflow-only patch committed on QA branch; runtime verification **PENDING / NOT RUN**. Phase 2 remains NOT ACCEPTED. No app/runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 53 — Action-v7 CI run started; status refreshed
+
+- Fresh fetch confirms active Quality Gate now uses `actions/checkout@v7`, `actions/setup-node@v7`, and `actions/upload-artifact@v7` (workflow commit `8f74189030b15ac1c8a2785eb0baf436b1bf7843`).
+- Workflow run **45072777611 / #713** was created for that commit and is currently **IN PROGRESS**. `typecheck-and-unit` completed SUCCESS (typecheck, core typecheck, runtime build, Node unit, Vitest, and audit artifact upload); `browser-e2e` has completed checkout/setup/npm install/Chromium install/local server startup and is currently running Playwright. No browser conclusion yet.
+- Supersedes Pass 52's initial observation that no run was visible. The CI action refresh is now being tested by this run; do not report overall PASS until the browser job and run conclusion complete.
+- Top-level CI summary refreshed. Dependency advisory counts remain 1 moderate + 2 critical; artifact detail inaccessible. Lockfile absent. Phase 2 remains NOT ACCEPTED; no app/backend/schema/auth/payment/main/deployment changes.
