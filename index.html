@@ -4726,17 +4726,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script id="fr-native-navigation-transition-qa">
 (function(){function install(){if(typeof window.showPage!=='function'||window.showPage.__frWrapped)return;const original=window.showPage;function wrapped(id){const current=document.querySelector('.page.active');if(current&&current.id!==id){current.classList.remove('fr-screen-enter');}const result=original.apply(this,arguments);const next=document.getElementById(id);if(next){next.classList.remove('fr-screen-enter');void next.offsetWidth;next.classList.add('fr-screen-enter');}return result;}wrapped.__frWrapped=true;window.showPage=wrapped;}document.addEventListener('DOMContentLoaded',install);if(document.readyState!=='loading')install();})();
 </script>
-<script id="fr-bottom-nav-cart-zero-fix">(function(){function update(){const el=document.getElementById('frBottomCartCount');if(!el)return;const n=parseInt((el.textContent||'0').replace(/\\D/g,''),10)||0;el.hidden=n===0;el.style.display=n===0?'none':'inline-flex';el.setAttribute('aria-label',n+' items in cart');}document.addEventListener('DOMContentLoaded',update);if(document.readyState!=='loading')update();const target=document.getElementById('frBottomCartCount');if(target)new MutationObserver(update).observe(target,{childList:true,characterData:true,subtree:true});})();</script><script id="fr-avatar-broken-image-recovery">
-(function(){
- function fixAvatar(){
-  const img=document.getElementById('frHomeProfileImage'),avatar=document.getElementById('frHomeProfileAvatar');
-  if(!img||!avatar)return;
-  img.addEventListener('error',function(){img.hidden=true;img.removeAttribute('src');avatar.style.display='grid';avatar.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';},{once:true});
-  if(img.complete&&img.naturalWidth===0&&img.src){img.hidden=true;avatar.style.display='grid';avatar.innerHTML='<span class="fr-default-avatar" aria-label="Default profile avatar">👤</span>';}
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fixAvatar);else fixAvatar();
-})();
-</script>
+<script id="fr-bottom-nav-cart-zero-fix">(function(){function update(){const el=document.getElementById('frBottomCartCount');if(!el)return;const n=parseInt((el.textContent||'0').replace(/\\D/g,''),10)||0;el.hidden=n===0;el.style.display=n===0?'none':'inline-flex';el.setAttribute('aria-label',n+' items in cart');}document.addEventListener('DOMContentLoaded',update);if(document.readyState!=='loading')update();const target=document.getElementById('frBottomCartCount');if(target)new MutationObserver(update).observe(target,{childList:true,characterData:true,subtree:true});})();</script>
 </body>
 <!-- FRIEND RIDE FCM Web Push integration -->
 <script src="./fcm-web-push.js"></script>
@@ -5046,10 +5036,14 @@ function repairAvatar(){
   avatar.innerHTML='<span class="fr-avatar-3d" aria-label="Default profile avatar"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="frAvatarFace" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffe4c4"/><stop offset="1" stop-color="#d59a69"/></linearGradient></defs><path d="M13 58c2-14 12-21 19-21s17 7 19 21" fill="#f5c66b"/><ellipse cx="32" cy="25" rx="16" ry="18" fill="url(#frAvatarFace)"/><path d="M16 24c-2-14 7-21 17-20 11 1 17 9 15 22l-4-8-7-7-12 4-7 9z" fill="#293448"/><circle cx="26" cy="26" r="2" fill="#293448"/><circle cx="38" cy="26" r="2" fill="#293448"/><path d="M27 33q5 4 10 0" fill="none" stroke="#9b5e47" stroke-width="2" stroke-linecap="round"/></svg></span>';
  }
  if(image){
-  image.addEventListener('error',function(){image.hidden=true;image.removeAttribute('src');if(avatar)avatar.style.display='grid';},{once:false});
-  if(!image.getAttribute('src'))image.hidden=true;
+  if(!image.dataset.frAvatarErrorBound){
+   image.dataset.frAvatarErrorBound='1';
+   image.addEventListener('error',function(){image.hidden=true;image.removeAttribute('src');if(avatar)avatar.style.display='grid';},{once:true});
+  }
+  if(!image.getAttribute('src')&&!image.hidden)image.hidden=true;
  }
 }
+function setTextIfChanged(node,value){if(node&&node.textContent!==value)node.textContent=value;}
 function ensureLearningCycle(){
  const grid=document.querySelector('#home .fr-native-service-grid');
  if(!grid)return;
@@ -5060,11 +5054,11 @@ function ensureLearningCycle(){
   grid.appendChild(b);
  }else{
   const item=[...grid.querySelectorAll('[data-fr-native-route]')].find(x=>x.dataset.frNativeRoute==='learnTeach');
-  if(item){item.querySelector('b').textContent='విద్యాసేతు';item.querySelector('small').textContent='Student • Teacher • Learning';}
+  if(item){setTextIfChanged(item.querySelector('b'),'విద్యాసేతు');setTextIfChanged(item.querySelector('small'),'Student • Teacher • Learning');}
  }
  // Cycle Delivery uses the existing cycleDelivery page/workflow, never a new parallel flow.
  const cycle=[...grid.querySelectorAll('[data-fr-native-route]')].find(x=>x.dataset.frNativeRoute==='cycleDelivery');
- if(cycle){cycle.querySelector('b').textContent='Cycle Delivery';cycle.querySelector('small').textContent='Eco-friendly bicycle delivery';}
+ if(cycle){setTextIfChanged(cycle.querySelector('b'),'Cycle Delivery');setTextIfChanged(cycle.querySelector('small'),'Eco-friendly bicycle delivery');}
 }
 function apply(){repairAvatar();ensureLearningCycle();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);else apply();
