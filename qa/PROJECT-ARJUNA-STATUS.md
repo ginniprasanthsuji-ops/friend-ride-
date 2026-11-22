@@ -28,7 +28,7 @@
 QA Supabase project `pqsangtvietawkfgpgfu`:
 - Public tables: 5 — `admin_users`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`, `rides`.
 - Public functions: 1 — `fr_create_notification_preferences_for_new_user`.
-- Static frontend direct `.from()` references: 15 tables; 14 are absent from QA, including `profiles`, `driver_locations`, `fr_app_notifications`, `fr_driver_documents`, `fr_emergency_contacts`, `fr_push_subscriptions`, `fr_ride_notifications`, `fr_ride_sos`, `fr_service_bookings`, `fr_service_provider_applications`, `fr_support_feedback`, `ride_live_locations` and additional referenced tables.
+- Static frontend direct `.from()` references: 15 tables; 13 are absent from QA, including `profiles`, `driver_locations`, `fr_app_notifications`, `fr_driver_documents`, `fr_emergency_contacts`, `fr_push_subscriptions`, `fr_ride_notifications`, `fr_ride_sos`, `fr_service_bookings`, `fr_service_provider_applications`, `fr_support_feedback`, `ride_live_locations` and additional referenced tables.
 - Frontend invokes 57 RPC names; QA currently has only 1 public function. Static browser mocks cannot verify authenticated DB workflows.
 - Do not copy production schema wholesale or apply unreviewed migrations. Create a reviewed minimal QA schema and test role boundaries before applying.
 
