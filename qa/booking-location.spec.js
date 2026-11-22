@@ -22,7 +22,7 @@ test.describe('Ride booking map and location suggestions', () => {
     await page.route('https://*.tile.openstreetmap.org/**', route =>
       route.fulfill({status:200,contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/a7sAAAAASUVORK5CYII=','base64')}));
     await page.route('https://*.basemaps.cartocdn.com/**', route =>
-      route.fulfill({status:200,contentType:'image/png',body:Buffer.from('')}));
+      route.fulfill({status:200,contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/a7sAAAAASUVORK5CYII=','base64')}));
     await page.goto('/');
     await page.evaluate(() => window.showPage('ride'));
     await expect(page.locator('#frBookingMap .leaflet-container')).toBeVisible({timeout:15000});
