@@ -201,6 +201,23 @@ Page IDs and headings were extracted. Role-to-page permission rules are not yet 
 - [ ] Verify app foreground/background/closed state on real Android device.
 - [ ] Verify role-specific notification routing, deduplication, quiet hours and consent controls.
 
+
+## Pass 6 — Owner requirements: subscription gateway, GST and toll-free contact
+
+User confirmed: payment gateway is not yet integrated for collecting subscription fees; the app should allow future Admin integration/configuration. GST registration is pending; Admin-entered GST details should later control invoice tax display/calculation. Admin toll-free number should be displayed on homepage, with a separate future toll-free telephony integration.
+
+### Current source findings
+- Cashfree is mentioned in the SPA in subscription/payment placeholder text. It explicitly says live billing requires server-created Cashfree orders and payment verification; subscription selection says payment has not started and secure backend/webhook must be connected before charging. This is **not evidence of a working gateway integration**.
+- Admin Platform Business Settings page contains Toll-Free (1800) and Platform GSTIN fields, validates formats, and calls RPCs `fr_get_platform_business_details` and `fr_admin_save_platform_business_details`. Backend persistence/permissions are source-call presence only; not runtime verified.
+- Existing GST Bills & Invoices page describes a calculation preview, not a statutory tax invoice. It differentiates seller/partner GSTIN from platform GSTIN and cautions about HSN/SAC, place-of-supply, tax split, invoice numbering and GST registration validation.
+- Toll-free homepage display was not verified in this pass. Admin configuration UI presence does not prove homepage rendering.
+
+### Locked implementation requirement (deferred to Phase 8/10)
+- Admin-configurable subscription gateway, initially scoped to subscription fees only, sandbox-first and secure server-side secrets/order/webhook verification. Keep existing ride/customer payment flow untouched.
+- GST settings disabled/unregistered by default while user has no GST registration. Invoice tax must use one source of truth and only show configured, valid tax registration/tax; do not fabricate GST or change old invoices. GST activation/tax treatment requires qualified verification.
+- Admin toll-free number configuration already appears in source; verify homepage visibility and add/repair only if missing. Future call/IVR provider integration is separate and not implemented.
+- Detailed user-confirmed requirements are in `docs/ARJUNA-X-ADMIN-PAYMENT-GST-TOLLFREE-REQUIREMENTS.md`.
+
 ## Phase 2 completion checklist
 - [x] Repository tree and tracked file count inventoried.
 - [x] App entry and architecture footprint identified.
