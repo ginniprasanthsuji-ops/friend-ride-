@@ -72,3 +72,10 @@ QA Supabase project `pqsangtvietawkfgpgfu`:
 - QA database catalog read-only check: 23 frontend RPCs present, 34 absent. This differs from the static migration inventory because two Tasko payment RPCs have migration definitions but are not installed in the QA catalog.
 - Detailed audit: `qa/PROJECT-ARJUNA-RPC-MIGRATION-AUDIT.md`.
 - No production or live Supabase writes performed during this audit.
+
+
+## Continued QA session — 2026-11-22
+- Confirmed latest CI runs on progress commit `d74ae88`: FRIEND RIDE workflow regression, TASKO/Laundry regression, FRIEND RIDE Quality Gate, and FRIEND RIDE Regression all **PASS**.
+- Added `qa/PROJECT-ARJUNA-MISSING-CORE-RPC-CONTRACTS.md` with exact frontend call contracts and security/acceptance requirements for the 20 missing non-payment core RPCs.
+- Latest new documentation commit `430fa87` triggers its own CI; verify those runs before claiming latest HEAD green.
+- Progress remains **80%** pending implementation/testing of missing core RPC/schema gaps and real-device release gates.
