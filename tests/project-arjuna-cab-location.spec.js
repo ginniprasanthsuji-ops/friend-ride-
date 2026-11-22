@@ -161,8 +161,14 @@ test.describe('Project Arjuna cab pickup/drop regression', () => {
 
 
 test('selected pickup/drop coordinates persist when booking map is unavailable', async ({ page }) => {
-  // Simulate a Leaflet/map loading failure; address selection must still retain valid coordinates.
-  await page.evaluate(() => { window.L = null; rideMap = null; });
+  await page.route('https://photon.komoot.io/**', async route => {
+    const url = new URL(route.request().url());
+    const result = url.searchParams.get('q')?.toLowerCase().includes('nau') ? dropResult : pickupResult;
+    await route.fulfill({ json: { type: 'FeatureCollection', features: [photonFeature(result)] } });
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => { showPage('ride'); window.L = null; rideMap = null; });
+  // Simulate Leaflet/map loading failure; coordinate state should still be saved.
   await page.locator('#pickup').fill('Tekkali');
   await expect(page.locator('#frPickupSuggestions button').first()).toContainText('Tekkali', { timeout: 10000 });
   await page.locator('#frPickupSuggestions button').first().click();
