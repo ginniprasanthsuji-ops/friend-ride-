@@ -462,3 +462,31 @@ get_ride_payment_details_v1
 - The repo alone is insufficient to prove exact argument contracts, deployed function existence, SECURITY DEFINER behavior, grants, or authorization for these RPCs.
 - No live database or deployed function metadata was accessed. No SQL was run or applied.
 - Phase 2 cannot mark the RPC/backend authorization audit complete until the function source/contract evidence is available or this limitation is formally accepted for Phase 2, with live QA still required in Phase 10.
+
+
+## Pass 13 — PWA manifests, worker implementation and push setup reconciliation
+
+### Manifest mismatch confirmed
+- `manifest.webmanifest` uses relative `./` start/scope and light theme colors (`#f4f6fb`); it includes 192/512 icon declarations and maskable purpose.
+- `manifest.json` uses absolute GitHub Pages subpath `/friend-ride-/` and dark theme colors (`#101827`), but has no icon declarations.
+- The two manifests therefore disagree on start/scope and theme, and may be deployment-host-specific. Which manifest the HTML actually links and which is active on the custom domain still requires full HTML/host verification. Do not consolidate during inventory without preserving the intended deployment paths.
+
+### Worker behavior and documented setup conflict
+- `fcm-web-push.js` registers `./service-worker.js`, requests permission on user click, obtains FCM token, and calls `fr-notification-register-token` with an authenticated access token.
+- `service-worker.js` has Firebase background handling and generic PushEvent handling; the generic handler ignores payloads it recognizes as FCM to avoid duplicate handling. It contains notification categories and Telugu copy, but no verified TTS/voice playback or marketing-frequency/consent logic in the inspected file.
+- `firebase-messaging-sw.js` is also a Firebase worker, but the inspected opt-in script does not register it.
+- `sw.js` separately handles generic push and notification clicks and deletes caches except its own cache on activation. Multiple workers remain a scope/registration risk.
+- `FCM-WEB-PUSH-SETUP.md` instructs registering `/firebase-messaging-sw.js` and says its apiKey/appId are placeholders, while the inspected source worker/config has values and the opt-in script explicitly registers `service-worker.js`. This documentation/runtime inconsistency is confirmed. Firebase config values are public client config; no private key was exposed in this pass.
+- README describes a different/older notification setup and says background push is not fully activated by these files alone. Treat delivery as unverified until the deployed Edge Function, token storage, and device tests are confirmed.
+
+### Confirmed notification release risks
+1. Worker registration path mismatch across setup doc and opt-in code.
+2. Multiple worker candidates and overlapping PushEvent handlers.
+3. Token registration endpoint response contract is only client-assumed; deployed Edge Function source was not inspected.
+4. Foreground new Notification usage and worker notifications may have differing click/deep-link behavior.
+5. Telugu TTS, user sound/voice settings, hourly opted-in marketing cadence, quiet hours, and marketing opt-out are requirements but not demonstrated by inspected runtime code.
+6. Lock-screen delivery and app-closed delivery are not verified; browser/OS restrictions apply.
+
+### Phase 2 status update
+- This pass adds source-backed reconciliation only. No runtime code, PWA manifest, worker, Supabase, auth, payment, main branch or live deployment changed.
+- Inventory acceptance remains OPEN because full HTML route/role guard inspection, visual logo/icon verification, deployed backend contract/authorization evidence, and notification runtime/device behavior are outstanding.
