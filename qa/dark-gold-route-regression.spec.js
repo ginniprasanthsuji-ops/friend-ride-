@@ -19,6 +19,7 @@ test.describe('FRIEND RIDE Project Arjuna UI and route regression', () => {
       await page.locator('#authModal .close').click();
     }
     await expect(launcher).toHaveClass(/hide/);
+    await page.evaluate(()=>window.showPage('home'));
   });
 
   test('current 56 routes exist; removed VidyaSetu and event services remain absent; theme tokens are applied', async ({ page }) => {
