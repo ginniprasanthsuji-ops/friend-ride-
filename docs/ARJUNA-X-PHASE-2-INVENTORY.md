@@ -1028,3 +1028,22 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 - This run executed the first audit summary implementation; it was subsequently made shell-safe in commit `19fe31e`. That follow-up run `45066833414` remained IN PROGRESS at this observation, with browser tests running and typecheck/unit job complete-success.
 - CI still used npm install and did not create a committed lockfile. The 1 moderate + 2 critical vulnerabilities remain unresolved. Artifact package-level detail could not be inspected through the available connector.
 - Phase 2 remains NOT ACCEPTED; no app/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 51 — Follow-up Quality Gate and branch divergence reconciliation
+
+### Fresh CI verification
+- Workflow run **45066833414 / #712** on commit `19fe31e276a1c73d25fec779974b9d910d0c2104` completed **SUCCESS**; both jobs completed successfully.
+- Browser job log: Playwright **48/48 passed** (22.1s). The earlier audit-capture workflow run **45066821254 / #711** also succeeded: 48 Playwright tests; Node unit **7/7**; Vitest **5/5**; typecheck, core typecheck and runtime build succeeded.
+- Run #712's typecheck/unit job confirms npm audit totals: **1 moderate + 2 critical (3 total)**. Audit artifact from run #711 is present (ID `14772085077`, 1,075 bytes), but the connector cannot download/inspect the ZIP here; package/advisory-level detail remains unverified. `npm install`/audit counts are evidence only; vulnerabilities remain unremediated.
+- Run #712 also logs the Actions Node 20 deprecation transition (actions forced to Node 24 compatibility) and `punycode` / `url.parse` tooling deprecation warnings; these are not test failures.
+
+### Branch divergence and UI asset finding
+- Fresh branch API confirms active QA head before this documentation pass: `29397f274a0423ced51355e1385e5cc47ab55eac`; branch protection disabled, required checks absent.
+- Fresh comparison `main` (`64845496f22487788aedbcf66b74147add3ab9c1`) vs QA branch reports **79 commits ahead, 1 behind, diverged**. No merge/cherry-pick performed.
+- The one main-only commit `6484549` adds `friendride-ui-v1.css` (Navy/Orange/White styling). Fresh main `index.html` head still contains legacy purple tokens and does not link this stylesheet in the inspected head; the QA branch lacks this CSS file (404). Treat this as an unintegrated Phase 3 UI asset, not as completed UI rollout. Do not cherry-pick until reviewed and branch reconciliation is approved/isolated.
+
+### Pass 51 disposition
+- CI evidence blocker for run #712 is **closed as verified evidence**; the dependency remediation/artifact-detail blocker remains open.
+- Phase 2 remains **IN PROGRESS / NOT ACCEPTED**. Exact open gates: lockfile and `npm ci` reproducibility (requires real checkout/install/commit), package-level advisory review/remediation, official icon/logo visual verification, device PWA install/update/offline and background/closed-app push, full deployed auth/RLS/SECDEF/Edge secret review, safe QA backend wiring/integration E2E, and owner-approved branch protection/required checks.
+- No app/runtime/backend/schema/auth/payment/main/deployment changes. No tests run in this automation environment; CI logs were read-only evidence.
