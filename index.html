@@ -5082,3 +5082,39 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 new MutationObserver(apply).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
+
+<!-- FRIEND RIDE QA hotfix: booking map + page isolation -->
+<script>
+(function(){
+'use strict';
+let frBookingMap=null,frBookingPickupMarker=null,frBookingDropMarker=null,frBookingRoute=null,frMapPinMode=null;
+const frBookingDefaultCenter=[18.605,84.23];
+function frBookingMapSetPin(kind,lat,lon,label){
+ const coord={lat:Number(lat),lon:Number(lon)}; if(!Number.isFinite(coord.lat)||!Number.isFinite(coord.lon))return;
+ if(kind==='pickup'){pickupCoords=coord;const el=$('pickup');if(el)el.value=label||('Pickup ('+coord.lat.toFixed(6)+', '+coord.lon.toFixed(6)+')');}
+ else{dropCoords=coord;const el=$('drop');if(el)el.value=label||('Drop ('+coord.lat.toFixed(6)+', '+coord.lon.toFixed(6)+')');}
+ const map=frInitBookingMap();if(!map)return;
+ const markerRef=kind==='pickup'?'frBookingPickupMarker':'frBookingDropMarker';
+ let marker=kind==='pickup'?frBookingPickupMarker:frBookingDropMarker;
+ if(marker)map.removeLayer(marker);
+ marker=L.marker([coord.lat,coord.lon],{draggable:true}).addTo(map).bindPopup((kind==='pickup'?'Pickup':'Drop')+' location').openPopup();
+ marker.on('dragend',async()=>{const p=marker.getLatLng();frBookingMapSetPin(kind,p.lat,p.lng);});
+ if(kind==='pickup')frBookingPickupMarker=marker;else frBookingDropMarker=marker;
+ if(frBookingPickupMarker&&frBookingDropMarker){const bounds=L.featureGroup([frBookingPickupMarker,frBookingDropMarker]).getBounds().pad(.18);map.fitBounds(bounds,{maxZoom:15});}
+ else map.setView([coord.lat,coord.lon],15);
+ if(frBookingPickupMarker&&frBookingDropMarker){if(frBookingRoute)map.removeLayer(frBookingRoute);frBookingRoute=L.polyline([frBookingPickupMarker.getLatLng(),frBookingDropMarker.getLatLng()],{color:'#6b31c8',weight:4,opacity:.8,dashArray:'8 8'}).addTo(map);}
+ const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='Map pin set • '+coord.lat.toFixed(5)+', '+coord.lon.toFixed(5);
+}
+window.frInitBookingMap=function(){
+ const el=$('frBookingMap');if(!el||!window.L)return null;
+ if(!frBookingMap){frBookingMap=L.map(el,{zoomControl:true}).setView(frBookingDefaultCenter,12);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(frBookingMap);frBookingMap.on('click',e=>{if(frMapPinMode){const mode=frMapPinMode;frMapPinMode=null;frBookingMapSetPin(mode,e.latlng.lat,e.latlng.lng);}});}
+ setTimeout(()=>{if(frBookingMap)frBookingMap.invalidateSize(true);},120);return frBookingMap;
+};
+window.frChooseMapPin=function(kind){if(!['pickup','drop'].includes(kind))return;frMapPinMode=kind;const map=frInitBookingMap();if(map){map.invalidateSize(true);map.getContainer().scrollIntoView({behavior:'smooth',block:'center'});}const hint=$(kind==='pickup'?'frPickupHint':'frDropHint');if(hint)hint.textContent='మ్యాప్‌పై నొక్కి '+(kind==='pickup'?'Pickup':'Drop')+' pin పెట్టండి.';};
+window.frUseMyLocation=function(){if(!navigator.geolocation){alert('ఈ browserలో GPS support లేదు.');return;}const hint=$('frPickupHint');if(hint)hint.textContent='GPS location గుర్తిస్తున్నాం…';navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lon=pos.coords.longitude;let label='Current Location ('+lat.toFixed(6)+', '+lon.toFixed(6)+')';try{const res=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon);const d=await res.json();if(d.display_name)label=d.display_name;}catch(_){}frBookingMapSetPin('pickup',lat,lon,label);},err=>{if(hint)hint.textContent='GPS error: '+err.message;alert('Location permission ఇవ్వండి; HTTPSలో GPS పనిచేస్తుంది.');},{enableHighAccuracy:true,timeout:15000,maximumAge:10000});};
+window.frBookingMapSetPin=frBookingMapSetPin;
+// Enforce one active route page. Remove stale active states and ensure the requested page is the only visible page.
+window.showPage=function(id){if(id==='frSuperHub')id='learnTeach';const target=$(id);if(!target||!target.classList.contains('page')){console.warn('FR navigation: unknown page',id);return;}if(id==='ride'&&currentProfile?.role==='customer'&&currentProfile?.address&&!$('pickup')?.value.trim())$('pickup').value=String(currentProfile.address).trim();if(id==='homeServices'&&currentProfile?.role==='admin')$('taskoAdminPanel')?.classList.remove('hide');if(id==='laundryServices'&&currentProfile?.role==='admin')$('laundryAdminPanel')?.classList.remove('hide');document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active');p.setAttribute('aria-hidden','true');});target.classList.add('active');target.setAttribute('aria-hidden','false');document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));document.querySelectorAll('main .page').forEach(p=>{if(p!==target)p.style.display='none';else p.style.display='block';});window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{window.frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize(true);},180);if(id==='tracking')setTimeout(()=>initTrackingMap(),100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();};
+const css=document.createElement('style');css.textContent='.page:not(.active){display:none!important}.page.active{display:block!important}[aria-hidden="true"].page{display:none!important}[aria-hidden="false"].page{display:block!important}#frBookingMap{min-height:250px;width:100%;position:relative;z-index:1}';document.head.appendChild(css);
+})();
+</script>
