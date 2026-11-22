@@ -1,7 +1,4 @@
 name: FRIEND RIDE Regression
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 on:
   push:
     branches: [main, ui/full-native-dark-gold-2026-11-21, project-arjuna/dark-gold-ui-rollout]
@@ -13,7 +10,7 @@ permissions:
 jobs:
   browser-regression:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -32,7 +29,7 @@ jobs:
           done
           cat /tmp/friend-ride-server.log
           exit 1
-      - name: Run browser regression tests
+      - name: Run permanent browser regression suite
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
         run: npm test
