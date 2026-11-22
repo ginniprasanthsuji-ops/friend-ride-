@@ -117,7 +117,7 @@ test('ARJUNA X PWA smoke: manifest, icons and service worker resolve on isolated
     return { scope: reg.scope, activeScript: reg.active?.scriptURL };
   });
   expect(registration.activeScript).toMatch(/\/service-worker\.js$/);
-  expect(registration.scope).toBe(new URL('./', location.href).toString());
+  expect(registration.scope).toBe(new URL('./', page.url()).toString());
 
   const manifestLink = await page.locator('link[rel="manifest"]').getAttribute('href');
   expect(manifestLink).toBe('./manifest.webmanifest');
