@@ -102,3 +102,8 @@ The app source hardcodes production Supabase ref `fglyplxcczdjtfwobtzh`; the sep
 ## Pass 43 repository governance
 
 Rulesets query returns 0; branch protection/required status checks previously observed disabled. CI now runs on QA branch push but is not enforced. Owner-approved branch protection policy is still required. No repository settings changed.
+
+
+## Pass 44 security-catalog screen
+
+Read-only catalog screen: production 88 authenticated-executable SECURITY DEFINER functions, 87/88 show auth/admin/role/ownership source references by heuristic (one public business-details RPC); QA 25/25 show references. All SECDEF functions have search_path settings; 23 production RLS-enabled tables have no policies (QA none). This is not a full manual authorization audit; owner/security review remains. No backend changes.

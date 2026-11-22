@@ -960,3 +960,14 @@ Tree/hash and compare API evidence only; no merge, deploy, app/backend/schema/au
 
 ### Pass 43 disposition
 - Read-only governance inventory only; no branch settings changed. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
+
+
+## Pass 44 — SECDEF grants heuristic screen (read-only catalog)
+
+- Production catalog: 88 SECURITY DEFINER functions executable by `authenticated`; 72 definitions reference `auth.uid()`, 20 reference admin helpers/`admin_users` (overlap), 85 reference role or ownership identifiers. A simple source-reference heuristic finds at least one auth/admin/role/ownership reference in 87/88; the one no-reference function is `fr_get_platform_business_details()`, an intentionally public business-details RPC reviewed in Pass 38. This is a heuristic screen, not proof of authorization correctness.
+- QA catalog: 25 authenticated-executable SECURITY DEFINER functions; 22 reference `auth.uid()`, 8 reference admin helpers (overlap), and all 25 contain role/user/owner identifiers; the heuristic found no function without these references. Still not a full manual grant/function audit.
+- All 102 production and 27 QA SECURITY DEFINER functions have a `search_path` setting. Production has 23 RLS-enabled tables with no policies (likely service-only; verify intended grants), QA has 0. Names of the 23 prod tables are cataloged in this pass: `fr_ai_usage_daily`, `fr_market_order_items`, `fr_market_orders`, `fr_parcel_orders`, `fr_partner_catalogue_items`, `fr_partner_order_candidates`, `fr_partner_order_routes`, `fr_platform_business_settings`, `fr_service_requests`, `fr_v8_delivery_otps`, `fr_v8_invoice_lines`, `fr_v8_invoice_verification_logs`, `fr_v8_invoices`, `fr_v8_order_ledger`, `fr_v8_platform_settings`, `fr_v8_subscription_events`, `friend_ride_receipt_email_logs`, `phone_otps`, `ride_offers`, `shop_delivery_assignments`, `shop_invoice_counters`, `shop_order_items`, `shop_payment_profiles`.
+- Manual review of 18 production functions and the 6 anon-executable function definitions remains sampled, not complete. Security Advisor warnings are review flags; no grants, policies, settings or backend code changed.
+
+### Pass 44 disposition
+- Catalog/source heuristic review only; Phase 2 remains **IN PROGRESS / NOT ACCEPTED** until the full grant/function/RLS review, QA environment wiring, PWA/device/asset and governance evidence are complete.
