@@ -692,3 +692,20 @@ The page-ID inventory is source reconciled with corrected counts; asset visual v
 
 ### Pass 24 disposition
 Draft icon pack prepared locally. No app runtime, manifest, backend, schema, auth, payment, main branch or live deployment changed. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
+
+
+## Pass 25 — PWA icon manifest integration review
+
+### Verified manifest facts
+- Active root `manifest.webmanifest` currently references `icons/icon-192.png` and `icons/icon-512.png`.
+- It declares the 192 icon with `purpose: any maskable`, the 512 icon with `purpose: any`, and references the same 512 file again as `purpose: maskable`.
+- Manifest `background_color` and `theme_color` are both `#f4f6fb`; icon replacement alone would not update the app launch/theme colors to the locked Navy/Orange/White palette.
+- The newly prepared draft icon files are not committed in this branch. The binary-capable replacement workflow is still needed before changing manifest icon references or runtime assets.
+
+### Safe disposition
+- Do not edit manifest yet: existing binary paths are present and changing to unavailable/uncommitted assets could break installability.
+- Next safe step when binary assets can be committed: replace 192/512 files, provide a separate maskable-safe 512 PNG, then update manifest purpose and palette fields and verify on local isolated PWA install/test.
+- No application code, manifest, backend, schema, auth, payment, main branch or live deployment changed in this pass.
+
+### Pass 25 status
+Manifest integration review is documented; icon binary integration and install verification remain pending. Phase 2 remains **IN PROGRESS / NOT ACCEPTED**.
