@@ -66,3 +66,27 @@ test("retry-safe action still obeys retry limit", async () => {
   assert.equal(result[0]?.status, "FAILED");
   assert.equal(result[0]?.attempts, 2);
 });
+
+test("tier 4 action requires special approval, not normal confirmation", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  const denied = await runtime.run([{ ...action, permissionTier: 4 }], { userConfirmedActionIds: ["a1"] });
+  assert.equal(denied[0]?.status, "NEEDS_SPECIAL_APPROVAL");
+  assert.equal(executions, 0);
+  const approved = await runtime.run([{ ...action, permissionTier: 4 }], { specialApprovalActionIds: ["a1"] });
+  assert.equal(approved[0]?.status, "SUCCEEDED");
+  assert.equal(executions, 1);
+});
+
+test("duplicate action IDs are rejected before any execution", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([action, { ...action }]), /Duplicate action id/);
+  assert.equal(executions, 0);
+});
+
+test("retry configuration outside supported bounds is rejected", async () => {
+  const runtime = new TaskExecutionRuntime({ async execute() { return "ok"; } });
+  await assert.rejects(() => runtime.run([action], { maxRetries: 4 }), /between 0 and 3/);
+  await assert.rejects(() => runtime.run([action], { maxRetries: -1 }), /between 0 and 3/);
+});
