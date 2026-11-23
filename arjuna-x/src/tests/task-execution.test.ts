@@ -156,3 +156,11 @@ test("cancellation signal after executor resolves marks action SKIPPED", async (
   assert.equal(result[0]?.status, "SKIPPED");
   assert.equal(result[0]?.output, undefined);
 });
+
+test("empty or non-string action descriptions are rejected before execution", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([{ ...action, description: "   " }]), /Action description is required/);
+  await assert.rejects(() => runtime.run([{ ...action, description: 123 } as never]), /Action description is required/);
+  assert.equal(executions, 0);
+});
