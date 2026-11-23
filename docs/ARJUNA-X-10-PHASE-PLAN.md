@@ -494,3 +494,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Latest fetched Quality Gate run #737 (45094159319) on prior head `a09d789b2c5c3ad37d5455b1f69bbf9e4d66b3a0` completed **success**. This is not CI evidence for current documentation commit `dc58d3d` or this Pass 90 commit.
 - Branch-protection setup requires owner/admin capability; connector/API read confirms unprotected state, but write access is not available here. Owner-side enablement remains a release blocker.
 - No repo settings, code, database, schema, grants, data, production, merge, or deployment changed in this pass. Phase 2 remains NOT ACCEPTED.
+
+
+## Pass 91 — QA Edge Function notification/classroom source review (read-only, 2026-11-23)
+
+- Enumerated active QA Edge Functions: notification dispatch (verify_jwt=false), token registration (verify_jwt=true), plus classroom/Zoom session functions (all verify_jwt=true).
+- Notification dispatcher source has a shared-secret header check before service-role use; requires configured FCM project/email/private key and processes queued events in batches of 50. It checks per-user category preferences, active tokens, and deactivates tokens on FCM UNREGISTERED responses. **Operational risk to test:** concurrent invocations may select the same queued events before status updates, potentially duplicating delivery; no claim of confirmed exploit. Confirm scheduler concurrency/locking/idempotency before enabling.
+- Token registration authenticates bearer session via getUser, validates token/platform and uses user-scoped client upsert; QA RLS policy for token/preferences ALL operations requires auth.uid()=user_id.
+- Classroom/Zoom function source samples validate approved teacher/course ownership and active enrollment before create; session-confirm function requires student ownership and pending_confirmation state; join-link function checks teacher/student participant, scheduled/started state and teacher-approved homework. External-classroom link accepts HTTP/HTTPS, which should be tested against product policy and safe URL expectations.
+- Read-only source and policy review only. No Edge Function deployed/changed; no DB schema/data/grants/policies changed; production untouched. Security and device/integration tests remain incomplete. Phase 2 NOT ACCEPTED.
