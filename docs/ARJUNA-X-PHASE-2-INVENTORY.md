@@ -1249,3 +1249,11 @@ Read-only QA source audit confirmed:
 - CI #750 SUCCESS on `91ab41ace0538a5500da21ceacb58fdf001bdbee`: TypeScript typecheck, core typecheck, runtime build, Node unit suite, Vitest core suite, and Playwright browser regression all passed.
 - #748 test failure is retained as history: 13/14 unit tests passed; browser job passed; second new audit test failed due to a setup-doc dependency racing the subsequent documentation commit. Removed that test-only dependency; #750 green.
 - #749 documentation commit CI SUCCESS. Current inventory doc commit `d74d2c65` is doc-only after CI #750 and not separately run.
+
+
+## Pass 111 — QA-only least-privilege remediation (2026-11-23)
+
+- Executed QA project `pqsangtvietawkfgpgfu` only: `REVOKE ALL PRIVILEGES` from `anon` on the 18 sampled tables (admin_users, driver_locations, fr_app_notifications, fr_bank_enquiries, fr_driver_documents, fr_emergency_contacts, fr_push_subscriptions, fr_ride_notifications, fr_ride_sos, fr_service_bookings, fr_service_categories, fr_service_provider_applications, fr_service_providers, fr_service_requests, fr_support_feedback, profiles, ride_live_locations, rides).
+- Post-change SQL verified anon table grants=0, PUBLIC table grants=0, RLS enabled on 21/21 public tables, total policies=46, anon/PUBLIC policies=0, authenticated table grant rows=141. This is a direct ACL revocation only; no schema/data/function/policy/auth/payment changes. Production project untouched.
+- Added read-only 54-check least-privilege section to `qa/read-only-regression.sql` and static coverage `tests/qa-security-audit-sql.test.cjs`.
+- Run #751/#752 queued or in progress at commit time; awaiting CI. Phase 2 remains gated by notification, owner/device, branch-protection and other checks.
