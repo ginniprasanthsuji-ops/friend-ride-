@@ -29,8 +29,12 @@ const MAX_ACTION_DESCRIPTION_LENGTH = 1_000;
 
 const SENSITIVE_OUTPUT_KEYS = /password|passwd|token|secret|authorization|cookie|api[-_]?key|credential/i;
 function redactText(value: string): string {
-  return value.replace(/(bearer\\s+)[A-Za-z0-9._~+\\/-]+=*/gi, "$1[REDACTED]")
-    .replace(/((?:password|passwd|token|secret|api[-_]?key|authorization|cookie|credential)\\s*[:=]\\s*)[^\\s,;]+/gi, "$1[REDACTED]");
+  return value
+    .replace(/-----BEGIN [A-Z ]*PRIVATE KEY-----[\\s\\S]*?-----END [A-Z ]*PRIVATE KEY-----/g, "[REDACTED PRIVATE KEY]")
+    .replace(/\\beyJ[A-Za-z0-9_-]+\\.eyJ[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\b/g, "[REDACTED JWT]")
+    .replace(/(bearer\\s+)[A-Za-z0-9._~+\\/-]+=*/gi, "$1[REDACTED]")
+    .replace(/((?:password|passwd|token|secret|api[-_]?key|authorization|cookie|credential|access[-_]?key|refresh[-_]?key)\\s*[:=]\\s*)[^\\s,;&]+/gi, "$1[REDACTED]")
+    .replace(/([?&](?:password|passwd|token|secret|api[-_]?key|authorization|cookie|credential|access[-_]?key|refresh[-_]?key)=)[^&#\\s]+/gi, "$1[REDACTED]");
 }
 function redactOutput(value: unknown, depth = 0, visited = new WeakSet<object>()): unknown {
   if (depth > 8) return "[Output omitted: maximum nesting depth]";
