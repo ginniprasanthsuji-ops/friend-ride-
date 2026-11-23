@@ -6,3 +6,4 @@ export * from "./core/orchestrator.js";
 export * from "./core/intent-router.js";
 export * from "./core/ai-provider.js";
 export * from "./core/assistant-runtime.js";
+export * from "./core/task-execution.js";
