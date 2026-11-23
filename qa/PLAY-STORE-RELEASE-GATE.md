@@ -370,3 +370,9 @@ On code/evidence commit `2598dec60f15552dc6add4d2bd5d187d27c1b44a`, four workflo
 ## 12. QA admin-RPC role-negative test increment (2026-11-23)
 
 Four additional QA admin RPC negative tests passed in a rollback transaction: `admin_review_driver_document`, `admin_review_driver`, `fr_admin_assign_service_provider`, `fr_admin_review_partner`. Each returned the expected admin-denial error for a synthetic authenticated non-admin. Post-rollback verification found no test profile, admin membership, dummy service request, or dummy provider. Combined with the earlier three QA admin-list RPC tests, 7 QA admin RPCs have negative-role evidence. This is limited QA coverage; it does not close production SECURITY DEFINER review or any live-device/credential gate.
+
+
+## 13. Latest QA role-negative increment / CI trigger note (2026-11-23)
+
+- Additional QA-only admin-role negative tests: **4/4 PASS** for `admin_review_driver_document`, `admin_review_driver`, `fr_admin_assign_service_provider`, and `fr_admin_review_partner`. All were tested with a synthetic authenticated non-admin and valid action arguments; each raised the expected Admin-denied exception. The transaction rolled back and post-checks found zero synthetic profile/admin membership or dummy request/provider rows. QA now has negative-role evidence for 7 admin RPCs total (3 earlier + 4 new).
+- Git-data ref update commit `76f02554185780bde9244a60b50a67584329e1bb` updated the evidence docs, but no workflow run was visible for that commit at the time of check. A new contents-API documentation commit is being used to trigger push/PR workflows. This is evidence-only; no source-code changes.
