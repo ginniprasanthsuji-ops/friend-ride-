@@ -640,3 +640,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Inspected the existing 58-route Playwright baseline: it asserts 58 `.page` IDs, activates each through the router, and checks PWA manifest/icons/service worker smoke. This remains a route/PWA smoke baseline, not visual per-route coverage.
 - Confirmed the Phase 3 design-system stylesheet is imported by `learn-teach.css`; evidence does not establish that the shared stylesheet is loaded globally across the full app. Therefore global shell rollout is still an integration blocker and must not be claimed complete.
 - No app code changed in this audit; branch remains QA-only. Latest verified HEAD before this record `ee073f332e6cb7a2af76efa97e54728bfee2c438`.
+
+
+## Phase 2 — Pass 107 (web push/FCM source integration audit)
+
+- Inspected current QA branch app opt-in code, both service workers, and live QA Edge Function source (read-only). Web opt-in stores browser PushManager subscription in `fr_push_subscriptions`, while dispatcher v7 reads/sends only `fr_notification_tokens` via FCM. Site does not call FCM `getToken()` or the JWT token-register function. Confirmed mismatch; no background push acceptance.
+- QA token-register v5 verifies session with `auth.getUser()`, accepts `platform=web`, and upserts token ownership. QA row counts on 2026-11-23: `fr_notification_events=0`, `fr_notification_tokens=0`, `fr_push_subscriptions=0`; no QA delivery data.
+- Corrected stale `FCM-WEB-PUSH-SETUP.md` and added static mismatch audit test `tests/notification-architecture-audit.test.cjs`. Commits: `2b40c760` (test), `ec934a09` (setup doc), `79602a0d` (Phase 2 inventory). No backend/schema/production changes.
+- CI #748 for test commit is in progress; #749 for setup-doc commit queued at record time. Phase 2 remains NOT ACCEPTED; owner confirmation of Firebase/VAPID config, safe integration, QA event producer, secret presence check (values not read), and physical device tests are blockers.
