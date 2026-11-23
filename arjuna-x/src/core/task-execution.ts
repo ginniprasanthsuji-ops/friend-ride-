@@ -43,6 +43,7 @@ export class TaskExecutionRuntime {
       if (![0, 1, 2, 3, 4].includes(action.permissionTier)) throw new Error(`Invalid permission tier for action ${action.id}`);
       if (action.retrySafe !== undefined && typeof action.retrySafe !== "boolean") throw new Error(`retrySafe must be a boolean for action ${action.id}`);
       if (typeof action.description !== "string" || !action.description.trim()) throw new Error(`Action description is required for ${action.id}`);
+      if (!["QUEUED", "READY", "RUNNING", "WAITING_APPROVAL", "VERIFYING", "COMPLETED", "FAILED", "BLOCKED", "CANCELLED"].includes(action.status)) throw new Error(`Invalid task status for action ${action.id}`);
     }
     if (options.userConfirmedActionIds !== undefined && (!Array.isArray(options.userConfirmedActionIds) || options.userConfirmedActionIds.some((id) => typeof id !== "string"))) throw new Error("userConfirmedActionIds must be an array of strings");
     if (options.specialApprovalActionIds !== undefined && (!Array.isArray(options.specialApprovalActionIds) || options.specialApprovalActionIds.some((id) => typeof id !== "string"))) throw new Error("specialApprovalActionIds must be an array of strings");
