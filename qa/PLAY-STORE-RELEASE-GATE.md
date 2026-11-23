@@ -423,3 +423,11 @@ A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95
 - Combined production role/ownership coverage: **30/88 verified; 58 remaining**. Post-test synthetic data counts 0 across profiles, admin_users, rides, market orders, parcel orders, service requests, service providers, driver locations.
 - Current branch head `c7ddfa65665b0357928d0c9d4d7d505b7841ee7c`: workflow/source `45131877959` success; Regression `45131878071`, TASKO/Laundry/Admin `45131878062`, Quality Gate `45131878153` were in progress at last check. CI not yet all-green on this documentation head.
 - Phase 2 still not accepted. Owner actions/settings, 58 remaining RPC checks, public visibility/table confirmations, QA push/live integration/device evidence remain release blockers. No production schema/Auth/function change, merge or deploy.
+
+
+## 22. Production SECURITY DEFINER function triage — 2026-11-23
+
+- Additional helper test: `is_friend_ride_admin()` returned false for synthetic authenticated non-admin. Production role/ownership function coverage now **38/88; 50 remain**.
+- Remaining 50 function source-marker triage: 41 caller/ownership markers; 1 admin-guard marker (`fr_cancel_ride`); 8 no-simple-auth-marker public/approved-data surfaces requiring manual review/owner acceptance. Marker triage is not authorization proof.
+- CI at `97211bdbf744b5c51f21ad5009c1846501f2b451`: workflow/source `45131985938` success; Regression `45131985922`, TASKO/Laundry/Admin `45131985913`, Quality Gate `45131986043` in progress. Do not treat as all green until completed.
+- Phase 2 remains blocked. No production DB/Auth/Edge changes, merge or deployment.
