@@ -293,3 +293,14 @@ test("redacts sensitive keys in executor output before returning results", async
   const result = await runtime.run([action]);
   assert.deepEqual(result[0]?.output, { ok: true, password: "[REDACTED]", nested: { apiKey: "[REDACTED]", value: "safe" }, authorization: "[REDACTED]" });
 });
+
+test("output sanitizer handles circular values and avoids invoking getters", async () => {
+  let getterCalls = 0;
+  const circular: Record<string, unknown> = { safe: "value" };
+  circular.self = circular;
+  Object.defineProperty(circular, "computed", { enumerable: true, get() { getterCalls++; return "unsafe"; } });
+  const runtime = new TaskExecutionRuntime({ async execute() { return circular; } });
+  const result = await runtime.run([action]);
+  assert.deepEqual(result[0]?.output, { safe: "value", self: "[Output omitted: circular reference]", computed: "[Output omitted: accessor]" });
+  assert.equal(getterCalls, 0);
+});
