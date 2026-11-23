@@ -1,0 +1,27 @@
+name: ARJUNA X Core CI
+on:
+  push:
+    branches:
+      - arjuna-x/implementation-foundation
+    paths:
+      - "arjuna-x/**"
+  pull_request:
+    paths:
+      - "arjuna-x/**"
+  workflow_dispatch:
+jobs:
+  core-checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: arjuna-x
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: arjuna-x/package-lock.json
+      - run: npm install
+      - run: npm run build
+      - run: npm test
