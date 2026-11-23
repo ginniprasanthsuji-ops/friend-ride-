@@ -632,3 +632,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added assertions for expected Navy (`#071c46`), Orange (`#ff6b00`), White surface token values and shared selectors (`.topbar`, `.hero`, `.btn`, `.bottom`, `.card`, `:focus-visible`).
 - Test-only commit `75b9cdac0d4b9522d466ab9f18b619a3645e2fce`. CI #745 and #746 both completed SUCCESS at latest check; Pass 105 CI pending.
 - This is regression guard coverage, not evidence of visual migration across all screens.
+
+
+## Phase 3 — Pass 106 (integration scope audit)
+
+- Re-verified CI #743–#747: all completed successfully; the latest #747 (Pass 105) is SUCCESS. #746 (Pass 104) and #745/#744/#743 also SUCCESS.
+- Inspected the existing 58-route Playwright baseline: it asserts 58 `.page` IDs, activates each through the router, and checks PWA manifest/icons/service worker smoke. This remains a route/PWA smoke baseline, not visual per-route coverage.
+- Confirmed the Phase 3 design-system stylesheet is imported by `learn-teach.css`; evidence does not establish that the shared stylesheet is loaded globally across the full app. Therefore global shell rollout is still an integration blocker and must not be claimed complete.
+- No app code changed in this audit; branch remains QA-only. Latest verified HEAD before this record `ee073f332e6cb7a2af76efa97e54728bfee2c438`.
