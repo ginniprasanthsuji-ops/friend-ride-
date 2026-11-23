@@ -1,0 +1,14 @@
+{
+  "name": "arjuna-x-core",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Isolated ARJUNA X assistant engine foundation",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
