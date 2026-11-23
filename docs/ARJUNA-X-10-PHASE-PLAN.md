@@ -326,3 +326,13 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - QA commits: SVG icon `11ec37ff620a330ec39d1966efda5e01655d0265`; manifest cleanup `5718b677f5c08a35c2178b66af2bfa08c8b1b430`.
 - Source-level validation: PNG signatures/dimensions verified; manifest JSON parsed and updated; SVG source created and referenced. Browser rendering, install prompt, masked Android launcher icon, screenshots and actual-device appearance remain unverified (connector-only environment cannot run browser/device test).
 - Icon review blocker is **source/asset review closed with an alternative**, while PWA/device compatibility remains a separate pending gate. Do not claim visual device verification.
+
+
+## Pass 72 — User-supplied official logo asset preparation (2026-11-23)
+
+- User supplied two logo images and confirmed this is the new FRIEND RIDE brand icon/logo. Official direction is the user's own logo: navy + orange + white, with the FR/location-pin mark and full FRIEND RIDE service wordmark.
+- Prepared locally from the supplied transparent logo source: square launcher icon sizes 192 and 512; a 512 maskable variant with additional safe padding; and a full transparent logo PNG. Assets were dimension-checked and the 512 icon was visually inspected.
+- Icon composition uses a navy outer field and white tile so the navy F and orange R/location mark remain readable; it does not alter the full official wordmark.
+- **Repository limitation:** the current GitHub connector supports UTF-8 text file writes but no direct binary file upload. Therefore these generated PNG assets are prepared and verified in this session but not committed to the QA repository. Do not falsely report the supplied logo as fully deployed. The previous themed SVG remains the current repository icon until the binary assets are added through an upload-capable Git path.
+- Fresh QA workflow evidence: Quality Gate run **#728 / 45091250892** completed **SUCCESS** on commit `5718b677f5c08a35c2178b66af2bfa08c8b1b430` (manifest/theme icon source change). This is not evidence that the new user-supplied PNG assets are installed or device-tested.
+- No main merge, production changes, deployment, or backend/schema/auth/payment changes. Phase 2 remains NOT ACCEPTED; remaining gates include FCM client wiring/device delivery, PWA install/update/offline device tests, security/RLS/Edge secrets review, QA backend integration E2E, branch protection/required checks, and committing the official binary assets.
