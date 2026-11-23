@@ -486,3 +486,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Source review: `get_driver_requests` validates an authenticated approved-driver profile before returning unassigned requested rides; `fr_register_driver_partner` checks authenticated UID, role/profile state, and required fields; `fr_customer_list_approved_stores_geo` limits results to approved partners; `fr_customer_list_approved_service_providers` filters approved online providers and active category but does not itself call `auth.uid()` or enforce a customer role. It is authenticated-granted, not anon-granted. Flag for role-based adversarial test and product/privacy confirmation; no grant/function change made.
 - `fr_public_homepage_feedback` remains an anon-access surface; sampled source returns only published homepage-enabled feedback (limit 20) and bounded display names. Consent, content safety, and abuse/rate-limit verification remain outstanding.
 - Audit is still a sample, not a complete security acceptance. Read-only QA SQL only; no schema, grants, function code, data, or production changes. Phase 2 NOT ACCEPTED.
+
+
+## Pass 90 — QA branch protection verification (read-only, 2026-11-23)
+
+- Fresh GitHub branch API read confirms the active QA branch `arjuna-x/phase-2-repository-assets-inventory` is **not protected** and protection is disabled; required status checks are not configured/enforced on this branch.
+- Latest fetched Quality Gate run #737 (45094159319) on prior head `a09d789b2c5c3ad37d5455b1f69bbf9e4d66b3a0` completed **success**. This is not CI evidence for current documentation commit `dc58d3d` or this Pass 90 commit.
+- Branch-protection setup requires owner/admin capability; connector/API read confirms unprotected state, but write access is not available here. Owner-side enablement remains a release blocker.
+- No repo settings, code, database, schema, grants, data, production, merge, or deployment changed in this pass. Phase 2 remains NOT ACCEPTED.
