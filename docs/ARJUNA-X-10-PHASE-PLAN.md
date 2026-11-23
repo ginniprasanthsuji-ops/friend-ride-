@@ -753,3 +753,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added Node regression assertions for this contrast-oriented CSS treatment. This is UI-only and does not change button behavior.
 - CI #763 and #764 verified SUCCESS for Pass 110 code/test. Pass 111 (#765/#766) and Pass 112 (#767/#768) are pending at this documentation update. Verify latest CI before considering this palette iteration accepted.
 - Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 113 (ride/map accents, 2026-11-23)
+
+- Harmonized scoped ride/map accent components: pills, location action buttons, tracking action buttons, map borders and map placeholder surfaces with Phase 3 Navy/Orange/White.
+- Added regression assertions for these scoped components.
+- CI #765 and #766 verified SUCCESS for Pass 111 (hardcoded purple shell remaps). #767/#768 Pass 112 and #769/#770 Pass 113 were pending at this update; follow the latest run.
+- Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
