@@ -26,3 +26,9 @@
 
 ## Safety
 No production deployment, merge, DB/schema/auth/payment change, secret access, or destructive operation performed.
+
+## Residual legacy palette source audit (after initial patch)
+- A static hex-token audit of the fetched branch source counted 937 color tokens across 624 distinct hex values.
+- Exact legacy palette references remain: `#5420b8` (7), `#24105f` (1), `#7b35df` (1), `#4c1b9c` (1), `#7736cb` (1), `#5120b4` (1), and `#8140df` (1).
+- This confirms the initial shared override is **not** a complete legacy-color removal. Remaining purple values are intentionally not mass-replaced without selector/context review to avoid breaking component states or third-party map controls.
+- Phase 3 remains in progress; the next work item is selector-by-selector review of remaining purple values, then logo/source asset confirmation and route visual regression.
