@@ -30,3 +30,11 @@
 - [ ] Text fallback works if speech is unsupported or denied.
 - [ ] Existing safety/permission checks remain unchanged.
 - [ ] Regression tests execute successfully in CI before merging.
+
+
+## Avatar presentation update
+- Ginny AI H1 uses a **male-presenting avatar**; assistant name stays Ginny.
+- Visual theme: friendly South Asian male avatar, navy-and-gold outfit, headset, gold circular frame on deep navy background.
+- Prefer masculine voice presentation when available, but voice selection follows language support and user preference.
+- Localized avatar alt text is provided by `ginny-avatar-profile.ts`.
+- Generated avatar concept exists in this conversation; image asset has not yet been uploaded into the repository or wired into UI.
