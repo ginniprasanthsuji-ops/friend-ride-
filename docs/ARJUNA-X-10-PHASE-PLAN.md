@@ -520,3 +520,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Retrieved successful CI #736 (run 45092676845) job step evidence: typecheck-and-unit and browser-e2e both completed success; npm ci audited 44 packages with **0 vulnerabilities**; typecheck, core typecheck, runtime build, unit/core tests, Chromium install and browser regression suite all completed successfully. Previously recorded Playwright result 48/48 is for that code SHA `b3c0dd59b34af006664329d959337bc3a40a9188`, not later documentation commits.
 - Current QA branch head at start of this pass was Pass 91 commit `90f3cb63009e522239c0543dfd9a3711ac5b088d`. Latest workflow still #737 success on earlier `a09d789b2c5c3ad37d5455b1f69bbf9e4d66b3a0`; no CI run has yet been observed for Pass 91 docs commit. No workflow dispatch/write permission available to trigger one here.
 - No source code, Edge Function, secrets, backend schema/grants/data, production, merge, or deployment changes. Phase 2 NOT ACCEPTED.
+
+
+## Pass 92 — Notification preferences/token/event adversarial review (read-only, 2026-11-23)
+
+- Confirmed authenticated grants and RLS: notification token/preferences tables allow authenticated table operations but policies constrain rows to auth.uid()=user_id; notification events are authenticated SELECT only with own-user policy. Service role has dispatcher access. No anon grants surfaced in sampled grant output.
+- Token table has unique token index and user/is_active lookup index; registration upsert on token may transfer token ownership to the authenticated user if a token is re-used/re-registered, behavior to verify in multi-account device scenarios.
+- **Confirmed source-level behavior gap:** preference schema includes quiet-hours enabled/start/end, but dispatcher source only checks category preference booleans and does not enforce quiet hours. This is a functional/privacy issue if quiet-hours UI is exposed; needs tests and a safe implementation proposal.
+- Dispatcher reads queued events in a batch and updates statuses after sending; no atomic claim/lock or idempotency guard is visible in source. Concurrent duplicate delivery is a risk requiring reproducible testing, not a confirmed incident.
+- Read-only QA SQL/source only. No schema/data/grants/RLS/Edge Functions changed; production untouched. Phase 2 NOT ACCEPTED.
