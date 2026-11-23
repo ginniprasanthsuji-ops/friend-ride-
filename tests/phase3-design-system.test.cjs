@@ -47,7 +47,9 @@ test('Phase 3 palette and shared component selectors keep intended values', () =
 
 test('Phase 3 shell is integrated behind an explicit root scope', () => {
   assert.match(index, /<body[^>]*class=["'][^"']*fr-phase3-shell/);
-  assert.match(index, /href=["']\.\/styles\/friendride-phase3-design-system\.css["']/);\n  assert.match(design, /\.fr-phase3-shell\{padding-bottom:calc\(82px/);\n  assert.match(design, /\.fr-phase3-shell \*.*animation-duration/);\n  assert.doesNotMatch(design, /\.fr-phase3-shell \.fr-phase3-shell/);
+  assert.match(index, /href=["']\.\/styles\/friendride-phase3-design-system\.css["']/);
+  assert.match(design, /\.fr-phase3-shell\{padding-bottom:calc\(82px/);
+  assert.match(design, /\.fr-phase3-shell \*.*animation-duration/);\n  assert.doesNotMatch(design, /\.fr-phase3-shell \.fr-phase3-shell/);
   for (const selector of ['.fr-phase3-shell .topbar', '.fr-phase3-shell .hero', '.fr-phase3-shell .btn', '.fr-phase3-shell .bottom', '.fr-phase3-shell main', '.fr-phase3-shell .card']) {
     assert.ok(design.includes(selector), `missing scoped shell selector: ${selector}`);
   }
