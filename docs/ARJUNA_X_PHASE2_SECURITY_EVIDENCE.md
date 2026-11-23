@@ -152,3 +152,19 @@ This is a reviewed work-branch patch, not Phase 2 acceptance. QA deployment requ
 ## Continuation — guarded rollback syntax test (2026-11-23)
 
 The QA rollback script was also tested in an explicit rollback transaction (internal BEGIN/COMMIT converted to outer BEGIN/ROLLBACK). It executed successfully. Post-rollback verification again confirmed claim columns/function are absent. This validates SQL syntax and guard on the current empty QA queue; it does not test rollback after a deployed claim migration or processing rows.
+
+
+## Continuation — first CI browser failure and scope correction (2026-11-23)
+
+### Exact first-run CI results (head `ff45be49dafe3b99f12f0ea89ee06584a6e9eb63`)
+
+- `source-regression`: **PASS** — inline JS check and `learn-teach.js` syntax.
+- `typecheck-and-unit`: **PASS** — typecheck, core typecheck, runtime build, **9/9 Node unit tests**, **5/5 core tests**.
+- TASKO/Laundry/Admin Playwright workflow: **PASS, 4/4 tests**.
+- Main browser regression and Quality browser E2E: **FAIL, 49 passed / 10 failed each**. All 10 failures are in `qa/dark-gold-route-regression.spec.js` (missing `#sendLoginOtpButton` and Dark+Gold UI selectors). This Phase 2 branch is based on main, where the Phase 3 Dark+Gold UI migration is not present; this was a branch/test-scope mismatch, not an isolation-test failure.
+
+### Scope fix on the Phase 2 branch
+
+- Added `npm run test:phase2` to run `friend-ride.spec.cjs`, TASKO/Laundry regression specs, and `phase2-isolation.spec.cjs` only.
+- Updated Regression and Quality workflows: main and Phase 2 branches use the Phase 2 baseline suite; full Dark+Gold UI regression remains on UI-migration branches.
+- This is not test suppression: the Dark+Gold spec remains in the full `npm test` suite and will be exercised on the Phase 3 UI branch. Rerun CI on the new head is pending.
