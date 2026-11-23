@@ -40,3 +40,19 @@ No SQL was executed in this audit. No production writes, main merge, or live dep
 - A literal escaped newline was introduced in the role-feature matrix source during a prior edit. It has been corrected in commit `689c0325`.
 - Role-feature tests now assert distinct unknown-feature denial and disabled external-provider denials in commit `992d9f74`.
 - No CI workflow runs were returned for commit `992d9f74`; automated test execution is not verified.
+
+## QA Supabase RLS metadata audit (read-only)
+Project: FRIEND RIDE QA (pqsangtvietawkfgpgfu). No SQL mutations were executed.
+- 21 public base tables inspected; RLS enabled on all 21.
+- RLS is not forced on any listed table (relforcerowsecurity=false); this is not inherently a defect, but privileged bypass roles and function behavior require review.
+- Policies inspected for all public tables. Key observed ownership/role constraints: profiles own-row select/update; rides customer-owned insert and customer/assigned-driver select; live-location access limited to ride participants; notifications own-user; bank enquiries and driver documents admin-restricted; provider/service requests have customer/provider/admin scopes.
+- 28 public SECURITY DEFINER functions detected. These are high-priority audit targets: verify explicit auth.uid() checks, role/ownership checks, safe search_path, and EXECUTE grants. Metadata alone cannot certify function safety.
+- QA tables with RLS enabled but no visible policy in returned policy list were not individually tested for intended access. Table access and function execution behavior remain untested.
+- No production RLS inspection or SQL changes in this turn.
+
+## RLS findings / next checks
+1. Review SECURITY DEFINER bodies and grants for all 28 functions, beginning with ride participant detail RPCs, admin review, driver registration, service-provider transition and notification claim.
+2. Test RLS matrix with actual anon/authenticated roles and test identities (read-only / controlled QA data only): customer, driver, partner, teacher, student, admin.
+3. Check profiles UPDATE policy/trigger for privileged role/approval fields; existing QA guard function is present but body and trigger binding need confirmation.
+4. Inspect storage bucket policies and private KYC buckets separately.
+5. Route runtime must use database-backed identity/role, not client role values alone.
