@@ -36,6 +36,24 @@ export class SessionContextStore {
     return this.sessions.get(sessionId);
   }
 
+  /** Returns a bounded, detached history window for prompt construction. */
+  getRecentMessages(sessionId: string, limit = 12): ContextMessage[] {
+    if (!Number.isInteger(limit) || limit < 0 || limit > this.maxMessagesPerSession) {
+      throw new Error(`limit must be an integer between 0 and ${this.maxMessagesPerSession}`);
+    }
+    return this.requireSession(sessionId).messages.slice(-limit).map((message) => ({ ...message }));
+  }
+
+  /** Returns a detached bounded fact snapshot, preventing callers from mutating session state. */
+  getFactsSnapshot(sessionId: string, maxFacts = 20, maxValueChars = 500): Record<string, string> {
+    if (!Number.isInteger(maxFacts) || maxFacts < 0 || maxFacts > 100) throw new Error("maxFacts must be between 0 and 100");
+    if (!Number.isInteger(maxValueChars) || maxValueChars < 1 || maxValueChars > this.maxMessageChars) throw new Error("maxValueChars is out of bounds");
+    return Object.fromEntries(
+      Object.entries(this.requireSession(sessionId).facts).slice(-maxFacts)
+        .map(([key, value]) => [key.slice(0, 80), value.slice(0, maxValueChars)]),
+    );
+  }
+
   appendMessage(sessionId: string, role: ContextMessage["role"], content: string): ContextMessage {
     const context = this.requireSession(sessionId);
     if (typeof content !== "string" || !content.trim()) throw new Error("Message content cannot be empty");
@@ -51,7 +69,9 @@ export class SessionContextStore {
 
   setFact(sessionId: string, key: string, value: string): void {
     const context = this.requireSession(sessionId);
-    context.facts[key] = value;
+    if (typeof key !== "string" || !key.trim() || key.length > 200) throw new Error("Fact key must be non-empty and at most 200 characters");
+    if (typeof value !== "string" || !value.trim() || value.length > this.maxMessageChars) throw new Error("Fact value must be non-empty and within the message limit");
+    context.facts[key.trim()] = value;
     context.updatedAt = new Date().toISOString();
   }
 
