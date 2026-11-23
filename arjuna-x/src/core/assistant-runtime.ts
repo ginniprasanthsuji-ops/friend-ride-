@@ -10,7 +10,13 @@ export interface RuntimeReply {
 }
 
 export class AssistantRuntime {
-  constructor(private readonly provider: AIProvider, private readonly contexts: SessionContextStore) {}
+  constructor(
+    private readonly provider: AIProvider,
+    private readonly contexts: SessionContextStore,
+    private readonly timeoutMs = 15_000,
+  ) {
+    if (!Number.isInteger(timeoutMs) || timeoutMs < 1) throw new Error("timeoutMs must be a positive integer");
+  }
 
   async handle(sessionId: string, userText: string): Promise<RuntimeReply> {
     if (!userText.trim()) throw new Error("Message cannot be empty");
@@ -37,8 +43,14 @@ export class AssistantRuntime {
       ...context.messages.slice(-12).map(({ role, content }) => ({ role, content })),
     ];
 
+    let timeout: ReturnType<typeof setTimeout> | undefined;
     try {
-      const completion = await this.provider.complete({ messages, temperature: 0.3, maxTokens: 600 });
+      const completion = await Promise.race([
+        this.provider.complete({ messages, temperature: 0.3, maxTokens: 600 }),
+        new Promise<never>((_, reject) => {
+          timeout = setTimeout(() => reject(new Error("AI provider timed out")), this.timeoutMs);
+        }),
+      ]);
       this.contexts.appendMessage(sessionId, "assistant", completion.text);
       return { sessionId, intent, completion };
     } catch {
@@ -47,6 +59,8 @@ export class AssistantRuntime {
         intent,
         fallbackMessage: "AI service is temporarily unavailable. Your request is saved in this session; please retry.",
       };
+    } finally {
+      if (timeout) clearTimeout(timeout);
     }
   }
 }
