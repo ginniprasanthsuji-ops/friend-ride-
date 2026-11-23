@@ -60,3 +60,10 @@
 .fr-phase3-shell .stock-mark.no{background:#fff0f0;color:#a92836}
 .fr-phase3-shell .fresh-mark{background:#e5f5ec;color:#12653f}
 .fr-phase3-shell a{color:var(--fr-navy)}
+
+/* Pass 110 — map legacy theme tokens into the scoped Phase 3 palette. */
+.fr-phase3-shell{
+  --purple:var(--fr-navy); --purple2:var(--fr-navy-2); --navy:var(--fr-navy);
+  --bg:var(--fr-bg); --ink:var(--fr-ink); --muted:var(--fr-muted); --line:var(--fr-border);
+  --orange:var(--fr-orange); --green:var(--fr-success); --red:var(--fr-danger); --gold:#f2b34a;
+}
