@@ -104,3 +104,16 @@ Other observations:
 - QA Storage buckets query returned no buckets; app's KYC upload flow cannot be verified in this QA project until setup discrepancy is resolved.
 - Nearby-driver function exposes online approved driver coordinates within requested radius (max 15 km) to authenticated customer/admin; confirm this is required and minimize precision/retention.
 - Function body/ACL metadata checks are not equivalent to role-based live tests. No exploitation or data modification performed.
+
+## Continued SQL checks: ACL resolution, cron, constraints and indexes (QA read-only)
+- Resolved ACL OIDs: 16384=postgres, 16480=anon, 16481=authenticated, 16482=service_role.
+- Most reviewed SECURITY DEFINER RPCs have EXECUTE for postgres/authenticated/service_role. Exceptions: notification-preferences trigger function and notification claim batch only postgres/service_role; profile guard postgres/service_role only. Homepage feedback is also anon EXECUTE, but function filters to published homepage feedback.
+- QA cron contains one active job: fr-hourly-notification-enqueue, hourly at minute 0 UTC. It queues hourly notification events for opted-in users while applying quiet-hours logic; it does not itself demonstrate push delivery. Delivery provider/API remains disabled/deferred under current constraints.
+- Notification queue has category/status checks, unique event_key, FK user_id->auth.users ON DELETE CASCADE; indexes for claim/status and user timeline.
+- Key inspected tables have baseline indexes: rides customer/driver/status-created; service requests customer/provider; driver docs unique driver+type and storage path. fr_service_bookings shows only primary-key index in this summary; query-path index adequacy should be checked against workload before suggesting DDL.
+- No changes to DB, policies, grants, cron, or data were made.
+## Remaining follow-up
+1. Controlled QA test for custom-GUC profile guard bypass, with disposable test account and rollback-safe approach; do not execute until explicitly approved.
+2. Resolve missing QA Storage buckets/environment discrepancy; no bucket creation without approval.
+3. Verify hourly enqueue idempotency/quiet-hours edge cases and inspect status backlog counts read-only.
+4. Review authenticated RPC grants and test actual role behavior; catalog ACL alone is not live security testing.
