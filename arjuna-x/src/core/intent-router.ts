@@ -28,7 +28,7 @@ const patterns: Array<{ kind: IntentKind; terms: string[] }> = [
 function matchesTerm(text: string, term: string): boolean {
   if (/^[a-z0-9 ]+$/i.test(term)) {
     if (term.includes(" ")) return text.includes(term);
-    return new RegExp(`\\b${term.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}\\b`, "i").test(text);
+    return new RegExp("\\b" + term + "\\b", "i").test(text);
   }
   return text.includes(term);
 }
