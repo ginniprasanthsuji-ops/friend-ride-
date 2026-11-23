@@ -571,3 +571,9 @@ test('Laundry Partner registration uses the exact approved database category and
   expect(source).toContain('laundry_unit_price:unitPrice');
 });
 
+
+
+test('Tier-A fixture blocks external navigation before network access', async ({ page }) => {
+  await expect(page.goto('https://example.com/')).rejects.toThrow();
+  expect(page.__frBlockedOrigins).toContain('https://example.com');
+});
