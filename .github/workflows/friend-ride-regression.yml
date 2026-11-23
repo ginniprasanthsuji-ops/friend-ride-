@@ -2,6 +2,8 @@ name: FRIEND RIDE Regression
 on:
   push:
     branches: [main, ui/full-native-dark-gold-2026-11-21, arjuna-x/phase-2-security-closure]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: '17 2 * * *'
