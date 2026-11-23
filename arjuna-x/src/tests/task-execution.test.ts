@@ -304,3 +304,11 @@ test("output sanitizer handles circular values and avoids invoking getters", asy
   assert.deepEqual(result[0]?.output, { safe: "value", self: "[Output omitted: circular reference]", computed: "[Output omitted: accessor]" });
   assert.equal(getterCalls, 0);
 });
+
+test("sanitizer omits prototype-pollution property names", async () => {
+  const payload = JSON.parse('{"safe":"ok","__proto__":{"polluted":true},"constructor":{"unsafe":true},"prototype":{"unsafe":true}}');
+  const runtime = new TaskExecutionRuntime({ async execute() { return payload; } });
+  const result = await runtime.run([action]);
+  assert.deepEqual(result[0]?.output, { safe: "ok" });
+  assert.equal(({} as { polluted?: boolean }).polluted, undefined);
+});
