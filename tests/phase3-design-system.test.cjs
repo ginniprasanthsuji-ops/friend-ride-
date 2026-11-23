@@ -62,3 +62,10 @@ test('Phase 3 shell-scoped supporting status and notice palette is present', () 
     assert.ok(design.includes(selector), `missing scoped supporting palette selector: ${selector}`);
   }
 });
+
+
+test('Phase 3 shell maps legacy theme tokens to the scoped palette', () => {
+  for (const token of ['--purple:var(--fr-navy)', '--purple2:var(--fr-navy-2)', '--navy:var(--fr-navy)', '--bg:var(--fr-bg)', '--ink:var(--fr-ink)', '--muted:var(--fr-muted)', '--line:var(--fr-border)', '--orange:var(--fr-orange)']) {
+    assert.ok(design.includes(token), `missing legacy token mapping: ${token}`);
+  }
+});
