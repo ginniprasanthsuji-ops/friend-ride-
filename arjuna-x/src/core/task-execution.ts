@@ -79,6 +79,10 @@ export class TaskExecutionRuntime {
         attempts += 1;
         try {
           const output = await this.executor.execute(action, options.signal);
+          if (options.signal?.aborted) {
+            results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled after action completion" });
+            break;
+          }
           results.push({ actionId: action.id, status: "SUCCEEDED", attempts, output });
           break;
         } catch (error) {
