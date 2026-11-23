@@ -46,7 +46,7 @@ test("runtime passes intent-aware safety and bounded session facts to provider",
   };
   const runtime = new AssistantRuntime(provider, contexts);
   await runtime.handle("phase7-prompt", "book cab and order food");
-  assert.match(captured, /Detected intent/);
+  assert.match(captured, /ambiguous/);\n  assert.match(captured, /possible intents/);
   assert.match(captured, /Telugu/);
   assert.match(captured, /explicit user confirmation/);
   assert.match(captured, /verified tool result/);
