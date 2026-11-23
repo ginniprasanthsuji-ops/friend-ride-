@@ -12,7 +12,7 @@ export interface SessionContext {
 }
 
 /** In-memory context store. Each session ID maps to an independent context. */
-export class SessionContextStore {
+export class SessionContextStore {\n  constructor(private readonly maxMessagesPerSession = 100, private readonly maxMessageChars = 8000) {\n    if (!Number.isInteger(maxMessagesPerSession) || maxMessagesPerSession < 1) throw new Error("maxMessagesPerSession must be a positive integer");\n    if (!Number.isInteger(maxMessageChars) || maxMessageChars < 1) throw new Error("maxMessageChars must be a positive integer");\n  }
   private readonly sessions = new Map<string, SessionContext>();
 
   create(sessionId: string): SessionContext {
