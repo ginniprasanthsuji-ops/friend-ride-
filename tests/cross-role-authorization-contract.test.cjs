@@ -1,0 +1,27 @@
+// Phase 8.15 — Cross-role authorization and privilege escalation assertions.
+'use strict';
+const assert=require('node:assert/strict');
+const c=require('../qa/cross-role-authorization-contract.cjs');
+for(const r of ['customer','driver','partner','admin'])assert.equal(c.validRole(r),true);
+assert.equal(c.validRole('root'),false);
+assert.equal(c.authorize('customer','ride.create').allowed,true);
+assert.equal(c.authorize('customer','admin.user.update').reason,'privilege_denied');
+assert.equal(c.authorize('driver','admin.kyc.review').reason,'privilege_denied');
+assert.equal(c.authorize('partner','admin.workflow.manage').reason,'privilege_denied');
+assert.equal(c.authorize('admin','admin.dashboard.read').allowed,true);
+assert.equal(c.checkOwnerAccess({role:'customer',actorId:'u1',recordOwnerId:'u1',permission:'profile.read_own'}).allowed,true);
+assert.equal(c.checkOwnerAccess({role:'customer',actorId:'u1',recordOwnerId:'u2',permission:'profile.read_own'}).reason,'not_owner');
+assert.equal(c.checkAssignedDriver({role:'driver',actorId:'d1',assignedDriverId:'d1',permission:'ride.update_assigned'}).allowed,true);
+assert.equal(c.checkAssignedDriver({role:'driver',actorId:'d1',assignedDriverId:'d2',permission:'ride.update_assigned'}).reason,'not_assigned_driver');
+assert.equal(c.checkAssignedDriver({role:'customer',actorId:'u1',assignedDriverId:'d1',permission:'ride.update_assigned'}).reason,'wrong_role');
+assert.equal(c.checkPartnerStore({role:'partner',actorId:'p1',storeOwnerId:'p1',permission:'store.catalog.update_own'}).allowed,true);
+assert.equal(c.checkPartnerStore({role:'partner',actorId:'p1',storeOwnerId:'p2',permission:'store.catalog.update_own'}).reason,'not_store_owner');
+assert.equal(c.checkAdminGuard({role:'customer',sessionVerified:true,permission:'admin.user.read'}).reason,'admin_only');
+assert.equal(c.checkAdminGuard({role:'admin',sessionVerified:false,permission:'admin.user.read'}).reason,'unverified_session');
+assert.equal(c.checkRoleChange({actorRole:'customer',targetRole:'admin',approved:true}).reason,'admin_only');
+assert.equal(c.checkRoleChange({actorRole:'admin',targetRole:'admin',approved:false}).reason,'approval_required');
+assert.equal(c.checkRoleChange({actorRole:'admin',targetRole:'driver',approved:true}).allowed,true);
+assert.equal(c.checkSensitiveAction({role:'admin',sessionVerified:true,permission:'admin.user.update',stepUpVerified:false}).reason,'step_up_required');
+assert.equal(c.checkSensitiveAction({role:'admin',sessionVerified:true,permission:'admin.user.update',stepUpVerified:true}).allowed,true);
+assert.equal(c.checkSensitiveAction({role:'admin',sessionVerified:false,permission:'admin.user.update',stepUpVerified:true}).reason,'unverified_session');
+console.log('Phase 8.15 assertions authored; runtime execution pending.');
