@@ -72,12 +72,12 @@ export class TaskExecutionRuntime {
           break;
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
-          if (attempts > maxRetries) {
-            results.push({ actionId: action.id, status: "FAILED", attempts, error: message });
-          }
           if (options.signal?.aborted) {
             results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled during action" });
             break;
+          }
+          if (attempts > maxRetries) {
+            results.push({ actionId: action.id, status: "FAILED", attempts, error: message });
           }
         }
       }
