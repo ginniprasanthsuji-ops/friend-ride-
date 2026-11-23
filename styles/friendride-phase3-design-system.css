@@ -50,3 +50,13 @@
   .fr-phase3-shell{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
   .fr-phase3-shell .bottom{max-width:920px;margin:0 auto;left:0;right:0}
 }
+
+/* Pass 109 — shell-scoped supporting component palette. */
+.fr-phase3-shell .notice{background:#edf3fb;color:var(--fr-navy);border:1px solid var(--fr-border)}
+.fr-phase3-shell .status{background:#fff1db;color:#865000;border:1px solid #f2d4a1}
+.fr-phase3-shell .status.ok{background:#e5f5ec;color:#12653f;border-color:#c2e4d1}
+.fr-phase3-shell .tag{background:#eaf0fa;color:var(--fr-navy);border:1px solid var(--fr-border)}
+.fr-phase3-shell .stock-mark.yes{background:#e5f5ec;color:#12653f}
+.fr-phase3-shell .stock-mark.no{background:#fff0f0;color:#a92836}
+.fr-phase3-shell .fresh-mark{background:#e5f5ec;color:#12653f}
+.fr-phase3-shell a{color:var(--fr-navy)}
