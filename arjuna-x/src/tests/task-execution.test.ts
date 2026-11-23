@@ -121,3 +121,18 @@ test("malformed actions array entries are rejected before executor runs", async 
   await assert.rejects(() => runtime.run([null as never]), /non-empty id/);
   assert.equal(executions, 0);
 });
+
+test("cancellation between actions prevents later executor calls", async () => {
+  const controller = new AbortController();
+  const seen: string[] = [];
+  const runtime = new TaskExecutionRuntime({
+    async execute(current) {
+      seen.push(current.id);
+      controller.abort();
+      return "done";
+    },
+  });
+  const result = await runtime.run([{ ...action, id: "first" }, { ...action, id: "second" }], { signal: controller.signal });
+  assert.deepEqual(seen, ["first"]);
+  assert.deepEqual(result.map((item) => item.status), ["SUCCEEDED", "SKIPPED"]);
+});
