@@ -43,6 +43,7 @@ function redactOutput(value: unknown, depth = 0, visited = new WeakSet<object>()
     }
     const result: Record<string, unknown> = {};
     for (const key of Object.keys(value).slice(0, 100)) {
+      if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
       if (SENSITIVE_OUTPUT_KEYS.test(key)) { result[key] = "[REDACTED]"; continue; }
       const descriptor = Object.getOwnPropertyDescriptor(value, key);
       result[key] = !descriptor || !("value" in descriptor) ? "[Output omitted: accessor]" : redactOutput(descriptor.value, depth + 1, visited);
