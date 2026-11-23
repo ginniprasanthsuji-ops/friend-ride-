@@ -1270,3 +1270,11 @@ Read-only QA source audit confirmed:
 
 - CI #752 browser log exact result: **48 passed (22.7s)**; all quality-gate jobs success. The earlier #748 test/doc race failure is corrected by #750 and is retained as historical evidence.
 - Original logo asset located in Library and visually inspected: `Friend Ride Service Icon Logo.png`, horizontal navy/orange wordmark with service icons and website capsule. Repo current SVG is only simplified square FR monogram. This is discovery only; no branding changes before Phase 2 gate.
+
+
+## Pass 114 — Fresh branch/CI state and logo source file verification (2026-11-23)
+
+- Fresh branch API read: current branch HEAD is `5a42736416858bcf1f5f78dbff8e8d408b9096a1`, commit message `docs(qa): record pass113 regression and logo discovery`. Branch protection is explicitly `protected=false`; protection enabled=false, required status checks empty. This is a verified owner/admin gate, not a connector read limitation on this endpoint.
+- Fresh Actions list shows latest workflow run #752 is SUCCESS, but its head SHA is `7fcfb45c32d661d20ad41b17294a88a357bf3ee4`, not current docs HEAD. CI #752 evidence remains 48 Playwright passed (22.7s) plus typecheck, core typecheck, runtime build, Node unit tests, Vitest core, and browser job success. The docs-only current head is not independently CI-run because the workflow excludes docs paths.
+- Original Library asset `Friend Ride Service Icon Logo.png` was materialized for file inspection: PNG, 1774×887, RGBA, 687,827 bytes. This is the horizontal navy/orange FRIEND RIDE service logo. The repo copy is not yet added; no binary upload/commit was attempted in this run. Current simplified SVG remains a separate asset.
+- Phase 2 remains NOT ACCEPTED. Required gates include owner/admin branch protection and required checks, notification integration/event producer, secrets presence check (values never accessed), physical Android/PWA/device verification, full integration/security review, and backup/rollback evidence. No production change, merge, or deployment.
