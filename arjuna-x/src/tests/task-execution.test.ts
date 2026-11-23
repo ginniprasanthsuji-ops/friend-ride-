@@ -213,3 +213,11 @@ test("circular executor output is safely omitted instead of crashing", async () 
   assert.equal(result[0]?.status, "SUCCEEDED");
   assert.equal(result[0]?.output, "[Output omitted: serialization failed]");
 });
+
+test("executor rejects plans exceeding the per-run action cap", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  const oversized = Array.from({ length: 101 }, (_, i) => ({ ...action, id: "a" + i }));
+  await assert.rejects(() => runtime.run(oversized), /Action count exceeds maximum of 100/);
+  assert.equal(executions, 0);
+});
