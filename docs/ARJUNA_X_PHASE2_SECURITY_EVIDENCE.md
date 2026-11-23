@@ -176,3 +176,16 @@ The QA rollback script was also tested in an explicit rollback transaction (inte
 - 15 functions call `is_friend_ride_admin()`; 8 admin RPCs reviewed explicitly, plus cancellation/routing/admin helpers. Eight functions call `is_approved_driver()`. The 28 marker-less set is now classified into read-only lists/payment details, admin-helper functions, service-only maintenance/notification functions, and triggers; the 72 authenticated-executable functions with `auth.uid()` still need full role-negative tests.
 - The current QA dispatch Edge Function v7 source is preserved at `qa/rollback/fr-notification-dispatch-v7.ts` for rollback. Current QA metadata: version 7, ACTIVE, verify_jwt=false; source SHA `e5c43e09b4738dac2f66f0199d7bacc79c8ea44fd558c633b71de6d1e0b1a7dc`. No secret values were inspected.
 - Latest Phase 2 branch head `b79988712275489d7e6a324664dee10b841534ac` has no combined status entries; PR-filtered workflow-run retrieval returned no runs for this head. The new branch-scoped CI rerun is therefore **not verified yet**.
+
+
+## Continuation — scoped Phase 2 CI PASS (2026-11-23)
+
+Verified CI head `28fc0d7bcdde973b980613a7982a38d1cb72ee77` (scope-fix code/workflow commit):
+
+- `source-regression`: **PASS**.
+- `quality/typecheck-and-unit`: **PASS** — 9/9 Node unit tests, 5/5 core tests; typecheck/core typecheck/runtime build passed.
+- `quality/browser-e2e` using `test:phase2`: **PASS, 49/49**.
+- `friend-ride-regression/browser-regression` using `test:phase2`: **PASS, 49/49**.
+- TASKO/Laundry/Admin Playwright: **PASS, 4/4**.
+
+The full Dark+Gold UI suite remains deferred to the Phase 3 UI branch. Latest branch head `ddfc...` only adds documentation and the preserved QA v7 rollback source after the passing CI head; those latest documentation/backup-only changes have no combined status entries. Phase 2 scoped code/workflow CI is verified on `28fc...`.
