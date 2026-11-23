@@ -820,3 +820,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Created `docs/ARJUNA-X-PHASE-3-ROUTE-COVERAGE.md`, grouping all 58 current SPA page sections into public/customer, ride/delivery, marketplace, home services, dashboards and admin categories. The checklist intentionally remains unchecked because screenshot-based route acceptance has not been performed.
 - CI #778/#779 (Pass 119 accent-text contrast) and #780 (Pass 120 58-page static baseline) verified SUCCESS. #781/#782 runtime smoke are still in progress.
 - Phase 3 remains IN PROGRESS pending runtime smoke and route-by-route visual/device acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 123 (runtime smoke failure diagnosis/fix, 2026-11-23)
+
+- Runtime smoke Playwright failures were diagnosed from actual CI logs: #781 failed the contrast test because the initial selector found no button and the RGB parser dereferenced null; #782 failed due literal escaped newline sequences inserted into the test source, causing a SyntaxError.
+- Corrected the contrast test to locate an orange-gradient button by computed background, return null safely when absent, use a simple digit parser, and normalize source newlines. Fix commit: `7b83abc26837c642e879f3a68d1bd8448143bbda`.
+- #783 was running for an intermediate correction; #784 is queued for the final fix. Do not accept Phase 3 runtime smoke until #784 and its browser job are verified green.
+- Phase 3 remains IN PROGRESS. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
