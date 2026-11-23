@@ -383,3 +383,24 @@ Current head at check: `c7ddfa65665b0357928d0c9d4d7d505b7841ee7c`. Workflow/sour
 - Fresh catalog marker triage of those 50 remaining functions: **41** contain caller/ownership markers, **1** has an admin-guard marker (`fr_cancel_ride`), and **8** have no simple auth marker and need manual source/privacy review: `fr_customer_list_approved_service_providers`, `fr_customer_list_approved_stores`, `fr_customer_list_approved_stores_geo`, `fr_customer_list_partner_catalogue`, `fr_customer_store_payment_options`, `fr_get_platform_business_details`, `fr_list_approved_partner_stores`, `fr_public_homepage_feedback`. These are marker-based categories only; they do not prove authorization. Owner acceptance of public provider phone/store coordinates/catalogue/payment/legal/feedback surfaces remains pending.
 - CI at evidence head `97211bdbf744b5c51f21ad5009c1846501f2b451`: workflow/source regression `45131985938` success; Regression `45131985922`, TASKO/Laundry/Admin `45131985913`, and Quality Gate `45131986043` in progress at last check. Additional duplicate Regression/Quality runs were also in progress. Not all-green yet.
 - Phase 2 remains **BLOCKED / NOT ACCEPTED**. No production writes, Auth changes, merge, or deployment.
+
+
+## 35. Additional production ownership/role checks and current CI (2026-11-23)
+
+### Three further production tests — PASS
+
+Preconditions were checked read-only: no parcel row with the dummy ID, no referrals/subscriptions for the synthetic subject, and no payment session for the synthetic ride ID. In a rollback-only authenticated transaction:
+
+- `fr_customer_get_parcel_delivery_otp`: expected `Parcel not found` (no OTP issued) — PASS.
+- `check_my_referral_free_subscription`: returned false (no reward created) — PASS.
+- `fr_get_ride_payment_state`: returned `not_started` — PASS.
+
+Post-test checks found zero synthetic profile/admin/ride/order/parcel/service/provider/location/referral/subscription/reward rows. No permanent data changes.
+
+Production verified role/ownership function coverage: **41/88; 47 remain**. Fresh static triage of the 47 remaining: 38 caller/ownership markers, 1 admin-guard marker (`fr_cancel_ride`), and 8 public/approved-data functions requiring manual privacy/owner acceptance. Marker triage is not proof of authorization.
+
+### Latest complete CI (branch head `428934eec3d41482fb43a4162ebe3c78d3cdc4c9` before this evidence-only commit)
+
+All four workflow groups completed success and jobs/steps report success: source/workflow regression `45132193156` (#424), TASKO/Laundry/Admin `45132193130` (#377), FRIEND RIDE regression `45132193047` (#696), and Quality Gate `45132193105` (#900). Phase 2 safe-browser suite passed; full UI-migration suite is skipped by Phase 2 scope. Current job metadata does not expose test counts; prior log evidence on this scoped branch documents 47/47 browser, 9/9 Node, and 5/5 core tests.
+
+Phase 2 remains **BLOCKED / NOT ACCEPTED**. Leaked-password protection, owner visibility/table acceptance, 47 remaining production function checks, QA push/HTTP/concurrency, and real device/credential checks are pending. No production schema/Auth/function changes, merge, or deployment.
