@@ -1257,3 +1257,10 @@ Read-only QA source audit confirmed:
 - Post-change SQL verified anon table grants=0, PUBLIC table grants=0, RLS enabled on 21/21 public tables, total policies=46, anon/PUBLIC policies=0, authenticated table grant rows=141. This is a direct ACL revocation only; no schema/data/function/policy/auth/payment changes. Production project untouched.
 - Added read-only 54-check least-privilege section to `qa/read-only-regression.sql` and static coverage `tests/qa-security-audit-sql.test.cjs`.
 - Run #751/#752 queued or in progress at commit time; awaiting CI. Phase 2 remains gated by notification, owner/device, branch-protection and other checks.
+
+
+## Pass 112 — QA ACL patch verification and CI (2026-11-23)
+
+- Executed the new committed SQL audit against QA: 54 checks PASS / 0 FAIL (18 anon direct-grant, 18 RLS, 18 anon/PUBLIC policy). Post-change privileges remain anon=0, PUBLIC=0; authenticated privileges=141; 21 public tables RLS-enabled; 46 public policies; no anon/PUBLIC policies.
+- CI #751 SUCCESS (SQL QA artifact + static coverage commit); CI #752 SUCCESS (static audit test commit): typecheck, core typecheck, runtime build, Node tests, Vitest, and Playwright browser regression succeeded. #750 also SUCCESS after test fix. #748 failure retained for traceability; it was test/docs commit-order, not app/browser failure.
+- Latest branch HEAD `cce2ca026ea93994b4bec5b948b77e51ef611de4` includes doc-only commits after #752; no CI on exact latest docs SHA.
