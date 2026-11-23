@@ -23,7 +23,7 @@ Isolated implementation workspace for the ARJUNA X assistant engine.
 - [x] Intent/runtime fallback
 - [x] Sequential execution, retry bounds
 - [x] Plan/action validation
-- [x] Cancellation behavior
+- [x] Cancellation behavior\n- [x] Cancellation emits one terminal result (no duplicate FAILED/SKIPPED records)
 - [x] Tests and CI success on isolated branch
 
 ## Not implemented yet
