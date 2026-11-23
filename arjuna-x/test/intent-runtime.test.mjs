@@ -51,3 +51,15 @@ test("runtime passes intent-aware safety and bounded session facts to provider",
   assert.match(captured, /explicit user confirmation/);
   assert.match(captured, /verified tool result/);
 });
+
+test("router identifies multi-intent requests and asks for clarification", () => {
+  const result = classifyIntent("book cab and order biryani");
+  assert.equal(result.kind, "RIDE_BOOKING");
+  assert.deepEqual(result.additionalIntents, ["FOOD_ORDER"]);
+  assert.equal(result.needsClarification, true);
+});
+
+test("single intent keeps no extra intents", () => {
+  const result = classifyIntent("track my order");
+  assert.deepEqual(result.additionalIntents, []);
+});
