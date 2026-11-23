@@ -117,3 +117,9 @@ Other observations:
 2. Resolve missing QA Storage buckets/environment discrepancy; no bucket creation without approval.
 3. Verify hourly enqueue idempotency/quiet-hours edge cases and inspect status backlog counts read-only.
 4. Review authenticated RPC grants and test actual role behavior; catalog ACL alone is not live security testing.
+
+## Notification runtime metadata (QA read-only)
+- Cron history: fr-hourly-notification-enqueue has 52 succeeded runs; latest observed run at 2026-11-23 16:00 UTC. No failure row appeared in the summarized history.
+- Current notification queue query returned no rows (empty queue at audit time).
+- Notification preferences table returned total=0, hourly_optin=0; therefore quiet-hours edge-case population cannot be exercised with current QA data.
+- pg_settings did not expose app.friend_ride_role_registration as a registered setting; custom GUC is likely dynamic, reinforcing that controlled QA bypass testing is needed. No attempt was made to set it or mutate profiles.
