@@ -147,3 +147,8 @@ This is a reviewed work-branch patch, not Phase 2 acceptance. QA deployment requ
 - Static catalog triage of all 16 `search_path=public` functions found no likely unqualified relation references after stripping explicitly qualified names. This is a heuristic, not proof; function-body review is still required.
 - Six additional authenticated functions were reviewed: `fr_can_access_delivery_order` verifies customer/driver ownership across ride/parcel/food/shop; `fr_can_read_partner_payment_qr` checks authenticated customer, pending payment, and expiry (row_security=off); Laundry/TASKO provider transitions require the assigned provider and validate state transitions; TASKO admin payment verification checks `admin_users`; TASKO payment submission requires the booking customer and valid reference. All are authenticated-only, with no anon EXECUTE.
 - The 28 marker-less functions are now partially classified into admin-helper-protected RPCs, read-only approved/public listing functions, service-only maintenance/notification functions, and trigger functions. Remaining function-by-function role tests are still open.
+
+
+## Continuation — guarded rollback syntax test (2026-11-23)
+
+The QA rollback script was also tested in an explicit rollback transaction (internal BEGIN/COMMIT converted to outer BEGIN/ROLLBACK). It executed successfully. Post-rollback verification again confirmed claim columns/function are absent. This validates SQL syntax and guard on the current empty QA queue; it does not test rollback after a deployed claim migration or processing rows.
