@@ -139,3 +139,11 @@ This is a reviewed work-branch patch, not Phase 2 acceptance. QA deployment requ
 - Post-rollback catalog check: `claim_token` column **false**, claim function **false**; QA schema remains unchanged.
 - Added a guarded QA rollback script `qa/phase2-notification-claim-rollback.sql`; it refuses rollback if any notification event is in `processing` and removes only the additive claim artifacts.
 - No migration was applied, no Edge Function deployed, no queue/token rows created, and no secrets accessed.
+
+
+## Continuation — production non-empty search_path and authorization review (2026-11-23)
+
+- Production SECURITY DEFINER search_path configurations: 79 empty; 16 `public`; 4 `public, auth`; 1 `pg_catalog, public`; 1 `pg_catalog, public, auth` with `row_security=off`; 1 `pg_catalog, public, vault, net`. No function had an unset search_path.
+- Static catalog triage of all 16 `search_path=public` functions found no likely unqualified relation references after stripping explicitly qualified names. This is a heuristic, not proof; function-body review is still required.
+- Six additional authenticated functions were reviewed: `fr_can_access_delivery_order` verifies customer/driver ownership across ride/parcel/food/shop; `fr_can_read_partner_payment_qr` checks authenticated customer, pending payment, and expiry (row_security=off); Laundry/TASKO provider transitions require the assigned provider and validate state transitions; TASKO admin payment verification checks `admin_users`; TASKO payment submission requires the booking customer and valid reference. All are authenticated-only, with no anon EXECUTE.
+- The 28 marker-less functions are now partially classified into admin-helper-protected RPCs, read-only approved/public listing functions, service-only maintenance/notification functions, and trigger functions. Remaining function-by-function role tests are still open.
