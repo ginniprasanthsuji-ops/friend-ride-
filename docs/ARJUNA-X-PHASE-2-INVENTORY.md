@@ -1215,3 +1215,16 @@ Run 719 is CI workflow evidence only, not production/live Supabase/device test e
 - Production advisor still reports 23 RLS-without-policy, 25 authenticated SECDEF, 6 anon SECDEF, and leaked-password protection disabled. The 23 no-policy tables were confirmed not directly granted to anon/authenticated. QA advisor reports no missing RLS policies, 1 anon SECDEF and 25 authenticated SECDEF.
 - No backend/schema/auth/payment changes made. Potential review items (not confirmed vulnerabilities): QA anon broad grants despite RLS/no anon policies; production leaked-password protection disabled; OTP lacks IP throttling and concurrent-attempt atomicity; provider phone/payment data visibility; arrival-photo function checks role + assignment but not driver approval status; secret configuration presence not verified. Any remediation requires owner-approved backend/auth/security change, outside this run's locked scope.
 - This is a read-only partial source review, not a complete penetration test or full audit of every function/secret. Phase 2 remains NOT ACCEPTED; device/PWA/logo review, QA integration, branch protection, and the listed security approvals remain blockers. Phases 3–10 gated. Main untouched, no deployment.
+
+
+## Pass 107 — Web Push/FCM integration mismatch (2026-11-23)
+
+Read-only QA source audit confirmed:
+- Website `frEnableDeviceAlerts()` creates a browser `PushManager` subscription and upserts `fr_push_subscriptions`; it does not call FCM `getToken()` or `fr-notification-register-token`.
+- QA `fr-notification-dispatch` v7 sends FCM via active `fr_notification_tokens` only; the web push subscription table is not its delivery source.
+- QA `fr-notification-register-token` v5 requires JWT, uses `auth.getUser()` to bind ownership, accepts `platform=web`, and upserts FCM token rows.
+- Separate root service workers exist for generic Web Push (`service-worker.js`) and Firebase background messages (`firebase-messaging-sw.js`), confirming two distinct paths.
+- Read-only QA row counts: events=0, FCM tokens=0, web-push subscriptions=0. Delivery cannot be verified in this environment.
+- Updated `FCM-WEB-PUSH-SETUP.md` to reflect the current source truth and owner/device/credential integration steps. Added `tests/notification-architecture-audit.test.cjs` as a static audit that passes only while this documented mismatch remains accurately represented.
+
+**Still blocked:** owner-confirmed Firebase web/VAPID config and integration architecture, QA event producer path, authorized secret presence check (values never read), token refresh/account-switch tests, Android device delivery and notification click tests. No backend deployment/schema changes.
