@@ -264,3 +264,11 @@ test("approval ID lists are bounded and validated before execution", async () =>
   await assert.rejects(() => runtime.run([action], { userConfirmedActionIds: ["  "] }), /userConfirmedActionIds contains invalid or excessive action IDs/);
   assert.equal(executions, 0);
 });
+
+test("approval ID lists reject duplicate IDs after trimming", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([action], { userConfirmedActionIds: ["a1", " a1 "] }), /userConfirmedActionIds contains duplicate action IDs/);
+  await assert.rejects(() => runtime.run([action], { specialApprovalActionIds: ["a1", "a1"] }), /specialApprovalActionIds contains duplicate action IDs/);
+  assert.equal(executions, 0);
+});
