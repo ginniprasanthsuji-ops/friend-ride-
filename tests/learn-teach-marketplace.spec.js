@@ -1,8 +1,8 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('../qa/local-only-fixture.cjs');
 
 test.describe('Learn & Teach marketplace UI smoke', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });
+    await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
   });
 
   test('Learn tab is present and opens marketplace landing screen', async ({ page }) => {
