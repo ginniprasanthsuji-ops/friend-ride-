@@ -1,0 +1,31 @@
+// Phase 8.11 — role-based workflow consistency contract tests
+'use strict';
+const assert = require('node:assert/strict');
+const { ROLES, isAllowed, checkRequest } = require('../qa/role-workflow-consistency-contract.cjs');
+
+assert.deepEqual(ROLES, ['customer', 'driver', 'partner', 'admin']);
+assert.equal(isAllowed('customer', 'ride', 'request'), true);
+assert.equal(checkRequest({ role: 'customer', module: 'ride', action: 'request', confirmed: true }).allowed, true);
+assert.equal(checkRequest({ role: 'customer', module: 'marketplace', action: 'checkout', confirmed: true }).allowed, true);
+assert.equal(isAllowed('driver', 'ride', 'accept_assigned'), true);
+assert.equal(isAllowed('driver', 'orders', 'update_assigned'), true);
+assert.equal(isAllowed('partner', 'marketplace', 'manage_own_catalog'), true);
+assert.equal(isAllowed('partner', 'tasko_laundry', 'manage_provider_service'), true);
+assert.equal(isAllowed('admin', 'admin', 'support_review'), true);
+assert.equal(isAllowed('customer', 'ride', 'accept_assigned'), false);
+assert.equal(isAllowed('driver', 'marketplace', 'checkout'), false);
+assert.equal(isAllowed('partner', 'ride', 'request'), false);
+assert.equal(isAllowed('admin', 'ride', 'request'), false);
+assert.equal(isAllowed('customer', 'admin', 'system_config_review'), false);
+assert.equal(isAllowed('unknown', 'ride', 'request'), false);
+assert.equal(isAllowed('customer', 'unknown_module', 'browse'), false);
+assert.equal(checkRequest({ role: 'customer', module: 'ride', action: 'request' }).reason, 'confirmation_required');
+assert.equal(checkRequest({ role: 'customer', module: 'marketplace', action: 'checkout' }).reason, 'confirmation_required');
+assert.equal(checkRequest({ role: 'customer', module: 'orders', action: 'cancel_own' }).reason, 'confirmation_required');
+assert.equal(checkRequest(null).reason, 'invalid_request');
+assert.equal(checkRequest({ role: 'x', module: 'ride', action: 'request' }).reason, 'unknown_role');
+assert.equal(checkRequest({ role: 'customer', module: 'not_a_module', action: 'browse' }).reason, 'unknown_module');
+assert.equal(checkRequest({ role: 'customer', module: 'ride', action: 'not_a_known_action' }).reason, 'unknown_action');
+const allowed = checkRequest({ role: 'customer', module: 'ride', action: 'request', confirmed: true });
+assert.equal(allowed.execution, 'none');
+console.log('Role workflow consistency contract: assertions authored (not executed).');
