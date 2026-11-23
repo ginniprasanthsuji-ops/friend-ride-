@@ -289,3 +289,12 @@ The active QA workflow commit `15f42bd0af757a9a47296f4f5dbeee74dbd3e52c` adds le
 - Tests this pass: source and QA Edge Function inspection only; no tests run, no notification sent. No app/backend/schema/auth/payment changes, no production project changes, no merge or deployment.
 
 Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now directionally locked to FCM but its implementation, configuration, and device delivery are still pending verification.
+
+
+## Pass 68 — FCM frontend/backend connection gap identified (2026-11-23)
+
+- Searched the QA branch `index.html` for FCM client calls and registration: no `firebase.messaging`, `getToken()`, `fr-notification-register-token`, or `fr_notification_tokens` client references were found.
+- The active notification enable handler (later function declaration) currently requests browser notification permission, registers `service-worker.js`, creates a Web Push subscription using the public VAPID key, and upserts `fr_push_subscriptions`. It is not an FCM token-registration flow.
+- `service-worker.js` includes Firebase Messaging compat imports/config and `onBackgroundMessage`, so an FCM background handler exists, but frontend token acquisition/refresh/registration wiring is missing or not located in this source audit.
+- Therefore FCM is the selected canonical architecture but **not yet fully wired end-to-end in the QA frontend**. Do not label notification delivery functional/verified. Next implementation should add the Firebase Messaging client/token lifecycle and authenticated call to the existing `fr-notification-register-token` Edge Function, while retaining notification permission UX and only removing VAPID after safe dependency review. Must validate browser support, token refresh, sign-in/sign-out ownership, worker scope, foreground handling and regression.
+- No code changes or tests in this pass. Read-only source search only. No live notification, secrets inspection, production/backend/schema/auth/payment changes, merge or deployment.
