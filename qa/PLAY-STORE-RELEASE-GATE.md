@@ -387,3 +387,6 @@ QA-only rollback testing now covers **22/25** authenticated-executable SECURITY 
 
 - Production admin-RPC negative tests: **15/88** authenticated-executable SECURITY DEFINER warnings have role-negative evidence (8 prior + 7 newly verified). New 7/7 PASS were `admin_approve_driver`, `admin_list_referral_progress`, `admin_list_subscription_requests`, `admin_review_driver_document`, `admin_review_driver_subscription`, `fr_admin_save_platform_business_details`, `fr_tasko_admin_verify_payment`. Synthetic non-admin test was transaction-rolled back; post-checks confirmed no profile, admin membership, dummy document, subscription or booking rows.
 - QA role/ownership coverage: **22/25** authenticated-executable SECURITY DEFINER functions tested in rollback transactions; 3 public/approved-data surfaces remain untested and need owner visibility acceptance. Production remains blocked; no live changes.
+
+
+**CI evidence note:** The latest security-coverage update is documentation-only (commit `68deefda4a9b1ed3b0c9304f0c8d2e656c33828e`); a Contents-API follow-up is being used to trigger branch CI. Source code has not changed in this increment.
