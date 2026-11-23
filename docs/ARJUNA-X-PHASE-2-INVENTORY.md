@@ -1149,3 +1149,14 @@ Freshly verified Quality Gate Run 719 on workflow commit `62d9df5`: overall SUCC
 - Runs 717 and 718 remain recorded as failed formatter iterations; corrected commit 62d9df5 is the verified successful run. Isolated formatter fixture: 4/4 checks PASS (not an app test).
 
 Run 719 is CI workflow evidence only, not production/live Supabase/device test evidence. Phase 2 remains NOT ACCEPTED; dependency remediation + lockfile, visual assets, mobile PWA/offline, background push, complete RLS/SECDEF/Edge secret review, QA backend wiring, and branch protection/required checks remain open. No runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 61 — Lockfile candidate CI path added (2026-11-23)
+
+- Freshly verified the active QA branch head before this change at `a237d317abedd0c3affefe0e2a150608b1b41281`; `package.json` has semver ranges, and neither `package-lock.json` nor `npm-shrinkwrap.json` exists.
+- Added workflow-level `permissions: contents: read` to the active `quality.yml`.
+- Added an isolated `dependency-lockfile-preview` job: Node 22, `npm install --package-lock-only --ignore-scripts --audit=false`, then `npm audit --json` against the generated candidate, and upload of the candidate lockfile + audit JSON for 7-day review. This job does not execute dependency lifecycle scripts and does not commit or apply a lockfile.
+- Workflow source was fetched and checked after commit `15f42bd0af757a9a47296f4f5dbeee74dbd3e52c`; the commit's combined status query returned no check/status entries at observation. CI execution and artifact generation are **not yet verified**. No local YAML parser or npm command was run.
+- Fresh main/QA comparison after workflow commit: QA **107 ahead / 1 behind**; diverged. Main-only `64845496f22487788aedbcf66b74147add3ab9c1` remains unmerged.
+- This is a lockfile-generation path, not lockfile acceptance. Next step is inspect the generated artifact/audit and review versions, then only commit a real reviewed lockfile and switch workflows to `npm ci`. Critical/moderate advisories remain unresolved.
+- Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; Phase 3–10 remain gated. No app runtime, backend, schema, auth, payment, main, or deployment changes.
