@@ -686,3 +686,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - CI #752 browser job log confirms **48 Playwright tests passed** in 22.7 seconds; all jobs passed (typecheck, core typecheck, runtime build, Node unit tests, Vitest core, Playwright). #751/#750/#749 also SUCCESS. #748 remains a documented historical failure, fixed by #750.
 - Located and visually inspected the Library asset `Friend Ride Service Icon Logo.png`: the full navy/orange FRIEND RIDE wordmark with service icon strip and friendride.in. Current repo `icons/friendride-icon.svg` is a simplified square monogram, not the full original horizontal logo. No logo/UI changes in this run; Phase 3 remains gated until Phase 2 acceptance.
 - Latest HEAD `1ac416be8901ed5a560305f96f69c798e5e66e16` (doc-only after #752). The quality workflow excludes `docs/**`, so doc-only updates do not trigger a CI run; the latest code/test commit has green CI #752.
+
+
+## Phase 2 — Pass 114 (fresh branch/CI/logo asset verification, 2026-11-23)
+
+- Fresh branch endpoint read at start of run: HEAD `5a42736416858bcf1f5f78dbff8e8d408b9096a1`; branch protection explicitly disabled (`protected=false`, enforcement off, required checks empty). Owner/admin must enable appropriate protection/checks.
+- Latest workflow run #752 is SUCCESS on older code/test SHA `7fcfb45c32d661d20ad41b17294a88a357bf3ee4`; 48 Playwright tests passed (22.7s), and typecheck/core typecheck/runtime build/Node unit/Vitest/browser jobs passed. Current docs-only HEAD is not CI-run; workflow ignores docs-only changes.
+- Verified original Library logo file `Friend Ride Service Icon Logo.png`: PNG 1774×887, RGBA, 687,827 bytes. Identified/materialized for inspection, but not copied to repository; no binary upload attempted. Current repo icon is still a separate simplified SVG.
+- Documentation evidence commit: inventory update `e2def46400dd37c7b96ff6e53667036b6daf4e3b` (Pass 114 findings). No app/runtime, schema, production, auth, payment, API, merge or deployment changes.
+- Phase 2 acceptance remains **NOT PASSED**. Phase 3–9 work is still sequentially gated. External blockers: owner/admin branch protection; approved notification provider/config architecture and event producer; owner-authorized credential-presence check without reading values; physical device/PWA and push delivery verification; remaining security/integration review; backup/rollback proof.
