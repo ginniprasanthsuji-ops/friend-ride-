@@ -280,3 +280,8 @@ Node syntax checks passed for the fixture, isolation test, and changed client-co
 ## 11. Notification queue claim patch prepared (2026-11-23)
 
 An additive, **unapplied** migration and QA Edge Function patch now use a service-role-only atomic `FOR UPDATE SKIP LOCKED` claim RPC, a 10-minute processing lease, and claim-token-guarded finalization. Static contract test passed 2/2 locally; TypeScript parse diagnostics were 0. Deno/runtime, QA migration/function deployment, concurrency, real push, and rollback tests are still **NOT TESTED**. No database or Edge Function was changed live. Release remains BLOCKED.
+
+
+## 12. Production RPC/RLS triage (2026-11-23)
+
+Read-only follow-up found **0/23** client-role direct SELECT/INSERT/UPDATE/DELETE grants on the RLS-enabled/no-policy production tables. Eight exposed admin RPCs all call `is_friend_ride_admin()`, which checks the caller against `admin_users`. Service-only functions were identified and reviewed for role grants. Public approved-list/feedback functions remain owner-acceptance items; the 88 authenticated SECURITY DEFINER warnings and full role-negative testing remain open. This reduces the no-policy-table access risk but does not close Phase 2 or the release gate.
