@@ -430,3 +430,10 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Security advisor reports **1 anon-executable SECURITY DEFINER function** (`public.fr_public_homepage_feedback`) and **25 authenticated-executable SECURITY DEFINER functions**. These are advisor warnings, not confirmed exploitable vulnerabilities; functions require manual review for auth guards, argument validation, ownership/admin checks and intentional grants. No SQL/schema/RLS changes were made.
 - Performance advisor baseline: **17 unindexed foreign keys**, **40 RLS auth-initplan warnings**, **12 unused indexes**, and **5 multiple-permissive-policy warnings**. These are performance review items; do not drop indexes or rewrite RLS without workload and regression evidence.
 - Production project was not queried or changed. Phase 2 remains NOT ACCEPTED until the security-function review and remaining inventory/device gates are closed or formally risk-accepted by the project owner.
+
+
+## Pass 83 — First-pass SECURITY DEFINER review (QA read-only, 2026-11-23)
+
+- Read-only QA database function-definition query reviewed sample SECURITY DEFINER RPCs flagged by advisor. Sample functions set empty `search_path` and include explicit guards: `accept_counter_offer` requires logged-in ride customer ownership and state; `accept_ride` checks approved driver role and active-ride constraint; admin list/review functions check `admin_users`; `counter_offer_ride` checks approved driver, positive fare and ride availability; `fr_customer_create_service_request` validates customer role, category, fields, and provider eligibility.
+- This sample suggests some warnings are intentional privileged RPCs with internal authorization, but it is NOT a full security approval. Remaining 25 authenticated-executable function review plus `fr_public_homepage_feedback` anon function: complete input/ownership/abuse review and verify grants, error behavior, and rate-limit/consent controls. No function/schema/grant change performed.
+- No QA or production data was changed. Production untouched.
