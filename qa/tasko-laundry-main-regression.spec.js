@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./local-only-fixture.cjs');
 
 test.describe('FRIEND RIDE TASKO / Laundry main-branch integration', () => {
   test.beforeEach(async ({ page }) => {
