@@ -38,3 +38,12 @@
 .lt-shell .lt-note{line-height:1.45}
 .lt-shell .lt-empty{border:1px dashed var(--fr-border,#dbe4f0);border-radius:14px}
 @media(forced-colors:active){.lt-shell button,.lt-shell .lt-status,.lt-shell .lt-card{border:1px solid ButtonText}}
+
+/* Pass 102 — resilient content sizing for learning module cards and lists. */
+.lt-shell{overflow-wrap:anywhere}
+.lt-card,.lt-role,.lt-course,.lt-stat{min-width:0}
+.lt-card h2,.lt-card h3,.lt-role b,.lt-course b,.lt-stat b{overflow-wrap:anywhere}
+.lt-row>*{min-width:0}
+.lt-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:700px){.lt-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:340px){.lt-grid{grid-template-columns:minmax(0,1fr)}.lt-tabs button{padding:8px 9px}}
