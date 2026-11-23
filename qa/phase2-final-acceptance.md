@@ -33,3 +33,12 @@ Scope: QA-only; production/main remains untouched.
 Fresh evidence (2026-11-23): production admin-RPC role-negative coverage is 15/88 authenticated-executable SECURITY DEFINER functions; 73 remain untested. QA coverage is 22/25, with 3 public/approved-data visibility surfaces untested. Leaked-password protection remains disabled, 23 RLS/no-policy internal tables require owner confirmation, and real OTP/GPS/payment/push/device checks are pending. Phase 2 must close these blockers before Phase 3 starts.
 
 No merge or live deployment.
+
+
+## Fresh continuation — 2026-11-23 12:59 IST
+
+- Production role/ownership test increment: **10/10 PASS** in a rollback-only transaction as authenticated synthetic subject. Five expected role denials: driver parcel-list, partner catalogue, partner market-order list, service-provider request list, nearby-driver list. Five caller-scope tests: customer market orders, parcel requests, service requests, and ride customer/driver details returned zero rows for synthetic subject/nonexistent ride.
+- Post-test check: synthetic profile/admin membership/ride/market order/parcel/service request/provider/driver-location counts were all 0. No permanent writes.
+- Production SECURITY DEFINER coverage updated from **15/88 to 25/88**; **63 remaining**. QA remains **22/25**; 3 public/approved-data surfaces await visibility acceptance.
+- Latest CI on pre-update evidence head `a1aa499e96bb5b37677a03b2601df47cc983d120`: workflow/source `45125814431`, TASKO/Laundry/Admin `45125814474`, Regression `45125814548`, Quality `45125814422` all successful. Full UI migration suite skipped; Phase 3 branch has no CI runs yet.
+- Fresh Advisor: production 23 no-policy RLS INFO, 6 anon + 88 authenticated SECURITY DEFINER warnings, leaked-password protection disabled; QA 1 anon + 25 authenticated warnings. Phase 2 remains **NOT ACCEPTED**. No production change, merge or deployment.
