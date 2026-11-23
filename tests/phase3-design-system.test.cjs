@@ -83,3 +83,10 @@ test('Phase 3 primary orange actions use navy foreground for contrast', () => {
   assert.match(design, /\.fr-phase3-shell \.home-banner\{[^}]*linear-gradient\(120deg,var\(--fr-navy\)/);
   assert.match(design, /\.fr-phase3-shell \.banner-cta\{[^}]*color:var\(--fr-navy\)/);
 });
+
+
+test('Phase 3 ride/map navigation accents are shell-scoped', () => {
+  for (const selector of ['.fr-phase3-shell .pill', '.fr-phase3-shell .location-action', '.fr-phase3-shell .track-actions button', '.fr-phase3-shell #mapPlaceholder']) {
+    assert.ok(design.includes(selector), `missing scoped ride/map accent: ${selector}`);
+  }
+});
