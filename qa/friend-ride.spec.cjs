@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./local-only-fixture.cjs');
 
 test('FRIEND RIDE production page boots and exposes the four role entry points', async ({ page }) => {
   const errors = [];
