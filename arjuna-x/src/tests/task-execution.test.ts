@@ -90,3 +90,17 @@ test("retry configuration outside supported bounds is rejected", async () => {
   await assert.rejects(() => runtime.run([action], { maxRetries: 4 }), /between 0 and 3/);
   await assert.rejects(() => runtime.run([action], { maxRetries: -1 }), /between 0 and 3/);
 });
+
+test("executor validates action retrySafe and malformed approval lists before execution", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([{ ...action, retrySafe: "true" } as never]), /retrySafe must be a boolean/);
+  await assert.rejects(() => runtime.run([action], { userConfirmedActionIds: "a1" as never }), /array of strings/);
+  await assert.rejects(() => runtime.run([action], { specialApprovalActionIds: [1] as never }), /array of strings/);
+  assert.equal(executions, 0);
+});
+
+test("duplicate IDs with surrounding whitespace are rejected", async () => {
+  const runtime = new TaskExecutionRuntime({ async execute() { return "ok"; } });
+  await assert.rejects(() => runtime.run([{ ...action, id: "a1 " }, { ...action, id: " a1" }]), /Duplicate action id/);
+});
