@@ -62,3 +62,10 @@
 - Never display a listening animation until the platform confirms capture has started.
 - Permission request, capture start, stop, and failure are separate UI states.
 - Core readiness helpers do not request permissions, access microphone, or start speech; UI/platform adapter owns those actions.
+
+
+## Voice session controller
+- Session state helper manages request/permission/capture/listening/stop/error transitions as a pure reducer-like module.
+- Requests are blocked when readiness checks fail.
+- Transcript updates are accepted only while state is listening and capped at 4,000 characters.
+- This core does not initiate microphone capture, persist transcripts, or transmit audio/text; platform adapter and UI must enforce consent, privacy and backend access rules.
