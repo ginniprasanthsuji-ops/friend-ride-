@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { GINNY_NAME, GINNY_COPY, getGinnyCopy, resolveGinnyLanguage } from "../core/ginny-assistant-localization";
+import { GINNY_NAME, GINNY_COPY, getGinnyCopy, getGinnyWelcomeProfile, resolveGinnyLanguage from "../core/ginny-assistant-localization";
 
 describe("Ginny assistant localization", () => {
   it("uses Ginny as the assistant name", () => {
@@ -35,3 +35,5 @@ describe("Ginny assistant localization", () => {
     expect(GINNY_COPY.hi.greeting("अमित")).toContain("अमित");
   });
 });
+
+\ndescribe("Ginny welcome profile", () => {\n  it("prioritizes explicit language selection over device locale", () => {\n    expect(getGinnyWelcomeProfile({ selectedLanguage: "hi", deviceLocale: "te-IN" }).language).toBe("hi");\n  });\n  it("uses device locale when selection is absent", () => {\n    expect(getGinnyWelcomeProfile({ deviceLocale: "hi-IN" }).language).toBe("hi");\n  });\n  it("trims optional display name and avoids empty-name greeting", () => {\n    expect(getGinnyWelcomeProfile({ selectedLanguage: "te", displayName: "  Ginni  " }).greeting).toContain("Ginni");\n    expect(getGinnyWelcomeProfile({ selectedLanguage: "te", displayName: "   " }).greeting).not.toContain("హాయ్  ");\n  });\n  it("returns consistent UI labels for chosen language", () => {\n    const profile = getGinnyWelcomeProfile({ selectedLanguage: "hi" });\n    expect(profile.inputPlaceholder).toBe(GINNY_COPY.hi.inputPlaceholder);\n    expect(profile.voicePrompt).toBe(GINNY_COPY.hi.voicePrompt);\n    expect(profile.languageLabel).toBe("हिन्दी");\n  });\n});\n
