@@ -304,3 +304,17 @@ Phase 2 remains **BLOCKED / NOT ACCEPTED** pending owner Auth setting, full role
 - Combined with the previously verified 8 production admin RPCs, **15 of 88** authenticated-executable SECURITY DEFINER warnings now have non-admin role-negative evidence; **73 remain untested**. This is only the admin RPC subset, not function-wide acceptance.
 - QA coverage is now **22/25** authenticated-executable SECURITY DEFINER functions with rollback negative/ownership checks (7 admin, 11 role, 4 ownership/data-return checks). The 3 remaining QA data surfaces are not negative-tested and require owner visibility acceptance.
 - Production Auth leaked-password setting, 73 remaining production function tests/review, owner acceptance of public surfaces and 23 internal tables, and real device/credential integrations remain open. No production merge/deploy/schema/auth mutation.
+
+
+## 29. Verified branch CI on refreshed evidence head (2026-11-23)
+
+Current evidence head before this documentation update: `d01296f5de42adb990d229ccc007b56a92091272`. GitHub Actions runs on that head completed successfully:
+
+| Run | Result |
+|---|---|
+| FRIEND RIDE Regression `45125283262` | **PASS 47/47** Phase 2 safe browser tests; full UI migration suite skipped by branch scope |
+| FRIEND RIDE Quality Gate `45125283319` | **PASS** typecheck, core typecheck, runtime build, **9/9** Node unit, **5/5** core, **47/47** browser; full UI migration suite skipped |
+| TASKO/Laundry/Admin `45125283240` | **PASS 4/4** Playwright tests |
+| FRIEND RIDE workflow regression `45125283265` | **PASS** inline JS/Version 10.1 integration source checks |
+
+Run/job records and decoded logs confirm these outcomes; combined commit-status API remained empty. These runs validate the branch code as of `d01296f`; the upcoming doc-only commit does not change source code. Phase 2 remains BLOCKED / NOT ACCEPTED.
