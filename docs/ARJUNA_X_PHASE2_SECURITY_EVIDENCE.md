@@ -339,7 +339,7 @@ Current verified status remains: production admin-RPC role-negative evidence **1
 The shared QA branch was concurrently updated. Latest branch/PR head must be rechecked before further edits; all changes remain in draft PR #39, no merge or production deployment.
 
 
-## 29. Production role/ownership read-only test increment (2026-11-23 12:59 IST)
+## 32. Production role/ownership read-only test increment (2026-11-23 12:59 IST)
 
 **Fresh branch/head at start:** `a1aa499e96bb5b37677a03b2601df47cc983d120`. Production and QA Supabase projects were ACTIVE_HEALTHY. Security Advisor observations: production 23 RLS-enabled/no-policy INFO, 6 anon-executable SECURITY DEFINER WARN, 88 authenticated-executable SECURITY DEFINER WARN, and leaked-password-protection disabled WARN; QA 1 anon and 25 authenticated SECURITY DEFINER WARN. Advisor observation timestamp: 2026-11-23 07:29:44 UTC (12:59:44 IST). No Auth setting or schema was changed.
 
