@@ -32,7 +32,7 @@ export class AssistantRuntime {
           "For high-impact financial, medical, legal, or safety advice, state uncertainty and recommend qualified verification when appropriate.",
           `Detected intent: ${intent.kind}; confidence: ${intent.confidence}. This is only a routing hint, not proof of intent.`,
           intent.needsClarification ? "Ask one concise clarifying question before suggesting action." : "",
-        ].filter(Boolean).join("\\n"),
+        ].filter(Boolean).join("\n"),
       },
       ...context.messages.slice(-12).map(({ role, content }) => ({ role, content })),
     ];
