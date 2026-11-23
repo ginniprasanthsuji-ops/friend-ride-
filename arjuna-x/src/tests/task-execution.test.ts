@@ -352,3 +352,12 @@ test("error text redaction removes bearer, key=value, URL credentials and privat
   assert.match(safe, /\[REDACTED\]/);
   assert.match(safe, /\[REDACTED PRIVATE KEY\]/);
 });
+
+
+test("redacts secrets embedded in plain string executor outputs", async () => {
+  const runtime = new TaskExecutionRuntime({ async execute() { return "Bearer token123 token=secret456 https://site.test/?access_token=url789"; } });
+  const result = await runtime.run([action]);
+  const output = String(result[0]?.output ?? "");
+  assert.doesNotMatch(output, /token123|secret456|url789/);
+  assert.match(output, /\[REDACTED\]/);
+});
