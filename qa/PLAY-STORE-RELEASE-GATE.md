@@ -415,3 +415,11 @@ A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95
 - Latest CI on the pre-doc head `a1aa499e96bb5b37677a03b2601df47cc983d120`: workflow/source `45125814431`, TASKO/Laundry/Admin `45125814474`, FRIEND RIDE regression `45125814548`, Quality Gate `45125814422` all success. Full UI-migration suite skipped; Phase 3 branch CI not present.
 - Fresh production Advisor: 23 RLS-enabled/no-policy INFO, 6 anon + 88 authenticated SECURITY DEFINER WARN, leaked-password protection disabled WARN. QA: 1 anon + 25 authenticated warnings.
 - Remaining external/owner blockers: enable leaked-password protection; confirm public data visibility and 23 internal tables; finish 63 production role/ownership tests; test QA push/concurrency/HTTP and real OTP/GPS/payment/device flows. No schema/Auth/Edge changes, merge or live deploy.
+
+
+## 20. Additional production role/ownership checks — 2026-11-23
+
+- Additional read-only, rollback-only production tests: **11/11 PASS** across five SECURITY DEFINER functions; 4 order-type access checks + 4 customer-only checks returned false for synthetic subject, partner QR-read check false, Learn/Teach admin check false, market-payment details returned expected inactive-window denial.
+- Combined production role/ownership coverage: **30/88 verified; 58 remaining**. Post-test synthetic data counts 0 across profiles, admin_users, rides, market orders, parcel orders, service requests, service providers, driver locations.
+- Current branch head `c7ddfa65665b0357928d0c9d4d7d505b7841ee7c`: workflow/source `45131877959` success; Regression `45131878071`, TASKO/Laundry/Admin `45131878062`, Quality Gate `45131878153` were in progress at last check. CI not yet all-green on this documentation head.
+- Phase 2 still not accepted. Owner actions/settings, 58 remaining RPC checks, public visibility/table confirmations, QA push/live integration/device evidence remain release blockers. No production schema/Auth/function change, merge or deploy.
