@@ -254,3 +254,17 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - GitHub Actions after the KYC handler fix: browser regression **29/29 PASS**, browser E2E **29/29 PASS**, TypeScript/core typecheck PASS, unit tests **5/5 PASS**, core tests **2/2 PASS**, Pages build/deploy PASS.
 - The earlier 28/29 failure was a test assertion expecting the bucket name inside the handler function text. The handler was corrected to satisfy that assertion; the next CI run passed 29/29.
 - These are browser/source wiring checks. They do **not** prove an authenticated driver has uploaded real documents or that an Admin has reviewed them. Those remain live staging tests.
+
+
+## 9. Fresh Phase 2 security audit addendum (2026-11-23)
+
+**Decision remains BLOCKED — NOT CERTIFIED.** The current read-only evidence is recorded in [`docs/ARJUNA_X_PHASE2_SECURITY_EVIDENCE.md`](../docs/ARJUNA_X_PHASE2_SECURITY_EVIDENCE.md); reusable catalog queries are in [`qa/phase2-security-audit.sql`](phase2-security-audit.sql).
+
+- Production project: 85 public tables, 85 RLS enabled, 0 disabled, 23 with no policies (INFO); Security Advisor reports 6 anon-executable SECURITY DEFINER, 88 authenticated-executable SECURITY DEFINER, and leaked-password protection disabled (WARN).
+- QA project: 21 public tables, all RLS enabled, none without policies; Security Advisor reports 25 authenticated-executable SECURITY DEFINER and 1 anon-executable SECURITY DEFINER. Function-body/catalog review is preliminary and negative role tests are still required.
+- QA notification dispatch v7 has JWT verification disabled but checks the dispatch-secret header; it currently selects queued rows without an atomic claim. QA has 0 notification events and 0 active tokens. The register-token function v5 verifies JWT and calls `auth.getUser()`.
+- Latest main SHA `64845496f22487788aedbcf66b74147add3ab9c1`: Pages build/deployment run 45039256929 passed. Combined commit status returned no checks. This deployment run is not regression test evidence. Phase 2/3 branch CI is not verified.
+- Main `index.html` hardcodes production Supabase configuration; QA E2E isolation is not yet implemented. The FCM opt-in file is present but not loaded from the main entry point.
+- No production/QA database mutation, grant change, Auth configuration change, merge, or deployment was performed during this audit.
+
+**Open release blockers:** Auth leaked-password protection; full production RPC authorization review and role-negative tests; owner confirmation for the 23 policy-free RLS tables and intentional public functions; QA-only frontend configuration and safe E2E; atomic notification claim/retry fix; FCM integration plus real device/token tests; real OTP/GPS/payment/ride tests; CI/regression evidence; Android AAB and Play Console gates.
