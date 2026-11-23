@@ -34,12 +34,17 @@ export class TaskExecutionRuntime {
   async run(actions: PlannedAction[], options: ExecutionOptions = {}): Promise<ActionExecutionResult[]> {
     const maxRetries = validateRetries(options.maxRetries ?? 0);
     const seenIds = new Set<string>();
+    if (!Array.isArray(actions)) throw new Error("actions must be an array");
     for (const action of actions) {
       if (!action || typeof action.id !== "string" || !action.id.trim()) throw new Error("Every action must have a non-empty id");
-      if (seenIds.has(action.id)) throw new Error(`Duplicate action id: ${action.id}`);
-      seenIds.add(action.id);
+      const actionId = action.id.trim();
+      if (seenIds.has(actionId)) throw new Error(`Duplicate action id: ${actionId}`);
+      seenIds.add(actionId);
       if (![0, 1, 2, 3, 4].includes(action.permissionTier)) throw new Error(`Invalid permission tier for action ${action.id}`);
+      if (action.retrySafe !== undefined && typeof action.retrySafe !== "boolean") throw new Error(`retrySafe must be a boolean for action ${action.id}`);
     }
+    if (options.userConfirmedActionIds !== undefined && (!Array.isArray(options.userConfirmedActionIds) || options.userConfirmedActionIds.some((id) => typeof id !== "string"))) throw new Error("userConfirmedActionIds must be an array of strings");
+    if (options.specialApprovalActionIds !== undefined && (!Array.isArray(options.specialApprovalActionIds) || options.specialApprovalActionIds.some((id) => typeof id !== "string"))) throw new Error("specialApprovalActionIds must be an array of strings");
     const confirmed = new Set(options.userConfirmedActionIds ?? []);
     const specialApproved = new Set(options.specialApprovalActionIds ?? []);
     const results: ActionExecutionResult[] = [];
