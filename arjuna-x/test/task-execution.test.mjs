@@ -43,3 +43,21 @@ test("executor failure is reported after bounded attempts", async () => {
   assert.equal(results[0].status, "FAILED");
   assert.equal(results[0].attempts, 3);
 });
+test("execution runtime rejects duplicate action IDs and invalid tiers", async () => {
+  const runtime = new TaskExecutionRuntime({ execute: async () => undefined });
+  await assert.rejects(runtime.run([action("dup", 1), action("dup", 1)]), /Duplicate action id/);
+  await assert.rejects(runtime.run([action("bad-tier", 8)]), /Invalid permission tier/);
+  await assert.rejects(runtime.run([{ ...action("blank", 1), id: " " }]), /non-empty id/);
+});
+
+test("aborted execution returns a cancellation result rather than losing it", async () => {
+  const controller = new AbortController();
+  const runtime = new TaskExecutionRuntime({ execute: async () => {
+    controller.abort();
+    throw new Error("aborted by executor");
+  } });
+  const results = await runtime.run([action("cancelled", 1)], { signal: controller.signal, maxRetries: 2 });
+  assert.equal(results[0].status, "SKIPPED");
+  assert.equal(results[0].attempts, 1);
+  assert.match(results[0].error, /cancelled/);
+});
