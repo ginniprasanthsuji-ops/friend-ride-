@@ -38,3 +38,10 @@
 - Prefer masculine voice presentation when available, but voice selection follows language support and user preference.
 - Localized avatar alt text is provided by `ginny-avatar-profile.ts`.
 - Generated avatar concept exists in this conversation; image asset has not yet been uploaded into the repository or wired into UI.
+
+
+## Product brand boundary
+- The app name remains **FRIEND RIDE**.
+- AI assistant name is **Ginny**; assistant UI label is **Ginny AI**.
+- Avatar presentation is male; avatar/app visuals follow navy + gold theme.
+- Never replace the app's FRIEND RIDE name with Ginny in product chrome, app launcher, or store identity.
