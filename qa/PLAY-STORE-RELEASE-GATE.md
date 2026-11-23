@@ -395,3 +395,8 @@ QA-only rollback testing now covers **22/25** authenticated-executable SECURITY 
 ## 16. Verified CI on refreshed Phase 2 evidence head (2026-11-23)
 
 On evidence head `d01296f5de42adb990d229ccc007b56a92091272`, all four workflows passed: Regression 47/47 safe browser tests (`45125283262`); Quality Gate 47/47 browser + 9/9 Node + 5/5 core with typechecks/runtime build (`45125283319`); TASKO/Laundry/Admin 4/4 (`45125283240`); source/workflow integration checks (`45125283265`). Full UI-migration route suite skipped by Phase 2 branch scope. Combined commit-status API empty; workflow/job records and logs are evidence. This doc-only follow-up does not change code. Release remains blocked.
+
+
+## 17. Latest CI re-verification (2026-11-23)
+
+On current evidence head `e753d895cb79f79bbee81b3f1de44d1fe93486fe`, Regression `45125485739` passed 47/47 Phase 2 safe browser tests; Quality `45125485784` passed 47/47 browser, 9/9 Node, 5/5 core, typechecks/runtime build; TASKO/Laundry/Admin `45125485753` passed 4/4; workflow/source regression `45125485805` passed. UI migration suite was skipped by Phase 2 scope. No code changed in this doc follow-up; release remains blocked.
