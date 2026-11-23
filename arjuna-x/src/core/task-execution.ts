@@ -23,6 +23,7 @@ export interface ExecutionOptions {
 }
 
 const MAX_OUTPUT_JSON_CHARS = 10_000;
+const MAX_ACTIONS_PER_RUN = 100;
 
 function boundOutput(output: unknown): unknown {
   if (output === undefined) return undefined;
