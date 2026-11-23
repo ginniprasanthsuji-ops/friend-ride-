@@ -315,3 +315,8 @@ First browser run on Phase 2 head `ff45be49`: source-regression PASS; quality ty
 ## 18. Expanded RPC classification and QA dispatch rollback source (2026-11-23)
 
 Eight authenticated-executable SECURITY DEFINER functions without simple auth markers were reviewed as read-only approved/public lists/payment-option details; six anon functions are read-only. Fifteen functions call the admin-membership helper, eight use the approved-driver helper, and service-only/trigger functions were classified. The full 72 auth.uid()-guarded functions still need role-negative tests. QA dispatch v7 rollback source is preserved in the branch. Latest head has no visible CI status/run evidence; scoped rerun remains unverified.
+
+
+## 19. Scoped Phase 2 CI PASS (2026-11-23)
+
+On code/workflow commit `28fc0d7bcdde973b980613a7982a38d1cb72ee77`: source-regression PASS; quality typecheck/unit PASS (9 Node unit + 5 core tests); quality browser suite PASS 49/49; FRIEND RIDE regression PASS 49/49; TASKO/Laundry/Admin Playwright PASS 4/4. The full Dark+Gold UI suite is deferred to Phase 3. Latest docs/rollback-source-only head has no visible combined statuses; the code/workflow scope-fix commit is verified. Release remains BLOCKED.
