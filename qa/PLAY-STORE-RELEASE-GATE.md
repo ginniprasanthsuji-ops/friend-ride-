@@ -439,3 +439,10 @@ A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95
 - Production SECURITY DEFINER role/ownership coverage: **41/88 verified; 47 remain**. Remaining 47 marker triage: 38 caller/ownership, 1 admin guard (`fr_cancel_ride`), 8 public/approved-data surfaces needing owner privacy acceptance. Marker counts do not certify security.
 - Latest full CI on `428934eec3d41482fb43a4162ebe3c78d3cdc4c9`: source/workflow `45132193156`, TASKO/Laundry/Admin `45132193130`, Regression `45132193047`, Quality Gate `45132193105` all success; Phase 2 full UI-migration browser suite skipped. Prior exact counts on same scoped suite: 47/47 browser, 9/9 Node, 5/5 core.
 - Phase 2 still blocked by leaked-password protection, public/internal visibility owner confirmation, 47 remaining RPC checks, QA push/HTTP/concurrency, and real OTP/GPS/payment/device gates. No production DB/Auth/Edge changes, merge or deploy.
+
+
+## 24. Fresh Phase 2 security checks and CI (2026-11-23 13:55 IST)
+- Fresh production/QA project status ACTIVE_HEALTHY. Advisor: production 23 RLS/no-policy INFO, 6 anon + 88 authenticated SECURITY DEFINER WARN, leaked-password protection disabled; QA 1 anon + 25 authenticated SECURITY DEFINER WARN.
+- Four additional authenticated synthetic-subject read-only tests PASS in rollback-only transaction: approved-driver helper false; subscription none/inactive; dummy ride payment details empty; dummy ride customer details empty. Post-check synthetic profile/admin/subscription/dummy ride counts 0. Verified production role/ownership coverage 45/88, 43 remaining; public-surface owner acceptance still open.
+- Current head CI PASS: Quality 45132414998 (9/9 Node, 5/5 core, 47/47 safe browser, typechecks/build); Regression 45132414855 47/47; TASKO/Laundry/Admin 45132414866 4/4; source regression 45132414856 25 inline scripts plus learn-teach syntax. Full UI migration suite skipped by Phase 2 scope.
+- Release readiness BLOCKED. Phase 2 is NOT accepted. Owner/Auth, privacy/table acceptance, remaining 43 function tests, QA push HTTP/auth/concurrency, and real device/credential integration are pending. No production changes, merge, or deploy.
