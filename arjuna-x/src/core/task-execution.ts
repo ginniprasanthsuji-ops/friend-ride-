@@ -67,6 +67,10 @@ export class TaskExecutionRuntime {
     if (options.userConfirmedActionIds !== undefined && (!Array.isArray(options.userConfirmedActionIds) || options.userConfirmedActionIds.some((id) => typeof id !== "string"))) throw new Error("userConfirmedActionIds must be an array of strings");
     if (options.specialApprovalActionIds !== undefined && (!Array.isArray(options.specialApprovalActionIds) || options.specialApprovalActionIds.some((id) => typeof id !== "string"))) throw new Error("specialApprovalActionIds must be an array of strings");
     if (options.signal !== undefined && (!options.signal || typeof options.signal.aborted !== "boolean" || typeof options.signal.addEventListener !== "function")) throw new Error("signal must be a valid AbortSignal");
+    for (const [label, ids] of [["userConfirmedActionIds", options.userConfirmedActionIds], ["specialApprovalActionIds", options.specialApprovalActionIds]] as const) {
+      if (ids && (ids.length > MAX_ACTIONS_PER_RUN || ids.some((id) => !id.trim() || id.trim().length > MAX_ACTION_ID_LENGTH))) throw new Error(`${label} contains invalid or excessive action IDs`);
+    }
+    if (options.signal !== undefined && (!options.signal || typeof options.signal.aborted !== "boolean" || typeof options.signal.addEventListener !== "function")) throw new Error("signal must be a valid AbortSignal");
     const confirmed = new Set((options.userConfirmedActionIds ?? []).map((id) => id.trim()));
     const specialApproved = new Set((options.specialApprovalActionIds ?? []).map((id) => id.trim()));
     const results: ActionExecutionResult[] = [];
