@@ -4,6 +4,7 @@ import {
   evaluatePhase7FeatureAccess,
   isPhase7FeatureAllowed,
   phase7FeatureDependencyCatalog,
+  evaluatePhase7Action,
 } from "../core/phase7-dependency-catalog.js";
 
 test("manual Supabase workflow is allowed as manual-only", () => {
@@ -30,4 +31,18 @@ test("unknown features fail closed", () => {
 
 test("current catalog makes no integrated claims", () => {
   assert.ok(phase7FeatureDependencyCatalog.every((item) => item.mode !== "integrated"));
+});
+
+test("feature gate blocks disabled features before action permission checks", () => {
+  assert.equal(evaluatePhase7Action("Payment gateway processing", { tier: 3, action: "pay", userConfirmed: true }), "DENY_FEATURE");
+});
+
+test("allowed manual feature still requires confirmation for transaction-tier actions", () => {
+  assert.equal(evaluatePhase7Action("Ride booking and lifecycle", { tier: 3, action: "book ride" }), "REQUIRE_CONFIRMATION");
+  assert.equal(evaluatePhase7Action("Ride booking and lifecycle", { tier: 3, action: "book ride", userConfirmed: true }), "ALLOW");
+});
+
+test("sensitive actions require special approval", () => {
+  assert.equal(evaluatePhase7Action("Admin approvals and complaints", { tier: 4, action: "approve sensitive request" }), "REQUIRE_SPECIAL_APPROVAL");
+  assert.equal(evaluatePhase7Action("Admin approvals and complaints", { tier: 4, action: "approve sensitive request", specialApproval: true }), "ALLOW");
 });
