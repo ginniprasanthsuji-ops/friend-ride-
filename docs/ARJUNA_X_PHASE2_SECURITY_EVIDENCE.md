@@ -209,3 +209,19 @@ The full Dark+Gold UI suite remains deferred to the Phase 3 UI branch. Latest br
 | FRIEND RIDE Regression / `45114175328` | PASS | Phase 2/main safe browser suite passed; full UI-migration suite skipped by branch scope |
 
 The previously recorded exact suite totals remain: 49/49 safe browser tests, 9/9 Node unit tests, 5/5 core tests, and 4/4 TASKO/Laundry/Admin Playwright tests. **These passes apply to commit `28fc0d7...`, not to later docs/rollback-only branch commits.** Combined status API remains empty; workflow-run and job records above are the evidence. No merge, deployment, database write, Auth change, secret access, or production action occurred. Phase 2 remains blocked by the open security review and owner/device/credential tasks listed above.
+
+
+## Continuation — latest-head Phase 2 CI verification (2026-11-23)
+
+**Verified branch head:** `97ea3fd40758eb6a0ce0337ccfa08ce826da320d` (PR #39, draft, base `main`). This head's GitHub Actions runs completed successfully:
+
+| Workflow / run | Verified result |
+|---|---|
+| FRIEND RIDE workflow regression / `45114870952` | PASS — inline JavaScript and `learn-teach.js` syntax checks |
+| FRIEND RIDE Quality Gate / `45114871004` | PASS — typecheck, core typecheck, runtime build, 9/9 Node unit tests, 5/5 Vitest core tests, and Phase 2 browser suite 47/47 |
+| TASKO Laundry Main Integration Regression / `45114870960` | PASS — 4/4 TASKO/Laundry/Admin Playwright tests |
+| FRIEND RIDE Regression / `45114871023` | PASS — Phase 2 safe browser suite 47/47 |
+
+Both browser workflows skipped the full UI-migration/Dark+Gold route regression by branch scope. This is an explicit skip, not acceptance of Phase 3 UI coverage. CI installed dependencies and Chromium successfully; the earlier local install-timeout report does not apply to these hosted CI runs.
+
+PR #39 remains **open and draft**. No merge, production deployment, Supabase schema/auth mutation, or credential/device testing occurred. Phase 2 remains blocked by the production leaked-password-protection owner action; SECURITY DEFINER function role-negative tests/owner risk acceptance; confirmation of 23 internal no-policy tables; notification claim migration/function QA deployment and concurrency/delivery tests; FCM entry-point wiring; and real OTP/GPS/payment/push checks requiring owner credentials and supported device(s).
