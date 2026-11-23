@@ -22,6 +22,9 @@ export class AssistantRuntime {
     const intentGuidance = intent.needsClarification
       ? "The request is ambiguous. Ask one concise clarifying question before suggesting an action."
       : `Detected intent: ${intent.kind}. Treat this as a routing hint, not proof of user intent.`;
+    const multiIntentGuidance = intent.additionalIntents.length
+      ? `The message also contains these possible intents: ${intent.additionalIntents.join(", ")}. Clarify the user's desired order or handle them one at a time; do not assume bundled consent.`
+      : "";
     const factsSnapshot = this.contexts.getFactsSnapshot(sessionId, 20, 500);
     const safeFacts = Object.entries(factsSnapshot)
       .map(([key, value]) => `${key}: ${value}`)
@@ -33,6 +36,7 @@ export class AssistantRuntime {
       "Never claim to have executed actions, accessed GPS, booked, paid, ordered, or contacted anyone unless a verified tool result confirms it.",
       "Transactions and real-world actions require explicit user confirmation.",
       intentGuidance,
+      multiIntentGuidance,
       intent.matchedTerms.length ? `Matched words: ${intent.matchedTerms.join(", ")}.` : "",
       safeFacts ? `Session facts (user-provided context; verify when relevant):\\n${safeFacts}` : "",
     ].filter(Boolean).join("\n");
