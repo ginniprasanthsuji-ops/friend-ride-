@@ -16,3 +16,15 @@
 .lt-stat b{color:var(--fr-navy,#071c46)}
 .lt-course{background:#eef3fa}
 @media(max-width:380px){.lt-hero{padding:15px}.lt-grid{gap:7px}.lt-card,.lt-role{padding:11px}}
+
+/* Pass 100 — learning module navigation and interaction-state polish. */
+.lt-tabs{scrollbar-width:thin;scrollbar-color:var(--fr-border,#dbe4f0) transparent;-webkit-overflow-scrolling:touch}
+.lt-tabs button{min-height:40px;transition:background-color .15s ease,border-color .15s ease,color .15s ease}
+.lt-tabs button:hover{border-color:var(--fr-orange,#ff6b00);background:#fff8f1}
+.lt-btn{min-height:44px;transition:filter .15s ease,transform .15s ease}
+.lt-btn:hover{filter:brightness(1.05)}
+.lt-btn:active{transform:translateY(1px)}
+.lt-form{min-width:0}
+.lt-form>*{min-width:0}
+.lt-form input,.lt-form select,.lt-form textarea{max-width:100%;min-height:42px}
+@media(prefers-reduced-motion:reduce){.lt-tabs button,.lt-btn{transition:none}.lt-btn:active{transform:none}}
