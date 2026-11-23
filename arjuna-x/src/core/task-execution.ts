@@ -70,6 +70,7 @@ export class TaskExecutionRuntime {
     for (const [label, ids] of [["userConfirmedActionIds", options.userConfirmedActionIds], ["specialApprovalActionIds", options.specialApprovalActionIds]] as const) {
       if (ids && (ids.length > MAX_ACTIONS_PER_RUN || ids.some((id) => !id.trim() || id.trim().length > MAX_ACTION_ID_LENGTH))) throw new Error(`${label} contains invalid or excessive action IDs`);
       if (ids && new Set(ids.map((id) => id.trim())).size !== ids.length) throw new Error(`${label} contains duplicate action IDs`);
+      if (ids && ids.some((id) => !seenIds.has(id.trim()))) throw new Error(`${label} contains IDs not present in this execution plan`);
     }
     if (options.signal !== undefined && (!options.signal || typeof options.signal.aborted !== "boolean" || typeof options.signal.addEventListener !== "function")) throw new Error("signal must be a valid AbortSignal");
     const confirmed = new Set((options.userConfirmedActionIds ?? []).map((id) => id.trim()));
