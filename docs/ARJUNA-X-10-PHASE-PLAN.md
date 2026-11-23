@@ -703,3 +703,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Quality workflow push ignores `docs/**`; PR CI targets `main` only. Current branch docs changes have no fresh CI run. #752 remains successful on code/test SHA `7fcfb45c32d661d20ad41b17294a88a357bf3ee4`, not current HEAD.
 - Notification static test verifies source architecture mismatch only, not runtime delivery. No code or provider/config change made; notification delivery gate remains open.
 - Pass 115 documentation evidence only; no production, schema, auth, payment, API, merge or deploy changes. Phase 2 NOT ACCEPTED.
+
+
+## Phase 3 — Pass 107 (fresh app-shell integration audit, 2026-11-23)
+
+- Freshly re-inspected the QA branch HEAD `cb1d63c2ac0a755824b60113a5c4a5ea3bd69a21`, app entry `index.html`, Phase 3 stylesheet, learning stylesheet and contract test.
+- Confirmed the Phase 3 design-system CSS is imported only through `learn-teach.css`; the main `index.html` still contains a large inline purple/legacy palette and does not link the Phase 3 stylesheet. The current design-system CSS uses broad selectors and therefore must not be globally linked without a deliberate cascade/scope strategy and visual regression proof.
+- Current Phase 3 coverage is limited: token/safe-area/reduced-motion/focus/responsive contract tests and learning-module scoped styling. No evidence of full-shell/global route rollout or per-route visual acceptance.
+- Latest verified Quality Gate #752 remains SUCCESS on code/test SHA `7fcfb45c32d661d20ad41b17294a88a357bf3ee4` (typecheck/unit/core/build and browser regression jobs); documentation-only HEAD is newer and workflow ignores docs paths. No new CI run was created for this pass.
+- No runtime, route, API, auth, payment, backend/schema, main, or deployment changes. Phase 3 remains IN PROGRESS; Phase 2 remains HOLD / DEFERRED / NOT ACCEPTED. Next safe step is a controlled global stylesheet integration with explicit scope/cascade tests and visual screenshots, not a blind stylesheet link.
