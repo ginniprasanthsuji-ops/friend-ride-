@@ -90,3 +90,10 @@ test('Phase 3 ride/map navigation accents are shell-scoped', () => {
     assert.ok(design.includes(selector), `missing scoped ride/map accent: ${selector}`);
   }
 });
+
+
+test('Phase 3 role launcher uses scoped Navy/Orange/White palette', () => {
+  for (const selector of ['.fr-phase3-shell .fr-role-card', '.fr-phase3-shell .fr-role-card b', '.fr-phase3-shell .fr-role-icon', '.fr-phase3-shell .fr-role-card.driver .fr-role-icon', '.fr-phase3-shell .fr-role-card.admin .fr-role-icon', '.fr-phase3-shell .fr-role-arrow']) {
+    assert.ok(design.includes(selector), `missing role launcher palette selector: ${selector}`);
+  }
+});
