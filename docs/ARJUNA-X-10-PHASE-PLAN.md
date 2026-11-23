@@ -672,3 +672,10 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Read-only post-change verification: anon direct privilege rows=0; PUBLIC direct privilege rows=0; all 21 public tables still have RLS enabled; 46 policies unchanged/visible, anon/PUBLIC policy count=0; authenticated table grants remain (141 privilege rows across public tables).
 - Added 54-check read-only SQL audit block (18 direct-grant, 18 RLS, 18 anon/PUBLIC policy checks) to `qa/read-only-regression.sql`, and static coverage in `tests/qa-security-audit-sql.test.cjs`. CI #751/#752 pending at record time.
 - QA-only ACL remediation is verified; Phase 2 still NOT ACCEPTED because notification integration/event producer, physical-device/PWA, owner credential verification, branch protection access and other release checks remain.
+
+
+## Phase 2 — Pass 112 (QA ACL patch verification + CI)
+
+- Re-ran the committed read-only QA grant/RLS/policy SQL: 54/54 checks PASS (18 anon direct-grant checks, 18 RLS checks, 18 anon/PUBLIC policy checks).
+- CI #751 SUCCESS on `467ca3df`: unit suite and browser E2E success. CI #752 SUCCESS on `7fcfb45c`: typecheck, core typecheck, runtime build, Node unit tests, Vitest core tests and Playwright browser regression all success. CI #750/#749 also SUCCESS; #748 is the historical test-doc dependency failure, fixed in #750.
+- Latest HEAD `cce2ca026ea93994b4bec5b948b77e51ef611de4` is documentation-only after #752; this exact docs head has not been CI-run. No production DB or deployment changes.
