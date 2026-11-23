@@ -85,3 +85,10 @@
 /* Pass 112 — WCAG contrast-oriented primary CTA treatment. */
 .fr-phase3-shell .home-banner{background:radial-gradient(circle at 85% 10%,#ffb45a 0,transparent 27%),linear-gradient(120deg,var(--fr-navy),var(--fr-navy-2))}
 .fr-phase3-shell .banner-cta{background:#fff;color:var(--fr-navy)}
+
+/* Pass 113 — ride/map navigation accents harmonized with Phase 3. */
+.fr-phase3-shell .pill{background:#eaf0fa;color:var(--fr-navy);border:1px solid var(--fr-border)}
+.fr-phase3-shell .location-action{border-color:var(--fr-border);background:#eaf0fa;color:var(--fr-navy)}
+.fr-phase3-shell .track-actions button{border-color:var(--fr-border);background:#fff;color:var(--fr-navy)}
+.fr-phase3-shell #rideMap,.fr-phase3-shell #trackingMap,.fr-phase3-shell .market-map{border-color:var(--fr-border)}
+.fr-phase3-shell #mapPlaceholder{background:linear-gradient(135deg,#eaf0fa,#f4f6fb);color:var(--fr-navy);border-color:var(--fr-border)}
