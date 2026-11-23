@@ -121,3 +121,10 @@ test('Phase 3 common shell controls enforce 44px minimum touch target', () => {
   assert.match(design, /\.fr-phase3-shell \.catalogue-category-pills button[^}]*min-height:44px/);
   assert.match(design, /\.fr-phase3-shell \.bottom button[^}]*min-height:44px/);
 });
+
+
+test('Phase 3 accent and secondary text use contrast-safe palette tokens', () => {
+  for (const selector of ['.fr-phase3-shell .bottom button.active', '.fr-phase3-shell .premium-bottom button.active', '.fr-phase3-shell .home-section-title button', '.fr-phase3-shell .fr-role-arrow', '.fr-phase3-shell .fr-premium-eyebrow.dark', '.fr-phase3-shell .location-head span']) {
+    assert.ok(design.includes(selector), `missing contrast text override: ${selector}`);
+  }
+});
