@@ -310,3 +310,8 @@ QA rollback script passed a syntax/execution test inside explicit BEGIN/ROLLBACK
 ## 17. CI scope correction (2026-11-23)
 
 First browser run on Phase 2 head `ff45be49`: source-regression PASS; quality typecheck/unit PASS (9 Node unit, 5 core tests); TASKO/Laundry/Admin Playwright PASS 4/4; main browser regression and quality browser E2E FAIL 49/59, with all 10 failures in the Phase 3 Dark+Gold UI spec (expected selectors absent on main-based Phase 2 branch). Added `npm run test:phase2` and branch-scoped workflow steps for main/Phase 2; the full UI suite remains on UI migration branches. Rerun pending. Release remains BLOCKED.
+
+
+## 18. Expanded RPC classification and QA dispatch rollback source (2026-11-23)
+
+Eight authenticated-executable SECURITY DEFINER functions without simple auth markers were reviewed as read-only approved/public lists/payment-option details; six anon functions are read-only. Fifteen functions call the admin-membership helper, eight use the approved-driver helper, and service-only/trigger functions were classified. The full 72 auth.uid()-guarded functions still need role-negative tests. QA dispatch v7 rollback source is preserved in the branch. Latest head has no visible CI status/run evidence; scoped rerun remains unverified.
