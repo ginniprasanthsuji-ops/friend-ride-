@@ -22,6 +22,20 @@ export interface ExecutionOptions {
   signal?: AbortSignal;
 }
 
+const MAX_OUTPUT_JSON_CHARS = 10_000;
+
+function boundOutput(output: unknown): unknown {
+  if (output === undefined) return undefined;
+  try {
+    const serialized = JSON.stringify(output);
+    if (serialized === undefined) return "[Output omitted: not JSON-serializable]";
+    if (serialized.length <= MAX_OUTPUT_JSON_CHARS) return output;
+    return `[Output truncated: ${serialized.slice(0, MAX_OUTPUT_JSON_CHARS)}]`;
+  } catch {
+    return "[Output omitted: serialization failed]";
+  }
+}
+
 function validateRetries(value: number): number {
   if (!Number.isInteger(value) || value < 0 || value > 3) throw new Error("maxRetries must be an integer between 0 and 3");
   return value;
@@ -85,7 +99,7 @@ export class TaskExecutionRuntime {
             results.push({ actionId: action.id.trim(), status: "SKIPPED", attempts, error: "Execution cancelled after action completion" });
             break;
           }
-          results.push({ actionId: action.id.trim(), status: "SUCCEEDED", attempts, output });
+          results.push({ actionId: action.id.trim(), status: "SUCCEEDED", attempts, output: boundOutput(output) });
           break;
         } catch (error) {
           const rawMessage = error instanceof Error ? error.message : String(error);
