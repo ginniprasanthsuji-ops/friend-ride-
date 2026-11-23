@@ -13,6 +13,8 @@ const transitions: Record<TaskStatus, readonly TaskStatus[]> = {
 };
 
 export function canTransition(from: TaskStatus, to: TaskStatus): boolean {
+  if (!Object.prototype.hasOwnProperty.call(transitions, from)) return false;
+  if (!Object.prototype.hasOwnProperty.call(transitions, to)) return false;
   return transitions[from].includes(to);
 }
 
