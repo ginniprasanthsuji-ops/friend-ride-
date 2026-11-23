@@ -15,7 +15,7 @@
   background:linear-gradient(110deg,var(--fr-navy),var(--fr-navy-2));color:#fff
 }
 .fr-phase3-shell .hero{background:linear-gradient(120deg,var(--fr-navy),var(--fr-navy-2));color:#fff}
-.fr-phase3-shell .btn, .fr-phase3-shell .top-action{background:linear-gradient(100deg,var(--fr-orange),var(--fr-orange-2));color:#fff}
+.fr-phase3-shell .btn, .fr-phase3-shell .top-action{background:linear-gradient(100deg,var(--fr-orange),var(--fr-orange-2));color:var(--fr-navy)}
 .fr-phase3-shell .btn.purple, .fr-phase3-shell .btn.dark{background:linear-gradient(100deg,var(--fr-navy),var(--fr-navy-2));color:#fff}
 .fr-phase3-shell .btn.light{background:#eaf0fa;color:var(--fr-navy);box-shadow:none}
 .fr-phase3-shell .field input, .fr-phase3-shell .field textarea, .fr-phase3-shell .field select, .fr-phase3-shell input, .fr-phase3-shell textarea, .fr-phase3-shell select{border-color:var(--fr-border);color:var(--fr-ink)}
@@ -81,3 +81,7 @@
 .fr-phase3-shell .fr-premium-hero{background:radial-gradient(circle at 78% 30%,#ff8b2433 0,transparent 30%),radial-gradient(circle at 12% 100%,#ff8b2433 0,transparent 27%),linear-gradient(125deg,var(--fr-navy) 0%,var(--fr-navy-2) 52%,#1c3b78 100%)}
 .fr-phase3-shell .fr-launcher-logo{background:linear-gradient(135deg,var(--fr-orange),var(--fr-orange-2));color:var(--fr-navy)}
 .fr-phase3-shell .fr-role-launcher{background:radial-gradient(circle at 12% 8%,#1c3b78 0,var(--fr-navy) 42%,#100b25 100%)}
+
+/* Pass 112 — WCAG contrast-oriented primary CTA treatment. */
+.fr-phase3-shell .home-banner{background:radial-gradient(circle at 85% 10%,#ffb45a 0,transparent 27%),linear-gradient(120deg,var(--fr-navy),var(--fr-navy-2))}
+.fr-phase3-shell .banner-cta{background:#fff;color:var(--fr-navy)}
