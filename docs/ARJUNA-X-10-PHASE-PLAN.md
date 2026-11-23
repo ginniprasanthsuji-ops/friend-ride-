@@ -663,3 +663,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - CI #750 on `91ab41ace0538a5500da21ceacb58fdf001bdbee` is SUCCESS: `typecheck`, `typecheck:core`, `build:runtime`, `test:unit`, `test:core`, and Playwright `browser regression suite` all successful.
 - CI #749 on docs commit `ec934a09764aeb85656a89cb7637eb0b7d4d2c91` SUCCESS. CI #748 remains a recorded failure caused by the test/docs commit-order assumption (13/14 Node tests passed, browser job succeeded); fixed test in #750 and the rerun is green.
 - Latest HEAD is documentation-only commit `d74d2c651f015bcd0bd51affccfb33efecd83792`; #750 verified the immediately preceding test-code commit. Doc-only inventory updates after #750 were not separately run by CI. Phase 2 still NOT ACCEPTED.
+
+
+## Phase 2 — Pass 111 (QA least-privilege ACL patch)
+
+- Before change: all 18 sampled public tables had RLS enabled but direct anon privileges included SELECT/INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER; no anon/PUBLIC policies and no PUBLIC table grants. This was excessive direct privilege, not a confirmed row-access bypass.
+- Applied QA-only `REVOKE ALL PRIVILEGES` from `anon` on exactly the 18 audited tables in project `pqsangtvietawkfgpgfu`. No production project was touched; no schema, RLS policies, authenticated privileges, functions, auth/payment/API contracts or data changed.
+- Read-only post-change verification: anon direct privilege rows=0; PUBLIC direct privilege rows=0; all 21 public tables still have RLS enabled; 46 policies unchanged/visible, anon/PUBLIC policy count=0; authenticated table grants remain (141 privilege rows across public tables).
+- Added 54-check read-only SQL audit block (18 direct-grant, 18 RLS, 18 anon/PUBLIC policy checks) to `qa/read-only-regression.sql`, and static coverage in `tests/qa-security-audit-sql.test.cjs`. CI #751/#752 pending at record time.
+- QA-only ACL remediation is verified; Phase 2 still NOT ACCEPTED because notification integration/event producer, physical-device/PWA, owner credential verification, branch protection access and other release checks remain.
