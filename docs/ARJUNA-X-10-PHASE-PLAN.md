@@ -394,3 +394,14 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - CI **#732**, **#733**, and **#734** were triggered by the SVG/manifest commits and were in progress at observation. #734 corresponds to the latest refined SVG. Await final statuses before acceptance.
 - Current active notification enrollment remains VAPID/Web Push; FCM helper that targeted production was safely removed as dormant code. FCM frontend integration remains unimplemented because the prior helper was production-bound; a QA-only Firebase/Supabase config must be defined first. Do not enable it with production endpoint.
 - Phase 2 remains NOT ACCEPTED. Remaining blockers: CI for latest icon/manifest, official PNG 512/maskable binary replacement (SVG alternative is in manifest but fallback PNGs remain legacy), QA-only FCM integration/token lifecycle/delivery, device PWA install/update/offline, QA backend E2E, security/RLS/Edge secret audit, branch protection verification. No production changes, main merge or deployment.
+
+
+## Pass 79 — Remove unused realtime notification fallback + icon CI verification (2026-11-23)
+
+- Fresh source-reference audit confirmed `fr-notification-fallback.js` is not loaded by `index.html` and repository search found no reference to the file. It was a dormant Supabase Realtime/polling notification helper with duplicate active-session display behavior; safely deleted from QA branch. Deletion commit `56ead5ab931e74f187564d7baf14a3f1edc3450a`. Active notification enrollment and service worker paths were not changed.
+- CI **#732 / 45092496343** initial SVG commit: SUCCESS; both jobs.
+- CI **#733 / 45092523927** manifest SVG-priority commit: SUCCESS; both jobs.
+- CI **#734 / 45092565184** refined SVG commit: SUCCESS; both jobs. Type/core typecheck, runtime build, unit/core tests, and Chromium Playwright **48/48** passed. npm audit report remains non-blocking in workflow pending advisory remediation.
+- Latest icon path: SVG launcher icon is preferred with `any maskable`; PNG 192 and 512 fallbacks remain. SVG was rendered and inspected locally; exact uploaded logo tracing and Android launcher mask/device proof remain pending.
+- CI triggered by fallback-helper deletion is pending; verify before claiming its commit passes.
+- Phase 2 NOT ACCEPTED. Remaining: CI for helper deletion, 512/maskable PNG asset replacement or accepted SVG device proof, QA-only FCM client/token lifecycle/delivery, mobile PWA install/update/offline, QA backend E2E, complete security/RLS/Edge-secret audit, branch protection. No production changes, main merge or deployment.
