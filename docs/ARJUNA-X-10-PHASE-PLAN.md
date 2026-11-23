@@ -769,3 +769,10 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added Node regression assertions for role-launcher palette selectors.
 - Pass 111 CI #765/#766 and Pass 110 CI #763/#764 are verified SUCCESS. Pass 112 #767/#768, Pass 113 #769/#770 and Pass 115 #771/#772 are pending; check latest CI before acceptance.
 - Phase 3 remains IN PROGRESS pending CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 116 (stylesheet isolation guard, 2026-11-23)
+
+- Added a static regression test that enumerates CSS selector-rule lines and requires every component rule to be scoped under `fr-phase3-shell`, except the intentional global `:root` design-token block. This guards against future accidental global selector leakage.
+- CI #767/#768 verified SUCCESS for Pass 112 contrast work and #769/#770 verified SUCCESS for Pass 113 ride/map accents. #771/#772 (Pass 115 launcher) and #773 (Pass 116 scope guard) were pending at this update; verify current HEAD CI.
+- Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
