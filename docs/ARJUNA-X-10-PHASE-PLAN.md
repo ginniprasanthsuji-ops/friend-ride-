@@ -712,3 +712,13 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Current Phase 3 coverage is limited: token/safe-area/reduced-motion/focus/responsive contract tests and learning-module scoped styling. No evidence of full-shell/global route rollout or per-route visual acceptance.
 - Latest verified Quality Gate #752 remains SUCCESS on code/test SHA `7fcfb45c32d661d20ad41b17294a88a357bf3ee4` (typecheck/unit/core/build and browser regression jobs); documentation-only HEAD is newer and workflow ignores docs paths. No new CI run was created for this pass.
 - No runtime, route, API, auth, payment, backend/schema, main, or deployment changes. Phase 3 remains IN PROGRESS; Phase 2 remains HOLD / DEFERRED / NOT ACCEPTED. Next safe step is a controlled global stylesheet integration with explicit scope/cascade tests and visual screenshots, not a blind stylesheet link.
+
+
+## Phase 3 — Pass 108 (controlled shell integration, 2026-11-23)
+
+- Implemented the first integration-safe app-shell step on the QA branch: added the Phase 3 design-system stylesheet after the existing inline CSS and before learning-module CSS; applied explicit `fr-phase3-shell` class to the app body.
+- Scoped broad design-system selectors and responsive/safe-area rules to the shell root to avoid affecting unrelated documents; corrected a selector-scope issue during review. The `:root` token definitions remain global, while component rules are root-scoped.
+- Extended Phase 3 Node regression checks to assert shell root, stylesheet integration, scoped component selectors, safe-area and reduced-motion coverage, and absence of duplicate scope nesting.
+- QA branch code commits: `e1df7b8b` (initial stylesheet integration), `107830fd` (HTML integration), `23803056` and `3e47736e` (selector scoping corrections), `70605d5b`, `46ccd325`, `f6253794`, `33768d8a` (regression test integration and syntax/newline corrections). Latest HEAD: `33768d8ab424fc8212057c98a7eb0018be498020`.
+- CI run **#760 / 45101678558** was queued for latest HEAD at verification; earlier intermediate commits produced run #754 failure and #755–#759 were pending/in progress. Therefore latest code and test suite are **not yet runtime-verified**; wait for #760 and inspect its jobs/logs before acceptance.
+- No business logic, route, API, auth, payment, backend/schema, main, or production deployment changes. Phase 3 remains IN PROGRESS; Phase 2 remains HOLD / DEFERRED / NOT ACCEPTED.
