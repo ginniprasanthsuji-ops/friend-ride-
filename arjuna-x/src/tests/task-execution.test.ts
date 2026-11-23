@@ -104,3 +104,20 @@ test("duplicate IDs with surrounding whitespace are rejected", async () => {
   const runtime = new TaskExecutionRuntime({ async execute() { return "ok"; } });
   await assert.rejects(() => runtime.run([{ ...action, id: "a1 " }, { ...action, id: " a1" }]), /Duplicate action id/);
 });
+
+test("approval IDs are trimmed and matched against normalized action IDs", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  const result = await runtime.run([{ ...action, id: " action-3 ", permissionTier: 3 }], {
+    userConfirmedActionIds: ["action-3 "],
+  });
+  assert.equal(result[0]?.status, "SUCCEEDED");
+  assert.equal(executions, 1);
+});
+
+test("malformed actions array entries are rejected before executor runs", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([null as never]), /non-empty id/);
+  assert.equal(executions, 0);
+});
