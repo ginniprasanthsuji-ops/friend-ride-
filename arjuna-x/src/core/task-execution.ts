@@ -58,6 +58,7 @@ function redactOutput(value: unknown, depth = 0, visited = new WeakSet<object>()
     }
     return result;
   }
+  if (typeof value === "string") return redactText(value);
   return value;
 }
 function boundOutput(output: unknown): unknown {
