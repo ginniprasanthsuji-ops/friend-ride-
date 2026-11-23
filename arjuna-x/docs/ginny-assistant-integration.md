@@ -76,3 +76,11 @@
 - Optional display name is trimmed and capped at 80 chars.
 - Display text strips control characters and caps at 8,000 chars.
 - Core validator performs no network requests; API/UI integration must respect consent, safety and cancellation.
+
+
+## Speech output policy
+- Speak only when the selected Indian locale voice is available.
+- Sensitive responses remain text-only by default; UI may allow a user-requested readout only after an explicit review/confirmation design.
+- Cancelled and empty outputs are suppressed.
+- Output is trimmed and capped at 4,000 characters before TTS.
+- Policy helper does not invoke a speech engine; native/web TTS integration is still required.
