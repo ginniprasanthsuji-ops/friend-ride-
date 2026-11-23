@@ -20,6 +20,6 @@ test('dispatch claims before send and finalizes only rows owned by its claim tok
   assert.match(dispatch, /rpc\(["']fr_notification_claim_batch["']/);
   assert.match(dispatch, /claim_token: null, claimed_at: null/);
   assert.match(dispatch, /\.eq\(["']claim_token["'], claimToken\)/);
-  assert.match(dispatch, /status: ["']processing["']/);
+  assert.match(migration, /SET status = 'processing'/i);
   assert.doesNotMatch(dispatch, /\.select\(["']\*["']\)\.eq\(["']status["'], ["']queued["']\)/);
 });
