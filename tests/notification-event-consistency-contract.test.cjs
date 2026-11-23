@@ -1,0 +1,27 @@
+// Phase 8.16 notification/event consistency assertions.
+'use strict';
+const assert=require('node:assert/strict');
+const c=require('../qa/notification-event-consistency-contract.cjs');
+const event={eventId:'evt-1',eventType:'ride_accepted',entityId:'ride-1',createdAt:'2026-11-24T10:00:00Z'};
+const notif={eventId:'evt-1',eventType:'ride_accepted',entityId:'ride-1',state:'accepted',recipientRole:'customer',recipientId:'user-1'};
+assert.equal(c.validateEvent(event).valid,true);
+assert.equal(c.checkNotification(notif,event).consistent,true);
+assert.equal(c.checkNotification({...notif,eventId:'bad'},event).reason,'event_id_mismatch');
+assert.equal(c.checkNotification({...notif,entityId:'other'},event).reason,'entity_id_mismatch');
+assert.equal(c.checkNotification({...notif,state:'requested'},event).reason,'state_mismatch');
+assert.equal(c.checkNotification({...notif,recipientRole:'partner'},event).reason,'recipient_role_mismatch');
+assert.equal(c.checkNotification({...notif,recipientId:''},event).reason,'missing_recipient');
+assert.equal(c.validateEvent({...event,eventType:'unknown'}).reason,'unknown_event_type');
+assert.equal(c.validateEvent({...event,createdAt:'bad-date'}).reason,'invalid_timestamp');
+assert.equal(c.validateEvent({...event,eventId:''}).reason,'missing_required_fields');
+assert.equal(c.isDuplicateEvent('evt-1',['evt-1']),true);
+assert.equal(c.isDuplicateEvent('evt-2',['evt-1']),false);
+assert.equal(c.checkDashboardState({entityId:'ride-1',state:'accepted',updatedAt:'2026-11-24T10:01:00Z'},event).consistent,true);
+assert.equal(c.checkDashboardState({entityId:'ride-1',state:'requested',updatedAt:'2026-11-24T10:01:00Z'},event).reason,'dashboard_state_mismatch');
+assert.equal(c.checkDashboardState({entityId:'ride-1',state:'accepted',updatedAt:'2026-11-24T09:59:00Z'},event).reason,'dashboard_stale');
+assert.equal(c.checkOrdering(event,{...event,eventId:'evt-2',createdAt:'2026-11-24T10:01:00Z'}).ordered,true);
+assert.equal(c.checkOrdering(event,{...event,eventId:'evt-2',createdAt:'2026-11-24T09:59:00Z'}).reason,'timestamp_regression');
+assert.equal(c.retryIsIdempotent({eventId:'evt-2',deliveryAttempts:2,deliveredEventIds:[]}).safe,true);
+assert.equal(c.retryIsIdempotent({eventId:'evt-1',deliveryAttempts:2,deliveredEventIds:['evt-1']}).reason,'already_delivered');
+assert.equal(c.retryIsIdempotent({eventId:'',deliveryAttempts:0,deliveredEventIds:[]}).reason,'invalid_retry_metadata');
+console.log('Phase 8.16 assertions authored; runtime execution pending.');
