@@ -28,6 +28,10 @@ const MAX_ACTION_ID_LENGTH = 128;
 const MAX_ACTION_DESCRIPTION_LENGTH = 1_000;
 
 const SENSITIVE_OUTPUT_KEYS = /password|passwd|token|secret|authorization|cookie|api[-_]?key|credential/i;
+function redactText(value: string): string {
+  return value.replace(/(bearer\\s+)[A-Za-z0-9._~+\\/-]+=*/gi, "$1[REDACTED]")
+    .replace(/((?:password|passwd|token|secret|api[-_]?key|authorization|cookie|credential)\\s*[:=]\\s*)[^\\s,;]+/gi, "$1[REDACTED]");
+}
 function redactOutput(value: unknown, depth = 0, visited = new WeakSet<object>()): unknown {
   if (depth > 8) return "[Output omitted: maximum nesting depth]";
   if (value && typeof value === "object") {
@@ -144,7 +148,7 @@ export class TaskExecutionRuntime {
           break;
         } catch (error) {
           const rawMessage = error instanceof Error ? error.message : String(error);
-          const message = rawMessage.slice(0, 500);
+          const message = redactText(rawMessage).slice(0, 500);
           if (options.signal?.aborted) {
             results.push({ actionId: action.id.trim(), status: "SKIPPED", attempts, error: "Execution cancelled during action" });
             break;
