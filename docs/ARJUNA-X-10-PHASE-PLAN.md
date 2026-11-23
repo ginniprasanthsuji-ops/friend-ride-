@@ -729,3 +729,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added Node regression coverage for the supporting component palette.
 - CI runs #761 and #762 were triggered by the CSS/test commits and were pending at the time of this documentation update; verify both and prefer the latest branch HEAD result.
 - Phase 3 remains IN PROGRESS pending CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 110 (legacy token mapping, 2026-11-23)
+
+- Added shell-scoped overrides mapping legacy purple/purple2/navy/bg/ink/muted/line/orange/green/red/gold variables into the Phase 3 Navy/Orange/White palette. The overrides are applied on `fr-phase3-shell` so unrelated documents are not affected.
+- Added Node regression coverage for these legacy token mappings.
+- CI #761 verified SUCCESS for the Pass 109 supporting palette CSS SHA `3b1fc1b8b14ab4b2647739ac55542cb3100e8df3`. #762 (Pass 109 test SHA) was still running at the time of the next code update; #763 and #764 are triggered for Pass 110 and pending.
+- Phase 3 remains IN PROGRESS pending final CI verification for Pass 110, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
