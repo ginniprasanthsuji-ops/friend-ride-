@@ -745,3 +745,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added regression assertions for the audited selector remaps.
 - CI #761 and #762 verified SUCCESS for Pass 109 CSS/test commits. Pass 110 (#763 CSS and #764 test) and Pass 111 (#765 CSS and #766 test) were pending at documentation time; follow latest branch CI before declaring the palette patch validated.
 - Phase 3 remains IN PROGRESS. Phase 2 remains HOLD / NOT ACCEPTED. No merge or deployment.
+
+
+## Phase 3 — Pass 112 (primary CTA contrast, 2026-11-23)
+
+- Contrast review calculated white text on Phase 3 orange `#ff6b00` at about 2.86:1, below WCAG AA normal-text target 4.5:1. Primary orange buttons now use navy foreground (`#071c46`) on orange, which is approximately 5.82:1; orange CTA accents on the home banner are moved to a navy gradient and white CTA chip with navy text.
+- Added Node regression assertions for this contrast-oriented CSS treatment. This is UI-only and does not change button behavior.
+- CI #763 and #764 verified SUCCESS for Pass 110 code/test. Pass 111 (#765/#766) and Pass 112 (#767/#768) are pending at this documentation update. Verify latest CI before considering this palette iteration accepted.
+- Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
