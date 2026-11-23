@@ -221,3 +221,19 @@ test("executor rejects plans exceeding the per-run action cap", async () => {
   await assert.rejects(() => runtime.run(oversized), /Action count exceeds maximum of 100/);
   assert.equal(executions, 0);
 });
+
+test("action IDs and descriptions have input length caps", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([{ ...action, id: "i".repeat(129) }]), /Action id exceeds maximum length/);
+  await assert.rejects(() => runtime.run([{ ...action, description: "d".repeat(1001) }]), /Action description exceeds maximum length/);
+  assert.equal(executions, 0);
+});
+
+test("executor receives trimmed action ID and description", async () => {
+  let captured: PlannedAction | undefined;
+  const runtime = new TaskExecutionRuntime({ async execute(current) { captured = current; return "ok"; } });
+  await runtime.run([{ ...action, id: "  trimmed-id  ", description: "  normalized description  " }]);
+  assert.equal(captured?.id, "trimmed-id");
+  assert.equal(captured?.description, "normalized description");
+});
