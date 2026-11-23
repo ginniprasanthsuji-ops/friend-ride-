@@ -81,3 +81,42 @@ union all select * from medical_test
 union all select * from bucket_checks
 union all select * from policy_checks
 order by check_name;
+
+-- Pass 111: least-privilege verification for the 18 QA tables whose direct anon grants were revoked.
+-- This is read-only and intentionally reports FAIL on an environment that still has direct anon grants.
+with expected_anon_tables(table_name) as (
+  values
+    ('admin_users'),('driver_locations'),('fr_app_notifications'),('fr_bank_enquiries'),
+    ('fr_driver_documents'),('fr_emergency_contacts'),('fr_push_subscriptions'),
+    ('fr_ride_notifications'),('fr_ride_sos'),('fr_service_bookings'),('fr_service_categories'),
+    ('fr_service_provider_applications'),('fr_service_providers'),('fr_service_requests'),
+    ('fr_support_feedback'),('profiles'),('ride_live_locations'),('rides')
+), direct_grant_checks as (
+  select 'ANON TABLE GRANTS '||e.table_name as check_name,
+    case when count(g.privilege_type)=0 then 'PASS' else 'FAIL' end as status,
+    count(g.privilege_type)::text||' direct anon privilege(s) remain' as details
+  from expected_anon_tables e
+  left join information_schema.role_table_grants g
+    on g.table_schema='public' and g.table_name=e.table_name and g.grantee='anon'
+  group by e.table_name
+), rls_checks as (
+  select 'RLS '||e.table_name as check_name,
+    case when c.relrowsecurity then 'PASS' else 'FAIL' end as status,
+    case when c.relrowsecurity then 'RLS enabled' else 'RLS disabled or table missing' end as details
+  from expected_anon_tables e
+  left join pg_class c on c.relname=e.table_name
+  left join pg_namespace n on n.oid=c.relnamespace and n.nspname='public'
+  where c.oid is null or n.oid is not null
+), anon_policy_checks as (
+  select 'ANON/PUBLIC POLICY '||e.table_name as check_name,
+    case when count(p.policyname)=0 then 'PASS' else 'FAIL' end as status,
+    count(p.policyname)::text||' anon/PUBLIC policy row(s)' as details
+  from expected_anon_tables e
+  left join pg_policies p on p.schemaname='public' and p.tablename=e.table_name
+    and (p.roles::text like '%anon%' or p.roles::text like '%public%')
+  group by e.table_name
+)
+select * from direct_grant_checks
+union all select * from rls_checks
+union all select * from anon_policy_checks
+order by check_name;
