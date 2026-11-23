@@ -23,7 +23,9 @@ export interface ExecutionOptions {
 }
 
 const MAX_OUTPUT_JSON_CHARS = 10_000;
-const MAX_ACTIONS_PER_RUN = 100;\nconst MAX_ACTION_ID_LENGTH = 128;\nconst MAX_ACTION_DESCRIPTION_LENGTH = 1_000;
+const MAX_ACTIONS_PER_RUN = 100;
+const MAX_ACTION_ID_LENGTH = 128;
+const MAX_ACTION_DESCRIPTION_LENGTH = 1_000;
 
 function boundOutput(output: unknown): unknown {
   if (output === undefined) return undefined;
@@ -53,11 +55,13 @@ export class TaskExecutionRuntime {
     for (const action of actions) {
       if (!action || typeof action.id !== "string" || !action.id.trim()) throw new Error("Every action must have a non-empty id");
       const actionId = action.id.trim();
-      if (actionId.length > MAX_ACTION_ID_LENGTH) throw new Error(`Action id exceeds maximum length of ${MAX_ACTION_ID_LENGTH}`);\n      if (seenIds.has(actionId)) throw new Error(`Duplicate action id: ${actionId}`);
+      if (actionId.length > MAX_ACTION_ID_LENGTH) throw new Error(`Action id exceeds maximum length of ${MAX_ACTION_ID_LENGTH}`);
+      if (seenIds.has(actionId)) throw new Error(`Duplicate action id: ${actionId}`);
       seenIds.add(actionId);
       if (![0, 1, 2, 3, 4].includes(action.permissionTier)) throw new Error(`Invalid permission tier for action ${action.id}`);
       if (action.retrySafe !== undefined && typeof action.retrySafe !== "boolean") throw new Error(`retrySafe must be a boolean for action ${action.id}`);
-      if (typeof action.description !== "string" || !action.description.trim()) throw new Error(`Action description is required for ${action.id}`);\n      if (action.description.trim().length > MAX_ACTION_DESCRIPTION_LENGTH) throw new Error(`Action description exceeds maximum length of ${MAX_ACTION_DESCRIPTION_LENGTH} for ${action.id}`);
+      if (typeof action.description !== "string" || !action.description.trim()) throw new Error(`Action description is required for ${action.id}`);
+      if (action.description.trim().length > MAX_ACTION_DESCRIPTION_LENGTH) throw new Error(`Action description exceeds maximum length of ${MAX_ACTION_DESCRIPTION_LENGTH} for ${action.id}`);
       if (action.status !== "QUEUED" && action.status !== "READY") throw new Error(`Action ${action.id} is not runnable from status ${action.status}`);
     }
     if (options.userConfirmedActionIds !== undefined && (!Array.isArray(options.userConfirmedActionIds) || options.userConfirmedActionIds.some((id) => typeof id !== "string"))) throw new Error("userConfirmedActionIds must be an array of strings");
