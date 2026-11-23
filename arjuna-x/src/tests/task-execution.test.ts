@@ -255,3 +255,12 @@ test("valid cancellation signal is passed to executor and execution completes", 
   assert.equal(receivedSignal, controller.signal);
   assert.equal(result[0]?.status, "SUCCEEDED");
 });
+
+test("approval ID lists are bounded and validated before execution", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([action], { userConfirmedActionIds: ["x".repeat(129)] }), /userConfirmedActionIds contains invalid or excessive action IDs/);
+  await assert.rejects(() => runtime.run([action], { specialApprovalActionIds: Array.from({ length: 101 }, (_, i) => "a" + i) }), /specialApprovalActionIds contains invalid or excessive action IDs/);
+  await assert.rejects(() => runtime.run([action], { userConfirmedActionIds: ["  "] }), /userConfirmedActionIds contains invalid or excessive action IDs/);
+  assert.equal(executions, 0);
+});
