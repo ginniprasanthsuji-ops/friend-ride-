@@ -31,7 +31,13 @@ jobs:
           done
           cat /tmp/friend-ride-server.log
           exit 1
-      - name: Run browser regression tests
+      - name: Run Phase 2/main safe browser suite
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/arjuna-x/phase-2-security-closure' || github.head_ref == 'arjuna-x/phase-2-security-closure'
+        env:
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
+        run: npm run test:phase2
+      - name: Run full browser regression (UI migration branches)
+        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/arjuna-x/phase-2-security-closure' && github.head_ref != 'arjuna-x/phase-2-security-closure'
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
         run: npm test
