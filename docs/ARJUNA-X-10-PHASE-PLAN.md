@@ -246,3 +246,12 @@ The active QA workflow commit `15f42bd0af757a9a47296f4f5dbeee74dbd3e52c` adds le
 - No runtime edits made: safely resolving service-worker duplication requires tracing registration code, deployment path, Firebase push behavior and browser tests; cannot perform those tests in current connector-only environment.
 - Phase 2 remains NOT ACCEPTED. Next: trace all service-worker registrations and their scope; verify notificationclick handling, FCM/web-push overlap, icon asset existence, PWA install/update/offline on device; verify lockfile workflow artifact/run; close backend/security/integration and branch-protection blockers. Phases 3–10 remain gated.
 - Tests executed this pass: none. Read-only branch file inspection and plan documentation only. No merge, deployment, backend/schema/auth/payment change.
+
+
+## Pass 63–64 — Lockfile accepted; npm ci CI evidence (2026-11-23)
+
+- Lockfile job succeeded in run 725 after safe workflow corrections. Three earlier lockfile-commit attempts failed only in the commit/push step (non-fast-forward, then rebase blocked by untracked lockfile, then generated runtime changes); all tests passed in those runs. Final fix commits candidate lockfile, cleans only the ephemeral runner workspace, rebases on latest QA branch, and pushes without force.
+- Verified lockfile commit `2e1e8c43e1401935b5831bdceb1cfe108bc03b7f` (1,299 lines, v3, 74 packages; Vitest/@vitest/mocker 5.1.1). Candidate audit 0 vulnerabilities.
+- Workflow commit `e698f75781845d387b1f42cc9dd27aa41f86f104` switches both CI jobs to `npm ci` and removes one-time preview/commit jobs. Run 726 SUCCESS: type/core typecheck, runtime build, unit 7/7, Vitest 5/5, Playwright 48/48, audit artifact 0.
+- QA branch/main divergence: 120 ahead / 1 behind. Main-only `6484549` is not merged.
+- Dependency lock/reproducibility gate resolved for QA dev dependencies. Phase 2 remains NOT ACCEPTED due icon visual review, device PWA/offline/push tests, complete Supabase security audit, QA environment integration, and owner-authorized branch protection. Phases 3–10 remain gated. No live/main/backend/schema/auth/payment changes.
