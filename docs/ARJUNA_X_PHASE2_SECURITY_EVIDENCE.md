@@ -275,3 +275,11 @@ Phase 2 remains **BLOCKED / NOT ACCEPTED** pending owner Auth setting, full role
 5. Real OTP, GPS, payment, push, customer/driver/partner/admin cross-role checks on supported physical devices require owner credentials/devices/test accounts.
 
 **No production DB/Auth/Edge Function change, merge, or live deployment occurred. Phase 2 remains BLOCKED / NOT ACCEPTED; Phase 3–9 are not advanced ahead of this gate.**
+
+
+## 26. Additional QA admin-RPC non-admin negative tests (2026-11-23)
+
+- In the QA Supabase project only, using synthetic authenticated JWT subject `11111111-1111-4111-8111-111111111111` (pre-check: no profile and no admin membership), four additional admin RPCs were invoked inside a transaction with valid decision/action arguments and dummy IDs: `admin_review_driver_document`, `admin_review_driver`, `fr_admin_assign_service_provider`, and `fr_admin_review_partner`.
+- Each test asserted the exact expected Admin-denied exception; unexpected success or any other exception would fail the test. **4/4 PASS** (expected non-admin denial). Transaction rolled back.
+- Post-test checks: synthetic profile 0, admin membership 0, dummy service request 0, dummy provider 0. No QA data persisted. Combined with the earlier QA tests, **7 QA admin RPCs** have negative-role denial evidence. This does not cover every SECURITY DEFINER function, public-data visibility, or live app roles.
+- Production remains untouched; Phase 2 remains BLOCKED pending the full 80 remaining production authenticated-executable SECURITY DEFINER role-negative review, owner/Auth/public-surface actions, and live-device integration gates.

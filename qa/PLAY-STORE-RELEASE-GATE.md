@@ -365,3 +365,8 @@ On code/evidence commit `2598dec60f15552dc6add4d2bd5d187d27c1b44a`, four workflo
 - App cold-start: branded logo plus a services splash/poster as the first screen; the poster concept is awaiting user approval before implementation.
 - Native-app interaction: tapping a service opens its dedicated full-screen next page with smooth transition and touch feedback. **Do not expand results underneath Home or turn the Home screen into a long results-scroll page.** Back navigation returns to the previous screen and should preserve selections where feasible.
 - Telugu/English support and mobile-first layout remain requirements. These are scope notes only; Phase 3 implementation/acceptance has not started on this Phase 2 branch.
+
+
+## 12. QA admin-RPC role-negative test increment (2026-11-23)
+
+Four additional QA admin RPC negative tests passed in a rollback transaction: `admin_review_driver_document`, `admin_review_driver`, `fr_admin_assign_service_provider`, `fr_admin_review_partner`. Each returned the expected admin-denial error for a synthetic authenticated non-admin. Post-rollback verification found no test profile, admin membership, dummy service request, or dummy provider. Combined with the earlier three QA admin-list RPC tests, 7 QA admin RPCs have negative-role evidence. This is limited QA coverage; it does not close production SECURITY DEFINER review or any live-device/credential gate.
