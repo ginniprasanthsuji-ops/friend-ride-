@@ -90,3 +90,17 @@ Latest main `index.html` hardcodes the production Supabase URL and public publis
 ## 7. Gate decision
 
 **Phase 2 is not closed. Release remains BLOCKED.** No production changes, merge, deployment, grant revocation, secret inspection, or destructive migration occurred. This document and `qa/phase2-security-audit.sql` are read-only evidence artifacts. Next run should address the QA/prod isolation patch and the notification queue claim design only after source review and safe tests; Auth dashboard configuration and real-device/credential tasks require the owner.
+
+
+## Continuation — QA isolation patch (2026-11-23)
+
+**Implemented on this work branch; not merged and not yet CI-accepted.**
+
+- Added a test-only Supabase config injection path in `index.html`. Normal production runtime still uses the existing production URL/key; Playwright test mode cannot select that production URL and falls back to `https://qa-offline.invalid` when no QA config is supplied.
+- Added `qa/fixtures.cjs`: all Playwright page tests are now offline by default and block Supabase requests. If QA URL + public anon key are supplied, the browser client is configured to that non-production project; requests remain blocked unless the explicit `FRIEND_RIDE_QA_E2E_ENABLED=true` switch is also set. Production host is never allowed by the fixture.
+- Converted the four existing Playwright spec files to the shared fixture and added `qa/phase2-isolation.spec.cjs` (2 assertions) to verify test mode and non-production target.
+- Added Phase 2 branch push triggers to Regression and Quality workflows; Regression also runs for pull requests targeting main.
+- **Local validation:** `node --check` passed for the shared fixture, isolation spec, and the changed app-config snippet. This is syntax-only, not full inline-script validation or Playwright execution.
+- **Not yet verified:** GitHub Actions status/run, full browser regression, QA authenticated integration, any QA database mutation. No Supabase request was allowed from the test harness in this run.
+
+This patch reduces the risk of QA browser tests hitting production, but it does not yet prove safe authenticated E2E. The main branch is unchanged; the patch is on `arjuna-x/phase-2-security-closure` pending CI review.
