@@ -1,0 +1,58 @@
+export interface ContextMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
+  timestamp: string;
+}
+
+export interface SessionContext {
+  sessionId: string;
+  messages: ContextMessage[];
+  facts: Record<string, string>;
+  updatedAt: string;
+}
+
+/** In-memory context store. Each session ID maps to an independent context. */
+export class SessionContextStore {
+  private readonly sessions = new Map<string, SessionContext>();
+
+  create(sessionId: string): SessionContext {
+    if (!sessionId.trim()) throw new Error("sessionId is required");
+    if (this.sessions.has(sessionId)) throw new Error("Session already exists");
+    const context: SessionContext = {
+      sessionId,
+      messages: [],
+      facts: {},
+      updatedAt: new Date().toISOString(),
+    };
+    this.sessions.set(sessionId, context);
+    return context;
+  }
+
+  get(sessionId: string): SessionContext | undefined {
+    return this.sessions.get(sessionId);
+  }
+
+  appendMessage(sessionId: string, role: ContextMessage["role"], content: string): ContextMessage {
+    const context = this.requireSession(sessionId);
+    const message = { role, content, timestamp: new Date().toISOString() } satisfies ContextMessage;
+    context.messages.push(message);
+    context.updatedAt = message.timestamp;
+    return message;
+  }
+
+  setFact(sessionId: string, key: string, value: string): void {
+    const context = this.requireSession(sessionId);
+    context.facts[key] = value;
+    context.updatedAt = new Date().toISOString();
+  }
+
+  clear(sessionId: string): boolean {
+    return this.sessions.delete(sessionId);
+  }
+
+  private requireSession(sessionId: string): SessionContext {
+    const context = this.sessions.get(sessionId);
+    if (!context) throw new Error(`Unknown session: ${sessionId}`);
+    return context;
+  }
+}
