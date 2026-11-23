@@ -6,7 +6,7 @@ const path = require('node:path');
 const root = path.join(__dirname, '..');
 const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const fcm = fs.readFileSync(path.join(root, 'fcm-web-push.js'), 'utf8');
-const fixture = fs.readFileSync(path.join(root, '..', 'qa', 'fixtures.cjs'), 'utf8');
+const fixture = fs.readFileSync(path.join(root, 'qa', 'fixtures.cjs'), 'utf8');
 
 test('main application test mode uses injected QA or offline Supabase config', () => {
   assert.match(indexHtml, /FR_TEST_MODE=window\.__FR_TEST_MODE__===true/);
