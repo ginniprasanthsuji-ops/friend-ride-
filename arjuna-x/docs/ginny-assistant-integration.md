@@ -91,3 +91,11 @@
 - Prevents concurrent submissions while sending and ignores assistant responses arriving after cancel.
 - Messages trim and cap at 8,000 characters; errors cap at 500.
 - Reset clears the local reducer history. Persistent history, deletion guarantees and backend/API cancellation remain unimplemented.
+
+
+## Business Assistant core (scaffold)
+- Intent routing covers orders, earnings, sales, delivery status, business insights, support, and admin overview.
+- Role policy differentiates shop-owner, partner, driver, delivery-partner, admin, and customer; explicit authorized data scopes are required.
+- Summary builder accepts aggregate counts/money only; it is not connected to live data or AI and does not receive customer personal identifiers.
+- Real backend queries, verified RLS, UI, and role-specific API wiring remain required before displaying live business data.
+- Document AI/OCR and AI Planner/Reminders are explicitly out of scope.
