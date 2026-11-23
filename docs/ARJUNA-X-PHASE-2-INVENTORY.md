@@ -1264,3 +1264,9 @@ Read-only QA source audit confirmed:
 - Executed the new committed SQL audit against QA: 54 checks PASS / 0 FAIL (18 anon direct-grant, 18 RLS, 18 anon/PUBLIC policy). Post-change privileges remain anon=0, PUBLIC=0; authenticated privileges=141; 21 public tables RLS-enabled; 46 public policies; no anon/PUBLIC policies.
 - CI #751 SUCCESS (SQL QA artifact + static coverage commit); CI #752 SUCCESS (static audit test commit): typecheck, core typecheck, runtime build, Node tests, Vitest, and Playwright browser regression succeeded. #750 also SUCCESS after test fix. #748 failure retained for traceability; it was test/docs commit-order, not app/browser failure.
 - Latest branch HEAD `cce2ca026ea93994b4bec5b948b77e51ef611de4` includes doc-only commits after #752; no CI on exact latest docs SHA.
+
+
+## Pass 113 — CI count + original logo discovery (2026-11-23)
+
+- CI #752 browser log exact result: **48 passed (22.7s)**; all quality-gate jobs success. The earlier #748 test/doc race failure is corrected by #750 and is retained as historical evidence.
+- Original logo asset located in Library and visually inspected: `Friend Ride Service Icon Logo.png`, horizontal navy/orange wordmark with service icons and website capsule. Repo current SVG is only simplified square FR monogram. This is discovery only; no branding changes before Phase 2 gate.
