@@ -375,3 +375,11 @@ Combined verified production role/ownership coverage is now **30/88** authentica
 ### CI status on current evidence head
 
 Current head at check: `c7ddfa65665b0357928d0c9d4d7d505b7841ee7c`. Workflow/source regression `45131877959` completed success. FRIEND RIDE Regression `45131878071`, TASKO/Laundry/Admin `45131878062`, and Quality Gate `45131878153` were in progress at the last check; duplicate reruns `45131871972` and `45131871896` were also in progress. Do not count these as final PASS until completed. Full UI-migration suite remains skipped by Phase 2 scope.
+
+
+## 34. Production role-gate helper and remaining-function triage (2026-11-23)
+
+- Read-only rollback test of `is_friend_ride_admin()` as authenticated synthetic non-admin returned **false** (PASS). Production verified role/ownership function coverage: **38/88**, with **50 remaining**.
+- Fresh catalog marker triage of those 50 remaining functions: **41** contain caller/ownership markers, **1** has an admin-guard marker (`fr_cancel_ride`), and **8** have no simple auth marker and need manual source/privacy review: `fr_customer_list_approved_service_providers`, `fr_customer_list_approved_stores`, `fr_customer_list_approved_stores_geo`, `fr_customer_list_partner_catalogue`, `fr_customer_store_payment_options`, `fr_get_platform_business_details`, `fr_list_approved_partner_stores`, `fr_public_homepage_feedback`. These are marker-based categories only; they do not prove authorization. Owner acceptance of public provider phone/store coordinates/catalogue/payment/legal/feedback surfaces remains pending.
+- CI at evidence head `97211bdbf744b5c51f21ad5009c1846501f2b451`: workflow/source regression `45131985938` success; Regression `45131985922`, TASKO/Laundry/Admin `45131985913`, and Quality Gate `45131986043` in progress at last check. Additional duplicate Regression/Quality runs were also in progress. Not all-green yet.
+- Phase 2 remains **BLOCKED / NOT ACCEPTED**. No production writes, Auth changes, merge, or deployment.
