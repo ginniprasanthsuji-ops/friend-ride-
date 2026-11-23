@@ -131,3 +131,11 @@ This is a reviewed work-branch patch, not Phase 2 acceptance. QA deployment requ
 - The dormant `fcm-web-push.js` helper now uses the same test-only QA/offline Supabase injection as the main app. Production default remains unchanged. The file is still **not loaded from `index.html`**, so notifications are not integrated yet.
 - Local mirrored-source checks: **5/5 PASS** (2 notification claim contract assertions + 3 QA config/fixture isolation assertions). Node syntax checks previously passed for the fixture, isolation spec and main app config snippet. The exact GitHub branch unit suite and browser tests are now pending CI on the latest head; no QA API request, token, event or secret was used.
 - The production 23 no-policy RLS tables have 0 direct anon/authenticated SELECT/INSERT/UPDATE/DELETE grants. Eight admin RPCs were reviewed and call `is_friend_ride_admin()`; its helper checks the caller against `admin_users`. Service-only helper grants and trigger functions were triaged. The public/approved-list RPC outputs and all 88 authenticated SECURITY DEFINER warnings still need owner acceptance and runtime negative tests.
+
+
+## Continuation — QA migration syntax/rollback verification (2026-11-23)
+
+- The proposed notification claim migration was executed inside an explicit QA `BEGIN … ROLLBACK` transaction to validate PostgreSQL syntax. The query returned successfully.
+- Post-rollback catalog check: `claim_token` column **false**, claim function **false**; QA schema remains unchanged.
+- Added a guarded QA rollback script `qa/phase2-notification-claim-rollback.sql`; it refuses rollback if any notification event is in `processing` and removes only the additive claim artifacts.
+- No migration was applied, no Edge Function deployed, no queue/token rows created, and no secrets accessed.
