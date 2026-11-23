@@ -69,3 +69,10 @@
 - Requests are blocked when readiness checks fail.
 - Transcript updates are accepted only while state is listening and capped at 4,000 characters.
 - This core does not initiate microphone capture, persist transcripts, or transmit audio/text; platform adapter and UI must enforce consent, privacy and backend access rules.
+
+
+## Chat request privacy validation
+- Validate trimmed non-empty message, max 4,000 chars, non-empty session ID, and explicit consent before any external AI request.
+- Optional display name is trimmed and capped at 80 chars.
+- Display text strips control characters and caps at 8,000 chars.
+- Core validator performs no network requests; API/UI integration must respect consent, safety and cancellation.
