@@ -170,3 +170,12 @@ test("execution results use normalized action identifiers", async () => {
   const result = await runtime.run([{ ...action, id: "  action-normalized  " }]);
   assert.equal(result[0]?.actionId, "action-normalized");
 });
+
+test("cancelled result paths preserve normalized action IDs", async () => {
+  const controller = new AbortController();
+  controller.abort();
+  const runtime = new TaskExecutionRuntime({ async execute() { return "should not run"; } });
+  const result = await runtime.run([{ ...action, id: "  cancelled-id  " }], { signal: controller.signal });
+  assert.equal(result[0]?.actionId, "cancelled-id");
+  assert.equal(result[0]?.status, "SKIPPED");
+});
