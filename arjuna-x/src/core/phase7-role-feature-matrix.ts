@@ -16,7 +16,8 @@ const roleFeatureAllowlist: Record<string, readonly Phase7Role[]> = {
 export type Phase7RoleFeatureDecision = "ALLOW_ROLE_FEATURE" | "DENY_ROLE_FEATURE" | "DENY_DISABLED_FEATURE" | "DENY_UNKNOWN_FEATURE";
 
 export function evaluatePhase7RoleFeature(role: Phase7Role, feature: string): Phase7RoleFeatureDecision {
-  const access = evaluatePhase7FeatureAccess(feature);\n  if (access === "deny-unknown") return "DENY_UNKNOWN_FEATURE";\n  if (access === "deny-disabled" || access === "deny-unverified") return "DENY_DISABLED_FEATURE";\n  if (access !== "allow-manual" && access !== "allow-verified-integrated") return "DENY_DISABLED_FEATURE";
+  const access = evaluatePhase7FeatureAccess(feature);
+  if (access === "deny-unknown") return "DENY_UNKNOWN_FEATURE";\n  if (access === "deny-disabled" || access === "deny-unverified") return "DENY_DISABLED_FEATURE";\n  if (access !== "allow-manual" && access !== "allow-verified-integrated") return "DENY_DISABLED_FEATURE";
   const allowedRoles = roleFeatureAllowlist[feature];
   if (!allowedRoles) return "DENY_UNKNOWN_FEATURE";
   return allowedRoles.includes(role) ? "ALLOW_ROLE_FEATURE" : "DENY_ROLE_FEATURE";
