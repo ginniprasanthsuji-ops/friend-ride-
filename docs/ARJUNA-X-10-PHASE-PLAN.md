@@ -562,3 +562,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Re-queried table grants and RLS policies for anon: anon has broad table privileges (SELECT/INSERT/UPDATE/DELETE plus REFERENCES/TRIGGER/TRUNCATE) across the sampled 18 tables. Policies are explicitly scoped to authenticated role, and no anon policy is present in the observed set; ordinary anon row access is therefore blocked by RLS, but the broad ACL remains excessive and should be reduced through a reviewed migration. TRUNCATE and other non-RLS privileges are especially inappropriate for anon and should be revoked after privilege-dependency review.
 - Branch API read shows the QA branch is not protected (protected=false; protection.enabled=false; required checks empty). This is a release-process blocker: owner-side branch protection/required CI checks must be configured and verified before release. The integration cannot configure this through current permissions.
 - No ACL, policy, schema, data, branch protection, production, merge, or deployment changes performed. Phase 2 NOT ACCEPTED; least-privilege remediation approval, cross-role tests, branch-protection setup, and device/notification gates remain.
+
+
+## Phase 3 started — Pass 97 (App Shell & Design System)
+
+- Phase 2 is explicitly **HOLD / DEFERRED / NOT ACCEPTED**, with open security, notification/device, integration, and branch-protection gates retained for Phase 10 release review. Phase 3 work may proceed in parallel; Phase 2 is not marked complete.
+- Inspected current QA index head and stylesheet cascade. The single-page app is a large inline-style monolith (~1 MB), so the complete index payload is truncated by the available fetch API and cannot safely be rewritten in this pass. No direct index.html edit was attempted.
+- Added `styles/friendride-phase3-design-system.css` with Navy/Orange/White token set, surface/card, shell, button, field focus, and reduced-motion primitives. Commit `8e96d15840547db7bf145392dd42ef4dc40cba7e`.
+- Loaded the design-system stylesheet via `@import` at the beginning of the already-linked `learn-teach.css`, preserving existing learning CSS below. Commit `13c40886c04545dc06bb38814647ea91de62e951`.
+- This is the initial integration layer only, not completion of Phase 3 or full UI rollout. Responsive role-navigation and safe-area coverage, visual/browser proof, route-by-route styles, accessibility and regression tests remain. No backend/schema/auth/payment changes; no main merge or deployment. CI for these two commits is not verified.
