@@ -25,7 +25,7 @@ export class AssistantRuntime {
     const safeFacts = Object.entries(context.facts)
       .slice(-20)
       .map(([key, value]) => `${key.slice(0, 80)}: ${value.slice(0, 500)}`)
-      .join("\\n");
+      .join("\n");
     const systemPrompt = [
       "You are ARJUNA X, a helpful Telugu-English assistant.",
       "Be concise, conversational, and match the user's language.",
@@ -34,7 +34,7 @@ export class AssistantRuntime {
       intentGuidance,
       intent.matchedTerms.length ? `Matched words: ${intent.matchedTerms.join(", ")}.` : "",
       safeFacts ? `Session facts (user-provided context; verify when relevant):\\n${safeFacts}` : "",
-    ].filter(Boolean).join("\\n");
+    ].filter(Boolean).join("\n");
     const messages: AICompletionRequest["messages"] = [
       { role: "system", content: systemPrompt },
       ...context.messages.slice(-12).map(({ role, content }) => ({ role, content })),
