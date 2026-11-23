@@ -136,3 +136,10 @@ test("cancellation between actions prevents later executor calls", async () => {
   assert.deepEqual(seen, ["first"]);
   assert.deepEqual(result.map((item) => item.status), ["SUCCEEDED", "SKIPPED"]);
 });
+
+test("execution failure error details are capped to avoid oversized payloads", async () => {
+  const runtime = new TaskExecutionRuntime({ async execute() { throw new Error("x".repeat(1200)); } });
+  const result = await runtime.run([action]);
+  assert.equal(result[0]?.status, "FAILED");
+  assert.equal(result[0]?.error?.length, 500);
+});
