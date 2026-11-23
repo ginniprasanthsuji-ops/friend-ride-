@@ -355,3 +355,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - **Alternative/removal assessment:** VAPID/Web Push is the only currently wired frontend notification enrollment path; removing it before the FCM frontend integration is proven would disable the existing user notification enable flow. Keep it temporarily; target FCM remains the user's locked canonical choice. Remove duplicate workers only after verifying scope, migration, and browser/device regression.
 - Current safe action is to keep this finding as a blocker and prepare the FCM integration patch with authenticated token registration, token refresh, user ownership/account switching, foreground display, deep-link click routing, and test coverage. Actual browser runtime cannot be executed via the available GitHub-only repository editing path in this continuation.
 - No frontend runtime edits, worker deletions, live notifications, secrets inspection, QA/production backend changes, main merge, or deployment were made in this pass.
+
+
+## Pass 75 — Official supplied logo mark committed to QA (2026-11-23)
+
+- Successfully used the Git blob/tree/commit route after the earlier binary-file upload limitation. Optimized, color-quantized supplied logo mark was committed as `icons/icon-192.png` on QA branch, replacing the old 192 PNG. Manifest already points to this path, and the active service worker notification icon references the same path, so the official mark is now used for these 192px references.
+- Commit: `edede1b7a6abc629600364e4b7b275a8b2c7846b`. Verified the branch ref moved to this commit and fetched the committed PNG blob SHA `995756dfee900aa148552d4c697b15f94139a80d`.
+- Remaining logo asset work: replace 512px normal and maskable icons with supplied-brand variants; full wordmark is not yet committed. Visual browser/device launcher mask proof remains pending.
+- Quality Gate run **#729 / 45092090745** triggered on this icon commit and was queued at observation; do not claim a pass until its jobs/logs are verified.
+- Phase 2 remains NOT ACCEPTED. Notification FCM client wiring, PWA/device verification, QA backend E2E, complete security/secret review, branch protection, and remaining logo assets are outstanding. No main merge or production deployment.
