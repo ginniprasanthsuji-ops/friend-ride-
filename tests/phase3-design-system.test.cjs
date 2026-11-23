@@ -76,3 +76,10 @@ test('Phase 3 shell remaps audited hardcoded legacy purple components', () => {
     assert.ok(design.includes(selector), `missing audited palette override: ${selector}`);
   }
 });
+
+
+test('Phase 3 primary orange actions use navy foreground for contrast', () => {
+  assert.match(design, /\.fr-phase3-shell \.btn, \.fr-phase3-shell \.top-action\{[^}]*color:var\(--fr-navy\)/);
+  assert.match(design, /\.fr-phase3-shell \.home-banner\{[^}]*linear-gradient\(120deg,var\(--fr-navy\)/);
+  assert.match(design, /\.fr-phase3-shell \.banner-cta\{[^}]*color:var\(--fr-navy\)/);
+});
