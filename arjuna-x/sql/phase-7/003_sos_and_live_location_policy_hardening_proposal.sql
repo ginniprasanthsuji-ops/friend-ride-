@@ -1,0 +1,67 @@
+-- Phase 7 security proposal (NOT EXECUTED)
+-- Target: QA only. Review exact policy names and app workflow before applying.
+-- Do not run in production. Requires explicit user approval before any execution.
+--
+-- Risk addressed:
+-- 1) fr_ride_sos insert must bind ride_id to caller participation.
+-- 2) ride_live_locations update must prevent changing ride_id to a ride
+--    where caller is not a participant.
+--
+-- SOS: preserve sender ownership and require participation in referenced ride.
+-- Add active-state restriction only after confirming SOS is allowed in the
+-- app's exact lifecycle states; intentionally omitted pending workflow review.
+--
+-- Draft replacement policy (policy name must be confirmed before use):
+-- DROP POLICY IF EXISTS qa_sos_insert_own ON public.fr_ride_sos;
+-- CREATE POLICY qa_sos_insert_own
+--   ON public.fr_ride_sos
+--   FOR INSERT TO authenticated
+--   WITH CHECK (
+--     sender_id = (select auth.uid())
+--     AND EXISTS (
+--       SELECT 1 FROM public.rides r
+--       WHERE r.id = fr_ride_sos.ride_id
+--         AND (r.customer_id = (select auth.uid())
+--              OR r.driver_id = (select auth.uid()))
+--     )
+--   );
+--
+-- Live-location update: existing policy's WITH CHECK appears to validate
+-- user_id only. Proposed predicate retains user ownership and participant
+-- relationship for the destination ride_id.
+--
+-- Draft replacement policy (confirm exact policy name before use):
+-- DROP POLICY IF EXISTS qa_live_locations_update_participants
+--   ON public.ride_live_locations;
+-- CREATE POLICY qa_live_locations_update_participants
+--   ON public.ride_live_locations
+--   FOR UPDATE TO authenticated
+--   USING (
+--     user_id = (select auth.uid())
+--     AND EXISTS (
+--       SELECT 1 FROM public.rides r
+--       WHERE r.id = ride_live_locations.ride_id
+--         AND (r.customer_id = (select auth.uid())
+--              OR r.driver_id = (select auth.uid()))
+--     )
+--   )
+--   WITH CHECK (
+--     user_id = (select auth.uid())
+--     AND EXISTS (
+--       SELECT 1 FROM public.rides r
+--       WHERE r.id = ride_live_locations.ride_id
+--         AND (r.customer_id = (select auth.uid())
+--              OR r.driver_id = (select auth.uid()))
+--     )
+--   );
+--
+-- Validation checklist BEFORE applying:
+-- - Confirm exact existing policy names, duplicate permissive policies, grants.
+-- - Check required SOS behavior for customer/driver and lifecycle.
+-- - Negative test: non-participant cannot create SOS for another user's ride.
+-- - Negative test: participant cannot retarget live-location row to unrelated ride.
+-- - Positive tests: customer and assigned driver valid SOS/location updates.
+-- - Confirm row lifecycle, location retention, and data minimization.
+-- - Prepare rollback by retaining current policy definitions and exact grants.
+--
+-- No SQL was executed; this file is a proposal only.
