@@ -323,3 +323,15 @@ test("redacts secrets embedded in output strings and executor errors", async () 
   assert.match(failed[0]?.error ?? "", /api_key=\[REDACTED\]/);
   assert.doesNotMatch(failed[0]?.error ?? "", /abc123|secret-value/);
 });
+
+test("redacts JWTs, URL secret parameters, and private-key blocks from text output", async () => {
+  const text = "jwt=eyJabc.eyJdef.signature https://example.test/?access_token=abc123&api_key=key987";
+  const privateKey = "-----BEGIN PRIVATE KEY-----\\nprivate-material\\n-----END PRIVATE KEY-----";
+  const runtime = new TaskExecutionRuntime({ async execute() { return text + " " + privateKey; } });
+  const result = await runtime.run([action]);
+  const output = String(result[0]?.output);
+  assert.doesNotMatch(output, /eyJabc|abc123|key987|private-material/);
+  assert.match(output, /REDACTED JWT/);
+  assert.match(output, /access_token=\[REDACTED\]/);
+  assert.match(output, /REDACTED PRIVATE KEY/);
+});
