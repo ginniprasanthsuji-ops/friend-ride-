@@ -92,3 +92,24 @@ test("runtime rejects invalid timeout configuration", () => {
   const store = new SessionContextStore();
   assert.throws(() => new AssistantRuntime(new CaptureProvider(), store, 0), /timeoutMs/);
 });
+
+test("runtime rejects blank session ID and blank user input", async () => {
+  const store = new SessionContextStore();
+  store.create("valid");
+  const runtime = new AssistantRuntime(new CaptureProvider(), store);
+  await assert.rejects(() => runtime.handle(" ", "hello"), /sessionId is required/);
+  await assert.rejects(() => runtime.handle("valid", "   "), /Message cannot be empty/);
+});
+
+test("runtime does not store empty provider output as assistant response", async () => {
+  const store = new SessionContextStore();
+  store.create("empty-response");
+  const emptyProvider: AIProvider = {
+    providerName: "empty",
+    async complete() { return { text: "  ", provider: "empty", model: "test" }; },
+  };
+  const runtime = new AssistantRuntime(emptyProvider, store);
+  const reply = await runtime.handle("empty-response", "Hello");
+  assert.ok(reply.fallbackMessage?.includes("temporarily unavailable"));
+  assert.equal(store.get("empty-response")?.messages.length, 1);
+});
