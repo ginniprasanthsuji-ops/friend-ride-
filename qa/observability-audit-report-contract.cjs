@@ -3,7 +3,7 @@
 const ALLOWED_EVENTS = new Set(["qa.started","qa.completed","qa.failed","workflow.transition","permission.denied","external_action.blocked","support.escalated"]);
 const SAFE_FIELDS = new Set(["event","module","status","error_code","timestamp","request_id","actor_role"]);
 const ID_RE = /^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$/;
-const ISO_RE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z$/;
+const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/;
 const SENSITIVE_KEYS = new Set(["password","otp","token","access_token","refresh_token","authorization","secret","api_key","card_number","cvv","pin","payload","message_body","email","phone"]);
 function hasSensitiveKey(value) { if (!value || typeof value !== "object") return false; for (const [key,child] of Object.entries(value)) { if (SENSITIVE_KEYS.has(key.toLowerCase())) return true; if (child && typeof child === "object" && hasSensitiveKey(child)) return true; } return false; }
 function validateAuditEvent(event) {
