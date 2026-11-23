@@ -1,0 +1,18 @@
+name: ARJUNA X QA Safety Unit Checks
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preflight-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout QA branch
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run dependency-free preflight safety tests
+        run: node --test tests/qa-preflight-safety.test.cjs
