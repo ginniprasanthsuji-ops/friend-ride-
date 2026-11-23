@@ -318,3 +318,13 @@ Current evidence head before this documentation update: `d01296f5de42adb990d229c
 | FRIEND RIDE workflow regression `45125283265` | **PASS** inline JS/Version 10.1 integration source checks |
 
 Run/job records and decoded logs confirm these outcomes; combined commit-status API remained empty. These runs validate the branch code as of `d01296f`; the upcoming doc-only commit does not change source code. Phase 2 remains BLOCKED / NOT ACCEPTED.
+
+
+## 30. CI re-verification on final current branch head (2026-11-23)
+
+Final head before this documentation update: `e753d895cb79f79bbee81b3f1de44d1fe93486fe`. Four GitHub Actions runs completed successfully on that exact head:
+- Regression `45125485739`: **47/47 PASS** Phase 2 safe browser; UI-migration suite skipped by scope.
+- Quality `45125485784`: **47/47 PASS** browser, **9/9** Node unit, **5/5** core; typecheck, core typecheck, runtime build PASS.
+- TASKO/Laundry/Admin `45125485753`: **4/4 PASS** Playwright.
+- Workflow/source regression `45125485805`: **PASS** inline JavaScript and Version 10.1 integration checks.
+These exact run/job records and decoded logs were rechecked. The combined commit-status API is empty; GitHub Actions records are the evidence. No code changed after these runs in this documentation update. Phase 2 remains blocked.
