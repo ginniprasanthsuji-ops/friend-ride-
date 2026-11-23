@@ -1235,3 +1235,10 @@ Read-only QA source audit confirmed:
 - Fresh QA SQL reconfirmed broad anon privileges on 18 sampled public tables, including TRUNCATE/REFERENCES/TRIGGER, but no anon/PUBLIC policies returned. RLS/policy evidence means this is an excessive-grant risk, not a confirmed row-access bypass; owner-approved privilege remediation is still pending.
 - GitHub branch-protection read returned 403 `Resource not accessible by integration`; we cannot verify/update protection from the current GitHub connector. Prior Pass 96 audit found it disabled and required checks empty; owner/admin action required.
 - CI #748: typecheck, core typecheck, runtime build succeeded; unit test suite failed 1/14 due the notification test checking setup-doc content from a later commit. Browser E2E job succeeded. Fix commit `91ab41ace0538a5500da21ceacb58fdf001bdbee` removes that timing dependency; #750 queued. #749 (doc commit) in progress at time of record.
+
+
+## Pass 109 — Notification event producer search (2026-11-23)
+
+- Read-only QA SQL search of public routines for references to `fr_notification_events`/`fr_notification_tokens` returned no matching functions; read-only trigger inventory for `fr_notification_events`, `fr_notification_tokens`, and `fr_push_subscriptions` returned no triggers.
+- QA project lists six active Edge Functions; source review of the notification dispatch and token registration functions found no event enqueue/producer path in those functions. Combined with zero queue rows, no notification event producer is evidenced in the QA project. This is an integration gap, not proof no producer exists outside the inspected database/project.
+- Query 1 initially failed because it included aggregate `pg_proc` entries (`array_agg`); corrected query limited to function/procedure kinds and returned zero matches. No changes made to DB.
