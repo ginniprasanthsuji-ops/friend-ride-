@@ -579,3 +579,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Additive CSS only; no app logic, route, API, auth, payment, schema or data changes. This improves CSS coverage but is not visual/device proof. Commit `70d79dd7b30f6763ec117c67f1ddbe292c285f34`.
 - Pass 97 CI #738 and #739 are confirmed successful. Pass 98 commit CI status is pending/not yet visible at documentation time.
 - Phase 3 remains in progress; visual screenshots/device QA, route-level design consistency, navigation and regression coverage remain. Phase 2 remains HOLD / DEFERRED / NOT ACCEPTED.
+
+
+## Phase 3 — Pass 99 (learning module scoped design-system alignment)
+
+- Inspected the available stylesheet structure: the app index is a large inline CSS monolith and the Phase 3 stylesheet is currently imported through `learn-teach.css`, so global rollout is not yet integrated. Avoided unsafe index rewrite.
+- Added scoped Navy/Orange/White styling for learning module hero, cards, role tiles, form focus, buttons, tabs, stats and compact-width spacing. Existing learning styles and behavior remain preserved. Commit `bd6acfb0408d36fa93ccdba766f1f568324cb668`.
+- CI #738/#739 for earlier Pass 97 integration were successful. CI #740 (Pass 98) still in progress at check. Pass 99 CI not yet reported.
+- Phase 3 is in progress; this is a module-scoped improvement, not global app UI migration. Phase 2 remains HOLD / DEFERRED / NOT ACCEPTED.
