@@ -305,3 +305,8 @@ All 102 SECURITY DEFINER functions have explicit search_path (79 empty, 16 publi
 ## 16. Guarded rollback syntax test (2026-11-23)
 
 QA rollback script passed a syntax/execution test inside explicit BEGIN/ROLLBACK; catalog check confirmed no claim columns/function persisted. The test ran against the current empty queue only, not after a deployed migration. No QA schema change was left behind.
+
+
+## 17. CI scope correction (2026-11-23)
+
+First browser run on Phase 2 head `ff45be49`: source-regression PASS; quality typecheck/unit PASS (9 Node unit, 5 core tests); TASKO/Laundry/Admin Playwright PASS 4/4; main browser regression and quality browser E2E FAIL 49/59, with all 10 failures in the Phase 3 Dark+Gold UI spec (expected selectors absent on main-based Phase 2 branch). Added `npm run test:phase2` and branch-scoped workflow steps for main/Phase 2; the full UI suite remains on UI migration branches. Rerun pending. Release remains BLOCKED.
