@@ -27,3 +27,16 @@ Prefer existing Supabase PostgreSQL for shared workflow state and logic: tables,
 5. Recheck Free-plan limits with current official docs before launch; the read-only size check alone is not full capacity validation.
 
 No SQL was executed in this audit. No production writes, main merge, or live deployment occurred.
+
+## Source/runtime evidence checkpoint (2026-11-23)
+- Root `README.md` explicitly describes SMS OTP, Google Maps point-to-point links, realtime updates while app open, call/WhatsApp links, browser notification permission and a service-worker push handler. It explicitly says closed-app push is not activated and requires a trusted sender/VAPID/subscription setup. These are documentation claims; source runtime and backend behavior still need validation.
+- Root `index.html` loads Leaflet from `unpkg.com` and Supabase JS from `cdn.jsdelivr.net`. The CDN dependency itself is an external distribution host and should be assessed against the approved-stack policy. Do not break app initialization by removing dependencies without a replacement plan.
+- Release-gate/test documentation says the SMS OTP Edge Function is active and mentions APITXT logs; actual function source path was not available in this branch fetch. Treat SMS delivery as restricted/unverified pending source/config inspection.
+- QA test marker for Cashfree confirms the app source is intended to avoid unsafe client-side charging and marks secure payment verification as live-only/blocked. This is not evidence that payment processing is active.
+- Existing README contact links are direct call/WhatsApp links, not evidence of a WhatsApp API integration. Manual links are still de-scoped by current feature catalog and should be reviewed as user-visible actions.
+- Zoom search returned no matches; no active Zoom integration evidence.
+
+## Phase 7 correction
+- A literal escaped newline was introduced in the role-feature matrix source during a prior edit. It has been corrected in commit `689c0325`.
+- Role-feature tests now assert distinct unknown-feature denial and disabled external-provider denials in commit `992d9f74`.
+- No CI workflow runs were returned for commit `992d9f74`; automated test execution is not verified.
