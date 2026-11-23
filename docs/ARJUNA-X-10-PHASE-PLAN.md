@@ -470,3 +470,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Verified a BEFORE UPDATE trigger `qa_guard_profile_privileged_fields` is present on QA `profiles`; source function `qa_guard_profile_privileged_fields()` rejects non-admin changes to role and driver/partner approval status except the scoped role-registration setting. This addresses a concern from the broad profile self-update policy at source level, but trigger/registration-path tests and overall policy audit are still required.
 - QA table privilege inventory shows broad table-level grants on profiles to anon/authenticated; RLS and trigger guards are therefore material controls and need full adversarial testing before release. No attempt to exploit or alter them was made.
 - This pass is read-only. No QA or production schema/data/grants changed; production remains untouched. Phase 2 NOT ACCEPTED.
+
+
+## Pass 88 — External 5-minute monitor scaffold (2026-11-23)
+
+- Added an importable n8n starter workflow and setup documentation on QA branch. The workflow schedules every 5 minutes, reads recent QA branch commits and Actions runs, and requests a monitor-only AI summary.
+- No credentials embedded. Setup requires the user to configure GitHub read-only token and OpenAI API key in their n8n environment/credential store and manually import, test, and activate the workflow.
+- The workflow is deliberately monitor-only: no repo writes, code patching, issue creation, PRs, Supabase access, merge, or deploy. This is a scaffold, not a live/activated external automation; n8n account/host connection is not available in this chat.
+- Production untouched; Phase 2 remains NOT ACCEPTED.
