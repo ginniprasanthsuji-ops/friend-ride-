@@ -104,3 +104,14 @@ Latest main `index.html` hardcodes the production Supabase URL and public publis
 - **Not yet verified:** GitHub Actions status/run, full browser regression, QA authenticated integration, any QA database mutation. No Supabase request was allowed from the test harness in this run.
 
 This patch reduces the risk of QA browser tests hitting production, but it does not yet prove safe authenticated E2E. The main branch is unchanged; the patch is on `arjuna-x/phase-2-security-closure` pending CI review.
+
+
+## Continuation — notification queue claim patch prepared (2026-11-23)
+
+- Added an **unapplied** additive migration `supabase/migrations/202611230001_fr_notification_claim_batch.sql`: claim_token/claimed_at columns, processing status, partial claim index, `FOR UPDATE SKIP LOCKED` claim RPC, and service-role-only execute grant.
+- Added QA dispatch source `supabase/functions/fr-notification-dispatch/index.ts`: obtains OAuth before claiming, claims up to 50, filters final status updates by the claim token, clears the lease on finalization, and reclaims processing events older than 10 minutes. The shared-secret check remains; JWT verification remains disabled.
+- Added read-only post-deployment verification SQL and a static unit contract test.
+- **Local checks:** the static contract test ran **2/2 PASS**; TypeScript parser diagnostics **0** (parse only; Deno type/runtime checks not run).
+- **Not applied/deployed:** migration not executed on QA, Edge Function not deployed, no queue rows or tokens were created. Concurrency/runtime delivery and rollback verification remain pending. A send-success followed by DB-finalization failure can still lead to at-least-once retry/duplicate delivery after the 10-minute lease; this is documented as a residual risk.
+
+This is a reviewed work-branch patch, not Phase 2 acceptance. QA deployment requires migration/function compatibility validation and a controlled synthetic QA event/token; production remains untouched.
