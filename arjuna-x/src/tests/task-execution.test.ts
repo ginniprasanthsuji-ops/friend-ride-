@@ -237,3 +237,10 @@ test("executor receives trimmed action ID and description", async () => {
   assert.equal(captured?.id, "trimmed-id");
   assert.equal(captured?.description, "normalized description");
 });
+
+test("runtime rejects malformed cancellation signal before executor", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([action], { signal: { aborted: false } as AbortSignal }), /signal must be a valid AbortSignal/);
+  assert.equal(executions, 0);
+});
