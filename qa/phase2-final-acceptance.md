@@ -80,3 +80,10 @@ No merge or live deployment.
 - Verified production authenticated SECURITY DEFINER role/ownership coverage now 53/88; 35 remain. This is evidence coverage, not security acceptance.
 - CI for code commit 7243a8007c16739c298324378c2d3338885647a8 was verified PASS; docs-only commits after it have no push-run evidence available through the current GitHub run-list wrapper, so newest doc head CI is pending verification.
 - Phase 2 NOT ACCEPTED: owner/Auth, privacy/table acceptance, remaining 35 RPC review/tests, QA push HTTP/auth/concurrency/live delivery, and real OTP/GPS/payment/device checks remain open. No production mutation, merge, or deployment.
+
+
+## Continuation — admin/referral read-only checks (2026-11-23)
+- Two additional rollback-only production checks PASS: is_admin() false for synthetic non-admin; my_referral_dashboard() expected Driver profile required denial. Post-check synthetic profile/admin/subscription/referral/reward counts 0.
+- Production role/ownership coverage 55/88; 33 remain. Coverage is not security acceptance.
+- Latest docs head CI was in progress at last check (Quality type/unit job and source job PASS; browser/regression/TASKO jobs still running). Await final workflow results.
+- Phase 2 NOT ACCEPTED: owner/Auth, public/internal visibility, 33 remaining RPC tests/reviews, QA push HTTP/auth/concurrency/delivery, and real OTP/GPS/payment/device integration remain open. No production change, merge, or deployment.
