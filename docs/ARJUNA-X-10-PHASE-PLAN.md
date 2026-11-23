@@ -209,3 +209,11 @@ Quality Gate Run 719 on workflow commit 62d9df5 is SUCCESS: typecheck/core typec
 ## Pass 61 — Lockfile preview workflow (2026-11-23)
 
 The active QA workflow commit `15f42bd0af757a9a47296f4f5dbeee74dbd3e52c` adds least-privilege `contents: read` and an isolated lockfile-candidate job that generates `package-lock.json` with package scripts disabled, captures candidate npm audit JSON, and uploads both for 7-day review. Combined status query had no entries at observation; no CI result/artifact is yet verified. This does not resolve lockfile reproducibility or advisories; artifact review and a real committed lockfile are still required before `npm ci` migration. QA branch is 107 ahead / 1 behind main, diverged; main-only commit `6484549` remains untouched. Phase 2 NOT ACCEPTED; Phases 3–10 gated. No app/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 62 — Vitest 5.1.1 and lockfile candidate (2026-11-23)
+
+- CI run 720 verified the candidate preview job but its lockfile/audit artifact still had 2 critical + 1 moderate with Vitest 3.2.7; candidate was not committed.
+- Pin QA dev dependency Vitest to 5.1.1 in `b0383d99`. Run 721 SUCCESS: typechecks/build PASS, Node unit 7/7, Vitest 5/5, Playwright 48/48. Candidate lockfile v3/74 entries audit 0, inspected artifact `14780368196`.
+- Workflow commit `7d28a2ff` adds a branch-only, gated lockfile validation/commit job. It will use the same-run candidate artifact, zero-audit gate, `npm ci --ignore-scripts`, and all local/Playwright checks before committing only `package-lock.json` to QA. Run 722 is pending browser job and locked-install job; no lockfile commit verified yet.
+- Phase 2 remains NOT ACCEPTED. No main merge, deployment, app runtime/backend/schema/auth/payment change. Phases 3–10 gated.
