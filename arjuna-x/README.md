@@ -1,28 +1,45 @@
 # ARJUNA X — Implementation Foundation
 
-This is an isolated implementation workspace for the ARJUNA X assistant engine.
+Isolated implementation workspace for the ARJUNA X assistant engine.
 
-> Safety boundary: this branch is separate from `main`. No production deployment, FRIEND RIDE backend, authentication, payment, or database changes are made here.
+**Safety boundary:** This branch is isolated from `main`. No live deployment, FRIEND RIDE backend/auth/payment/schema changes, or production integration has been performed.
 
-## Current scaffold
-- TypeScript core package
-- Task lifecycle model
-- Permission tier model and gate
-- Orchestrator state-transition guard
-- Minimal build/typecheck setup
+## Implemented core
+- Task model and guarded state transitions
+- Permission tiers (0–2 safe/read/draft; 3 explicit confirmation; 4 special approval)
+- Session context isolation with bounded message/fact context
+- Orchestrator plan creation, plan validation, and action authorization
+- Telugu/English initial intent routing
+- AI-provider abstraction and mock provider for tests
+- Assistant runtime with fallback behavior
+- Sequential guarded task execution with bounded retries (0–3)
+- Action ID/description/tier validation, duplicate rejection, cancellation reporting
+- Node test suite and GitHub Actions build/test workflow
 
-## Status
-Foundation scaffold only. Voice, AI-provider, location, service adapters, UI integration, and runtime execution are not implemented yet.
+## Phase 6 readiness checks
+- [x] Build/typecheck workflow
+- [x] Permission gates
+- [x] Session isolation and context limits
+- [x] Intent/runtime fallback
+- [x] Sequential execution, retry bounds
+- [x] Plan/action validation
+- [x] Cancellation behavior
+- [x] Tests and CI success on isolated branch
+
+## Not implemented yet
+- Production AI provider credentials or live provider integration
+- Voice input/output engine
+- GPS/location and journey engine
+- FRIEND RIDE app integration
+- Production executor adapters for real bookings/payments
+- Production deployment
 
 ## Setup
 ```bash
 npm install
-npm run typecheck
-```
+npm run build
+npm test
+``
 
-## Next
-1. Add unit tests for permission and state transitions.
-2. Implement context/session isolation.
-3. Add provider adapter interface and mock.
-4. Add task planner and bounded recovery.
-5. Integrate with FRIEND RIDE only on a separately reviewed integration branch.
+## Safety model
+The core intentionally uses test/mock providers and abstract executors. Any real-world action adapter must be separately reviewed, enforce user identity and permissions server-side, and require explicit confirmation for tier-3 actions and special approval for tier-4 actions. Never put provider secrets in client code.
