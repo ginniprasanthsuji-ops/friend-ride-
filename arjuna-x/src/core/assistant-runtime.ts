@@ -19,8 +19,24 @@ export class AssistantRuntime {
 
     this.contexts.appendMessage(sessionId, "user", userText);
     const intent = classifyIntent(userText);
+    const intentGuidance = intent.needsClarification
+      ? "The request is ambiguous. Ask one concise clarifying question before suggesting an action."
+      : `Detected intent: ${intent.kind}. Treat this as a routing hint, not proof of user intent.`;
+    const safeFacts = Object.entries(context.facts)
+      .slice(-20)
+      .map(([key, value]) => `${key.slice(0, 80)}: ${value.slice(0, 500)}`)
+      .join("\\n");
+    const systemPrompt = [
+      "You are ARJUNA X, a helpful Telugu-English assistant.",
+      "Be concise, conversational, and match the user's language.",
+      "Never claim to have executed actions, accessed GPS, booked, paid, ordered, or contacted anyone unless a verified tool result confirms it.",
+      "Transactions and real-world actions require explicit user confirmation.",
+      intentGuidance,
+      intent.matchedTerms.length ? `Matched words: ${intent.matchedTerms.join(", ")}.` : "",
+      safeFacts ? `Session facts (user-provided context; verify when relevant):\\n${safeFacts}` : "",
+    ].filter(Boolean).join("\\n");
     const messages: AICompletionRequest["messages"] = [
-      { role: "system", content: "You are ARJUNA X. Be helpful, concise, and do not perform transactions without explicit user confirmation." },
+      { role: "system", content: systemPrompt },
       ...context.messages.slice(-12).map(({ role, content }) => ({ role, content })),
     ];
 
