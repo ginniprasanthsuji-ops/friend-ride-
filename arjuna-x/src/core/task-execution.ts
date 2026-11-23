@@ -28,13 +28,24 @@ const MAX_ACTION_ID_LENGTH = 128;
 const MAX_ACTION_DESCRIPTION_LENGTH = 1_000;
 
 const SENSITIVE_OUTPUT_KEYS = /password|passwd|token|secret|authorization|cookie|api[-_]?key|credential/i;
-function redactOutput(value: unknown, depth = 0): unknown {
+function redactOutput(value: unknown, depth = 0, visited = new WeakSet<object>()): unknown {
   if (depth > 8) return "[Output omitted: maximum nesting depth]";
-  if (Array.isArray(value)) return value.slice(0, 100).map((item) => redactOutput(item, depth + 1));
   if (value && typeof value === "object") {
+    if (visited.has(value)) return "[Output omitted: circular reference]";
+    visited.add(value);
+    if (Array.isArray(value)) {
+      const safe: unknown[] = [];
+      for (let i = 0; i < Math.min(value.length, 100); i++) {
+        const descriptor = Object.getOwnPropertyDescriptor(value, String(i));
+        safe.push(!descriptor || !("value" in descriptor) ? "[Output omitted: accessor]" : redactOutput(descriptor.value, depth + 1, visited));
+      }
+      return safe;
+    }
     const result: Record<string, unknown> = {};
-    for (const [key, child] of Object.entries(value as Record<string, unknown>).slice(0, 100)) {
-      result[key] = SENSITIVE_OUTPUT_KEYS.test(key) ? "[REDACTED]" : redactOutput(child, depth + 1);
+    for (const key of Object.keys(value).slice(0, 100)) {
+      if (SENSITIVE_OUTPUT_KEYS.test(key)) { result[key] = "[REDACTED]"; continue; }
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      result[key] = !descriptor || !("value" in descriptor) ? "[Output omitted: accessor]" : redactOutput(descriptor.value, depth + 1, visited);
     }
     return result;
   }
