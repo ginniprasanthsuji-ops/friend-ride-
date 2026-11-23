@@ -27,12 +27,26 @@ const MAX_ACTIONS_PER_RUN = 100;
 const MAX_ACTION_ID_LENGTH = 128;
 const MAX_ACTION_DESCRIPTION_LENGTH = 1_000;
 
+const SENSITIVE_OUTPUT_KEYS = /password|passwd|token|secret|authorization|cookie|api[-_]?key|credential/i;
+function redactOutput(value: unknown, depth = 0): unknown {
+  if (depth > 8) return "[Output omitted: maximum nesting depth]";
+  if (Array.isArray(value)) return value.slice(0, 100).map((item) => redactOutput(item, depth + 1));
+  if (value && typeof value === "object") {
+    const result: Record<string, unknown> = {};
+    for (const [key, child] of Object.entries(value as Record<string, unknown>).slice(0, 100)) {
+      result[key] = SENSITIVE_OUTPUT_KEYS.test(key) ? "[REDACTED]" : redactOutput(child, depth + 1);
+    }
+    return result;
+  }
+  return value;
+}
 function boundOutput(output: unknown): unknown {
   if (output === undefined) return undefined;
   try {
-    const serialized = JSON.stringify(output);
+    const safeOutput = redactOutput(output);
+    const serialized = JSON.stringify(safeOutput);
     if (serialized === undefined) return "[Output omitted: not JSON-serializable]";
-    if (serialized.length <= MAX_OUTPUT_JSON_CHARS) return output;
+    if (serialized.length <= MAX_OUTPUT_JSON_CHARS) return safeOutput;
     return `[Output truncated: ${serialized.slice(0, MAX_OUTPUT_JSON_CHARS)}]`;
   } catch {
     return "[Output omitted: serialization failed]";
