@@ -69,3 +69,10 @@ test('Phase 3 shell maps legacy theme tokens to the scoped palette', () => {
     assert.ok(design.includes(token), `missing legacy token mapping: ${token}`);
   }
 });
+
+
+test('Phase 3 shell remaps audited hardcoded legacy purple components', () => {
+  for (const selector of ['.fr-phase3-shell .drawer-head', '.fr-phase3-shell .market-category-row button.active', '.fr-phase3-shell .catalogue-category-pills button.active', '.fr-phase3-shell .market-price', '.fr-phase3-shell .fr-poster-ref', '.fr-phase3-shell .fr-premium-hero', '.fr-phase3-shell .fr-role-launcher']) {
+    assert.ok(design.includes(selector), `missing audited palette override: ${selector}`);
+  }
+});
