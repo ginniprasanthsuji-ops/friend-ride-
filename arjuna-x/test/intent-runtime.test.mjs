@@ -31,3 +31,23 @@ test("runtime rejects empty input and missing session", async () => {
   contexts.create("s1");
   await assert.rejects(runtime.handle("s1", "  "), /Message cannot be empty/);
 });
+
+test("runtime passes intent-aware safety and bounded session facts to provider", async () => {
+  const contexts = new SessionContextStore();
+  contexts.create("phase7-prompt");
+  contexts.setFact("phase7-prompt", "preferredLanguage", "Telugu");
+  let captured;
+  const provider = {
+    providerName: "capture",
+    async complete(request) {
+      captured = request.messages[0].content;
+      return { text: "clarifying", provider: "capture", model: "test" };
+    },
+  };
+  const runtime = new AssistantRuntime(provider, contexts);
+  await runtime.handle("phase7-prompt", "book cab and order food");
+  assert.match(captured, /Detected intent/);
+  assert.match(captured, /Telugu/);
+  assert.match(captured, /explicit user confirmation/);
+  assert.match(captured, /verified tool result/);
+});
