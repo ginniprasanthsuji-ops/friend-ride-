@@ -1242,3 +1242,10 @@ Read-only QA source audit confirmed:
 - Read-only QA SQL search of public routines for references to `fr_notification_events`/`fr_notification_tokens` returned no matching functions; read-only trigger inventory for `fr_notification_events`, `fr_notification_tokens`, and `fr_push_subscriptions` returned no triggers.
 - QA project lists six active Edge Functions; source review of the notification dispatch and token registration functions found no event enqueue/producer path in those functions. Combined with zero queue rows, no notification event producer is evidenced in the QA project. This is an integration gap, not proof no producer exists outside the inspected database/project.
 - Query 1 initially failed because it included aggregate `pg_proc` entries (`array_agg`); corrected query limited to function/procedure kinds and returned zero matches. No changes made to DB.
+
+
+## Pass 110 — CI fix/rerun verification (2026-11-23)
+
+- CI #750 SUCCESS on `91ab41ace0538a5500da21ceacb58fdf001bdbee`: TypeScript typecheck, core typecheck, runtime build, Node unit suite, Vitest core suite, and Playwright browser regression all passed.
+- #748 test failure is retained as history: 13/14 unit tests passed; browser job passed; second new audit test failed due to a setup-doc dependency racing the subsequent documentation commit. Removed that test-only dependency; #750 green.
+- #749 documentation commit CI SUCCESS. Current inventory doc commit `d74d2c65` is doc-only after CI #750 and not separately run.
