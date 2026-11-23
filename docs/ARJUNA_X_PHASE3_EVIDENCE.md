@@ -32,3 +32,9 @@ No production deployment, merge, DB/schema/auth/payment change, secret access, o
 - Exact legacy palette references remain: `#5420b8` (7), `#24105f` (1), `#7b35df` (1), `#4c1b9c` (1), `#7736cb` (1), `#5120b4` (1), and `#8140df` (1).
 - This confirms the initial shared override is **not** a complete legacy-color removal. Remaining purple values are intentionally not mass-replaced without selector/context review to avoid breaking component states or third-party map controls.
 - Phase 3 remains in progress; the next work item is selector-by-selector review of remaining purple values, then logo/source asset confirmation and route visual regression.
+
+## Continuation: residual palette selector cleanup
+- Latest source was re-fetched and targeted replacements applied after selector-context review. Changes covered shared CSS variables, topbar gradients, purple primary/light buttons, category active states, inline category filter state styles, meta theme color, and poster shadows.
+- Commits: `ce01202` and `8505456`.
+- Final exact-token scan on latest fetched source: {"#5420b8":0,"#7b35df":0,"#24105f":0,"#4c1b9c":0,"#7736cb":0,"#5120b4":0,"#8140df":0}. All reviewed exact legacy palette tokens are now absent from the source (this does **not** prove every rendered screen has no purple; gradients, images, external libraries, and non-hex colors still require visual inspection).
+- Still not run: Playwright/browser/device tests, accessibility test suite, CI run. Status API reports no checks, not success.
