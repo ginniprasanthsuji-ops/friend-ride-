@@ -50,3 +50,11 @@ No merge or live deployment.
 - Combined production SECURITY DEFINER role/ownership evidence: **30/88; 58 remaining**. No synthetic data persisted (post-check 0 in profiles, admin_users, rides, market orders, parcel orders, service requests, service providers, driver locations).
 - Current evidence head `c7ddfa65665b0357928d0c9d4d7d505b7841ee7c`: workflow/source regression `45131877959` PASS; Regression `45131878071`, TASKO/Laundry/Admin `45131878062`, Quality Gate `45131878153` were still in progress at last check. Do not mark CI complete until rerun status confirms.
 - Phase 2 remains blocked: leaked-password setting, owner visibility/table confirmations, remaining 58 production RPC role/ownership tests, QA push/HTTP/concurrency, real device/credential tests. No production change, merge, or deployment.
+
+
+## Production RPC coverage and static triage — 2026-11-23
+
+- `is_friend_ride_admin()` returned false for synthetic authenticated non-admin (rollback/read-only): PASS. Combined production function role/ownership coverage is **38/88; 50 remaining**.
+- Static triage of the remaining 50: 41 caller/ownership markers, 1 admin-guard marker (`fr_cancel_ride`), and 8 public/approved-list functions with no simple auth marker. These markers are triage only; source review/owner visibility acceptance remains required.
+- Latest CI at head `97211bdbf744b5c51f21ad5009c1846501f2b451`: workflow/source regression `45131985938` PASS; Regression `45131985922`, TASKO/Laundry/Admin `45131985913`, Quality Gate `45131986043` in progress. Full Phase 3 UI suite remains untested on its branch.
+- Phase 2 is still NOT ACCEPTED; owner settings/visibility/table acceptance, 50 remaining function checks, push/HTTP/device/credential gates remain pending.
