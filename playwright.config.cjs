@@ -10,7 +10,7 @@ try {
 } catch {
   throw new Error('Safety guard: FRIEND_RIDE_BASE_URL must be a valid URL.');
 }
-const allowedHosts = new Set(['localhost', '127.0.0.1', '::1']);
+const allowedHosts = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
 if (!allowedHosts.has(parsedBaseURL.hostname) || !['http:', 'https:'].includes(parsedBaseURL.protocol)) {
   throw new Error('Safety guard: Playwright is restricted to localhost/loopback. External and hosted targets are denied.');
 }
