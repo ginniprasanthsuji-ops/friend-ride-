@@ -73,3 +73,10 @@ No merge or live deployment.
 - Production verified authenticated SECURITY DEFINER role/ownership evidence now 45/88; 43 remain. This is test coverage only, not security acceptance.
 - Current Phase 2 head 7243a8007c16739c298324378c2d3338885647a8: Quality Gate 9/9 Node, 5/5 core, 47/47 safe browser plus typechecks/build PASS; Regression 47/47 PASS; TASKO/Laundry/Admin 4/4 PASS; source/workflow regression 25 inline checks + learn-teach syntax PASS. Full UI migration suite skipped.
 - Phase 2 NOT ACCEPTED: leaked-password setting, public/internal visibility owner confirmations, remaining 43 RPC checks/reviews, QA notification HTTP/auth/concurrency/live FCM, and real OTP/GPS/payment/push device/account checks remain open. No production mutation, merge, or deployment.
+
+
+## Continuation — eight production role-denial checks (2026-11-23)
+- Eight rollback-only production checks PASS: driver start/complete/parcel accept/ride-payment confirm denied for synthetic non-approved driver; parcel-payment confirm false on dummy parcel; Laundry/TASKO transition no assigned booking; service-provider update denied for synthetic non-provider. Pre/post checks: synthetic profile/admin/subscriptions and dummy ride/parcel/booking/request/payment rows all 0.
+- Verified production authenticated SECURITY DEFINER role/ownership coverage now 53/88; 35 remain. This is evidence coverage, not security acceptance.
+- CI for code commit 7243a8007c16739c298324378c2d3338885647a8 was verified PASS; docs-only commits after it have no push-run evidence available through the current GitHub run-list wrapper, so newest doc head CI is pending verification.
+- Phase 2 NOT ACCEPTED: owner/Auth, privacy/table acceptance, remaining 35 RPC review/tests, QA push HTTP/auth/concurrency/live delivery, and real OTP/GPS/payment/device checks remain open. No production mutation, merge, or deployment.
