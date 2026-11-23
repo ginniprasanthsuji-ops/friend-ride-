@@ -27,7 +27,7 @@ const MAX_ACTIONS_PER_RUN = 100;
 const MAX_ACTION_ID_LENGTH = 128;
 const MAX_ACTION_DESCRIPTION_LENGTH = 1_000;
 
-const SENSITIVE_OUTPUT_KEYS = /password|passwd|token|secret|authorization|cookie|api[-_]?key|credential/i;
+const SENSITIVE_OUTPUT_KEYS = /password|passwd|token|secret|authorization|cookie|api[-_]?key|credential|access[-_]?key|refresh[-_]?key|private[-_]?key/i;
 function redactText(value: string): string {
   return value
     .replace(/-----BEGIN [A-Z ]*PRIVATE KEY-----[\\s\\S]*?-----END [A-Z ]*PRIVATE KEY-----/g, "[REDACTED PRIVATE KEY]")
