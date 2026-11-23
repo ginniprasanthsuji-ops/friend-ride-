@@ -1,0 +1,224 @@
+{
+  "name": "ARJUNA X — 5-minute QA Monitor (starter)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "sched",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/ginniprasanthsu-ops/friend-ride-/commits?sha=arjuna-x/phase-2-repository-assets-inventory&per_page=5",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.ARJUNA_GITHUB_TOKEN}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "commits",
+      "name": "Get QA Branch Commits",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/ginniprasanthsuji-ops/friend-ride-/actions/runs?branch=arjuna-x%2Fphase-2-repository-assets-inventory&per_page=5",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.ARJUNA_GITHUB_TOKEN}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "runs",
+      "name": "Get Recent CI Runs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "merge",
+      "name": "Combine Monitor Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        680,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.ARJUNA_OPENAI_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{JSON.stringify({model:'gpt-6-mini',input:'You are a QA monitoring analyst for FRIEND RIDE Project ARJUNA X. Analyze only the supplied GitHub branch commit and CI data. Report: latest QA branch commit, recent CI conclusions, any failure or stale run, safe next QA action. Do not propose production changes, main merge, deployment, secrets, destructive changes, or DB/schema edits. If data is incomplete, say so. Monitoring only; do not write code.\\n\\nDATA:\\n'+JSON.stringify($json)})}}",
+        "options": {}
+      },
+      "id": "ai",
+      "name": "AI Monitor Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "ARJUNA_X_monitor_report",
+              "value": "={{$json.output_text || $json.output || JSON.stringify($json)}}",
+              "type": "string"
+            },
+            {
+              "name": "monitor_timestamp",
+              "value": "={{$now.toISO()}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "report",
+      "name": "Report in Execution Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        280
+      ]
+    }
+  ],
+  "connections": {
+    "Every 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Get QA Branch Commits",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Recent CI Runs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get QA Branch Commits": {
+      "main": [
+        [
+          {
+            "node": "Combine Monitor Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Recent CI Runs": {
+      "main": [
+        [
+          {
+            "node": "Combine Monitor Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Combine Monitor Data": {
+      "main": [
+        [
+          {
+            "node": "AI Monitor Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Monitor Summary": {
+      "main": [
+        [
+          {
+            "node": "Report in Execution Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "arjuna-x-starter-v1",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
