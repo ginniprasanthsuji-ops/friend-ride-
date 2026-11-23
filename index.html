@@ -4674,3 +4674,25 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #frSupportFeedback .btn.light{background:#eaf2f8;color:#12304f}
 #frAdminSupportPanel #frAdminSupportList{border-color:#d9e3ec;color:#102a43;background:#f4f7fb}
 </style>
+
+<style id="arjuna-x-phase3b-screen-transitions">
+/* P3-B: smooth screen transitions and accessible motion preferences */
+main .page{transition:opacity .18s ease,transform .18s ease;}
+main .page.active{animation:frScreenEnter .2s ease both;}
+@keyframes frScreenEnter{from{opacity:.72;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){main .page{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+<script id="arjuna-x-phase3b-navigation-polish">
+(function(){
+ if(window.__FR_PHASE3B_NAV_POLISH__)return;window.__FR_PHASE3B_NAV_POLISH__=true;
+ function activatePage(id){const page=document.getElementById(String(id));if(!page||!page.classList.contains('page'))return;
+  document.querySelectorAll('main .page').forEach(p=>{const active=p===page;p.classList.toggle('active',active);p.setAttribute('aria-hidden',active?'false':'true');if('inert'in p)p.inert=!active;});
+  document.querySelectorAll('.bottom button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===String(id)));
+  const heading=page.querySelector('h1,h2,h3');if(heading&&!heading.hasAttribute('tabindex'))heading.setAttribute('tabindex','-1');
+  if(heading){try{heading.focus({preventScroll:true})}catch(_){}}
+ }
+ const old=window.showPage;if(typeof old==='function'&&!old.__frPhase3b){const wrapped=function(id){const r=old.apply(this,arguments);activatePage(id);return r;};wrapped.__frPhase3b=true;window.showPage=wrapped;}
+ // Keep a single screen active if other legacy handlers toggle page classes.
+ const root=document.querySelector('main');if(root){const observer=new MutationObserver(()=>{const active=[...root.querySelectorAll('.page.active')];if(active.length>1){const target=document.querySelector('.bottom button.active')?.dataset.page;const preferred=active.find(p=>p.id===target)||active[0];activatePage(preferred.id);}});observer.observe(root,{subtree:true,attributes:true,attributeFilter:['class']});}
+})();
+</script>
