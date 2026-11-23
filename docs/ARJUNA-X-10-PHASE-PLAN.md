@@ -761,3 +761,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added regression assertions for these scoped components.
 - CI #765 and #766 verified SUCCESS for Pass 111 (hardcoded purple shell remaps). #767/#768 Pass 112 and #769/#770 Pass 113 were pending at this update; follow the latest run.
 - Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 115 (role-launcher palette, 2026-11-23)
+
+- Refined the role launcher cards and role icons to the scoped Navy/Orange/White palette; role card surfaces remain white, headings/nav arrows use Navy/Orange, icon backgrounds use palette variants. Role-selection behavior is unchanged.
+- Added Node regression assertions for role-launcher palette selectors.
+- Pass 111 CI #765/#766 and Pass 110 CI #763/#764 are verified SUCCESS. Pass 112 #767/#768, Pass 113 #769/#770 and Pass 115 #771/#772 are pending; check latest CI before acceptance.
+- Phase 3 remains IN PROGRESS pending CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
