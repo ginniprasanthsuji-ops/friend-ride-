@@ -285,3 +285,8 @@ An additive, **unapplied** migration and QA Edge Function patch now use a servic
 ## 12. Production RPC/RLS triage (2026-11-23)
 
 Read-only follow-up found **0/23** client-role direct SELECT/INSERT/UPDATE/DELETE grants on the RLS-enabled/no-policy production tables. Eight exposed admin RPCs all call `is_friend_ride_admin()`, which checks the caller against `admin_users`. Service-only functions were identified and reviewed for role grants. Public approved-list/feedback functions remain owner-acceptance items; the 88 authenticated SECURITY DEFINER warnings and full role-negative testing remain open. This reduces the no-policy-table access risk but does not close Phase 2 or the release gate.
+
+
+## 13. FCM helper isolation and static tests (2026-11-23)
+
+The dormant `fcm-web-push.js` helper now honors test-only QA/offline Supabase injection (not yet loaded by the main app). Local mirrored-source checks **5/5 PASS** for the notification claim and QA isolation contracts. Latest branch CI still pending; no QA API request, token, event, secret, database write, or Edge deployment. Production no-policy table grants were rechecked as 0/23 for anon/authenticated SELECT/INSERT/UPDATE/DELETE; eight admin RPCs use the admin membership helper. Release remains blocked by Auth setting, full RPC review/negative tests, notification runtime deployment/tests, and device/live checks.
