@@ -5,7 +5,7 @@
   --fr-bg:#f3f6fb; --fr-surface:#ffffff; --fr-ink:#13213a; --fr-muted:#5b6880;
   --fr-border:#dbe4f0; --fr-success:#16804b; --fr-warning:#a86600; --fr-danger:#c53645;
   --fr-radius-card:18px; --fr-radius-control:12px; --fr-shadow-card:0 5px 18px rgba(7,28,70,.07);
-  --fr-focus:0 0 0 3px rgba(255,107,0,.22);
+  --fr-focus-color:#c84b00; --fr-focus:0 0 0 3px rgba(200,75,0,.22);
 }
 .fr-phase3-shell{background:var(--fr-bg);color:var(--fr-ink)}
 .fr-phase3-shell .card, .fr-phase3-shell .feature-box, .fr-phase3-shell .stat, .fr-phase3-shell .kpi, .fr-phase3-shell .offer-card, .fr-phase3-shell .listrow, .fr-phase3-shell .fr-payment-method{
@@ -19,11 +19,11 @@
 .fr-phase3-shell .btn.purple, .fr-phase3-shell .btn.dark{background:linear-gradient(100deg,var(--fr-navy),var(--fr-navy-2));color:#fff}
 .fr-phase3-shell .btn.light{background:#eaf0fa;color:var(--fr-navy);box-shadow:none}
 .fr-phase3-shell .field input, .fr-phase3-shell .field textarea, .fr-phase3-shell .field select, .fr-phase3-shell input, .fr-phase3-shell textarea, .fr-phase3-shell select{border-color:var(--fr-border);color:var(--fr-ink)}
-.fr-phase3-shell .field input:focus, .fr-phase3-shell .field textarea:focus, .fr-phase3-shell .field select:focus{border-color:var(--fr-orange);box-shadow:var(--fr-focus)}
+.fr-phase3-shell .field input:focus, .fr-phase3-shell .field textarea:focus, .fr-phase3-shell .field select:focus{border-color:var(--fr-focus-color);box-shadow:var(--fr-focus)}
 .fr-phase3-shell .bottom, .fr-phase3-shell .premium-bottom{background:#fff;border-color:var(--fr-border)}
 .fr-phase3-shell .bottom button.active, .fr-phase3-shell .premium-bottom button.active{color:var(--fr-orange)}
 .fr-phase3-shell .tile, .fr-phase3-shell .home-more-grid button{border-color:var(--fr-border);color:var(--fr-ink)}
-.fr-phase3-shell :focus-visible{outline:2px solid var(--fr-orange);outline-offset:2px}
+.fr-phase3-shell :focus-visible{outline:2px solid var(--fr-focus-color);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.fr-phase3-shell{scroll-behavior:auto}.fr-phase3-shell *, .fr-phase3-shell *::before, .fr-phase3-shell *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
 /* Pass 98 — viewport/safe-area shell hardening. Additive and behavior-neutral. */
@@ -100,3 +100,5 @@
 .fr-phase3-shell .fr-role-card.driver .fr-role-icon,.fr-phase3-shell .fr-role-card.partner .fr-role-icon{background:linear-gradient(145deg,var(--fr-orange),var(--fr-orange-2));color:var(--fr-navy)}
 .fr-phase3-shell .fr-role-card.admin .fr-role-icon{background:linear-gradient(145deg,#fff,#eaf0fa);color:var(--fr-navy);border:1px solid var(--fr-border)}
 .fr-phase3-shell .fr-role-arrow{color:var(--fr-orange)}
+
+/* Pass 117 — visible keyboard focus uses a darker contrast-safe orange. */
