@@ -12,6 +12,7 @@ export interface IntentResult {
   kind: IntentKind;
   confidence: number;
   matchedTerms: string[];
+  additionalIntents: IntentKind[];
   needsClarification: boolean;
 }
 
@@ -26,21 +27,23 @@ const patterns: Array<{ kind: IntentKind; terms: string[] }> = [
 
 export function classifyIntent(input: string): IntentResult {
   const normalized = input.trim().toLocaleLowerCase();
-  if (!normalized) return { kind: "UNKNOWN", confidence: 0, matchedTerms: [], needsClarification: true };
+  if (!normalized) return { kind: "UNKNOWN", confidence: 0, matchedTerms: [], additionalIntents: [], needsClarification: true };
 
   const hits = patterns
     .map((pattern) => ({ kind: pattern.kind, terms: pattern.terms.filter((term) => normalized.includes(term)) }))
     .filter((entry) => entry.terms.length > 0)
     .sort((a, b) => b.terms.length - a.terms.length);
 
-  if (hits.length === 0) return { kind: "GENERAL_CHAT", confidence: 0.4, matchedTerms: [], needsClarification: false };
+  if (hits.length === 0) return { kind: "GENERAL_CHAT", confidence: 0.4, matchedTerms: [], additionalIntents: [], needsClarification: false };
   const top = hits[0]!;
   const second = hits[1];
-  const ambiguous = Boolean(second && second.terms.length === top.terms.length);
+  const multipleIntents = hits.length > 1;
+  const ambiguous = Boolean(second && second.terms.length === top.terms.length) || multipleIntents;
   return {
     kind: top.kind,
     confidence: Math.min(0.95, 0.55 + top.terms.length * 0.15),
     matchedTerms: top.terms,
+    additionalIntents: hits.slice(1).map((hit) => hit.kind),
     needsClarification: ambiguous,
   };
 }
