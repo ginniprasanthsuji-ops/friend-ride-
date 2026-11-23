@@ -20,5 +20,5 @@ module.exports = defineConfig({
   timeout: 45000,
   retries: 1,
   reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
-  use: { baseURL: parsedBaseURL.href, headless: true, trace: 'retain-on-failure' }
+  use: { baseURL: parsedBaseURL.href, headless: true, trace: 'retain-on-failure', serviceWorkers: 'block' }
 });
