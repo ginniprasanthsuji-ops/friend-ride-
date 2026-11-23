@@ -381,3 +381,9 @@ Four additional QA admin RPC negative tests passed in a rollback transaction: `a
 ## 14. QA SECURITY DEFINER role/ownership coverage increment (2026-11-23)
 
 QA-only rollback testing now covers **22/25** authenticated-executable SECURITY DEFINER functions: 7 admin RPC expected-denial checks, 11 driver/customer/provider role-denial checks, and 4 counter-offer/contact-data ownership boundary checks. All passed; post-test counts for synthetic profile, admin membership, dummy service request/provider/ride were 0. The remaining 3 untested QA data surfaces are provider-list phone fields, approved-store geo coordinates, and public homepage feedback; owner visibility acceptance is required. Production remains blocked—QA coverage is not a production acceptance substitute.
+
+
+## 15. Current security test coverage increment (2026-11-23)
+
+- Production admin-RPC negative tests: **15/88** authenticated-executable SECURITY DEFINER warnings have role-negative evidence (8 prior + 7 newly verified). New 7/7 PASS were `admin_approve_driver`, `admin_list_referral_progress`, `admin_list_subscription_requests`, `admin_review_driver_document`, `admin_review_driver_subscription`, `fr_admin_save_platform_business_details`, `fr_tasko_admin_verify_payment`. Synthetic non-admin test was transaction-rolled back; post-checks confirmed no profile, admin membership, dummy document, subscription or booking rows.
+- QA role/ownership coverage: **22/25** authenticated-executable SECURITY DEFINER functions tested in rollback transactions; 3 public/approved-data surfaces remain untested and need owner visibility acceptance. Production remains blocked; no live changes.

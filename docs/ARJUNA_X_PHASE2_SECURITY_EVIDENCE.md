@@ -295,3 +295,12 @@ Phase 2 remains **BLOCKED / NOT ACCEPTED** pending owner Auth setting, full role
 
 
 **CI trigger note (2026-11-23):** The expanded QA role/ownership test evidence was committed via Git Data API. A subsequent Contents-API docs-only commit is being used to ensure push/PR CI is triggered on the refreshed evidence head; no source code changed in this increment.
+
+
+## 28. Production admin-RPC negative-test increment and QA coverage status (2026-11-23)
+
+- Production `friend-ride` read-only negative-role testing: **7/7 PASS** for `admin_approve_driver`, `admin_list_referral_progress`, `admin_list_subscription_requests`, `admin_review_driver_document`, `admin_review_driver_subscription`, `fr_admin_save_platform_business_details`, and `fr_tasko_admin_verify_payment`. Each was called inside an explicit transaction as authenticated with a synthetic non-admin subject and valid decision/action arguments; each produced the expected Admin-denied error. The transaction was rolled back.
+- Production post-test catalog/data checks: synthetic profile 0, admin membership 0, dummy document 0, dummy subscription 0, dummy booking 0. No production rows changed.
+- Combined with the previously verified 8 production admin RPCs, **15 of 88** authenticated-executable SECURITY DEFINER warnings now have non-admin role-negative evidence; **73 remain untested**. This is only the admin RPC subset, not function-wide acceptance.
+- QA coverage is now **22/25** authenticated-executable SECURITY DEFINER functions with rollback negative/ownership checks (7 admin, 11 role, 4 ownership/data-return checks). The 3 remaining QA data surfaces are not negative-tested and require owner visibility acceptance.
+- Production Auth leaked-password setting, 73 remaining production function tests/review, owner acceptance of public surfaces and 23 internal tables, and real device/credential integrations remain open. No production merge/deploy/schema/auth mutation.
