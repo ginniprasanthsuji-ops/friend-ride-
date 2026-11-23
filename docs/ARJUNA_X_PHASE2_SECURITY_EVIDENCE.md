@@ -189,3 +189,23 @@ Verified CI head `28fc0d7bcdde973b980613a7982a38d1cb72ee77` (scope-fix code/work
 - TASKO/Laundry/Admin Playwright: **PASS, 4/4**.
 
 The full Dark+Gold UI suite remains deferred to the Phase 3 UI branch. Latest branch head `ddfc...` only adds documentation and the preserved QA v7 rollback source after the passing CI head; those latest documentation/backup-only changes have no combined status entries. Phase 2 scoped code/workflow CI is verified on `28fc...`.
+
+
+## Continuation — fresh advisor snapshot and CI-run re-verification (2026-11-23)
+
+**Fresh Supabase Security Advisor snapshot:** observed at 2026-11-23T04:57:18Z (read-only; no changes made).
+
+- Production `friend-ride`: 23 RLS-enabled/no-policy INFO; 6 anon-executable SECURITY DEFINER WARN; 88 authenticated-executable SECURITY DEFINER WARN; 1 leaked-password-protection WARN (still disabled).
+- QA `FRIEND RIDE QA`: 1 anon-executable SECURITY DEFINER WARN; 25 authenticated-executable SECURITY DEFINER WARN. No advisor findings in this snapshot were remediated by this run.
+- Both Supabase projects reported `ACTIVE_HEALTHY`.
+
+**CI re-verification for scoped Phase 2 code/workflow commit `28fc0d7bcdde973b980613a7982a38d1cb72ee77` (GitHub Actions runs queried by commit SHA):**
+
+| Workflow / run | Result | Verified job summary |
+|---|---|---|
+| FRIEND RIDE workflow regression / `45114175251` | PASS | `source-regression`; inline JS and `learn-teach.js` syntax checks passed |
+| FRIEND RIDE Quality Gate / `45114175357` | PASS | `browser-e2e` Phase 2/main safe suite passed; full UI-migration suite skipped by branch scope; typecheck/unit job passed (`test:unit`, `test:core`, typechecks, runtime build) |
+| TASKO Laundry Main Integration Regression / `45114175263` | PASS | TASKO/Laundry/Admin Playwright job passed |
+| FRIEND RIDE Regression / `45114175328` | PASS | Phase 2/main safe browser suite passed; full UI-migration suite skipped by branch scope |
+
+The previously recorded exact suite totals remain: 49/49 safe browser tests, 9/9 Node unit tests, 5/5 core tests, and 4/4 TASKO/Laundry/Admin Playwright tests. **These passes apply to commit `28fc0d7...`, not to later docs/rollback-only branch commits.** Combined status API remains empty; workflow-run and job records above are the evidence. No merge, deployment, database write, Auth change, secret access, or production action occurred. Phase 2 remains blocked by the open security review and owner/device/credential tasks listed above.
