@@ -9,7 +9,10 @@
    - **Lender/NBFC approval:** lender decision, positive limit and decision reference; or
    - **Authorized Admin approval:** privileged admin explicitly approves a positive limit, with approver ID and audit reference.
 6. Show approved limit only after DigiLocker identity verification, both consents, completed credit check, and one complete approval path. Admin approval does not bypass identity or credit-check gates.
-7. Pending/rejected cases show status, not a guessed limit. Admin actions must be auditable, server-authorized, and protected from customer/partner role access.
+7. After approval, customer sees a congratulations message and the approved limit (example: ₹5,000) in the app.
+8. Customer submits a grocery quotation through the app. The quotation is sent to Admin for procurement; requests exceeding the approved limit are blocked.
+9. Admin accepts the quotation and confirms the order. Customer receives an in-app message that delivery is targeted within 2 days after order confirmation, with status updates. This is a delivery target, not a guaranteed SLA; actual delivery dates depend on stock, location, and logistics.
+10. Pending/rejected cases show status, not a guessed limit. Admin actions must be auditable, server-authorized, and protected from customer/partner role access.
 
 ## Integration/security requirements
 - Official, authorized DigiLocker and credit-bureau/lending partner integrations only; no password collection, scraping, or unofficial score access.
@@ -18,4 +21,4 @@
 - Encrypt sensitive records, minimize retention, restrict role access, and verify backend authorization/RLS.
 - Credit decisions/limits are server-authoritative; UI and AI cannot override them. Admin authority must be formally configured by the business/lending compliance process.
 - Avoid retaining raw Aadhaar, credentials, or documents unless a lawful approved requirement exists.
-- This scaffold does not connect external partners or make decisions; lender partnership and regulatory/compliance review are required before launch.
+- Customer message and quotation/order helpers are scaffolding only; customer UI, admin procurement dashboard, notifications, inventory/order service, delivery tracking, persistence and RLS remain to be integrated.\n- This scaffold does not connect external partners or make decisions; lender partnership and regulatory/compliance review are required before launch.
