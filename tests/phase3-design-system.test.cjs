@@ -55,3 +55,10 @@ test('Phase 3 shell is integrated behind an explicit root scope', () => {
     assert.ok(design.includes(selector), `missing scoped shell selector: ${selector}`);
   }
 });
+
+
+test('Phase 3 shell-scoped supporting status and notice palette is present', () => {
+  for (const selector of ['.fr-phase3-shell .notice', '.fr-phase3-shell .status', '.fr-phase3-shell .status.ok', '.fr-phase3-shell .tag', '.fr-phase3-shell .stock-mark.yes', '.fr-phase3-shell .stock-mark.no', '.fr-phase3-shell .fresh-mark', '.fr-phase3-shell a']) {
+    assert.ok(design.includes(selector), `missing scoped supporting palette selector: ${selector}`);
+  }
+});
