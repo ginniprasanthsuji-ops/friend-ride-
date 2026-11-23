@@ -679,3 +679,10 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Re-ran the committed read-only QA grant/RLS/policy SQL: 54/54 checks PASS (18 anon direct-grant checks, 18 RLS checks, 18 anon/PUBLIC policy checks).
 - CI #751 SUCCESS on `467ca3df`: unit suite and browser E2E success. CI #752 SUCCESS on `7fcfb45c`: typecheck, core typecheck, runtime build, Node unit tests, Vitest core tests and Playwright browser regression all success. CI #750/#749 also SUCCESS; #748 is the historical test-doc dependency failure, fixed in #750.
 - Latest HEAD `cce2ca026ea93994b4bec5b948b77e51ef611de4` is documentation-only after #752; this exact docs head has not been CI-run. No production DB or deployment changes.
+
+
+## Pass 113 — Exact CI evidence and brand-asset discovery
+
+- CI #752 browser job log confirms **48 Playwright tests passed** in 22.7 seconds; all jobs passed (typecheck, core typecheck, runtime build, Node unit tests, Vitest core, Playwright). #751/#750/#749 also SUCCESS. #748 remains a documented historical failure, fixed by #750.
+- Located and visually inspected the Library asset `Friend Ride Service Icon Logo.png`: the full navy/orange FRIEND RIDE wordmark with service icon strip and friendride.in. Current repo `icons/friendride-icon.svg` is a simplified square monogram, not the full original horizontal logo. No logo/UI changes in this run; Phase 3 remains gated until Phase 2 acceptance.
+- Latest HEAD `1ac416be8901ed5a560305f96f69c798e5e66e16` (doc-only after #752). The quality workflow excludes `docs/**`, so doc-only updates do not trigger a CI run; the latest code/test commit has green CI #752.
