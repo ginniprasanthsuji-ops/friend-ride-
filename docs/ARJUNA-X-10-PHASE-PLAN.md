@@ -625,3 +625,10 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Extended the Phase 3 CSS contract suite to assert compact viewport breakpoints (380px and 340px) and minimum input/button target heights (42/44px) remain present.
 - Test-only change; no app behavior, backend or production changes. Commit `ed1b9662bbdc78252e0374b326959d60e5af8a6c`.
 - CI #744 (Pass 102) confirmed successful. CI #745 (Pass 103) was in progress at last check; Pass 104 CI pending.
+
+
+## Phase 3 — Pass 105 (palette/component contract tests)
+
+- Added assertions for expected Navy (`#071c46`), Orange (`#ff6b00`), White surface token values and shared selectors (`.topbar`, `.hero`, `.btn`, `.bottom`, `.card`, `:focus-visible`).
+- Test-only commit `75b9cdac0d4b9522d466ab9f18b619a3645e2fce`. CI #745 and #746 both completed SUCCESS at latest check; Pass 105 CI pending.
+- This is regression guard coverage, not evidence of visual migration across all screens.
