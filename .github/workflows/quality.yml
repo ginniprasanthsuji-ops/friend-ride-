@@ -217,6 +217,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package-lock.json
           git commit -m "chore(qa): add reviewed dependency lockfile"
+          git reset --hard HEAD
+          git clean -fd
           git fetch origin arjuna-x/phase-2-repository-assets-inventory
           git rebase FETCH_HEAD
           git push origin HEAD:arjuna-x/phase-2-repository-assets-inventory
