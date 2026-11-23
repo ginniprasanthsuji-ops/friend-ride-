@@ -300,3 +300,8 @@ The proposed notification claim migration passed a PostgreSQL syntax test inside
 ## 15. Production search_path and function authorization triage (2026-11-23)
 
 All 102 SECURITY DEFINER functions have explicit search_path (79 empty, 16 public, 4 public/auth, and 3 other pg_catalog/public variants). A static relation-reference scan of the 16 public-path functions found no likely unqualified table references. Six additional authenticated-only delivery/payment/Laundry/TASKO functions were reviewed and their ownership/admin/state guards were confirmed. These are source/catalog reviews, not role-negative tests; the 88 authenticated warnings remain open.
+
+
+## 16. Guarded rollback syntax test (2026-11-23)
+
+QA rollback script passed a syntax/execution test inside explicit BEGIN/ROLLBACK; catalog check confirmed no claim columns/function persisted. The test ran against the current empty queue only, not after a deployed migration. No QA schema change was left behind.
