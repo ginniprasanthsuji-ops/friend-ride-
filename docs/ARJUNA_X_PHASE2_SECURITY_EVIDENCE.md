@@ -184,8 +184,8 @@ Verified CI head `28fc0d7bcdde973b980613a7982a38d1cb72ee77` (scope-fix code/work
 
 - `source-regression`: **PASS**.
 - `quality/typecheck-and-unit`: **PASS** — 9/9 Node unit tests, 5/5 core tests; typecheck/core typecheck/runtime build passed.
-- `quality/browser-e2e` using `test:phase2`: **PASS, 49/49**.
-- `friend-ride-regression/browser-regression` using `test:phase2`: **PASS, 49/49**.
+- `quality/browser-e2e` using `test:phase2`: **PASS, 47/47**.
+- `friend-ride-regression/browser-regression` using `test:phase2`: **PASS, 47/47**.
 - TASKO/Laundry/Admin Playwright: **PASS, 4/4**.
 
 The full Dark+Gold UI suite remains deferred to the Phase 3 UI branch. Latest branch head `ddfc...` only adds documentation and the preserved QA v7 rollback source after the passing CI head; those latest documentation/backup-only changes have no combined status entries. Phase 2 scoped code/workflow CI is verified on `28fc...`.
@@ -208,7 +208,7 @@ The full Dark+Gold UI suite remains deferred to the Phase 3 UI branch. Latest br
 | TASKO Laundry Main Integration Regression / `45114175263` | PASS | TASKO/Laundry/Admin Playwright job passed |
 | FRIEND RIDE Regression / `45114175328` | PASS | Phase 2/main safe browser suite passed; full UI-migration suite skipped by branch scope |
 
-The previously recorded exact suite totals remain: 49/49 safe browser tests, 9/9 Node unit tests, 5/5 core tests, and 4/4 TASKO/Laundry/Admin Playwright tests. **These passes apply to commit `28fc0d7...`, not to later docs/rollback-only branch commits.** Combined status API remains empty; workflow-run and job records above are the evidence. No merge, deployment, database write, Auth change, secret access, or production action occurred. Phase 2 remains blocked by the open security review and owner/device/credential tasks listed above.
+The previously recorded exact suite totals remain: 47/47 safe browser tests, 9/9 Node unit tests, 5/5 core tests, and 4/4 TASKO/Laundry/Admin Playwright tests. **These passes apply to commit `28fc0d7...`, not to later docs/rollback-only branch commits.** Combined status API remains empty; workflow-run and job records above are the evidence. No merge, deployment, database write, Auth change, secret access, or production action occurred. Phase 2 remains blocked by the open security review and owner/device/credential tasks listed above.
 
 
 ## Continuation — latest-head Phase 2 CI verification (2026-11-23)
@@ -225,3 +225,8 @@ The previously recorded exact suite totals remain: 49/49 safe browser tests, 9/9
 Both browser workflows skipped the full UI-migration/Dark+Gold route regression by branch scope. This is an explicit skip, not acceptance of Phase 3 UI coverage. CI installed dependencies and Chromium successfully; the earlier local install-timeout report does not apply to these hosted CI runs.
 
 PR #39 remains **open and draft**. No merge, production deployment, Supabase schema/auth mutation, or credential/device testing occurred. Phase 2 remains blocked by the production leaked-password-protection owner action; SECURITY DEFINER function role-negative tests/owner risk acceptance; confirmation of 23 internal no-policy tables; notification claim migration/function QA deployment and concurrency/delivery tests; FCM entry-point wiring; and real OTP/GPS/payment/push checks requiring owner credentials and supported device(s).
+
+
+## Correction — browser test totals rechecked against job logs (2026-11-23)
+
+The previous evidence text listed 49/49 for scoped commit `28fc0d7bcdde973b980613a7982a38d1cb72ee77`. A fresh log review of runs `45114175328` and `45114175357` shows **47 tests ran and 47 passed** in each browser job. The same 47/47 count is verified on latest pre-doc head `97ea3fd40758eb6a0ce0337ccfa08ce826da320d` in runs `45114871023` and `45114871004`. The 49/49 entry was a documentation error; it is corrected here. Node unit/core and TASKO/Laundry/Admin counts remain 9/9, 5/5, and 4/4 respectively.
