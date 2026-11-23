@@ -143,3 +143,16 @@ test("execution failure error details are capped to avoid oversized payloads", a
   assert.equal(result[0]?.status, "FAILED");
   assert.equal(result[0]?.error?.length, 500);
 });
+
+test("cancellation signal after executor resolves marks action SKIPPED", async () => {
+  const controller = new AbortController();
+  const runtime = new TaskExecutionRuntime({
+    async execute() {
+      controller.abort();
+      return "late output";
+    },
+  });
+  const result = await runtime.run([action], { signal: controller.signal });
+  assert.equal(result[0]?.status, "SKIPPED");
+  assert.equal(result[0]?.output, undefined);
+});
