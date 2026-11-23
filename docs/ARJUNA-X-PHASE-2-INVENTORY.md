@@ -1228,3 +1228,10 @@ Read-only QA source audit confirmed:
 - Updated `FCM-WEB-PUSH-SETUP.md` to reflect the current source truth and owner/device/credential integration steps. Added `tests/notification-architecture-audit.test.cjs` as a static audit that passes only while this documented mismatch remains accurately represented.
 
 **Still blocked:** owner-confirmed Firebase web/VAPID config and integration architecture, QA event producer path, authorized secret presence check (values never read), token refresh/account-switch tests, Android device delivery and notification click tests. No backend deployment/schema changes.
+
+
+## Pass 108 — Fresh grants and CI triage (2026-11-23)
+
+- Fresh QA SQL reconfirmed broad anon privileges on 18 sampled public tables, including TRUNCATE/REFERENCES/TRIGGER, but no anon/PUBLIC policies returned. RLS/policy evidence means this is an excessive-grant risk, not a confirmed row-access bypass; owner-approved privilege remediation is still pending.
+- GitHub branch-protection read returned 403 `Resource not accessible by integration`; we cannot verify/update protection from the current GitHub connector. Prior Pass 96 audit found it disabled and required checks empty; owner/admin action required.
+- CI #748: typecheck, core typecheck, runtime build succeeded; unit test suite failed 1/14 due the notification test checking setup-doc content from a later commit. Browser E2E job succeeded. Fix commit `91ab41ace0538a5500da21ceacb58fdf001bdbee` removes that timing dependency; #750 queued. #749 (doc commit) in progress at time of record.
