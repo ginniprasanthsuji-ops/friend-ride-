@@ -1,14 +1,3 @@
-/* FCM background support, sharing the site's existing PWA service worker. */
-importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js');
-firebase.initializeApp({apiKey:'AIzaSyAlFAYAjcV1pR1dzeUjUH9sQaxV19UM',authDomain:'friend-ride-app.firebaseapp.com',projectId:'friend-ride-app',storageBucket:'friend-ride-app.firebasestorage.app',messagingSenderId:'986949278576',appId:'1:986949278576:web:7da92fc7889d7eb168db5'});
-const fcmMessaging=firebase.messaging();
-fcmMessaging.onBackgroundMessage(payload=>{
-  const n=payload.notification||{};
-  const d=payload.data||{};
-  self.registration.showNotification(n.title||d.title||'FRIEND RIDE',{body:n.body||d.body||d.message||'మీకు కొత్త update ఉంది.',icon:'./icons/icon-192.png',badge:'./icons/icon-192.png',data:{url:d.url||'./'}});
-});
-
 /* FRIEND RIDE PWA Service Worker — Web Push + Telugu event alerts */
 self.addEventListener('install', event => { event.waitUntil(self.skipWaiting()); });
 self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });
@@ -18,7 +7,6 @@ self.addEventListener('push', event => {
   try { data = event.data ? event.data.json() : {}; }
   catch (_) { data = { title: 'FRIEND RIDE', body: event.data ? event.data.text() : 'మీకు కొత్త update ఉంది.' }; }
 
-  if (data.notification || data.from || data.fcmMessageId || data.messageId) return; // FCM SDK handles its own payload
   const role = String(data.role || '').toLowerCase();
   const raw = String([data.notification_type, data.title, data.body, data.message].join(' ')).toLowerCase();
   const isOrder = /order|store|market|food|ఆర్డర్|షాప్|ఫుడ్/.test(raw);
