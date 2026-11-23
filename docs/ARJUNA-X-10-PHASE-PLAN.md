@@ -648,3 +648,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - QA token-register v5 verifies session with `auth.getUser()`, accepts `platform=web`, and upserts token ownership. QA row counts on 2026-11-23: `fr_notification_events=0`, `fr_notification_tokens=0`, `fr_push_subscriptions=0`; no QA delivery data.
 - Corrected stale `FCM-WEB-PUSH-SETUP.md` and added static mismatch audit test `tests/notification-architecture-audit.test.cjs`. Commits: `2b40c760` (test), `ec934a09` (setup doc), `79602a0d` (Phase 2 inventory). No backend/schema/production changes.
 - CI #748 for test commit is in progress; #749 for setup-doc commit queued at record time. Phase 2 remains NOT ACCEPTED; owner confirmation of Firebase/VAPID config, safe integration, QA event producer, secret presence check (values not read), and physical device tests are blockers.
+
+
+## Phase 2 — Pass 108 (fresh QA grants/branch-protection and CI failure triage)
+
+- Fresh read-only QA role grants query confirms broad `anon` table privileges (SELECT/INSERT/UPDATE/DELETE plus TRUNCATE/REFERENCES/TRIGGER) on the previously sampled 18 tables; fresh `pg_policies` query returns no anon/PUBLIC policies. No bypass confirmed; least-privilege cleanup still needs owner-approved backend change.
+- Attempt to read GitHub branch-protection API was denied with HTTP 403 `Resource not accessible by integration`; protection status cannot be independently re-verified through this connector on this run. Earlier audit found protection disabled and no required checks; owner/admin verification is needed.
+- CI #748 on commit `2b40c760` failed: 13/14 Node unit subtests passed; new notification architecture audit's second subtest failed because it required the setup documentation update to already exist in that earlier test commit (commit ordering race). Browser E2E job in #748 succeeded. Removed the test's documentation dependency in commit `91ab41ac`; CI #750 queued. #749 on documentation commit `ec934a09` is in progress.
+- No schema/ACL/backend changes. Phase 2 NOT ACCEPTED; broad grants, branch protection owner access, push integration, credentials and device tests remain gates.
