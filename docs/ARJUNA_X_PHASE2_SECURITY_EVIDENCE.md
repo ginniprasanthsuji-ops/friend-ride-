@@ -243,3 +243,11 @@ The previous evidence text listed 49/49 for scoped commit `28fc0d7bcdde973b98061
 - Fresh Security Advisor (2026-11-23 05:32:57 UTC): production 23 RLS/no-policy INFO, 6 anon SECURITY DEFINER WARN, 88 authenticated SECURITY DEFINER WARN, leaked-password protection disabled; QA 1 anon and 25 authenticated SECURITY DEFINER WARN. Production tables remain 85/85 RLS enabled, 0 disabled; QA 21/21 RLS enabled, 0 no-policy. Production no-policy table client grants rechecked at 0 for anon/authenticated CRUD.
 
 Phase 2 remains **BLOCKED / NOT ACCEPTED** pending owner Auth setting, full role-negative SECURITY DEFINER review/risk acceptance, public/internal table ownership confirmation, and real credentials/device-based OTP/GPS/payment/push tests. QA notification migration/function is now deployed and the isolated transactional checks pass; true concurrency and live push remain open. No production change, merge, or live deployment.
+
+
+## Continuation — production admin-RPC non-admin negative tests (2026-11-23)
+
+- Source/grant review verified eight exposed admin RPCs have `anon` EXECUTE=false, `authenticated` EXECUTE=true, and call `public.is_friend_ride_admin()` before returning or mutating data.
+- In a read-only transaction, `SET ROLE authenticated` with a synthetic JWT subject that has no `admin_users` membership was tested against all eight: `admin_list_driver_applications`, `admin_list_driver_documents`, `admin_review_driver`, `admin_set_driver_status`, `fr_admin_assign_service_provider`, `fr_admin_list_partner_applications`, `fr_admin_list_service_requests`, and `fr_admin_review_partner`. Each raised the expected admin-denial exception before any mutation. Transaction rolled back.
+- Post-test catalog/data checks found zero dummy profiles, driver locations, service requests, service providers, or synthetic admin membership. No Auth user was created; no production data changes were made.
+- This verified **8 of the 88** production authenticated-executable SECURITY DEFINER warnings (admin RPC subset). The remaining function-by-function role-negative review and owner risk acceptance remain open; anon/public function intent and leaked-password protection also remain open. Phase 2 is still blocked/not accepted.

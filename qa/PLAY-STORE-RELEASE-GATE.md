@@ -342,3 +342,12 @@ Fresh Security Advisor remains: production 23 no-policy RLS tables (0 client CRU
 ## 22. Latest evidence-branch CI verification (2026-11-23)
 
 Commit `2598dec60f15552dc6add4d2bd5d187d27c1b44a` completed successful workflows: FRIEND RIDE Regression `45118777060` **47/47** Phase 2 browser tests; FRIEND RIDE Quality Gate `45118777119` **47/47** browser tests, 9/9 Node unit, 5/5 core tests, typechecks/runtime build pass; TASKO/Laundry/Admin `45118777058` **4/4**; source regression `45118777029` pass. Full UI-migration/Dark+Gold suite was skipped by Phase 2 scope. Release remains blocked.
+
+
+## 23. Production admin-RPC non-admin negative tests (2026-11-23)
+
+Read-only source/grant review verified anon EXECUTE=false and authenticated EXECUTE=true for eight admin RPCs, each checking `is_friend_ride_admin()` before data access/write. In a transaction with `SET ROLE authenticated` and a synthetic JWT subject lacking admin membership, all eight (`admin_list_driver_applications`, `admin_list_driver_documents`, `admin_review_driver`, `admin_set_driver_status`, `fr_admin_assign_service_provider`, `fr_admin_list_partner_applications`, `fr_admin_list_service_requests`, `fr_admin_review_partner`) raised the expected admin-denial exception. Post-test checks found no dummy profiles, driver locations, service requests, providers, or admin membership; transaction rolled back. No production data was changed. This closes only 8/88 production authenticated SECURITY DEFINER warnings; the remaining full role-negative review and owner acceptance are still pending.
+
+## 24. Latest evidence-branch CI (2026-11-23)
+
+On code/evidence commit `2598dec60f15552dc6add4d2bd5d187d27c1b44a`, four workflows passed: Regression 47/47, Quality browser 47/47 plus 9/9 Node and 5/5 core tests with typechecks/runtime build, TASKO/Laundry/Admin 4/4, and source regression. On later docs-restoration commit `5c339c448005373bf1182cc2f1d64f5bee8d00e5`, Regression run `45118947001` and Quality run `45118947010` passed (47/47 browser, 9/9 Node, 5/5 core, typechecks/runtime build); the duplicate Regression `45118952932` was still in progress at this record. Source and TASKO workflows were not triggered on this documentation-only head, but passed on the preceding code/evidence head. Full UI-migration/Dark+Gold tests are skipped on the Phase 2 branch. Release remains BLOCKED.
