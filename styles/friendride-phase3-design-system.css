@@ -1,0 +1,27 @@
+/* FRIEND RIDE Phase 3 — Navy / Orange / White design tokens + shared shell primitives.
+   Additive UI-only layer. Existing feature behavior, selectors and contracts remain unchanged. */
+:root{
+  --fr-navy:#071c46; --fr-navy-2:#102b63; --fr-orange:#ff6b00; --fr-orange-2:#ff8b24;
+  --fr-bg:#f3f6fb; --fr-surface:#ffffff; --fr-ink:#13213a; --fr-muted:#5b6880;
+  --fr-border:#dbe4f0; --fr-success:#16804b; --fr-warning:#a86600; --fr-danger:#c53645;
+  --fr-radius-card:18px; --fr-radius-control:12px; --fr-shadow-card:0 5px 18px rgba(7,28,70,.07);
+  --fr-focus:0 0 0 3px rgba(255,107,0,.22);
+}
+body{background:var(--fr-bg);color:var(--fr-ink)}
+.card,.feature-box,.stat,.kpi,.offer-card,.listrow,.fr-payment-method{
+  background:var(--fr-surface);border-color:var(--fr-border);box-shadow:var(--fr-shadow-card);color:var(--fr-ink)
+}
+.topbar,.home-topbar,.premium-topbar,.drawer-head{
+  background:linear-gradient(110deg,var(--fr-navy),var(--fr-navy-2));color:#fff
+}
+.hero{background:linear-gradient(120deg,var(--fr-navy),var(--fr-navy-2));color:#fff}
+.btn,.top-action{background:linear-gradient(100deg,var(--fr-orange),var(--fr-orange-2));color:#fff}
+.btn.purple,.btn.dark{background:linear-gradient(100deg,var(--fr-navy),var(--fr-navy-2));color:#fff}
+.btn.light{background:#eaf0fa;color:var(--fr-navy);box-shadow:none}
+.field input,.field textarea,.field select,input,textarea,select{border-color:var(--fr-border);color:var(--fr-ink)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--fr-orange);box-shadow:var(--fr-focus)}
+.bottom,.premium-bottom{background:#fff;border-color:var(--fr-border)}
+.bottom button.active,.premium-bottom button.active{color:var(--fr-orange)}
+.tile,.home-more-grid button{border-color:var(--fr-border);color:var(--fr-ink)}
+:focus-visible{outline:2px solid var(--fr-orange);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
