@@ -41,3 +41,9 @@ test("approved workflow path remains valid", () => {
   const path: TaskStatus[] = ["QUEUED", "READY", "WAITING_APPROVAL", "READY", "RUNNING", "VERIFYING", "COMPLETED"];
   for (let i = 0; i < path.length - 1; i++) assertTransition(path[i]!, path[i + 1]!);
 });
+
+test("unknown runtime state values are rejected safely", () => {
+  assert.equal(canTransition("UNKNOWN" as TaskStatus, "READY"), false);
+  assert.equal(canTransition("QUEUED", "UNKNOWN" as TaskStatus), false);
+  assert.throws(() => assertTransition("UNKNOWN" as TaskStatus, "READY"), /Invalid task transition/);
+});
