@@ -63,8 +63,10 @@ export class TaskExecutionRuntime {
         continue;
       }
 
+      // Retry only actions explicitly marked safe/idempotent; all others run once.
+      const actionRetries = action.retrySafe === true ? maxRetries : 0;
       let attempts = 0;
-      while (attempts <= maxRetries) {
+      while (attempts <= actionRetries) {
         attempts += 1;
         try {
           const output = await this.executor.execute(action, options.signal);
@@ -76,7 +78,7 @@ export class TaskExecutionRuntime {
             results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled during action" });
             break;
           }
-          if (attempts > maxRetries) {
+          if (attempts > actionRetries) {
             results.push({ actionId: action.id, status: "FAILED", attempts, error: message });
           }
         }
