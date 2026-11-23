@@ -4595,3 +4595,26 @@ window.frRefreshHomeProfileAvatar=async function(){
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
+
+<!-- ARJUNA X Phase 3: Navy Blue + Orange + White UI skin (additive; no feature logic changes) -->
+<style id="fr-arjuna-x-phase3-navy-orange">
+:root{--purple:#12304f;--purple2:#1b466f;--navy:#102a43;--orange:#f58220;--bg:#f4f7fb;--ink:#102a43;--muted:#5c7185;--line:#d9e3ec;--white:#fff;--gold:#ffc65a}
+body{background:linear-gradient(180deg,#f4f7fb 0%,#eef3f8 100%);color:#102a43}
+.topbar,.home-topbar{background:linear-gradient(110deg,#102a43 0%,#173b5d 100%);color:#fff;border-bottom:1px solid #ffffff20}
+.topbar .logo,.home-topbar .logo{background:#fff;color:#f58220}
+.hero{background:radial-gradient(circle at 88% 12%,#f5822035 0,transparent 30%),linear-gradient(118deg,#102a43 0%,#173b5d 65%,#1d4b73 100%);color:#fff}
+.card{background:#fff;border-color:#d9e3ec;box-shadow:0 8px 24px #102a430b}
+.tile,.market-store,.market-product,.master-visual-card,.home-catalog-shortcuts button{background:#fff;border-color:#d9e3ec;color:#102a43}
+.btn,.top-action{background:linear-gradient(105deg,#f58220,#ffab4a);color:#102a43;box-shadow:0 6px 15px #f5822026}
+.btn.purple,.btn.dark{background:linear-gradient(105deg,#102a43,#1d4b73);color:#fff;box-shadow:0 7px 17px #102a4325}
+.btn.light,.location-action{background:#eaf2f8;color:#12304f;border:1px solid #d3e0eb;box-shadow:none}
+.bottom{background:#fff;border-top:1px solid #d9e3ec;box-shadow:0 -7px 22px #102a4308}
+.bottom button.active{color:#f58220}.bottom button.active span{background:#fff0df}
+.menu-item:hover,.menu-item:active{background:#edf4fa;color:#12304f}
+.status{background:#fff0df;color:#94520c}.status.ok{background:#e1f5ec;color:#116d49}
+.pill{background:#eaf2f8;color:#12304f}
+.market-category-row button,.catalogue-category-pills button{border-color:#d9e3ec;color:#12304f;background:#fff}
+.market-category-row button.active,.catalogue-category-pills button.active{background:#12304f;color:#fff;border-color:#12304f}
+.market-price,.master-partner-price{color:#12304f}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f58220;outline-offset:2px}
+</style>
