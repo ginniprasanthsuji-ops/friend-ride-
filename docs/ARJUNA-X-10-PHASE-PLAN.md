@@ -813,3 +813,10 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added Playwright runtime smoke coverage to `qa/phase3-shell-visual-smoke.spec.js`: stylesheet loading, shell body class, 58 pages inheriting Navy tokens, computed body background, orange primary CTA foreground/background contrast, and keyboard-visible focus outline.
 - CI #778/#779 (Pass 119 accent text) and #780 (Pass 120 route-section baseline) verified SUCCESS. #781/#782 (runtime smoke file) were pending at this update.
 - Phase 3 remains IN PROGRESS pending runtime smoke CI, remaining route-level visual review and physical-device acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 122 (route-by-route visual acceptance inventory, 2026-11-23)
+
+- Created `docs/ARJUNA-X-PHASE-3-ROUTE-COVERAGE.md`, grouping all 58 current SPA page sections into public/customer, ride/delivery, marketplace, home services, dashboards and admin categories. The checklist intentionally remains unchecked because screenshot-based route acceptance has not been performed.
+- CI #778/#779 (Pass 119 accent-text contrast) and #780 (Pass 120 58-page static baseline) verified SUCCESS. #781/#782 runtime smoke are still in progress.
+- Phase 3 remains IN PROGRESS pending runtime smoke and route-by-route visual/device acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
