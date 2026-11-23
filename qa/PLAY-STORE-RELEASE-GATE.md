@@ -400,3 +400,8 @@ On evidence head `d01296f5de42adb990d229ccc007b56a92091272`, all four workflows 
 ## 17. Latest CI re-verification (2026-11-23)
 
 On current evidence head `e753d895cb79f79bbee81b3f1de44d1fe93486fe`, Regression `45125485739` passed 47/47 Phase 2 safe browser tests; Quality `45125485784` passed 47/47 browser, 9/9 Node, 5/5 core, typechecks/runtime build; TASKO/Laundry/Admin `45125485753` passed 4/4; workflow/source regression `45125485805` passed. UI migration suite was skipped by Phase 2 scope. No code changed in this doc follow-up; release remains blocked.
+
+
+## 18. Sequential Phase 2 gate correction (2026-11-23)
+
+A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95% for development continuation” while deferring security blockers. This was corrected in `qa/phase2-final-acceptance.md`: Phase 2 is **NOT accepted for Phase 3 advancement**. Current verified blockers remain production admin-RPC tests 15/88 (73 remaining), QA role/ownership tests 22/25 (3 visibility surfaces untested), leaked-password protection disabled, 23 internal no-policy tables owner confirmation, and live device/credential integration tests. The sequential sprint rule remains Phase 2 first. No merge/deployment.
