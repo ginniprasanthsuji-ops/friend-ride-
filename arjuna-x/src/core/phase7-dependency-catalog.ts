@@ -1,9 +1,9 @@
 import type { FeatureDependencyDeclaration } from "./approved-stack-guard.js";
 
 /**
- * Phase 7 safe-mode catalogue for feature workflow dependencies.
- * Existing workflows are preserved; this catalog does not claim backend integrations are verified.
- * External-provider-dependent capability is disabled or clearly manual.
+ * Phase 7 safe-mode catalogue. Manual means the workflow may be shown/used
+ * without claiming external integrations are active. Provider-dependent features
+ * are explicitly disabled. This catalogue is not proof of runtime deactivation.
  */
 export const phase7FeatureDependencyCatalog: FeatureDependencyDeclaration[] = [
   { feature: "Ride booking and lifecycle", dependency: "Supabase", mode: "manual" },
@@ -24,6 +24,23 @@ export const phase7FeatureDependencyCatalog: FeatureDependencyDeclaration[] = [
   { feature: "Lender/NBFC API and automated credit decisions", dependency: "GitHub", mode: "disabled" },
   { feature: "Firebase push delivery", dependency: "Firebase", mode: "manual" },
 ];
+
+export type Phase7FeatureAccess = "allow-manual" | "allow-verified-integrated" | "deny-disabled" | "deny-unverified" | "deny-unknown";
+
+/** Fail closed: only manual workflows or explicitly verified approved integrations are allowed. */
+export function evaluatePhase7FeatureAccess(feature: string): Phase7FeatureAccess {
+  const declaration = phase7FeatureDependencyCatalog.find((item) => item.feature === feature);
+  if (!declaration) return "deny-unknown";
+  if (declaration.mode === "disabled") return "deny-disabled";
+  if (declaration.mode === "manual") return "allow-manual";
+  if (declaration.mode === "integrated" && declaration.verified === true) return "allow-verified-integrated";
+  return "deny-unverified";
+}
+
+export function isPhase7FeatureAllowed(feature: string): boolean {
+  const access = evaluatePhase7FeatureAccess(feature);
+  return access === "allow-manual" || access === "allow-verified-integrated";
+}
 
 export function getPhase7DependencyMode(feature: string): "integrated" | "manual" | "disabled" | "unknown" {
   const declaration = phase7FeatureDependencyCatalog.find((item) => item.feature === feature);
