@@ -336,3 +336,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - **Repository limitation:** the current GitHub connector supports UTF-8 text file writes but no direct binary file upload. Therefore these generated PNG assets are prepared and verified in this session but not committed to the QA repository. Do not falsely report the supplied logo as fully deployed. The previous themed SVG remains the current repository icon until the binary assets are added through an upload-capable Git path.
 - Fresh QA workflow evidence: Quality Gate run **#728 / 45091250892** completed **SUCCESS** on commit `5718b677f5c08a35c2178b66af2bfa08c8b1b430` (manifest/theme icon source change). This is not evidence that the new user-supplied PNG assets are installed or device-tested.
 - No main merge, production changes, deployment, or backend/schema/auth/payment changes. Phase 2 remains NOT ACCEPTED; remaining gates include FCM client wiring/device delivery, PWA install/update/offline device tests, security/RLS/Edge secrets review, QA backend integration E2E, branch protection/required checks, and committing the official binary assets.
+
+
+## Pass 73 — Fresh Quality Gate #728 log/artifact verification (2026-11-23)
+
+- Run **#728 / 45091250892** was re-checked from job metadata and decoded logs. Both jobs completed successfully: `typecheck-and-unit` and `browser-e2e`.
+- Fresh checks on commit `5718b677f5c08a35c2178b66af2bfa08c8b1b430`: `npm ci`; dependency audit reports **0 vulnerabilities**; typecheck and core typecheck; runtime build; Node unit **7/7**; Vitest/core **2 files, 5 tests passed**; Chromium Playwright **48 passed**. Audit artifact `14780698740` exists (312 bytes). This supersedes the previous status of run #728 being merely reported without log verification.
+- Run #728 is on the manifest/theme source commit, not the Pass 72 documentation commit and not the new PNG files. No claim that official supplied-logo PNGs are in the repo or device-verified.
+- QA branch latest documentation commit is Pass 72 `d2f17efa422bd7875e9999952cc6955de4d2dc93`. No CI run is claimed for that docs-only commit.
+- Phase 2 remains **NOT ACCEPTED**. Open gates: upload/commit official binary logo assets; FCM frontend token integration and real delivery/device test; PWA install/update/offline device verification; full security/RLS/Edge-secret review; QA backend integration E2E; owner-verified branch protection/required checks. No main merge, production change, deployment, backend/schema/auth/payment change.
