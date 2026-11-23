@@ -376,3 +376,8 @@ Four additional QA admin RPC negative tests passed in a rollback transaction: `a
 
 - Additional QA-only admin-role negative tests: **4/4 PASS** for `admin_review_driver_document`, `admin_review_driver`, `fr_admin_assign_service_provider`, and `fr_admin_review_partner`. All were tested with a synthetic authenticated non-admin and valid action arguments; each raised the expected Admin-denied exception. The transaction rolled back and post-checks found zero synthetic profile/admin membership or dummy request/provider rows. QA now has negative-role evidence for 7 admin RPCs total (3 earlier + 4 new).
 - Git-data ref update commit `76f02554185780bde9244a60b50a67584329e1bb` updated the evidence docs, but no workflow run was visible for that commit at the time of check. A new contents-API documentation commit is being used to trigger push/PR workflows. This is evidence-only; no source-code changes.
+
+
+## 14. QA SECURITY DEFINER role/ownership coverage increment (2026-11-23)
+
+QA-only rollback testing now covers **22/25** authenticated-executable SECURITY DEFINER functions: 7 admin RPC expected-denial checks, 11 driver/customer/provider role-denial checks, and 4 counter-offer/contact-data ownership boundary checks. All passed; post-test counts for synthetic profile, admin membership, dummy service request/provider/ride were 0. The remaining 3 untested QA data surfaces are provider-list phone fields, approved-store geo coordinates, and public homepage feedback; owner visibility acceptance is required. Production remains blocked—QA coverage is not a production acceptance substitute.
