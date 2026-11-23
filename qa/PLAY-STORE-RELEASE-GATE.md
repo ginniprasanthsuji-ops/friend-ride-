@@ -275,3 +275,8 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 A branch-only test isolation patch is now present on `arjuna-x/phase-2-security-closure`: the browser tests inject a test Supabase target, use an offline placeholder by default, block production Supabase requests, and only allow the QA host when the explicit test flag is enabled. Four existing specs use the shared fixture; a new isolation spec has two checks. Regression/Quality push triggers were added for the Phase 2 branch; Regression also has a PR trigger.
 
 Node syntax checks passed for the fixture, isolation test, and changed client-config snippet. **Full Playwright/CI results are still pending**, so this patch is not accepted and the release gate remains blocked. See the Phase 2 security evidence document for details.
+
+
+## 11. Notification queue claim patch prepared (2026-11-23)
+
+An additive, **unapplied** migration and QA Edge Function patch now use a service-role-only atomic `FOR UPDATE SKIP LOCKED` claim RPC, a 10-minute processing lease, and claim-token-guarded finalization. Static contract test passed 2/2 locally; TypeScript parse diagnostics were 0. Deno/runtime, QA migration/function deployment, concurrency, real push, and rollback tests are still **NOT TESTED**. No database or Edge Function was changed live. Release remains BLOCKED.
