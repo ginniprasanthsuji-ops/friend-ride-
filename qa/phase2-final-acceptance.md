@@ -93,3 +93,12 @@ No merge or live deployment.
 - The four runs on head 76e38b5167fb4db020d9bfcb0512a5fb1459a4e2 are now verified complete PASS: 47/47 safe browser in both regression/quality, 9/9 Node, 5/5 core, typechecks/runtime build, 4/4 TASKO/Laundry/Admin, and 25 inline scripts plus learn-teach syntax. Full UI migration suite skipped.
 - Newer final documentation head has no visible push-run/check status through the current connector; mark latest docs-only CI unverified. No source code changed after the verified code commit.
 - Phase 2 remains NOT ACCEPTED: 55/88 role/ownership test coverage only (33 remain); owner settings/acceptance and real QA/device integration remain open.
+
+
+## Fresh continuation — advisor and CI correction (2026-11-23)
+
+- Fresh read-only Supabase security advisors: production `friend-ride` has 23 RLS/no-policy INFO, 6 anon SECURITY DEFINER WARN, 88 authenticated SECURITY DEFINER WARN, and leaked-password protection disabled. QA `FRIEND RIDE QA` has 1 anon and 25 authenticated SECURITY DEFINER WARN. Both projects are ACTIVE_HEALTHY; health advisors returned no lints. No schema/Auth/Edge changes made.
+- CI on resolved documentation commit `154ed19f259d9ff4b1ba9bcf0a0b87cbc95639d5` is now verified all green: source regression run `45139530466`, Quality Gate `45139530573`, TASKO/Laundry/Admin `45139530763`, FRIEND RIDE Regression `45139530426`. Quality: typecheck/core typecheck/runtime build, 9/9 Node, 5/5 core, 47/47 safe browser; Regression 47/47 safe browser; TASKO/Laundry/Admin 4/4; source 25 inline scripts + learn-teach syntax. UI-migration suites skipped by Phase 2 scope.
+- Dependency blocker surfaced in Quality and Regression logs: `npm install` audited 57 packages and reported 3 vulnerabilities (1 moderate, 2 critical). No `package-lock.json` or `npm-shrinkwrap.json` found; full `npm audit` details not captured. No `npm audit fix --force` run. Reproducible lockfile and advisory/path review/remediation are required.
+- Logo follow-up: the original `Friend Ride Service Icon Logo.png` is available in the Library, but the inspected Phase 2 app markup still uses an `FR` text mark; logo has not been integrated. Phase 3 remains on hold.
+- Security test coverage remains 55/88; 33 functions/surfaces remain. This run added no production RPC tests. Phase 2 remains **BLOCKED / NOT ACCEPTED** pending owner/Auth/privacy approvals, remaining security reviews/tests, QA notification real HTTP/auth/concurrency/FCM, physical-device OTP/GPS/payment/push, and dependency remediation. No production changes, merge, or deployment.
