@@ -529,3 +529,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - **Confirmed source-level behavior gap:** preference schema includes quiet-hours enabled/start/end, but dispatcher source only checks category preference booleans and does not enforce quiet hours. This is a functional/privacy issue if quiet-hours UI is exposed; needs tests and a safe implementation proposal.
 - Dispatcher reads queued events in a batch and updates statuses after sending; no atomic claim/lock or idempotency guard is visible in source. Concurrent duplicate delivery is a risk requiring reproducible testing, not a confirmed incident.
 - Read-only QA SQL/source only. No schema/data/grants/RLS/Edge Functions changed; production untouched. Phase 2 NOT ACCEPTED.
+
+
+## Pass 93 — Notification event uniqueness and queue evidence (read-only, 2026-11-23)
+
+- QA schema confirms unique constraint/index on notification event_key, so enqueue duplicate event keys are prevented at DB constraint level; this does not alone prevent concurrent dispatchers from delivering the same queued row because queue selection/status transition is not atomic.
+- QA event status index (status, created_at) supports queued dispatch lookup; user-created index (user_id, created_at DESC) supports own event history.
+- No notification event rows, device tokens, or preference rows present in QA at inspection time (empty data), so no live queue or delivery/concurrency test could be performed; this is evidence limitation, not pass.
+- Quiet-hours preference enforcement remains a source-level gap: dispatcher checks category toggles but does not inspect quiet_hours_enabled/start/end. Since QA preference rows are empty, usage/exposure cannot be confirmed here.
+- No table triggers found on sampled notification tables. Read-only inspection only; no DB, Edge Function, production changes. Phase 2 NOT ACCEPTED.
