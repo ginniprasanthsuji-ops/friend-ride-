@@ -32,7 +32,8 @@ test.describe('Phase 3 app-shell runtime smoke', () => {
 
   test('orange primary button foreground meets WCAG AA normal-text contrast', async ({ page }) => {
     const state = await page.evaluate(() => {
-      const button = document.querySelector('.btn:not(.purple):not(.dark):not(.light):not(.red):not(.green)');
+      const button = [...document.querySelectorAll('.btn')].find(item => getComputedStyle(item).backgroundImage.includes('rgb(255, 107, 0)'));
+      if (!button) return null;
       if (!button) return null;
       const toRgb = value => value.match(/\\d+/g).slice(0, 3).map(Number);
       const luminance = rgb => rgb.map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
