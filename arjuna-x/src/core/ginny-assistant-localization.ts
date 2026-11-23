@@ -48,3 +48,24 @@ export function resolveGinnyLanguage(language?: string | null): GinnyLanguage {
 export function getGinnyCopy(language?: string | null) {
   return GINNY_COPY[resolveGinnyLanguage(language)];
 }
+
+/** Resolve explicit user selection before device locale; display name is optional. */
+export function getGinnyWelcomeProfile(options: {
+  selectedLanguage?: GinnyLanguage | null;
+  deviceLocale?: string | null;
+  displayName?: string | null;
+}) {
+  const language = options.selectedLanguage ?? resolveGinnyLanguage(options.deviceLocale);
+  const copy = GINNY_COPY[language];
+  const safeName = (options.displayName ?? "").trim().slice(0, 80) || undefined;
+  return {
+    name: GINNY_NAME,
+    language,
+    welcome: copy.welcome,
+    welcomeShort: copy.welcomeShort,
+    greeting: copy.greeting(safeName),
+    inputPlaceholder: copy.inputPlaceholder,
+    voicePrompt: copy.voicePrompt,
+    languageLabel: copy.languageLabel,
+  };
+}
