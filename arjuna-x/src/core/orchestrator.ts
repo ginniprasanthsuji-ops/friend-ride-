@@ -34,7 +34,7 @@ export function createPlan(sessionId: string, request: string, actions: Omit<Pla
     if (!Number.isInteger(action.permissionTier) || ![0, 1, 2, 3, 4].includes(action.permissionTier)) {
       throw new Error(`Invalid permission tier for action ${id}`);
     }
-    return { id, description: action.description.trim(), permissionTier: action.permissionTier, status: "QUEUED" as const };
+    return { id, description: action.description.trim(), permissionTier: action.permissionTier, status: "QUEUED" as const, retrySafe: action.retrySafe === true };
   });
 
   return {
