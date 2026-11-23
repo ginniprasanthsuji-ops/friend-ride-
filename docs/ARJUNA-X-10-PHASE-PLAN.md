@@ -538,3 +538,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - No notification event rows, device tokens, or preference rows present in QA at inspection time (empty data), so no live queue or delivery/concurrency test could be performed; this is evidence limitation, not pass.
 - Quiet-hours preference enforcement remains a source-level gap: dispatcher checks category toggles but does not inspect quiet_hours_enabled/start/end. Since QA preference rows are empty, usage/exposure cannot be confirmed here.
 - No table triggers found on sampled notification tables. Read-only inspection only; no DB, Edge Function, production changes. Phase 2 NOT ACCEPTED.
+
+
+## Pass 94 — QA public/anon table grants and RLS posture (read-only, 2026-11-23)
+
+- Read-only QA audit of 21 public base tables: RLS enabled on all 21; FORCE RLS is false on all 21 (not by itself a finding because owner/service roles can bypass RLS as expected).
+- Anon role has SELECT/INSERT/UPDATE/DELETE table grants on 18 sampled public tables, including admin_users, driver_locations, notifications, bank enquiries, driver documents, emergency contacts, push subscriptions, ride SOS, service data, profiles, and rides. However, current pg_policies query returned no policies explicitly granted to anon or PUBLIC, so RLS currently blocks anon row access under ordinary anon-role requests. This is excessive privilege surface and should be reviewed/trimmed via approved migration, but no access bypass confirmed from this read-only check.
+- SECURITY DEFINER function inventory sampled: authenticated-only execute grants for sensitive functions; public homepage feedback function is intentionally anon-executable. No broad anon table policy found.
+- No grants/policies/schema/data were modified. QA-only inspection; production untouched. Phase 2 remains NOT ACCEPTED pending least-privilege remediation decision and authenticated cross-role testing.
