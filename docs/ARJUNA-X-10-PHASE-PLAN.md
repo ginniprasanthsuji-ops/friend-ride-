@@ -364,3 +364,13 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Remaining logo asset work: replace 512px normal and maskable icons with supplied-brand variants; full wordmark is not yet committed. Visual browser/device launcher mask proof remains pending.
 - Quality Gate run **#729 / 45092090745** triggered on this icon commit and was queued at observation; do not claim a pass until its jobs/logs are verified.
 - Phase 2 remains NOT ACCEPTED. Notification FCM client wiring, PWA/device verification, QA backend E2E, complete security/secret review, branch protection, and remaining logo assets are outstanding. No main merge or production deployment.
+
+
+## Pass 76 — Official 192 icon manifest priority + fresh CI #729 (2026-11-23)
+
+- Verified Quality Gate **#729 / 45092090745** for official 192 PNG commit `edede1b7a6abc629600364e4b7b275a8b2c7846b`: SUCCESS. Both jobs passed. Logs: `npm ci`; audit parsed report has no package-level vulnerability entries; typecheck, core typecheck, runtime build, Node unit **7/7**, Vitest **2 files / 5 tests**, Chromium Playwright **48/48**. Audit artifact **14780709866** (312 bytes) was uploaded.
+- Fixed manifest icon priority in QA: removed old simplified SVG from the manifest so the newly committed official supplied-brand `icons/icon-192.png` is now the declared first/only current official icon; kept 512 icon declaration pending its binary replacement. Theme/background remain navy.
+- Manifest commit: `366c3637334aabf764bf6cae042958a8c9e2b73d`. This commit is newer than CI #729; no CI pass is claimed for it yet.
+- FCM audit: repository has `fcm-web-push.js` and `fr-notification-fallback.js` but neither is loaded from `index.html`; main page still registers only `service-worker.js`. The FCM script includes public Firebase config and a Supabase URL/anon key pointing to the production project. Although public client keys are not service-role secrets, it is a QA integration hazard and must not be activated unchanged. Avoid deploying/loading that file; make QA-safe config/environment explicit before wiring it.
+- FCM setup doc itself lists missing web config/registration/token steps. No FCM client patch or worker deletion in this pass. The extra `firebase-messaging-sw.js` and `sw.js` are not explicitly registered in index; deletion still requires scope/device migration proof.
+- Phase 2 remains NOT ACCEPTED. Remaining gates: 512 normal+maskable official icon binaries; CI after manifest commit; FCM QA-safe client integration and token lifecycle; notification delivery/device testing; PWA install/update/offline device tests; full security/RLS/Edge-secret audit; QA backend E2E; owner-confirmed branch protection. No main merge or production deployment.
