@@ -105,3 +105,8 @@
 
 /* Pass 118 — common shell controls meet a 44px touch-target floor. */
 .fr-phase3-shell .top-action,.fr-phase3-shell .location-action,.fr-phase3-shell .market-category-row button,.fr-phase3-shell .catalogue-category-pills button,.fr-phase3-shell .bottom button,.fr-phase3-shell .premium-bottom button{min-height:44px}
+
+/* Pass 119 — contrast-safe accent text in navigation and secondary headings. */
+.fr-phase3-shell .bottom button.active,.fr-phase3-shell .premium-bottom button.active,.fr-phase3-shell .home-section-title button,.fr-phase3-shell .fr-role-arrow{color:var(--fr-focus-color)}
+.fr-phase3-shell .fr-premium-eyebrow.dark{color:var(--fr-navy)}
+.fr-phase3-shell .location-head span,.fr-phase3-shell .fr-hub-welcome p,.fr-phase3-shell .fr-section-head p{color:var(--fr-muted)}
