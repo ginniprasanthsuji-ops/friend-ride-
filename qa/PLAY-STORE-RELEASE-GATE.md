@@ -351,3 +351,17 @@ Read-only source/grant review verified anon EXECUTE=false and authenticated EXEC
 ## 24. Latest evidence-branch CI (2026-11-23)
 
 On code/evidence commit `2598dec60f15552dc6add4d2bd5d187d27c1b44a`, four workflows passed: Regression 47/47, Quality browser 47/47 plus 9/9 Node and 5/5 core tests with typechecks/runtime build, TASKO/Laundry/Admin 4/4, and source regression. On later docs-restoration commit `5c339c448005373bf1182cc2f1d64f5bee8d00e5`, Regression run `45118947001` and Quality run `45118947010` passed (47/47 browser, 9/9 Node, 5/5 core, typechecks/runtime build); the duplicate Regression `45118952932` was still in progress at this record. Source and TASKO workflows were not triggered on this documentation-only head, but passed on the preceding code/evidence head. Full UI-migration/Dark+Gold tests are skipped on the Phase 2 branch. Release remains BLOCKED.
+
+
+## 10. ARJUNA X continuation snapshot — 2026-11-23 11:59 IST
+
+- Latest Phase 2 head at snapshot: `e11e4e81bf0a8368d6126f648cbf6dc0a3be4f82`; PR #39 remains draft/open. Branch-head CI run `45119120888` completed success with 47/47 Phase 2 safe-browser tests. Full UI-migration tests were skipped by Phase 2 scope.
+- Fresh read-only production Security Advisor: 23 RLS/no-policy tables (0 direct anon/authenticated CRUD grants previously verified), 6 anon-executable and 88 authenticated-executable SECURITY DEFINER warnings, and leaked-password protection disabled. Eight admin RPC non-admin negative tests remain verified; 80 authenticated-executable SECURITY DEFINER functions still require full authorization review/role-negative coverage. Public surface/data visibility and internal-table intent need owner confirmation. QA advisor: 1 anon + 25 authenticated SECURITY DEFINER warnings.
+- **Release remains BLOCKED / NOT CERTIFIED.** Owner Auth setting, remaining function review/tests, owner acceptance, QA notification concurrency/HTTP/FCM, device OTP/GPS/payment/push tests, and release/Android gates are outstanding. No production changes, merge, or deployment.
+
+## 11. Deferred Phase 3 UI requirements (latest user-confirmed direction)
+
+- Preserve the originally supplied FRIEND RIDE logo; use **Navy Blue + Orange + White** (not Dark+Gold) for the clean-room UI direction.
+- App cold-start: branded logo plus a services splash/poster as the first screen; the poster concept is awaiting user approval before implementation.
+- Native-app interaction: tapping a service opens its dedicated full-screen next page with smooth transition and touch feedback. **Do not expand results underneath Home or turn the Home screen into a long results-scroll page.** Back navigation returns to the previous screen and should preserve selections where feasible.
+- Telugu/English support and mobile-first layout remain requirements. These are scope notes only; Phase 3 implementation/acceptance has not started on this Phase 2 branch.
