@@ -45,8 +45,8 @@ export class TaskExecutionRuntime {
     }
     if (options.userConfirmedActionIds !== undefined && (!Array.isArray(options.userConfirmedActionIds) || options.userConfirmedActionIds.some((id) => typeof id !== "string"))) throw new Error("userConfirmedActionIds must be an array of strings");
     if (options.specialApprovalActionIds !== undefined && (!Array.isArray(options.specialApprovalActionIds) || options.specialApprovalActionIds.some((id) => typeof id !== "string"))) throw new Error("specialApprovalActionIds must be an array of strings");
-    const confirmed = new Set(options.userConfirmedActionIds ?? []);
-    const specialApproved = new Set(options.specialApprovalActionIds ?? []);
+    const confirmed = new Set((options.userConfirmedActionIds ?? []).map((id) => id.trim()));
+    const specialApproved = new Set((options.specialApprovalActionIds ?? []).map((id) => id.trim()));
     const results: ActionExecutionResult[] = [];
 
     for (const action of actions) {
@@ -56,8 +56,8 @@ export class TaskExecutionRuntime {
       }
       const decision = authorizeAction(
         action.permissionTier as PermissionTier,
-        confirmed.has(action.id),
-        specialApproved.has(action.id),
+        confirmed.has(action.id.trim()),
+        specialApproved.has(action.id.trim()),
       );
       if (decision === "REQUIRE_CONFIRMATION") {
         results.push({ actionId: action.id, status: "NEEDS_CONFIRMATION", attempts: 0 });
@@ -72,6 +72,10 @@ export class TaskExecutionRuntime {
       const actionRetries = action.retrySafe === true ? maxRetries : 0;
       let attempts = 0;
       while (attempts <= actionRetries) {
+        if (options.signal?.aborted) {
+          results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled before attempt" });
+          break;
+        }
         attempts += 1;
         try {
           const output = await this.executor.execute(action, options.signal);
