@@ -1,0 +1,33 @@
+// Phase 8.13 — data integrity and duplicate prevention assertions
+'use strict';
+const assert=require('node:assert/strict');
+const c=require('../qa/data-integrity-duplicate-prevention-contract.cjs');
+
+assert.equal(c.validId('abc'),true);
+assert.equal(c.validId(''),false);
+assert.equal(c.validMoney(0),true);
+assert.equal(c.validMoney(-1),false);
+assert.equal(c.validMoney(NaN),false);
+assert.equal(c.validateMoneyRecord({currency:'INR',total:125,subtotal:100,fee:25}).valid,true);
+assert.equal(c.validateMoneyRecord({currency:'USD',total:10}).reason,'currency_mismatch');
+assert.equal(c.validateMoneyRecord({currency:'INR',total:-2}).reason,'invalid_total');
+assert.equal(c.validateMoneyRecord({currency:'INR',total:120,subtotal:100,fee:10}).reason,'total_mismatch');
+const key=c.duplicateKey('ride',{actor_id:'u1',operation:'request',target_id:'route1',idempotency_key:'key1'});
+assert.equal(typeof key,'string');
+assert.equal(c.duplicateKey('ride',{actor_id:'u1'}),null);
+assert.equal(c.isDuplicate([key],key),true);
+assert.equal(c.isDuplicate([],key),false);
+assert.equal(c.checkSubmission({type:'ride',actor_id:'u1',operation:'request',target_id:'r1',idempotency_key:'k1'}).reason,'confirmation_required');
+assert.equal(c.checkSubmission({type:'ride',actor_id:'u1',operation:'request',target_id:'r1',idempotency_key:'k1',confirmed:true,submitting:true}).reason,'submission_in_progress');
+const validSubmission={type:'ride',actor_id:'u1',operation:'request',target_id:'r1',idempotency_key:'k1',confirmed:true};
+assert.equal(c.checkSubmission(validSubmission).allowed,true);
+assert.equal(c.checkSubmission(validSubmission,[c.duplicateKey('ride',validSubmission)]).reason,'duplicate_submission');
+assert.equal(c.validateOwnership({actor_id:'u1',store_id:'s1',customer_id:'c1'},{actor_id:'u1',store_id:'s1',customer_id:'c1'}).valid,true);
+assert.equal(c.validateOwnership({actor_id:'u2'},{actor_id:'u1'}).reason,'ownership_mismatch');
+assert.equal(c.validateWorkflowFreshness({version:3},3).valid,true);
+assert.equal(c.validateWorkflowFreshness({version:2},3).reason,'stale_state');
+assert.equal(c.validateLineItems([]).reason,'empty_items');
+assert.equal(c.validateLineItems([{item_id:'i1',store_id:'s1',quantity:2,unit_price:50}]).valid,true);
+assert.equal(c.validateLineItems([{item_id:'i1',store_id:'s1',quantity:2,unit_price:50},{item_id:'i1',store_id:'s1',quantity:1,unit_price:50}]).reason,'duplicate_line_item');
+assert.equal(c.validateLineItems([{item_id:'i1',store_id:'s1',quantity:0,unit_price:50}]).reason,'invalid_item');
+console.log('Phase 8.13 integrity contract assertions authored (not executed).');
