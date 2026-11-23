@@ -204,3 +204,8 @@ Run 716 completed SUCCESS. Runs 717 and 718 failed due a stale duplicate ternary
 ## Pass 60 — CI formatter acceptance evidence verified
 
 Quality Gate Run 719 on workflow commit 62d9df5 is SUCCESS: typecheck/core typecheck/runtime build PASS, Node unit 7/7, Vitest 5/5, Playwright 48/48; both check-runs succeeded. Audit summary formatter fixed; npm audit still reports 2 critical and 1 moderate across tinypool, vitest and @vitest/mocker with fix target 5.1.1. Phase 2 remains NOT ACCEPTED due unresolved security remediation/lockfile, icon/device/PWA/push, full backend security and QA integration, and branch protection. Phase 3–10 remain gated; no merge/deployment.
+
+
+## Pass 61 — Lockfile preview workflow (2026-11-23)
+
+The active QA workflow commit `15f42bd0af757a9a47296f4f5dbeee74dbd3e52c` adds least-privilege `contents: read` and an isolated lockfile-candidate job that generates `package-lock.json` with package scripts disabled, captures candidate npm audit JSON, and uploads both for 7-day review. Combined status query had no entries at observation; no CI result/artifact is yet verified. This does not resolve lockfile reproducibility or advisories; artifact review and a real committed lockfile are still required before `npm ci` migration. QA branch is 107 ahead / 1 behind main, diverged; main-only commit `6484549` remains untouched. Phase 2 NOT ACCEPTED; Phases 3–10 gated. No app/backend/schema/auth/payment/main/deployment changes.
