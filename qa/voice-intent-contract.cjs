@@ -11,9 +11,9 @@ function normalizeCommand(input) {
   return String(input ?? '')
     .trim()
     .toLowerCase()
-    .replace(/[\\u200B-\\u200D\\uFEFF]/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
     .replace(/[.,!?;:]+/g, ' ')
-    .replace(/\\s+/g, ' ');
+    .replace(/\s+/g, ' ');
 }
 
 function parseVoiceIntent(input) {
