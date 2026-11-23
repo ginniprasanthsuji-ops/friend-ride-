@@ -29,7 +29,7 @@ test("authorization returns distinct approval states by tier", () => {
 });
 
 test("transitionTask rejects illegal transitions and leaves original immutable", () => {
-  const task = { id: "t1", sessionId: "s1", status: "QUEUED" as const, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
+  const task = { id: "t1", sessionId: "s1", title: "Test", status: "QUEUED" as const, priority: "P2" as const, requiresApproval: false, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
   assert.throws(() => transitionTask(task, "COMPLETED"), /Invalid task transition/);
   assert.equal(task.status, "QUEUED");
 });
