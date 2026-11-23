@@ -806,3 +806,10 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added static regression coverage to guard the 58-page baseline and confirm the Phase 3 root body and stylesheet encompass the page sections. This confirms shell-level CSS integration, not route-by-route visual acceptance.
 - CI #776/#777 verified SUCCESS for Pass 118 touch-target CSS/test. #778/#779 Pass 119 accent contrast and #780 Pass 120 coverage guard were pending at this update.
 - Phase 3 remains IN PROGRESS pending latest CI, per-route visual review and physical-device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 121 (runtime shell smoke, 2026-11-23)
+
+- Added Playwright runtime smoke coverage to `qa/phase3-shell-visual-smoke.spec.js`: stylesheet loading, shell body class, 58 pages inheriting Navy tokens, computed body background, orange primary CTA foreground/background contrast, and keyboard-visible focus outline.
+- CI #778/#779 (Pass 119 accent text) and #780 (Pass 120 route-section baseline) verified SUCCESS. #781/#782 (runtime smoke file) were pending at this update.
+- Phase 3 remains IN PROGRESS pending runtime smoke CI, remaining route-level visual review and physical-device acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
