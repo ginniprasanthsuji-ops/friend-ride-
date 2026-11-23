@@ -22,3 +22,27 @@ test("context limits validate at construction", () => {
   assert.throws(() => new SessionContextStore(0), /positive integer/);
   assert.throws(() => new SessionContextStore(10, 0), /positive integer/);
 });
+
+test("recent message and fact snapshots are bounded and detached", () => {
+  const store = new SessionContextStore(5, 50);
+  store.create("snapshot");
+  store.appendMessage("snapshot", "user", "one");
+  store.appendMessage("snapshot", "assistant", "two");
+  store.setFact("snapshot", "language", "Telugu");
+  const history = store.getRecentMessages("snapshot", 1);
+  history[0].content = "mutated";
+  const facts = store.getFactsSnapshot("snapshot");
+  facts.language = "mutated";
+  assert.equal(store.getRecentMessages("snapshot", 1)[0].content, "two");
+  assert.equal(store.getFactsSnapshot("snapshot").language, "Telugu");
+  assert.throws(() => store.getRecentMessages("snapshot", 6), /limit must be/);
+  assert.throws(() => store.getFactsSnapshot("snapshot", 101), /maxFacts/);
+});
+
+test("facts reject invalid keys and values", () => {
+  const store = new SessionContextStore(5, 10);
+  store.create("facts");
+  assert.throws(() => store.setFact("facts", " ", "value"), /Fact key/);
+  assert.throws(() => store.setFact("facts", "key", " "), /Fact value/);
+  assert.throws(() => store.setFact("facts", "key", "12345678901"), /message limit/);
+});
