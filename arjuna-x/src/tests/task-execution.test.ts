@@ -335,3 +335,9 @@ test("redacts JWTs, URL secret parameters, and private-key blocks from text outp
   assert.match(output, /access_token=\[REDACTED\]/);
   assert.match(output, /REDACTED PRIVATE KEY/);
 });
+
+test("redacts access, refresh, and private key fields in structured output", async () => {
+  const runtime = new TaskExecutionRuntime({ async execute() { return { accessKey: "access-secret", refresh_key: "refresh-secret", privateKey: "private-secret", ordinary: "visible" }; } });
+  const result = await runtime.run([action]);
+  assert.deepEqual(result[0]?.output, { accessKey: "[REDACTED]", refresh_key: "[REDACTED]", privateKey: "[REDACTED]", ordinary: "visible" });
+});
