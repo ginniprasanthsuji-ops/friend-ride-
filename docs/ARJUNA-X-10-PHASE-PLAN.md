@@ -478,3 +478,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - No credentials embedded. Setup requires the user to configure GitHub read-only token and OpenAI API key in their n8n environment/credential store and manually import, test, and activate the workflow.
 - The workflow is deliberately monitor-only: no repo writes, code patching, issue creation, PRs, Supabase access, merge, or deploy. This is a scaffold, not a live/activated external automation; n8n account/host connection is not available in this chat.
 - Production untouched; Phase 2 remains NOT ACCEPTED.
+
+
+## Pass 89 — QA SECURITY DEFINER function role/grant sampling (read-only, 2026-11-23)
+
+- Fresh QA inventory confirms sampled SECURITY DEFINER RPC execute grants: `fr_customer_list_approved_service_providers`, `fr_customer_list_approved_stores_geo`, `fr_register_driver_partner`, and `get_driver_requests` are executable by authenticated/service_role but not anon; `fr_public_homepage_feedback` is executable by anon, authenticated, service_role.
+- Source review: `get_driver_requests` validates an authenticated approved-driver profile before returning unassigned requested rides; `fr_register_driver_partner` checks authenticated UID, role/profile state, and required fields; `fr_customer_list_approved_stores_geo` limits results to approved partners; `fr_customer_list_approved_service_providers` filters approved online providers and active category but does not itself call `auth.uid()` or enforce a customer role. It is authenticated-granted, not anon-granted. Flag for role-based adversarial test and product/privacy confirmation; no grant/function change made.
+- `fr_public_homepage_feedback` remains an anon-access surface; sampled source returns only published homepage-enabled feedback (limit 20) and bounded display names. Consent, content safety, and abuse/rate-limit verification remain outstanding.
+- Audit is still a sample, not a complete security acceptance. Read-only QA SQL only; no schema, grants, function code, data, or production changes. Phase 2 NOT ACCEPTED.
