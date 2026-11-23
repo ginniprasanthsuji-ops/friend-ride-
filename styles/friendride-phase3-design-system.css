@@ -102,6 +102,8 @@
 .fr-phase3-shell .fr-role-arrow{color:var(--fr-orange)}
 
 /* Pass 117 — visible keyboard focus uses a darker contrast-safe orange. */
+.fr-phase3-shell :focus-visible{outline:2px solid var(--fr-focus-color);outline-offset:2px}
+.fr-phase3-shell .field input:focus,.fr-phase3-shell .field textarea:focus,.fr-phase3-shell .field select:focus{border-color:var(--fr-focus-color);box-shadow:var(--fr-focus)
 
 /* Pass 118 — common shell controls meet a 44px touch-target floor. */
 .fr-phase3-shell .top-action,.fr-phase3-shell .location-action,.fr-phase3-shell .market-category-row button,.fr-phase3-shell .catalogue-category-pills button,.fr-phase3-shell .bottom button,.fr-phase3-shell .premium-bottom button{min-height:44px}
