@@ -4714,3 +4714,24 @@ main .page.active{animation:frScreenEnter .2s ease both;}
 @media(max-width:480px){#home .home-banner{min-height:172px;padding:18px}#home .join-card{padding:14px}#home .join-card .tile{padding:11px;min-height:92px}}
 @media(prefers-reduced-motion:reduce){#home .join-card .tile,.fr-poster-rail .fr-poster{transition:none}}
 </style>
+
+<style id="arjuna-x-phase3c-home-screen-polish">
+/* P3-C: home screen banner, poster rail and registration card refinements */
+.home-banner-wrap{margin:0 0 16px;overflow:hidden;border-radius:22px}
+.home-banner{border-radius:22px;box-shadow:0 12px 30px #102a4328;position:relative;overflow:hidden}
+.home-banner h1{line-height:1.22;text-wrap:balance}
+.banner-cta,.fr-poster-cta{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border-radius:12px;background:#f58220;color:#102a43;font-weight:850;text-decoration:none}
+.banner-art{filter:drop-shadow(0 8px 12px #0002)}
+.banner-dots{display:flex;align-items:center;gap:6px;padding:10px 4px 0}
+.banner-dots b{width:6px;height:6px;border-radius:50%;background:#b7c7d6}
+.banner-dots strong{margin-left:auto;color:#5c7185;font-size:11px}
+.join-card{border:1px solid #d9e3ec;background:#fff}
+.join-card .tile{min-height:104px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px}
+.fr-poster-rail{gap:12px}
+.fr-poster{border:1px solid #d9e3ec;border-radius:20px;box-shadow:0 8px 20px #102a430c;transition:transform .16s ease,box-shadow .16s ease}
+.fr-poster:active{transform:scale(.985)}
+.fr-poster-copy h3{line-height:1.28;text-wrap:balance}
+.fr-poster-copy p{line-height:1.45}
+@media(max-width:480px){.home-banner-wrap{border-radius:18px}.home-banner{border-radius:18px}.join-card .grid{gap:8px}.join-card .tile{padding:11px;min-height:96px}.fr-poster{border-radius:18px}}
+@media(prefers-reduced-motion:reduce){.fr-poster,.home-banner{transition:none!important}}
+</style>
