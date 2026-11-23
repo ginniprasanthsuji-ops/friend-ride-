@@ -1,4 +1,4 @@
-import { evaluateGroceryEmiApprovalGate, formatGroceryEmiApprovedLimit, type GroceryEmiApplication } from "./smart-grocery-emi-approval";
+import { formatGroceryEmiApprovedLimit, type GroceryEmiApplication } from "./smart-grocery-emi-approval";
 
 export type GroceryEmiQuotation = { quotationId: string; customerId: string; itemsSummary: string; totalPaise: number; status: "draft" | "submitted-to-admin" | "admin-accepted" | "rejected" | "ordered" | "delivered"; adminOrderReference?: string };
 export type GroceryEmiCustomerMessage = { title: string; body: string; limitPaise?: number; deliveryPromiseDays?: number; quotationId?: string };
