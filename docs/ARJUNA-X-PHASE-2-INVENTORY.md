@@ -1278,3 +1278,13 @@ Read-only QA source audit confirmed:
 - Fresh Actions list shows latest workflow run #752 is SUCCESS, but its head SHA is `7fcfb45c32d661d20ad41b17294a88a357bf3ee4`, not current docs HEAD. CI #752 evidence remains 48 Playwright passed (22.7s) plus typecheck, core typecheck, runtime build, Node unit tests, Vitest core, and browser job success. The docs-only current head is not independently CI-run because the workflow excludes docs paths.
 - Original Library asset `Friend Ride Service Icon Logo.png` was materialized for file inspection: PNG, 1774×887, RGBA, 687,827 bytes. This is the horizontal navy/orange FRIEND RIDE service logo. The repo copy is not yet added; no binary upload/commit was attempted in this run. Current simplified SVG remains a separate asset.
 - Phase 2 remains NOT ACCEPTED. Required gates include owner/admin branch protection and required checks, notification integration/event producer, secrets presence check (values never accessed), physical Android/PWA/device verification, full integration/security review, and backup/rollback evidence. No production change, merge, or deployment.
+
+
+## Pass 115 — Fresh workflow security-gate audit (2026-11-23)
+
+- Fresh HEAD confirmed `209e93b20a6bf778cb4bfbe00496b7eafd32bfa4`; latest workflow run #752 SUCCESS remains on older code/test SHA `7fcfb45c32d661d20ad41b17294a88a357bf3ee4`. No newer run exists for documentation-only commits.
+- Inspected `.github/workflows/quality.yml`: dependency audit runs `npm audit --json > npm-audit.json || true`, explicitly non-blocking. It summarizes advisory counts and uploads the report; this workflow does not fail solely on npm audit findings. Release security acceptance must therefore use a separately reviewed, blocking audit/owner-approved exception record, not CI green alone.
+- Workflow push path excludes `docs/**`; pull-request trigger targets `main` only. Current QA branch commits do not receive PR-triggered CI unless a PR is opened against main. Existing push CI evidence applies to the recorded code/test SHAs only.
+- Fresh source review of the notification static test confirms it verifies the present mismatch (website opt-in uses Web Push, does not register FCM token) and distinct service-worker paths; it is an architecture regression detector, not proof of live notification delivery.
+- No code change in this pass: avoid modifying CI security policy or notification implementation without owner decision and validated dependency/provider architecture. No production or database changes.
+- Phase 2 remains NOT ACCEPTED; external and technical blockers unchanged. Newly explicit release gate: blocking dependency audit and disposition of all advisories.
