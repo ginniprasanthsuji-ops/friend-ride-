@@ -51,3 +51,8 @@ No production deployment, merge, DB/schema/auth/payment change, secret access, o
 - Reviewed residual purple/light accent tokens were replaced with navy/blue-gray/neutral/orange palette. Exact source counts after patch: {"#f4eaff":0,"#f0e8ff":0,"#eee5ff":0,"#eee7fb":0,"#faf7ff":0,"#e9e3f2":0,"#e8e0f2":0,"#77718a":0,"#24143b":0,"#34204e":0,"#40206d":0,"#392052":0,"#44205b":0,"#41206a":0,"#241044":0,"#dfccff":0}.
 - Commit: `a4660f2`.
 - Runtime route walkthrough and Playwright remain pending; source inventory is not route acceptance.
+
+## Support/feedback UI continuation
+- Targeted support feedback form and admin support panel scoped styling committed as `3c196a5`; palette, border, text, field focus and button surfaces now align with Navy/Blue-gray/Orange styling. No form behavior or backend contract was changed.
+- Duplicate-ID scan names are explained by static UI plus conditional fallback installer templates in the source. The installers guard with element-existence checks before appending fallback sections/components, so source duplication is not equivalent to runtime duplicate elements. This remains unverified at runtime and must be checked in browser before acceptance; no IDs were renamed.
+- Latest inventory remains 59 section containers and 50 unique literal `showPage` targets. CI and browser tests still not verified.
