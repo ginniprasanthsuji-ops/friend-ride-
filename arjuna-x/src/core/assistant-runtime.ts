@@ -22,10 +22,11 @@ export class AssistantRuntime {
     const intentGuidance = intent.needsClarification
       ? "The request is ambiguous. Ask one concise clarifying question before suggesting an action."
       : `Detected intent: ${intent.kind}. Treat this as a routing hint, not proof of user intent.`;
-    const safeFacts = Object.entries(context.facts)
-      .slice(-20)
-      .map(([key, value]) => `${key.slice(0, 80)}: ${value.slice(0, 500)}`)
+    const factsSnapshot = this.contexts.getFactsSnapshot(sessionId, 20, 500);
+    const safeFacts = Object.entries(factsSnapshot)
+      .map(([key, value]) => `${key}: ${value}`)
       .join("\n");
+    const recentMessages = this.contexts.getRecentMessages(sessionId, 12);
     const systemPrompt = [
       "You are ARJUNA X, a helpful Telugu-English assistant.",
       "Be concise, conversational, and match the user's language.",
@@ -37,7 +38,7 @@ export class AssistantRuntime {
     ].filter(Boolean).join("\n");
     const messages: AICompletionRequest["messages"] = [
       { role: "system", content: systemPrompt },
-      ...context.messages.slice(-12).map(({ role, content }) => ({ role, content })),
+      ...recentMessages.map(({ role, content }) => ({ role, content })),
     ];
 
     try {
