@@ -53,3 +53,12 @@
 - Speech recognition and synthesis locale tags: `te-IN`, `hi-IN`, `en-IN`.
 - If requested speech locale is unavailable, use text fallback; do not silently switch spoken language.
 - Preference module is pure and does not introduce storage or permission side effects; UI must use existing settings persistence and microphone permission flow.
+
+
+## Voice readiness and microphone safety
+- Evaluate microphone permission, speech recognition availability, and requested locale before presenting voice as available.
+- Evaluate synthesis support and locale independently.
+- If either side is unavailable, text chat remains available and UI presents a text-fallback state.
+- Never display a listening animation until the platform confirms capture has started.
+- Permission request, capture start, stop, and failure are separate UI states.
+- Core readiness helpers do not request permissions, access microphone, or start speech; UI/platform adapter owns those actions.
