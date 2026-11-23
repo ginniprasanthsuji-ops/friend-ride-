@@ -123,3 +123,10 @@ Other observations:
 - Current notification queue query returned no rows (empty queue at audit time).
 - Notification preferences table returned total=0, hourly_optin=0; therefore quiet-hours edge-case population cannot be exercised with current QA data.
 - pg_settings did not expose app.friend_ride_role_registration as a registered setting; custom GUC is likely dynamic, reinforcing that controlled QA bypass testing is needed. No attempt was made to set it or mutate profiles.
+
+## Current QA schema inventory vs legacy release gate (read-only)
+- Current QA project has exactly 21 public base tables (inventory listed): admin_users, driver_locations, fr_app_notifications, fr_bank_enquiries, fr_driver_documents, fr_emergency_contacts, fr_notification_events, fr_notification_preferences, fr_notification_tokens, fr_push_subscriptions, fr_ride_notifications, fr_ride_sos, fr_service_bookings, fr_service_categories, fr_service_provider_applications, fr_service_providers, fr_service_requests, fr_support_feedback, profiles, ride_live_locations, rides.
+- Earlier release-gate document from 2026-11-09 describes 71 public tables and 58 migrations, while current QA project reports 21 tables. This is a material environment/schema drift or project mismatch; do not assume older release-gate inventory applies to this QA instance.
+- Education/Vidya Setu (teacher/student/content/homework) tables are not present in this current 21-table QA inventory. Thus education workflows are not DB-backed/verified in this QA project yet.
+- Current inventory also lacks many marketplace/parcel/food/catalog tables referenced by the older gate. Treat those flows as missing from this QA database or on a different environment; do not assert they are functional.
+- This inventory difference should be reconciled by project identity and migrations before any deployment. No SQL changes.
