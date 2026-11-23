@@ -280,3 +280,10 @@ test("approval IDs must belong to actions in the current plan", async () => {
   await assert.rejects(() => runtime.run([action], { specialApprovalActionIds: ["other-action"] }), /IDs not present in this execution plan/);
   assert.equal(executions, 0);
 });
+
+test("reject conflicting user-confirmation and special-approval grants", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([action], { userConfirmedActionIds: ["a1"], specialApprovalActionIds: [" a1 "] }), /both confirmation and special approval grants/);
+  assert.equal(executions, 0);
+});
