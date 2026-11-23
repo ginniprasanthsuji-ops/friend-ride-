@@ -462,3 +462,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - `fr_public_homepage_feedback` is anon-executable and returns only published homepage feedback, max 20 rows, with display name capped to 80 characters and fallback label; release review still needs explicit consent/privacy/abuse checks for message text and public display.
 - Ride lifecycle/details functions reviewed in this pass require authenticated users and scope updates/queries to assigned ride/driver/customer plus permitted ride states. Admin assignment/review functions check `admin_users`. Registration RPC validates authenticated role, profile and role-specific fields. This is source-level sampling, not full exhaustive review of all 25.
 - Security review status remains **INCOMPLETE**. No function, grant, RLS, schema, or data was changed. Production remains untouched. Phase 2 NOT ACCEPTED; no main merge/deploy.
+
+
+## Pass 87 — QA RLS/profile privileged-field guard review (read-only, 2026-11-23)
+
+- Queried QA policies for `profiles`, `rides`, `driver_locations`, `fr_support_feedback`, `fr_service_requests`, and `fr_service_providers`. Sampled policies restrict profile select/update to own row, feedback insert to own row and unpublished/new state, feedback read to owner/admin, service requests to customer/provider/admin parties, and ride read to customer/assigned driver.
+- Verified a BEFORE UPDATE trigger `qa_guard_profile_privileged_fields` is present on QA `profiles`; source function `qa_guard_profile_privileged_fields()` rejects non-admin changes to role and driver/partner approval status except the scoped role-registration setting. This addresses a concern from the broad profile self-update policy at source level, but trigger/registration-path tests and overall policy audit are still required.
+- QA table privilege inventory shows broad table-level grants on profiles to anon/authenticated; RLS and trigger guards are therefore material controls and need full adversarial testing before release. No attempt to exploit or alter them was made.
+- This pass is read-only. No QA or production schema/data/grants changed; production remains untouched. Phase 2 NOT ACCEPTED.
