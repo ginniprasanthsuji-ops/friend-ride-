@@ -236,3 +236,13 @@ The active QA workflow commit `15f42bd0af757a9a47296f4f5dbeee74dbd3e52c` adds le
 - Run 722/lockfile commit remains unverifiable: workflow-run connector lists PR-triggered runs only; candidate artifact cannot be retrieved through current tools. Do not assume it succeeded.
 - Phase 2 remains NOT ACCEPTED. Next safe action is verify push-triggered run/artifact and lockfile commit through an access path that exposes those runs, then review the lockfile and test evidence. Remaining non-lockfile blockers: logo/icon visual inspection, device PWA/offline/background push, complete auth/RLS/SECDEF/Edge-secret review, QA backend wiring/integration E2E, owner-approved branch protection/required checks. Phases 3–10 gated.
 - Tests executed this pass: none. GitHub source and commit diffs read-only; documentation update only. No main merge, deployment, app/backend/schema/auth/payment changes.
+
+
+## Pass 65 — PWA service-worker registration and manifest audit (2026-11-23)
+
+- Fresh source inspection confirms both `service-worker.js` and `sw.js` exist on QA branch. They have overlapping push/notification behavior, different cache/activation logic, and different icon path conventions. This raises a duplicate-registration/notification consistency risk; the registration points and behavior must be traced in a checkout/browser before changing or deleting either worker.
+- `manifest.webmanifest` declares standalone display and 192/512 PNG icons; current manifest colors are pale blue-grey (#f4f6fb), while the service-worker notification icons use `./icons/icon-192.png`. This is source-only evidence; icons, installability, offline behavior, and update flow were not visually/device verified.
+- `package-lock.json` still fetches 404 at QA HEAD, so lockfile acceptance remains unverified. `package.json` continues to pin Vitest 5.1.1.
+- No runtime edits made: safely resolving service-worker duplication requires tracing registration code, deployment path, Firebase push behavior and browser tests; cannot perform those tests in current connector-only environment.
+- Phase 2 remains NOT ACCEPTED. Next: trace all service-worker registrations and their scope; verify notificationclick handling, FCM/web-push overlap, icon asset existence, PWA install/update/offline on device; verify lockfile workflow artifact/run; close backend/security/integration and branch-protection blockers. Phases 3–10 remain gated.
+- Tests executed this pass: none. Read-only branch file inspection and plan documentation only. No merge, deployment, backend/schema/auth/payment change.
