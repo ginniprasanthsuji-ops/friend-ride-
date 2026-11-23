@@ -141,3 +141,80 @@ jobs:
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173
         run: npx playwright test
+
+  lockfile-acceptance-commit:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/arjuna-x/phase-2-repository-assets-inventory'
+    needs: [typecheck-and-unit, browser-e2e, dependency-lockfile-preview]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Check whether a lockfile already exists
+        id: lockfile-gate
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "needs_commit=false" >> "$GITHUB_OUTPUT"
+            echo "Existing lockfile found; no auto-commit needed."
+          else
+            echo "needs_commit=true" >> "$GITHUB_OUTPUT"
+            echo "No lockfile found; reviewing candidate artifact."
+          fi
+      - name: Download lockfile candidate from this run
+        if: steps.lockfile-gate.outputs.needs_commit == 'true'
+        uses: actions/download-artifact@v8
+        with:
+          name: dependency-lockfile-preview-${{ github.sha }}
+      - name: Verify candidate lockfile and zero audit findings
+        if: steps.lockfile-gate.outputs.needs_commit == 'true'
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          const audit = JSON.parse(fs.readFileSync('npm-audit-lockfile-preview.json', 'utf8'));
+          const counts = audit.metadata?.vulnerabilities || {};
+          const locked = lock.packages?.['']?.devDependencies || {};
+          for (const [name, version] of Object.entries(pkg.devDependencies || {})) {
+            if (locked[name] !== version) throw new Error('Lockfile root dependency mismatch: ' + name);
+          }
+          if (lock.packages?.['node_modules/vitest']?.version !== pkg.devDependencies?.vitest) throw new Error('Vitest lock entry does not match pinned package version.');
+          if ((counts.total || 0) !== 0) throw new Error('Refusing to commit lockfile: npm audit total is ' + (counts.total || 0));
+          console.log('Lockfile v' + lock.lockfileVersion + ', ' + Object.keys(lock.packages || {}).length + ' package entries; audit total 0.');
+          NODE
+      - name: Install exactly from candidate lockfile without lifecycle scripts
+        if: steps.lockfile-gate.outputs.needs_commit == 'true'
+        run: npm ci --ignore-scripts
+      - name: Run locked dependency checks and tests
+        if: steps.lockfile-gate.outputs.needs_commit == 'true'
+        run: |
+          npm run typecheck
+          npm run typecheck:core
+          npm run build:runtime
+          npm run test:unit
+          npm run test:core
+      - name: Install Chromium for locked Playwright run
+        if: steps.lockfile-gate.outputs.needs_commit == 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Start isolated local server for locked Playwright run
+        if: steps.lockfile-gate.outputs.needs_commit == 'true'
+        run: |
+          python3 -m http.server 4173 --directory . >/tmp/friend-ride-http.log 2>&1 &
+          echo $! >/tmp/friend-ride-http.pid
+          sleep 2
+      - name: Run Playwright using locked dependencies
+        if: steps.lockfile-gate.outputs.needs_commit == 'true'
+        env:
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173
+        run: npx playwright test
+      - name: Commit reviewed lockfile to QA branch only
+        if: steps.lockfile-gate.outputs.needs_commit == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore(qa): add reviewed dependency lockfile"
+          git push origin HEAD:arjuna-x/phase-2-repository-assets-inventory
