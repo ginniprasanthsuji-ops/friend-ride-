@@ -105,3 +105,10 @@ test('Phase 3 component rules remain shell-scoped (root token block is the only 
     assert.ok(selector.startsWith('.fr-phase3-shell'), `unexpected unscoped Phase 3 rule: ${selector}`);
   }
 });
+
+
+test('Phase 3 keyboard focus indicator uses contrast-safe orange', () => {
+  assert.match(design, /--fr-focus-color\s*:\s*#c84b00/i);
+  assert.match(design, /:focus-visible\{outline:2px solid var\(--fr-focus-color\)/);
+  assert.match(design, /field input:focus[^}]*border-color:var\(--fr-focus-color\)/);
+});
