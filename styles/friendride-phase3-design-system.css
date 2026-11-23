@@ -67,3 +67,17 @@
   --bg:var(--fr-bg); --ink:var(--fr-ink); --muted:var(--fr-muted); --line:var(--fr-border);
   --orange:var(--fr-orange); --green:var(--fr-success); --red:var(--fr-danger); --gold:#f2b34a;
 }
+
+/* Pass 111 — audited remaining primary-shell hardcoded purple components. */
+.fr-phase3-shell .drawer{background:linear-gradient(180deg,#fff 0%,#f3f6fb 100%)}
+.fr-phase3-shell .drawer-head{background:linear-gradient(120deg,var(--fr-navy),var(--fr-navy-2))}
+.fr-phase3-shell .menu-item:active,.fr-phase3-shell .menu-item:hover{background:linear-gradient(90deg,#eaf0fa,#fff4e8);color:var(--fr-navy)}
+.fr-phase3-shell .market-category-row button{color:var(--fr-navy);border-color:var(--fr-border)}
+.fr-phase3-shell .market-category-row button.active{background:var(--fr-navy);color:#fff}
+.fr-phase3-shell .catalogue-category-pills button{color:var(--fr-navy);border-color:var(--fr-border)}
+.fr-phase3-shell .catalogue-category-pills button.active{background:var(--fr-navy);color:#fff}
+.fr-phase3-shell .market-price,.fr-phase3-shell .master-visual-info .master-partner-price{color:var(--fr-navy)}
+.fr-phase3-shell .fr-poster-ref{background:radial-gradient(circle at 85% 15%,#ffdb8a 0,transparent 27%),linear-gradient(120deg,var(--fr-navy),var(--fr-navy-2))}
+.fr-phase3-shell .fr-premium-hero{background:radial-gradient(circle at 78% 30%,#ff8b2433 0,transparent 30%),radial-gradient(circle at 12% 100%,#ff8b2433 0,transparent 27%),linear-gradient(125deg,var(--fr-navy) 0%,var(--fr-navy-2) 52%,#1c3b78 100%)}
+.fr-phase3-shell .fr-launcher-logo{background:linear-gradient(135deg,var(--fr-orange),var(--fr-orange-2));color:var(--fr-navy)}
+.fr-phase3-shell .fr-role-launcher{background:radial-gradient(circle at 12% 8%,#1c3b78 0,var(--fr-navy) 42%,#100b25 100%)}
