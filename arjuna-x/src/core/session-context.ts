@@ -38,8 +38,13 @@ export class SessionContextStore {
 
   appendMessage(sessionId: string, role: ContextMessage["role"], content: string): ContextMessage {
     const context = this.requireSession(sessionId);
+    if (typeof content !== "string" || !content.trim()) throw new Error("Message content cannot be empty");
+    if (content.length > this.maxMessageChars) throw new Error(`Message exceeds ${this.maxMessageChars} character limit`);
     const message = { role, content, timestamp: new Date().toISOString() } satisfies ContextMessage;
     context.messages.push(message);
+    if (context.messages.length > this.maxMessagesPerSession) {
+      context.messages.splice(0, context.messages.length - this.maxMessagesPerSession);
+    }
     context.updatedAt = message.timestamp;
     return message;
   }
