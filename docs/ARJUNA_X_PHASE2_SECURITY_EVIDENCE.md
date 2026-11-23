@@ -337,3 +337,24 @@ A concurrently added `qa/phase2-final-acceptance.md` initially said “Phase 2 a
 Current verified status remains: production admin-RPC role-negative evidence **15/88** (73 remain); QA auth-executable SECURITY DEFINER role/ownership tests **22/25** (3 public/approved-data surfaces remain untested and require owner visibility acceptance); leaked-password protection disabled; 23 RLS/no-policy internal tables require owner confirmation; real OTP/GPS/payment/push/device checks pending. The 95% figure is not a verified acceptance percentage and does not authorize Phase 3.
 
 The shared QA branch was concurrently updated. Latest branch/PR head must be rechecked before further edits; all changes remain in draft PR #39, no merge or production deployment.
+
+
+## 29. Production role/ownership read-only test increment (2026-11-23 12:59 IST)
+
+**Fresh branch/head at start:** `a1aa499e96bb5b37677a03b2601df47cc983d120`. Production and QA Supabase projects were ACTIVE_HEALTHY. Security Advisor observations: production 23 RLS-enabled/no-policy INFO, 6 anon-executable SECURITY DEFINER WARN, 88 authenticated-executable SECURITY DEFINER WARN, and leaked-password-protection disabled WARN; QA 1 anon and 25 authenticated SECURITY DEFINER WARN. Advisor observation timestamp: 2026-11-23 07:29:44 UTC (12:59:44 IST). No Auth setting or schema was changed.
+
+### Additional production tests — 10/10 PASS
+
+Rollback-only transaction; role set to `authenticated`; synthetic subject `11111111-1111-4111-8111-111111111111`; no real users/data were used:
+
+- Expected role denial: `fr_driver_list_parcel_requests` (approved-driver required), `fr_partner_list_catalogue` (partner required), `fr_partner_list_market_orders` (partner required), `fr_service_provider_list_my_requests` (approved service-provider required), and `fr_customer_list_nearby_drivers` (customer role required): **5/5 PASS**.
+- Caller-scoped read/ownership boundaries: `fr_customer_list_market_orders`, `fr_customer_list_parcel_requests`, `fr_customer_list_service_requests`, `get_ride_customer_details_v2`, and `get_ride_driver_details` returned zero rows for the synthetic subject/nonexistent ride: **5/5 PASS**.
+- Post-test verification found 0 synthetic rows in profiles, admin_users, rides, market orders, parcel orders, service requests, service providers, or driver locations. The test transaction rolled back. No permanent DB writes or Auth users were created.
+
+Combined with prior 15 production admin-RPC tests, verified production role/ownership coverage is now **25/88** authenticated-executable SECURITY DEFINER functions; **63 remain untested**. This is not overall security acceptance.
+
+### Latest GitHub CI on the start-of-run Phase 2 head
+
+All four latest workflow records completed success at `a1aa499e96bb5b37677a03b2601df47cc983d120`: workflow/source regression `45125814431`, TASKO/Laundry/Admin `45125814474`, FRIEND RIDE regression `45125814548`, and Quality Gate `45125814422`. Jobs/steps API reports all required steps successful. The Phase 2 browser step passed; the full UI-migration browser suite was skipped by branch scope. The latest job metadata did not expose per-test counts; previously documented 47/47 Phase 2 browser tests and 9/9 Node + 5/5 core tests remain from prior log evidence, not newly extracted counts for these run IDs.
+
+Phase 2 remains **BLOCKED / NOT ACCEPTED**. Owner action is still required for leaked-password protection, intended public data surfaces, 23 internal/no-policy tables, QA push/concurrency/live delivery, real OTP/GPS/payment/device tests, and the remaining 63 production function tests. No production schema/Auth/function change, merge, or deployment.
