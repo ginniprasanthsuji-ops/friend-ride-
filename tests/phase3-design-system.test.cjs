@@ -25,3 +25,11 @@ test('Learning module imports shared design system and keeps scoped accessibilit
   assert.match(learning, /forced-colors\s*:\s*active/);
   assert.match(learning, /prefers-reduced-motion\s*:\s*reduce/);
 });
+
+test('Phase 3 responsive and touch-target CSS contract remains present', () => {
+  assert.match(design, /max-width\s*:\s*380px/);
+  assert.match(design, /safe-area-inset-bottom/);
+  assert.match(learning, /max-width\s*:\s*340px/);
+  assert.match(learning, /min-height\s*:\s*44px/);
+  assert.match(learning, /min-height\s*:\s*42px/);
+});
