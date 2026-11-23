@@ -312,3 +312,14 @@ test("sanitizer omits prototype-pollution property names", async () => {
   assert.deepEqual(result[0]?.output, { safe: "ok" });
   assert.equal(({} as { polluted?: boolean }).polluted, undefined);
 });
+
+test("redacts secrets embedded in output strings and executor errors", async () => {
+  const outputRuntime = new TaskExecutionRuntime({ async execute() { return "Bearer abc123 token=super-secret"; } });
+  const output = await outputRuntime.run([action]);
+  assert.equal(output[0]?.output, "Bearer [REDACTED] token=[REDACTED]");
+  const errorRuntime = new TaskExecutionRuntime({ async execute() { throw new Error("authorization: Bearer abc123 api_key=secret-value"); } });
+  const failed = await errorRuntime.run([action]);
+  assert.match(failed[0]?.error ?? "", /Bearer \[REDACTED\]/);
+  assert.match(failed[0]?.error ?? "", /api_key=\[REDACTED\]/);
+  assert.doesNotMatch(failed[0]?.error ?? "", /abc123|secret-value/);
+});
