@@ -571,3 +571,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added `styles/friendride-phase3-design-system.css` with Navy/Orange/White token set, surface/card, shell, button, field focus, and reduced-motion primitives. Commit `8e96d15840547db7bf145392dd42ef4dc40cba7e`.
 - Loaded the design-system stylesheet via `@import` at the beginning of the already-linked `learn-teach.css`, preserving existing learning CSS below. Commit `13c40886c04545dc06bb38814647ea91de62e951`.
 - This is the initial integration layer only, not completion of Phase 3 or full UI rollout. Responsive role-navigation and safe-area coverage, visual/browser proof, route-by-route styles, accessibility and regression tests remain. No backend/schema/auth/payment changes; no main merge or deployment. CI for these two commits is not verified.
+
+
+## Phase 3 — Pass 98 (safe-area & compact viewport hardening)
+
+- Extended the Phase 3 design-system stylesheet with top/bottom safe-area padding for the sticky header, fixed bottom navigation, drawer and modal; small-width (<=380px) layout adjustments for header, cards, tiles and service grid; map max-width containment.
+- Additive CSS only; no app logic, route, API, auth, payment, schema or data changes. This improves CSS coverage but is not visual/device proof. Commit `70d79dd7b30f6763ec117c67f1ddbe292c285f34`.
+- Pass 97 CI #738 and #739 are confirmed successful. Pass 98 commit CI status is pending/not yet visible at documentation time.
+- Phase 3 remains in progress; visual screenshots/device QA, route-level design consistency, navigation and regression coverage remain. Phase 2 remains HOLD / DEFERRED / NOT ACCEPTED.
