@@ -319,4 +319,11 @@ Eight authenticated-executable SECURITY DEFINER functions without simple auth ma
 
 ## 19. Scoped Phase 2 CI PASS (2026-11-23)
 
-On code/workflow commit `28fc0d7bcdde973b980613a7982a38d1cb72ee77`: source-regression PASS; quality typecheck/unit PASS (9 Node unit + 5 core tests); quality browser suite PASS 49/49; FRIEND RIDE regression PASS 49/49; TASKO/Laundry/Admin Playwright PASS 4/4. The full Dark+Gold UI suite is deferred to Phase 3. Latest docs/rollback-source-only head has no visible combined statuses; the code/workflow scope-fix commit is verified. Release remains BLOCKED.
+On code/workflow commit `28fc0d7bcdde973b980613a7982a38d1cb72ee77`: source-regression PASS; quality typecheck/unit PASS (9 Node unit + 5 core tests); quality browser suite PASS 47/47; FRIEND RIDE regression PASS 47/47; TASKO/Laundry/Admin Playwright PASS 4/4. The full Dark+Gold UI suite is deferred to Phase 3. Latest docs/rollback-source-only head has no visible combined statuses; the code/workflow scope-fix commit is verified. Release remains BLOCKED.
+
+
+## 20. Latest Phase 2 head CI verification and count correction (2026-11-23)
+
+The latest code head before the evidence-only documentation commits, `97ea3fd40758eb6a0ce0337ccfa08ce826da320d`, has four successful GitHub Actions runs: source regression `45114870952`; Quality Gate `45114871004`; TASKO/Laundry/Admin regression `45114870960`; and FRIEND RIDE Regression `45114871023`. Quality checks passed (typecheck, core typecheck, runtime build, 9/9 Node unit, 5/5 core); both Phase 2 browser runs passed **47/47**; TASKO/Laundry/Admin passed **4/4**. The full UI-migration/Dark+Gold route suites were explicitly skipped by Phase 2 branch scope and remain Phase 3 verification.
+
+A log recheck corrected the earlier scoped commit `28fc0d7...` browser totals from 49/49 to **47/47** (runs `45114175328` and `45114175357`). PR #39 is still open/draft; the documentation-only follow-up commits are not yet CI-verified. No merge or deployment was performed. Release remains BLOCKED by the Phase 2 security/owner/device blockers listed above.
