@@ -4,5 +4,5 @@ module.exports = defineConfig({
   timeout: 45000,
   retries: 1,
   reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
-  use: { baseURL: process.env.FRIEND_RIDE_BASE_URL || 'https://ginniprasanthsuji-ops.github.io/friend-ride-/', headless: true, trace: 'retain-on-failure' }
+  use: { baseURL: process.env.FRIEND_RIDE_BASE_URL || 'https://ginniprasanthsu-ops.github.io/friend-ride-/', headless: true, trace: 'retain-on-failure', serviceWorkers: 'block' }
 });
