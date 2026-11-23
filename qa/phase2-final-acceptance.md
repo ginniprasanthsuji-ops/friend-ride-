@@ -42,3 +42,11 @@ No merge or live deployment.
 - Production SECURITY DEFINER coverage updated from **15/88 to 25/88**; **63 remaining**. QA remains **22/25**; 3 public/approved-data surfaces await visibility acceptance.
 - Latest CI on pre-update evidence head `a1aa499e96bb5b37677a03b2601df47cc983d120`: workflow/source `45125814431`, TASKO/Laundry/Admin `45125814474`, Regression `45125814548`, Quality `45125814422` all successful. Full UI migration suite skipped; Phase 3 branch has no CI runs yet.
 - Fresh Advisor: production 23 no-policy RLS INFO, 6 anon + 88 authenticated SECURITY DEFINER warnings, leaked-password protection disabled; QA 1 anon + 25 authenticated warnings. Phase 2 remains **NOT ACCEPTED**. No production change, merge or deployment.
+
+
+## Additional production role/ownership tests — 2026-11-23
+
+- Second rollback-only transaction: **11/11 PASS** across 5 functions (delivery-order access flags for ride/parcel/food/shop 4/4 false; customer-delivery flags 4/4 false; partner QR permission false; Learn/Teach admin check false; customer market-payment details raised expected inactive-window error).
+- Combined production SECURITY DEFINER role/ownership evidence: **30/88; 58 remaining**. No synthetic data persisted (post-check 0 in profiles, admin_users, rides, market orders, parcel orders, service requests, service providers, driver locations).
+- Current evidence head `c7ddfa65665b0357928d0c9d4d7d505b7841ee7c`: workflow/source regression `45131877959` PASS; Regression `45131878071`, TASKO/Laundry/Admin `45131878062`, Quality Gate `45131878153` were still in progress at last check. Do not mark CI complete until rerun status confirms.
+- Phase 2 remains blocked: leaked-password setting, owner visibility/table confirmations, remaining 58 production RPC role/ownership tests, QA push/HTTP/concurrency, real device/credential tests. No production change, merge, or deployment.
