@@ -45,3 +45,11 @@
 - AI assistant name is **Ginny**; assistant UI label is **Ginny AI**.
 - Avatar presentation is male; avatar/app visuals follow navy + gold theme.
 - Never replace the app's FRIEND RIDE name with Ginny in product chrome, app launcher, or store identity.
+
+
+## Language preference and speech fallback
+- Resolve valid explicit saved choice (`te`, `hi`, `en`) before device locale.
+- Invalid saved preference falls back to device locale; missing/unknown locale falls back to Telugu.
+- Speech recognition and synthesis locale tags: `te-IN`, `hi-IN`, `en-IN`.
+- If requested speech locale is unavailable, use text fallback; do not silently switch spoken language.
+- Preference module is pure and does not introduce storage or permission side effects; UI must use existing settings persistence and microphone permission flow.
