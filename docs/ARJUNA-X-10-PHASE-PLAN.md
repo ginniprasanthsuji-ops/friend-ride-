@@ -405,3 +405,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Latest icon path: SVG launcher icon is preferred with `any maskable`; PNG 192 and 512 fallbacks remain. SVG was rendered and inspected locally; exact uploaded logo tracing and Android launcher mask/device proof remain pending.
 - CI triggered by fallback-helper deletion is pending; verify before claiming its commit passes.
 - Phase 2 NOT ACCEPTED. Remaining: CI for helper deletion, 512/maskable PNG asset replacement or accepted SVG device proof, QA-only FCM client/token lifecycle/delivery, mobile PWA install/update/offline, QA backend E2E, complete security/RLS/Edge-secret audit, branch protection. No production changes, main merge or deployment.
+
+
+## Pass 80 — Remove dormant FCM SDK from active Web Push worker (2026-11-23)
+
+- Frontend source audit confirmed FCM enrollment helper is removed and current opt-in path uses Web Push/VAPID. Active `service-worker.js` still imported Firebase compat SDK and initialized a production-configured Firebase app for an FCM background handler that had no wired client token lifecycle.
+- Alternative/removal action: removed the unused Firebase SDK imports/config/background handler from the active Web Push worker and removed the obsolete FCM-payload skip condition so current Web Push payloads continue through the existing notification classification/display path. Commit `b3c0dd59b34af006664329d959337bc3a40a9188`.
+- Kept separate root `firebase-messaging-sw.js` and `sw.js` because historical browser registration/scope migration cannot be verified without device/browser access. They remain documented duplicate-worker risks, not active registrations in index.
+- CI #734 for refined SVG: verified SUCCESS, both jobs. CI #735 for unused realtime fallback deletion is queued; CI for active-worker cleanup pending/triggered.
+- Phase 2 NOT ACCEPTED. Remaining: latest CI; device/browser worker migration tests; QA-only FCM integration if still required by locked notification architecture (or formally accept Web Push-only alternative); device PWA/offline/update; QA backend E2E; security/RLS/Edge secrets; branch protection; old 512 fallback asset replacement/device proof. No production, main merge, deployment.
