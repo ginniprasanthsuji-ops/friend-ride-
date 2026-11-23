@@ -1,5 +1,5 @@
 import type { Phase7Role } from "./phase7-identity-gate.js";
-import { isPhase7FeatureAllowed } from "./phase7-dependency-catalog.js";
+import { evaluatePhase7FeatureAccess } from "./phase7-dependency-catalog.js";
 
 /** Conservative Phase 7 role-feature allowlist; not a replacement for database RLS. */
 const roleFeatureAllowlist: Record<string, readonly Phase7Role[]> = {
@@ -16,7 +16,7 @@ const roleFeatureAllowlist: Record<string, readonly Phase7Role[]> = {
 export type Phase7RoleFeatureDecision = "ALLOW_ROLE_FEATURE" | "DENY_ROLE_FEATURE" | "DENY_DISABLED_FEATURE" | "DENY_UNKNOWN_FEATURE";
 
 export function evaluatePhase7RoleFeature(role: Phase7Role, feature: string): Phase7RoleFeatureDecision {
-  if (!isPhase7FeatureAllowed(feature)) return "DENY_DISABLED_FEATURE";
+  const access = evaluatePhase7FeatureAccess(feature);\n  if (access === "deny-unknown") return "DENY_UNKNOWN_FEATURE";\n  if (access === "deny-disabled" || access === "deny-unverified") return "DENY_DISABLED_FEATURE";\n  if (access !== "allow-manual" && access !== "allow-verified-integrated") return "DENY_DISABLED_FEATURE";
   const allowedRoles = roleFeatureAllowlist[feature];
   if (!allowedRoles) return "DENY_UNKNOWN_FEATURE";
   return allowedRoles.includes(role) ? "ALLOW_ROLE_FEATURE" : "DENY_ROLE_FEATURE";
