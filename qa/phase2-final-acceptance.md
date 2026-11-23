@@ -87,3 +87,9 @@ No merge or live deployment.
 - Production role/ownership coverage 55/88; 33 remain. Coverage is not security acceptance.
 - Latest docs head CI was in progress at last check (Quality type/unit job and source job PASS; browser/regression/TASKO jobs still running). Await final workflow results.
 - Phase 2 NOT ACCEPTED: owner/Auth, public/internal visibility, 33 remaining RPC tests/reviews, QA push HTTP/auth/concurrency/delivery, and real OTP/GPS/payment/device integration remain open. No production change, merge, or deployment.
+
+
+## CI correction — docs head 76e38 (2026-11-23)
+- The four runs on head 76e38b5167fb4db020d9bfcb0512a5fb1459a4e2 are now verified complete PASS: 47/47 safe browser in both regression/quality, 9/9 Node, 5/5 core, typechecks/runtime build, 4/4 TASKO/Laundry/Admin, and 25 inline scripts plus learn-teach syntax. Full UI migration suite skipped.
+- Newer final documentation head has no visible push-run/check status through the current connector; mark latest docs-only CI unverified. No source code changed after the verified code commit.
+- Phase 2 remains NOT ACCEPTED: 55/88 role/ownership test coverage only (33 remain); owner settings/acceptance and real QA/device integration remain open.
