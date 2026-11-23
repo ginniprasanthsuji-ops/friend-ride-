@@ -68,3 +68,27 @@ test("unknown session is rejected without calling AI provider", async () => {
   await assert.rejects(() => runtime.handle("missing", "hello"), /Unknown session/);
   assert.equal(provider.requests.length, 0);
 });
+
+test("runtime times out slow provider and ignores late completion", async () => {
+  const store = new SessionContextStore();
+  store.create("timeout-test");
+  const slowProvider: AIProvider = {
+    providerName: "slow",
+    async complete() {
+      await new Promise((resolve) => setTimeout(resolve, 80));
+      return { text: "late response", provider: "slow", model: "slow-test" };
+    },
+  };
+  const runtime = new AssistantRuntime(slowProvider, store, 15);
+  const reply = await runtime.handle("timeout-test", "Hello");
+
+  assert.ok(reply.fallbackMessage?.includes("temporarily unavailable"));
+  assert.equal(store.get("timeout-test")?.messages.length, 1);
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  assert.equal(store.get("timeout-test")?.messages.length, 1);
+});
+
+test("runtime rejects invalid timeout configuration", () => {
+  const store = new SessionContextStore();
+  assert.throws(() => new AssistantRuntime(new CaptureProvider(), store, 0), /timeoutMs/);
+});
