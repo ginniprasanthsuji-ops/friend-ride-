@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#24105f">
+<meta name="theme-color" content="#102a43">
 <meta name="application-version" content="11.1-PRO-category-routing-learning-isolation">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>FRIEND RIDE V11.1 PRO – Friend Mart | Version 10.3</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--purple:#5420b8;--purple2:#7b35df;--navy:#211044;--orange:#ff8a24;--bg:#f6f4fb;--ink:#201936;--muted:#77718a;--line:#e9e3f2;--green:#13875b;--red:#c83c4c;--white:#fff;--gold:#ffc65a}
+:root{--purple:#12304f;--purple2:#1b466f;--navy:#102a43;--orange:#f58220;--bg:#f4f7fb;--ink:#102a43;--muted:#5c7185;--line:#d9e3ec;--green:#13875b;--red:#c83c4c;--white:#fff;--gold:#ffc65a}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 12% 0%,#eee5ff 0,transparent 32%),linear-gradient(180deg,#f8f6fc 0%,#f2eff8 100%);color:var(--ink);font:15px/1.52 system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:82px}button,input,textarea,select{font:inherit}button{cursor:pointer}
-.topbar{position:sticky;top:0;z-index:20;background:linear-gradient(110deg,#241044 0%,#4c1b9c 52%,#7736cb 100%);color:white;padding:11px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 7px 24px #24104435;border-bottom:1px solid #ffffff20}
+.topbar{position:sticky;top:0;z-index:20;background:linear-gradient(110deg,#102a43 0%,#173b5d 52%,#1d4b73 100%);color:white;padding:11px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 7px 24px #102a4320;border-bottom:1px solid #ffffff20}
 .iconbtn{border:0;border-radius:13px;background:#ffffff20;color:#fff;width:45px;height:45px;font-size:24px;display:grid;place-items:center}.logo{width:42px;height:42px;border-radius:14px;background:#fff;color:var(--purple);display:grid;place-items:center;font-weight:1000;font-size:19px;flex-shrink:0}.brand{flex:1;min-width:0}.brand b{display:block;font-size:16px;letter-spacing:.4px}.brand small{display:block;color:#e7d9ff;font-size:11px}.top-action{border:0;border-radius:12px;background:#fff;color:var(--purple);font-weight:800;padding:10px 13px}
 main{max-width:920px;margin:auto;padding:14px}.page{display:none}.page.active{display:block}.card{background:linear-gradient(145deg,#fff 0%,#fdfbff 100%);border:1px solid #e8e0f3;border-radius:22px;padding:18px;margin-bottom:15px;box-shadow:0 9px 28px #32105e0c,0 2px 6px #32105e06}.hero{background:radial-gradient(circle at 88% 12%,#a66af0 0,transparent 27%),linear-gradient(118deg,#211044 0%,#48208e 52%,#7430c5 100%);color:white;border:0;padding:24px;overflow:hidden;position:relative;box-shadow:0 13px 30px #4b168a2c}.hero h1{font-size:26px;line-height:1.2;margin:6px 0}.hero p{color:#e8dcff;margin:5px 0}.hero .eyebrow{font-size:11px;letter-spacing:1px;color:#e4d2ff;font-weight:800}
 h2{font-size:20px;margin:0 0 13px}h3{font-size:16px;margin:0 0 8px}.muted{color:var(--muted)}.tiny{font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{border:1px solid #e8e0f2;border-radius:19px;padding:15px;background:linear-gradient(145deg,#fff 0%,#faf7ff 100%);text-align:left;color:var(--ink);min-height:116px;box-shadow:0 6px 16px #32105e0b;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.tile .emoji{display:grid;place-items:center;width:49px;height:49px;border-radius:16px;background:linear-gradient(145deg,#f0e5ff,#fff0e3);font-size:26px;margin-bottom:9px;box-shadow:inset 0 1px 0 #fff,0 3px 8px #4b168a10}.tile b{display:block;font-size:15px}.tile small{display:block;color:var(--muted);margin-top:3px}
-.btn{border:0;border-radius:14px;background:linear-gradient(105deg,#ff8125,#ffad43);color:#321747;font-weight:900;padding:13px 16px;width:100%;margin-top:8px;box-shadow:0 6px 15px #ff8a2430;letter-spacing:.1px}.btn.purple{background:linear-gradient(105deg,#5120b4,#8140df);color:#fff;box-shadow:0 7px 17px #5420b832}.btn.dark{background:var(--navy)}.btn.light{background:#f1e9ff;color:var(--purple);box-shadow:none}.btn.red{background:#fae8eb;color:var(--red);box-shadow:none}.btn.green{background:var(--green)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn{border:0;border-radius:14px;background:linear-gradient(105deg,#ff8125,#ffad43);color:#321747;font-weight:900;padding:13px 16px;width:100%;margin-top:8px;box-shadow:0 6px 15px #ff8a2430;letter-spacing:.1px}.btn.purple{background:linear-gradient(105deg,#102a43,#1d4b73);color:#fff;box-shadow:0 7px 17px #102a4325}.btn.dark{background:var(--navy)}.btn.light{background:#eaf2f8;color:#12304f;box-shadow:none}.btn.red{background:#fae8eb;color:var(--red);box-shadow:none}.btn.green{background:var(--green)}.btn:disabled{opacity:.45;cursor:not-allowed}
 .field{margin:12px 0}.field label{display:block;font-size:13px;font-weight:800;margin-bottom:5px}.field input,.field textarea,.field select,input,textarea,select{width:100%;border:1px solid #ded8e9;border-radius:12px;padding:12px;background:#fff;color:var(--ink);outline:none}.field textarea,textarea{min-height:78px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:#7b42ce;box-shadow:0 0 0 3px #7b42ce18}
 .row{display:flex;gap:9px}.row>*{flex:1;min-width:0}.hide{display:none!important}.notice{padding:11px 13px;border-radius:12px;background:#f4effb;color:#5b4a75;font-size:12px;margin:10px 0}.status{display:inline-block;padding:5px 10px;border-radius:99px;background:#fff0d8;color:#87530d;font-weight:800;font-size:12px}.status.ok{background:#e1f5ec;color:#116d49}
 .bottom{position:fixed;bottom:0;left:0;right:0;background:#fffdfefa;border-top:1px solid #e8e0f2;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:20;box-shadow:0 -7px 22px #2410440b;backdrop-filter:blur(14px)}.bottom button{border:0;background:none;color:#898398;font-size:11px;font-weight:650}.bottom button span{display:block;font-size:21px;line-height:1.3}.bottom button.active{color:var(--purple);font-weight:950}.bottom button.active span{display:inline-grid;place-items:center;width:34px;height:28px;border-radius:11px;background:#f0e7ff}
@@ -74,7 +74,7 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 .market-product button{margin:0 9px;width:calc(100% - 18px);padding:8px;border-radius:11px}
 .market-category-row{display:flex;gap:8px;overflow:auto;padding:4px 0 10px}
 .market-category-row button{white-space:nowrap;border:1px solid #e8dff3;background:#fff;border-radius:20px;padding:8px 12px;color:#4f1da7;font-weight:800}
-.market-category-row button.active{background:#5420b8;color:#fff}
+.market-category-row button.active{background:#12304f;color:#fff}
 .market-cart-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
 .market-cart-row small{display:block;color:var(--muted)}
 .market-empty{padding:22px;text-align:center;border:1px dashed #d9cde9;border-radius:16px;color:var(--muted);background:#fff}
@@ -99,7 +99,7 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 .master-visual-info button{width:100%;padding:8px;border-radius:11px}
 .catalogue-category-pills{display:flex;gap:7px;overflow:auto;padding:4px 0 9px}
 .catalogue-category-pills button{white-space:nowrap;border:1px solid #e4d9ef;background:#fff;border-radius:18px;padding:7px 11px;font-size:11px;font-weight:800;color:#5420b8}
-.catalogue-category-pills button.active{background:#5420b8;color:#fff}
+.catalogue-category-pills button.active{background:#12304f;color:#fff}
 
 
 .stock-mark{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:900;border-radius:20px;padding:4px 8px}
@@ -3442,14 +3442,14 @@ async function frAdminUpdateBankEnquiry(id,status){
  function apply(kind){
   const list=document.getElementById(kind+'ApprovalList'),bar=document.getElementById(kind+'ApprovalFilter');if(!list||!bar)return;
   const active=bar.dataset.active||'pending';
-  bar.querySelectorAll('button').forEach(b=>{const on=b.dataset.state===active;b.style.background=on?'#5420b8':'#fff';b.style.color=on?'#fff':'#5420b8';});
+  bar.querySelectorAll('button').forEach(b=>{const on=b.dataset.state===active;b.style.background=on?'#12304f':'#fff';b.style.color=on?'#fff':'#12304f';});
   [...list.children].forEach(card=>{if(card.classList.contains('card')||card.tagName==='ARTICLE')card.hidden=statusOf(card,kind)!==active;});
  }
  function install(kind){
   const list=document.getElementById(kind+'ApprovalList');if(!list)return;
   let bar=document.getElementById(kind+'ApprovalFilter');
   if(!bar){bar=document.createElement('div');bar.id=kind+'ApprovalFilter';bar.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px';list.parentNode.insertBefore(bar,list);}
-  if(!bar.dataset.ready){bar.innerHTML=states.map(s=>'<button type="button" data-state="'+s+'" style="border:1px solid #ded5ea;border-radius:20px;padding:8px 14px;background:#fff;color:#5420b8;font-weight:800">'+names[s]+'</button>').join('');bar.addEventListener('click',e=>{const b=e.target.closest('button[data-state]');if(!b)return;bar.dataset.active=b.dataset.state;apply(kind);});bar.dataset.ready='1';bar.dataset.active='pending';}
+  if(!bar.dataset.ready){bar.innerHTML=states.map(s=>'<button type="button" data-state="'+s+'" style="border:1px solid #ded5ea;border-radius:20px;padding:8px 14px;background:#fff;color:#12304f;font-weight:800">'+names[s]+'</button>').join('');bar.addEventListener('click',e=>{const b=e.target.closest('button[data-state]');if(!b)return;bar.dataset.active=b.dataset.state;apply(kind);});bar.dataset.ready='1';bar.dataset.active='pending';}
   apply(kind);
  }
  const d=window.loadDriverApprovals,p=window.loadPartnerApprovals;
@@ -4617,4 +4617,14 @@ body{background:linear-gradient(180deg,#f4f7fb 0%,#eef3f8 100%);color:#102a43}
 .market-category-row button.active,.catalogue-category-pills button.active{background:#12304f;color:#fff;border-color:#12304f}
 .market-price,.master-partner-price{color:#12304f}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f58220;outline-offset:2px}
+</style>
+
+<style id="fr-arjuna-x-phase3-residual-palette-fix">
+:root{--purple:#12304f;--purple2:#1b466f;--navy:#102a43;--orange:#f58220;--bg:#f4f7fb;--ink:#102a43;--muted:#5c7185;--line:#d9e3ec}
+.topbar{background:linear-gradient(110deg,#102a43 0%,#173b5d 52%,#1d4b73 100%)}
+.btn.purple{background:linear-gradient(105deg,#102a43,#1d4b73);color:#fff}
+.btn.light{background:#eaf2f8;color:#12304f}
+.market-category-row button.active,.catalogue-category-pills button.active{background:#12304f;color:#fff;border-color:#12304f}
+.market-category-row button,.catalogue-category-pills button{color:#12304f}
+.fr-poster{box-shadow:0 10px 24px #102a4320}
 </style>
