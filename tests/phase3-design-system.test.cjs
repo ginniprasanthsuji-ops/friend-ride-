@@ -112,3 +112,12 @@ test('Phase 3 keyboard focus indicator uses contrast-safe orange', () => {
   assert.match(design, /:focus-visible\{outline:2px solid var\(--fr-focus-color\)/);
   assert.match(design, /field input:focus[^}]*border-color:var\(--fr-focus-color\)/);
 });
+
+
+test('Phase 3 common shell controls enforce 44px minimum touch target', () => {
+  assert.match(design, /\.fr-phase3-shell \.top-action[^}]*min-height:44px/);
+  assert.match(design, /\.fr-phase3-shell \.location-action[^}]*min-height:44px/);
+  assert.match(design, /\.fr-phase3-shell \.market-category-row button[^}]*min-height:44px/);
+  assert.match(design, /\.fr-phase3-shell \.catalogue-category-pills button[^}]*min-height:44px/);
+  assert.match(design, /\.fr-phase3-shell \.bottom button[^}]*min-height:44px/);
+});
