@@ -290,3 +290,8 @@ Read-only follow-up found **0/23** client-role direct SELECT/INSERT/UPDATE/DELET
 ## 13. FCM helper isolation and static tests (2026-11-23)
 
 The dormant `fcm-web-push.js` helper now honors test-only QA/offline Supabase injection (not yet loaded by the main app). Local mirrored-source checks **5/5 PASS** for the notification claim and QA isolation contracts. Latest branch CI still pending; no QA API request, token, event, secret, database write, or Edge deployment. Production no-policy table grants were rechecked as 0/23 for anon/authenticated SELECT/INSERT/UPDATE/DELETE; eight admin RPCs use the admin membership helper. Release remains blocked by Auth setting, full RPC review/negative tests, notification runtime deployment/tests, and device/live checks.
+
+
+## 14. QA migration syntax and rollback check (2026-11-23)
+
+The proposed notification claim migration passed a PostgreSQL syntax test inside an explicit QA `BEGIN … ROLLBACK` transaction. Post-rollback catalog checks confirmed no claim column/function persisted. A guarded QA rollback script was added (refuses if events are processing). **No QA migration or Edge Function deployment has been applied.** Release remains BLOCKED.
