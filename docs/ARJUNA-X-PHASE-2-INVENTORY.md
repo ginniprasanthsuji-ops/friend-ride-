@@ -1170,3 +1170,25 @@ Run 719 is CI workflow evidence only, not production/live Supabase/device test e
 - Official Vitest release documentation lists 5.1 as actively patched and 4.1 as receiving important fixes; advisories confirmed the prior vulnerable ranges. Upgrade is supported by Node 22 CI tests but the candidate lockfile install still needs verification.
 - Added a QA-branch-only `lockfile-acceptance-commit` workflow job in commit `7d28a2ffcc87c06c601c38f5464d894edb232506`: after all jobs pass, it downloads the candidate artifact, requires zero audit findings and package/Vitest version match, runs `npm ci --ignore-scripts` plus all local checks and Playwright, then commits only `package-lock.json` to this QA branch using job-scoped `contents: write`. This is not a production or main-branch write. Run **722** is currently in progress; preview artifact `14780831253` was inspected (lockfile v3, 74 entries, Vitest 5.1.1, audit 0), but locked-install job has not yet appeared/finished at this update.
 - No local npm commands or app tests executed. CI evidence above is from actual GitHub Actions logs. Phase 2 remains NOT ACCEPTED until the lockfile is committed and verified via `npm ci`, and the remaining logo/device/security/QA integration/branch-protection gates are addressed. Phases 3–10 remain gated. No runtime/backend/schema/auth/payment/main/deployment changes.
+
+
+## Pass 63–64 — Reviewed lockfile committed; CI switched to npm ci (2026-11-23)
+
+### Lockfile acceptance
+- Run **725** (`45090132081`) completed SUCCESS after three earlier lockfile-commit job failures were diagnosed and fixed. Earlier failures were: run 722 push rejected because documentation commits advanced QA; run 723 rebase refused due untracked candidate lockfile; run 724 rebase refused due generated runtime/build changes. All test jobs in those failed runs passed; only the lockfile commit step failed.
+- Run 725's lockfile job verified the candidate audit was 0, installed with `npm ci --ignore-scripts`, passed typecheck/core typecheck/runtime build/Node unit/Vitest checks and Playwright **48/48**, then committed and pushed the candidate lockfile. Remote branch file verified after push.
+- Lockfile commit: `2e1e8c43e1401935b5831bdceb1cfe108bc03b7f` (`package-lock.json`, 1,299 lines); blob SHA `9c989313093c1ec366b75194c9dc96fad1abcb63`. Lockfile v3; 74 package entries; Vitest 5.1.1 and @vitest/mocker 5.1.1. Candidate audit total 0.
+
+### Reproducible CI acceptance
+- Workflow commit `e698f75781845d387b1f42cc9dd27aa41f86f104` changed both QA install jobs from `npm install` to `npm ci` and removed the one-time lockfile-preview/auto-commit jobs.
+- Run **726** (`45090342763`) completed SUCCESS on that workflow commit: typecheck PASS, core typecheck PASS, runtime build PASS, Node unit tests **7/7**, Vitest **5/5**, Playwright **48/48** (17.3s). npm audit artifact `14780717386` downloaded and inspected: **0 total vulnerabilities** (0 critical/high/moderate/low).
+- Fresh branch/main comparison after workflow change: QA **120 ahead / 1 behind**, diverged. Main-only commit `64845496f22487788aedbcf66b74147add3ab9c1` remains untouched.
+- Dependency/lockfile blocker is now **RESOLVED for the QA CI dev-dependency graph**: exact Vitest 5.1.1 pin, committed lockfile, npm ci in both jobs, zero audit findings, and CI evidence. Do not claim production dependency audit; package.json is QA dev dependencies only.
+
+### Phase 2 remaining acceptance blockers
+- Official icon/logo visual inspection and comparison to the owner-approved reference: still pending (binary image review not completed in this run).
+- Android/iOS PWA install, update, offline/cache behavior, and background/closed-app notification device verification: pending.
+- Complete production RLS, SECDEF grants/functions, Edge Function secret validation, SMS abuse/rate-limit review: pending; previous partial read-only audit is not complete evidence.
+- Isolated QA Supabase environment wiring and integration E2E evidence: pending; current app's production project wiring has not been safely replaced/verified.
+- Branch protection and required status checks: disabled; configuration needs repository-owner authorization/approval.
+- Phase 2 remains **IN PROGRESS / NOT ACCEPTED**; Phase 3–10 gated. Navy Blue + Orange + White scope remains locked. No main merge, live deployment, runtime/backend/schema/auth/payment change.
