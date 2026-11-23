@@ -128,3 +128,15 @@ test('Phase 3 accent and secondary text use contrast-safe palette tokens', () =>
     assert.ok(design.includes(selector), `missing contrast text override: ${selector}`);
   }
 });
+
+
+test('Phase 3 shell integration covers all existing page sections', () => {
+  const pageSections = index.match(/<section\b[^>]*class=["'][^"']*\bpage\b[^"']*["'][^>]*>/g) || [];
+  assert.equal(pageSections.length, 58, 'existing page-section baseline changed; review Phase 3 route coverage inventory');
+  const bodyStart = index.indexOf('<body class="fr-phase3-shell">');
+  const bodyEnd = index.indexOf('</body>');
+  assert.ok(bodyStart >= 0 && bodyEnd > bodyStart, 'shell body boundaries are missing');
+  const pageStart = index.indexOf('<section', bodyStart);
+  assert.ok(pageStart > bodyStart && pageStart < bodyEnd, 'page sections must live inside the Phase 3 shell body');
+  assert.ok(index.indexOf('./styles/friendride-phase3-design-system.css') < bodyStart, 'Phase 3 stylesheet must load before body content');
+});
