@@ -28,3 +28,13 @@
 .lt-form>*{min-width:0}
 .lt-form input,.lt-form select,.lt-form textarea{max-width:100%;min-height:42px}
 @media(prefers-reduced-motion:reduce){.lt-tabs button,.lt-btn{transition:none}.lt-btn:active{transform:none}}
+
+/* Pass 101 — keyboard and status-state clarity for learning module. */
+.lt-shell a:focus-visible,.lt-shell button:focus-visible,.lt-shell input:focus-visible,.lt-shell select:focus-visible,.lt-shell textarea:focus-visible{outline:2px solid var(--fr-orange,#ff6b00);outline-offset:2px}
+.lt-shell button:disabled,.lt-shell input:disabled,.lt-shell select:disabled,.lt-shell textarea:disabled{opacity:.62;cursor:not-allowed}
+.lt-shell .lt-status{border:1px solid transparent}
+.lt-shell .lt-status.approved{border-color:#b8e5cc}
+.lt-shell .lt-status.rejected{border-color:#f3c5cb}
+.lt-shell .lt-note{line-height:1.45}
+.lt-shell .lt-empty{border:1px dashed var(--fr-border,#dbe4f0);border-radius:14px}
+@media(forced-colors:active){.lt-shell button,.lt-shell .lt-status,.lt-shell .lt-card{border:1px solid ButtonText}}
