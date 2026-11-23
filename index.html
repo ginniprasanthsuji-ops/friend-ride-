@@ -4696,3 +4696,21 @@ main .page.active{animation:frScreenEnter .2s ease both;}
  const root=document.querySelector('main');if(root){const observer=new MutationObserver(()=>{const active=[...root.querySelectorAll('.page.active')];if(active.length>1){const target=document.querySelector('.bottom button.active')?.dataset.page;const preferred=active.find(p=>p.id===target)||active[0];activatePage(preferred.id);}});observer.observe(root,{subtree:true,attributes:true,attributeFilter:['class']});}
 })();
 </script>
+
+<style id="arjuna-x-phase3c-home-visual-polish">
+/* P3-C Home screen: banner, registration cards, poster rail and tap feedback */
+#home .home-banner-wrap{border-radius:24px;overflow:hidden;margin-bottom:14px;box-shadow:0 12px 28px #102a4322}
+#home .home-banner{background:radial-gradient(circle at 88% 18%,#f5822038 0,transparent 30%),linear-gradient(118deg,#102a43 0%,#173b5d 65%,#1d4b73 100%);color:#fff;border:1px solid #ffffff12;border-radius:24px;padding:22px;min-height:190px}
+#home .home-banner h1{color:#fff;line-height:1.2;letter-spacing:-.3px}
+#home .home-banner p{color:#dce9f5}
+#home .banner-cta{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:linear-gradient(105deg,#f58220,#ffad43);color:#102a43;font-weight:850;padding:9px 13px;margin-top:8px}
+#home .banner-art{filter:drop-shadow(0 5px 10px #0003)}
+#home .join-card{border:1px solid #d9e3ec;background:#fff}
+#home .join-card .tile{min-height:100px;border:1px solid #d9e3ec;background:linear-gradient(145deg,#fff,#f4f8fb);border-radius:18px}
+#home .join-card .tile:active{border-color:#f58220;transform:scale(.985)}
+.fr-poster-rail .fr-poster{border-radius:20px;border:1px solid #d9e3ec;box-shadow:0 8px 22px #102a4310;transition:transform .15s ease,box-shadow .15s ease}
+.fr-poster-rail .fr-poster:active{transform:scale(.99);box-shadow:0 4px 12px #102a4312}
+.fr-poster-rail .fr-poster-cta{background:#f58220;color:#102a43;border-radius:999px;font-weight:850}
+@media(max-width:480px){#home .home-banner{min-height:172px;padding:18px}#home .join-card{padding:14px}#home .join-card .tile{padding:11px;min-height:92px}}
+@media(prefers-reduced-motion:reduce){#home .join-card .tile,.fr-poster-rail .fr-poster{transition:none}}
+</style>
