@@ -66,3 +66,10 @@ No merge or live deployment.
 - Production verified role/ownership function coverage: **41/88; 47 remaining**. Remaining-function marker triage: 38 caller/ownership markers, 1 admin-guard (`fr_cancel_ride`), 8 public/approved-data surfaces requiring owner acceptance.
 - Latest full CI before this documentation update, head `428934eec3d41482fb43a4162ebe3c78d3cdc4c9`: source/workflow `45132193156`, TASKO/Laundry/Admin `45132193130`, Regression `45132193047`, Quality Gate `45132193105` all completed success. Phase 2 UI migration suite skipped. Exact latest test totals not available from job metadata; previous log evidence is 47/47 safe browser, 9/9 Node, 5/5 core.
 - Phase 2 still NOT ACCEPTED; owner settings/visibility/table acceptance, 47 remaining RPC tests, QA push/concurrency, and physical device/credential integration remain blockers.
+
+
+## Continuation — fresh read-only checks and CI (2026-11-23 13:55 IST)
+- Four new rollback-only authenticated role-scope checks passed: is_approved_driver false; my_driver_subscription none/inactive; get_ride_payment_details_v1(dummy ride) empty; get_ride_customer_details(dummy ride) empty. Post-test synthetic profile/admin/subscription/dummy ride counts were 0.
+- Production verified authenticated SECURITY DEFINER role/ownership evidence now 45/88; 43 remain. This is test coverage only, not security acceptance.
+- Current Phase 2 head 7243a8007c16739c298324378c2d3338885647a8: Quality Gate 9/9 Node, 5/5 core, 47/47 safe browser plus typechecks/build PASS; Regression 47/47 PASS; TASKO/Laundry/Admin 4/4 PASS; source/workflow regression 25 inline checks + learn-teach syntax PASS. Full UI migration suite skipped.
+- Phase 2 NOT ACCEPTED: leaked-password setting, public/internal visibility owner confirmations, remaining 43 RPC checks/reviews, QA notification HTTP/auth/concurrency/live FCM, and real OTP/GPS/payment/push device/account checks remain open. No production mutation, merge, or deployment.
