@@ -186,3 +186,12 @@ test("invalid planned action status is rejected before execution", async () => {
   await assert.rejects(() => runtime.run([{ ...action, status: "INVALID" as never }]), /Invalid task status/);
   assert.equal(executions, 0);
 });
+
+test("executor rejects non-runnable action states before any execution", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  for (const status of ["RUNNING", "WAITING_APPROVAL", "VERIFYING", "COMPLETED", "FAILED", "BLOCKED", "CANCELLED"]) {
+    await assert.rejects(() => runtime.run([{ ...action, status: status as never }]), /not runnable from status/);
+  }
+  assert.equal(executions, 0);
+});
