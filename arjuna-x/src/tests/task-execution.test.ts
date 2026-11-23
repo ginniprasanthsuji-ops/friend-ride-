@@ -287,3 +287,9 @@ test("reject conflicting user-confirmation and special-approval grants", async (
   await assert.rejects(() => runtime.run([action], { userConfirmedActionIds: ["a1"], specialApprovalActionIds: [" a1 "] }), /both confirmation and special approval grants/);
   assert.equal(executions, 0);
 });
+
+test("redacts sensitive keys in executor output before returning results", async () => {
+  const runtime = new TaskExecutionRuntime({ async execute() { return { ok: true, password: "p-secret", nested: { apiKey: "key-secret", value: "safe" }, authorization: "Bearer secret" }; } });
+  const result = await runtime.run([action]);
+  assert.deepEqual(result[0]?.output, { ok: true, password: "[REDACTED]", nested: { apiKey: "[REDACTED]", value: "safe" }, authorization: "[REDACTED]" });
+});
