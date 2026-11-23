@@ -695,3 +695,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Verified original Library logo file `Friend Ride Service Icon Logo.png`: PNG 1774×887, RGBA, 687,827 bytes. Identified/materialized for inspection, but not copied to repository; no binary upload attempted. Current repo icon is still a separate simplified SVG.
 - Documentation evidence commit: inventory update `e2def46400dd37c7b96ff6e53667036b6daf4e3b` (Pass 114 findings). No app/runtime, schema, production, auth, payment, API, merge or deployment changes.
 - Phase 2 acceptance remains **NOT PASSED**. Phase 3–9 work is still sequentially gated. External blockers: owner/admin branch protection; approved notification provider/config architecture and event producer; owner-authorized credential-presence check without reading values; physical device/PWA and push delivery verification; remaining security/integration review; backup/rollback proof.
+
+
+## Phase 2 — Pass 115 (CI security-gate audit, 2026-11-23)
+
+- Fresh workflow source audit found `npm audit` explicitly non-blocking (`|| true`); JSON summary/artifact are generated, but CI success alone is not dependency-security acceptance. Require blocking audit plus documented owner-approved disposition for any advisories before Phase 10.
+- Quality workflow push ignores `docs/**`; PR CI targets `main` only. Current branch docs changes have no fresh CI run. #752 remains successful on code/test SHA `7fcfb45c32d661d20ad41b17294a88a357bf3ee4`, not current HEAD.
+- Notification static test verifies source architecture mismatch only, not runtime delivery. No code or provider/config change made; notification delivery gate remains open.
+- Pass 115 documentation evidence only; no production, schema, auth, payment, API, merge or deploy changes. Phase 2 NOT ACCEPTED.
