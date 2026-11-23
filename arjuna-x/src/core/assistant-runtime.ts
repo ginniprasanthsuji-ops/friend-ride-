@@ -19,7 +19,8 @@ export class AssistantRuntime {
   }
 
   async handle(sessionId: string, userText: string): Promise<RuntimeReply> {
-    if (!userText.trim()) throw new Error("Message cannot be empty");
+    if (typeof userText !== "string" || !userText.trim()) throw new Error("Message cannot be empty");
+    if (typeof sessionId !== "string" || !sessionId.trim()) throw new Error("sessionId is required");
     const context = this.contexts.get(sessionId);
     if (!context) throw new Error(`Unknown session: ${sessionId}`);
 
@@ -51,6 +52,7 @@ export class AssistantRuntime {
           timeout = setTimeout(() => reject(new Error("AI provider timed out")), this.timeoutMs);
         }),
       ]);
+      if (!completion || typeof completion.text !== "string" || !completion.text.trim()) throw new Error("AI provider returned an invalid response");
       this.contexts.appendMessage(sessionId, "assistant", completion.text);
       return { sessionId, intent, completion };
     } catch {
