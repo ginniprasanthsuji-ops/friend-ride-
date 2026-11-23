@@ -453,3 +453,10 @@ A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95
 - Production role/ownership test coverage: 53/88; 35 remaining. Remaining triage: 26 caller/ownership-marker functions, 1 admin-guard, and 8 public/approved-data surfaces still awaiting owner acceptance; markers are not security proof.
 - CI verified on code head 7243a8007c16739c298324378c2d3338885647a8: Quality 9/9 Node, 5/5 core, 47/47 safe browser, typechecks/build; Regression 47/47; TASKO/Laundry/Admin 4/4; source regression 25 inline scripts and learn-teach syntax. Newer docs-only commit CI is not verifiable via the available run-list wrapper; latest documentation head checks remain pending.
 - Release readiness BLOCKED and Phase 2 NOT accepted. Leaked-password Auth owner setting, public/internal visibility acceptance, 35 remaining function reviews/tests, QA push HTTP/auth/concurrency, and real device/credential integration are open. No production changes, merge, or deployment.
+
+
+## 26. Additional read-only admin/referral role checks (2026-11-23)
+- Two rollback-only production checks PASS: is_admin false for synthetic non-admin; my_referral_dashboard expected Driver profile required denial. Post-test synthetic profile/admin/subscription/referral/reward counts all 0.
+- Production role/ownership evidence now 55/88; 33 remaining. Remaining triage: 24 caller/ownership-marker functions, 1 admin-guard, 8 public/approved-data surfaces pending owner acceptance.
+- CI on the then-current documentation head was in progress: Quality type/unit and source/workflow jobs PASS; browser regression and TASKO/Laundry/Admin were still running. Newest head final CI remains pending.
+- Release readiness BLOCKED and Phase 2 NOT accepted. Owner Auth/privacy/table confirmations, remaining 33 function reviews/tests, QA push HTTP/auth/concurrency, and physical device/credential integrations remain blockers. No production changes, merge, or deployment.
