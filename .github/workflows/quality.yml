@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
-      - name: Capture dependency audit report (non-blocking while remediation is pending)
+      - name: Capture dependency audit report (diagnostic)
         run: |
           npm audit --json > npm-audit.json || true
           node <<'NODE'
@@ -80,6 +80,8 @@ jobs:
       - run: npm run build:runtime
       - run: npm run test:unit
       - run: npm run test:core
+      - name: Enforce dependency audit release gate
+        run: npm audit --audit-level=low
 
   browser-e2e:
     runs-on: ubuntu-latest
