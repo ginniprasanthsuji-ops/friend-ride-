@@ -14,8 +14,10 @@ test("role matrix denies roles outside feature allowlist", () => {
 
 test("disabled provider features are denied regardless of role", () => {
   assert.equal(evaluatePhase7RoleFeature("admin", "Payment gateway processing"), "DENY_DISABLED_FEATURE");
+  assert.equal(evaluatePhase7RoleFeature("admin", "External AI tutor and model API"), "DENY_DISABLED_FEATURE");
+  assert.equal(evaluatePhase7RoleFeature("admin", "External maps/GPS provider integration"), "DENY_DISABLED_FEATURE");
 });
 
-test("unknown feature names fail closed", () => {
-  assert.equal(evaluatePhase7RoleFeature("admin", "unknown feature"), "DENY_DISABLED_FEATURE");
+test("unknown feature names fail closed distinctly", () => {
+  assert.equal(evaluatePhase7RoleFeature("admin", "unknown feature"), "DENY_UNKNOWN_FEATURE");
 });
