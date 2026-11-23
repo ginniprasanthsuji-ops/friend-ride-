@@ -737,3 +737,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added Node regression coverage for these legacy token mappings.
 - CI #761 verified SUCCESS for the Pass 109 supporting palette CSS SHA `3b1fc1b8b14ab4b2647739ac55542cb3100e8df3`. #762 (Pass 109 test SHA) was still running at the time of the next code update; #763 and #764 are triggered for Pass 110 and pending.
 - Phase 3 remains IN PROGRESS pending final CI verification for Pass 110, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 111 (hardcoded legacy purple audit, 2026-11-23)
+
+- Audited early app-shell CSS for hardcoded legacy purple beyond variable usage. Added scoped overrides for drawer/menu accents, active marketplace and catalogue category pills, market price text, legacy purple poster, premium hero, and role-launcher surfaces. No feature logic or routes changed.
+- Added regression assertions for the audited selector remaps.
+- CI #761 and #762 verified SUCCESS for Pass 109 CSS/test commits. Pass 110 (#763 CSS and #764 test) and Pass 111 (#765 CSS and #766 test) were pending at documentation time; follow latest branch CI before declaring the palette patch validated.
+- Phase 3 remains IN PROGRESS. Phase 2 remains HOLD / NOT ACCEPTED. No merge or deployment.
