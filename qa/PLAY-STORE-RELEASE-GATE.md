@@ -295,3 +295,8 @@ The dormant `fcm-web-push.js` helper now honors test-only QA/offline Supabase in
 ## 14. QA migration syntax and rollback check (2026-11-23)
 
 The proposed notification claim migration passed a PostgreSQL syntax test inside an explicit QA `BEGIN … ROLLBACK` transaction. Post-rollback catalog checks confirmed no claim column/function persisted. A guarded QA rollback script was added (refuses if events are processing). **No QA migration or Edge Function deployment has been applied.** Release remains BLOCKED.
+
+
+## 15. Production search_path and function authorization triage (2026-11-23)
+
+All 102 SECURITY DEFINER functions have explicit search_path (79 empty, 16 public, 4 public/auth, and 3 other pg_catalog/public variants). A static relation-reference scan of the 16 public-path functions found no likely unqualified table references. Six additional authenticated-only delivery/payment/Laundry/TASKO functions were reviewed and their ownership/admin/state guards were confirmed. These are source/catalog reviews, not role-negative tests; the 88 authenticated warnings remain open.
