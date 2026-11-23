@@ -52,7 +52,7 @@ export class TaskExecutionRuntime {
 
     for (const action of actions) {
       if (options.signal?.aborted) {
-        results.push({ actionId: action.id, status: "SKIPPED", attempts: 0, error: "Execution cancelled" });
+        results.push({ actionId: action.id.trim(), status: "SKIPPED", attempts: 0, error: "Execution cancelled" });
         continue;
       }
       const decision = authorizeAction(
@@ -61,11 +61,11 @@ export class TaskExecutionRuntime {
         specialApproved.has(action.id.trim()),
       );
       if (decision === "REQUIRE_CONFIRMATION") {
-        results.push({ actionId: action.id, status: "NEEDS_CONFIRMATION", attempts: 0 });
+        results.push({ actionId: action.id.trim(), status: "NEEDS_CONFIRMATION", attempts: 0 });
         continue;
       }
       if (decision === "REQUIRE_SPECIAL_APPROVAL") {
-        results.push({ actionId: action.id, status: "NEEDS_SPECIAL_APPROVAL", attempts: 0 });
+        results.push({ actionId: action.id.trim(), status: "NEEDS_SPECIAL_APPROVAL", attempts: 0 });
         continue;
       }
 
@@ -84,7 +84,7 @@ export class TaskExecutionRuntime {
             results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled after action completion" });
             break;
           }
-          results.push({ actionId: action.id, status: "SUCCEEDED", attempts, output });
+          results.push({ actionId: action.id.trim(), status: "SUCCEEDED", attempts, output });
           break;
         } catch (error) {
           const rawMessage = error instanceof Error ? error.message : String(error);
@@ -94,7 +94,7 @@ export class TaskExecutionRuntime {
             break;
           }
           if (attempts > actionRetries) {
-            results.push({ actionId: action.id, status: "FAILED", attempts, error: message });
+            results.push({ actionId: action.id.trim(), status: "FAILED", attempts, error: message });
           }
         }
       }
