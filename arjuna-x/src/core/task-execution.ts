@@ -82,7 +82,8 @@ export class TaskExecutionRuntime {
           results.push({ actionId: action.id, status: "SUCCEEDED", attempts, output });
           break;
         } catch (error) {
-          const message = error instanceof Error ? error.message : String(error);
+          const rawMessage = error instanceof Error ? error.message : String(error);
+          const message = rawMessage.slice(0, 500);
           if (options.signal?.aborted) {
             results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled during action" });
             break;
