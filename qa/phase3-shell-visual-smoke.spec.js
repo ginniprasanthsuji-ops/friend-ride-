@@ -32,16 +32,16 @@ test.describe('Phase 3 app-shell runtime smoke', () => {
 
   test('orange primary button foreground meets WCAG AA normal-text contrast', async ({ page }) => {
     const state = await page.evaluate(() => {
-      const button = document.querySelector('.btn:not(.purple):not(.dark)');
+      const button = document.querySelector('.btn:not(.purple):not(.dark):not(.light):not(.red):not(.green)');
       if (!button) return null;
       const toRgb = value => value.match(/\\d+/g).slice(0, 3).map(Number);
       const luminance = rgb => rgb.map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
       const ratio = (a, b) => { const values = [luminance(a), luminance(b)].sort((x, y) => y - x); return (values[0] + 0.05) / (values[1] + 0.05); };
       const fg = toRgb(getComputedStyle(button).color);
-      return { foreground: getComputedStyle(button).color, contrastOnOrange: ratio(fg, [255, 107, 0]), contrastOnOrange2: ratio(fg, [255, 139, 36]) };
+      return { foreground: getComputedStyle(button).color, backgroundImage: getComputedStyle(button).backgroundImage, contrastOnOrange: ratio(fg, [255, 107, 0]), contrastOnOrange2: ratio(fg, [255, 139, 36]) };
     });
     expect(state).not.toBeNull();
-    expect(state.foreground).toBe('rgb(7, 28, 70)');
+    expect(state.foreground).toBe('rgb(7, 28, 70)');\n    expect(state.backgroundImage).toContain('rgb(255, 107, 0)');\n    expect(state.backgroundImage).toContain('rgb(255, 139, 36)');
     expect(state.contrastOnOrange).toBeGreaterThanOrEqual(4.5);
     expect(state.contrastOnOrange2).toBeGreaterThanOrEqual(4.5);
   });
