@@ -268,3 +268,10 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - No production/QA database mutation, grant change, Auth configuration change, merge, or deployment was performed during this audit.
 
 **Open release blockers:** Auth leaked-password protection; full production RPC authorization review and role-negative tests; owner confirmation for the 23 policy-free RLS tables and intentional public functions; QA-only frontend configuration and safe E2E; atomic notification claim/retry fix; FCM integration plus real device/token tests; real OTP/GPS/payment/ride tests; CI/regression evidence; Android AAB and Play Console gates.
+
+
+## 10. Phase 2 QA isolation patch (2026-11-23)
+
+A branch-only test isolation patch is now present on `arjuna-x/phase-2-security-closure`: the browser tests inject a test Supabase target, use an offline placeholder by default, block production Supabase requests, and only allow the QA host when the explicit test flag is enabled. Four existing specs use the shared fixture; a new isolation spec has two checks. Regression/Quality push triggers were added for the Phase 2 branch; Regression also has a PR trigger.
+
+Node syntax checks passed for the fixture, isolation test, and changed client-config snippet. **Full Playwright/CI results are still pending**, so this patch is not accepted and the release gate remains blocked. See the Phase 2 security evidence document for details.
