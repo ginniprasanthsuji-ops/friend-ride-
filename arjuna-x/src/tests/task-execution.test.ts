@@ -195,3 +195,21 @@ test("executor rejects non-runnable action states before any execution", async (
   }
   assert.equal(executions, 0);
 });
+
+test("oversized executor outputs are truncated to a bounded result payload", async () => {
+  const runtime = new TaskExecutionRuntime({ async execute() { return "x".repeat(20_000); } });
+  const result = await runtime.run([action]);
+  assert.equal(result[0]?.status, "SUCCEEDED");
+  assert.equal(typeof result[0]?.output, "string");
+  assert.ok((result[0]?.output as string).length <= 10_050);
+  assert.match(result[0]?.output as string, /^\[Output truncated:/);
+});
+
+test("circular executor output is safely omitted instead of crashing", async () => {
+  const circular: Record<string, unknown> = {};
+  circular.self = circular;
+  const runtime = new TaskExecutionRuntime({ async execute() { return circular; } });
+  const result = await runtime.run([action]);
+  assert.equal(result[0]?.status, "SUCCEEDED");
+  assert.equal(result[0]?.output, "[Output omitted: serialization failed]");
+});
