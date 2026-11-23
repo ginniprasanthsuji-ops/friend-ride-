@@ -1,5 +1,8 @@
-name: ARJUNA X QA Safety Unit Checks
+name: FRIEND RIDE Phase 7 QA Safety Gate
 on:
+  push:
+    branches:
+      - qa/phase9-stabilization-2026-11-24
   workflow_dispatch:
 permissions:
   contents: read
