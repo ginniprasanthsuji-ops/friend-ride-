@@ -85,3 +85,22 @@ Limitations / follow-up:
 2. Review all SECURITY DEFINER function bodies and execute ACLs, especially admin and notification workflows.
 3. Inspect profile guard trigger function body; test role/approval-field tampering.
 4. Run actual auth-role integration tests in controlled QA identities; metadata alone does not prove behavior.
+
+## Selected full SECURITY DEFINER pass + profile guard review (QA, read-only)
+Reviewed definitions for all 28 SECURITY DEFINER public functions in QA, plus exact Storage bucket state and profile guard trigger.
+Positive checks observed:
+- Most workflow functions use empty search_path and fully-qualified public objects.
+- Admin review/list functions check admin_users membership.
+- Ride accept/counter-offer/start/complete enforce approved-driver identity, ownership, or state predicates.
+- Service-request creation checks customer role, active category, input bounds, and provider approval/availability.
+- Provider transition functions verify assigned provider and transition states.
+- Customer/driver ride detail RPCs match authenticated participant and eligible ride states.
+- Notification claim function is granted to service_role only; public feedback RPC is anon-readable but filters to published homepage feedback.
+- Profile trigger exists and checks role/approval field changes, but a high-priority bypass concern follows.
+## HIGH-PRIORITY REVIEW FINDING — custom GUC bypass candidate
+qa_guard_profile_privileged_fields() trusts current_setting('app.friend_ride_role_registration', true) matching auth.uid() as a bypass for role/approval fields. fr_register_driver_partner sets that custom GUC. PostgreSQL custom GUCs may be user-settable by clients; if authenticated users can set the same GUC themselves, they could potentially bypass the guard via direct profile UPDATE. This is not confirmed exploit-tested; mark HIGH PRIORITY and require controlled QA verification and a safer registration authorization mechanism before sign-off. Do not patch production.
+Other observations:
+- Guard function uses search_path='public' (rather than empty); its referenced table is schema-qualified. Still review hardening.
+- QA Storage buckets query returned no buckets; app's KYC upload flow cannot be verified in this QA project until setup discrepancy is resolved.
+- Nearby-driver function exposes online approved driver coordinates within requested radius (max 15 km) to authenticated customer/admin; confirm this is required and minimize precision/retention.
+- Function body/ACL metadata checks are not equivalent to role-based live tests. No exploitation or data modification performed.
