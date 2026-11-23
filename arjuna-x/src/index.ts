@@ -9,3 +9,4 @@ export * from "./core/task-execution.js";
 export * from "./core/approved-stack-guard.js";
 export * from "./core/phase7-dependency-catalog.js";
 export * from "./core/phase7-identity-gate.js";
+export * from "./core/phase7-role-feature-matrix.js";
