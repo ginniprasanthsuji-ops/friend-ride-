@@ -36,3 +36,8 @@ commit;
 -- where table_schema='public' and grantee='authenticated'
 --   and privilege_type in ('TRUNCATE','TRIGGER','REFERENCES');
 -- Expected: no rows.
+
+-- Extra targeted safeguard for admin membership table:
+-- authenticated clients must not directly mutate admin membership.
+-- (This section is a proposal and remains unapplied.)
+-- revoke insert, update, delete, truncate, trigger, references on table public.admin_users from authenticated;
