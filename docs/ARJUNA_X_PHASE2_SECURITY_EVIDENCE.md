@@ -168,3 +168,11 @@ The QA rollback script was also tested in an explicit rollback transaction (inte
 - Added `npm run test:phase2` to run `friend-ride.spec.cjs`, TASKO/Laundry regression specs, and `phase2-isolation.spec.cjs` only.
 - Updated Regression and Quality workflows: main and Phase 2 branches use the Phase 2 baseline suite; full Dark+Gold UI regression remains on UI-migration branches.
 - This is not test suppression: the Dark+Gold spec remains in the full `npm test` suite and will be exercised on the Phase 3 UI branch. Rerun CI on the new head is pending.
+
+
+## Continuation — expanded production function classification and v7 rollback source (2026-11-23)
+
+- The 8 authenticated-executable SECURITY DEFINER functions with no simple `auth.uid()`/`admin_users`/`is_friend_ride_admin()` marker are read-only: approved provider list (phone/service area), approved store list, public geo listing, approved catalogue, authenticated store payment options (UPI/PhonePe/QR path), public platform business details (legal name/toll-free/GSTIN), public approved-store list, and published homepage feedback. Owner must confirm these fields are intentionally visible. All six anon-advisor functions are read-only; the admin-check helper returns only a boolean.
+- 15 functions call `is_friend_ride_admin()`; 8 admin RPCs reviewed explicitly, plus cancellation/routing/admin helpers. Eight functions call `is_approved_driver()`. The 28 marker-less set is now classified into read-only lists/payment details, admin-helper functions, service-only maintenance/notification functions, and triggers; the 72 authenticated-executable functions with `auth.uid()` still need full role-negative tests.
+- The current QA dispatch Edge Function v7 source is preserved at `qa/rollback/fr-notification-dispatch-v7.ts` for rollback. Current QA metadata: version 7, ACTIVE, verify_jwt=false; source SHA `e5c43e09b4738dac2f66f0199d7bacc79c8ea44fd558c633b71de6d1e0b1a7dc`. No secret values were inspected.
+- Latest Phase 2 branch head `b79988712275489d7e6a324664dee10b841534ac` has no combined status entries; PR-filtered workflow-run retrieval returned no runs for this head. The new branch-scoped CI rerun is therefore **not verified yet**.
