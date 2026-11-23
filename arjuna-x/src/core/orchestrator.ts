@@ -25,12 +25,13 @@ export function createPlan(sessionId: string, request: string, actions: Omit<Pla
 
   const seenIds = new Set<string>();
   const validatedActions = actions.map((action) => {
-    if (!action || typeof action !== "object") throw new Error("Action must be an object");
+    if (!action || typeof action !== "object" || Array.isArray(action)) throw new Error("Action must be an object");
     if (typeof action.id !== "string" || !action.id.trim()) throw new Error("Action id is required");
     const id = action.id.trim();
     if (seenIds.has(id)) throw new Error(`Duplicate action id: ${id}`);
     seenIds.add(id);
     if (typeof action.description !== "string" || !action.description.trim()) throw new Error(`Action description is required: ${id}`);
+    if (action.retrySafe !== undefined && typeof action.retrySafe !== "boolean") throw new Error(`retrySafe must be a boolean for action ${id}`);
     if (!Number.isInteger(action.permissionTier) || ![0, 1, 2, 3, 4].includes(action.permissionTier)) {
       throw new Error(`Invalid permission tier for action ${id}`);
     }
