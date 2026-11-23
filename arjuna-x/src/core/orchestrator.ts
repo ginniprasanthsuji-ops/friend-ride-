@@ -7,6 +7,8 @@ export interface PlannedAction {
   description: string;
   permissionTier: PermissionTier;
   status: TaskStatus;
+  /** Opt-in only: retries are allowed only when the action is idempotent/safe to repeat. */
+  retrySafe?: boolean;
 }
 
 export interface OrchestratorPlan {
