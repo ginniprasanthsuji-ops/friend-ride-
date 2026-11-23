@@ -38,3 +38,7 @@ No production deployment, merge, DB/schema/auth/payment change, secret access, o
 - Commits: `ce01202` and `8505456`.
 - Final exact-token scan on latest fetched source: {"#5420b8":0,"#7b35df":0,"#24105f":0,"#4c1b9c":0,"#7736cb":0,"#5120b4":0,"#8140df":0}. All reviewed exact legacy palette tokens are now absent from the source (this does **not** prove every rendered screen has no purple; gradients, images, external libraries, and non-hex colors still require visual inspection).
 - Still not run: Playwright/browser/device tests, accessibility test suite, CI run. Status API reports no checks, not success.
+
+## PWA palette alignment
+- `manifest.webmanifest` colors updated to background `#f4f7fb` and theme `#102a43` in commit `fa0ee07`.
+- Manifest references `icons/icon-192.png` and `icons/icon-512.png`; content endpoint returned binary UTF-8 decode errors, which indicates these paths may contain binary data but image dimensions/visual branding were **not** verified. The original logo/icon visual verification remains pending.
