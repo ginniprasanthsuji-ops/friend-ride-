@@ -32,7 +32,14 @@ export class TaskExecutionRuntime {
   constructor(private readonly executor: ActionExecutor) {}
 
   async run(actions: PlannedAction[], options: ExecutionOptions = {}): Promise<ActionExecutionResult[]> {
-    const maxRetries = validateRetries(options.maxRetries ?? 0);\n    const seenIds = new Set<string>();\n    for (const action of actions) {\n      if (!action || typeof action.id !== "string" || !action.id.trim()) throw new Error("Every action must have a non-empty id");\n      if (seenIds.has(action.id)) throw new Error(`Duplicate action id: ${action.id}`);\n      seenIds.add(action.id);\n      if (![0, 1, 2, 3, 4].includes(action.permissionTier)) throw new Error(`Invalid permission tier for action ${action.id}`);\n    }
+    const maxRetries = validateRetries(options.maxRetries ?? 0);
+    const seenIds = new Set<string>();
+    for (const action of actions) {
+      if (!action || typeof action.id !== "string" || !action.id.trim()) throw new Error("Every action must have a non-empty id");
+      if (seenIds.has(action.id)) throw new Error(`Duplicate action id: ${action.id}`);
+      seenIds.add(action.id);
+      if (![0, 1, 2, 3, 4].includes(action.permissionTier)) throw new Error(`Invalid permission tier for action ${action.id}`);
+    }
     const confirmed = new Set(options.userConfirmedActionIds ?? []);
     const specialApproved = new Set(options.specialApprovalActionIds ?? []);
     const results: ActionExecutionResult[] = [];
@@ -68,7 +75,10 @@ export class TaskExecutionRuntime {
           if (attempts > maxRetries) {
             results.push({ actionId: action.id, status: "FAILED", attempts, error: message });
           }
-          if (options.signal?.aborted) {\n            results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled during action" });\n            break;\n          }
+          if (options.signal?.aborted) {
+            results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled during action" });
+            break;
+          }
         }
       }
     }
