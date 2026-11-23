@@ -328,3 +328,12 @@ Final head before this documentation update: `e753d895cb79f79bbee81b3f1de44d1fe9
 - TASKO/Laundry/Admin `45125485753`: **4/4 PASS** Playwright.
 - Workflow/source regression `45125485805`: **PASS** inline JavaScript and Version 10.1 integration checks.
 These exact run/job records and decoded logs were rechecked. The combined commit-status API is empty; GitHub Actions records are the evidence. No code changed after these runs in this documentation update. Phase 2 remains blocked.
+
+
+## 31. Sequential acceptance correction after concurrent evidence update (2026-11-23)
+
+A concurrently added `qa/phase2-final-acceptance.md` initially said “Phase 2 automated QA closure accepted at 95% for development continuation” and deferred remaining Phase 2 security/integration blockers to Phase 9/10. That conflicts with the user's explicit sprint sequence. The decision text was corrected on this QA branch: **Phase 2 remains NOT ACCEPTED for Phase 3 advancement**. Automated browser checks are evidence, not security/owner/device gate closure.
+
+Current verified status remains: production admin-RPC role-negative evidence **15/88** (73 remain); QA auth-executable SECURITY DEFINER role/ownership tests **22/25** (3 public/approved-data surfaces remain untested and require owner visibility acceptance); leaked-password protection disabled; 23 RLS/no-policy internal tables require owner confirmation; real OTP/GPS/payment/push/device checks pending. The 95% figure is not a verified acceptance percentage and does not authorize Phase 3.
+
+The shared QA branch was concurrently updated. Latest branch/PR head must be rechecked before further edits; all changes remain in draft PR #39, no merge or production deployment.
