@@ -431,3 +431,11 @@ A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95
 - Remaining 50 function source-marker triage: 41 caller/ownership markers; 1 admin-guard marker (`fr_cancel_ride`); 8 no-simple-auth-marker public/approved-data surfaces requiring manual review/owner acceptance. Marker triage is not authorization proof.
 - CI at `97211bdbf744b5c51f21ad5009c1846501f2b451`: workflow/source `45131985938` success; Regression `45131985922`, TASKO/Laundry/Admin `45131985913`, Quality Gate `45131986043` in progress. Do not treat as all green until completed.
 - Phase 2 remains blocked. No production DB/Auth/Edge changes, merge or deployment.
+
+
+## 23. Production role/ownership coverage and current CI — 2026-11-23
+
+- Additional production tests: **3/3 PASS** (parcel OTP lookup denied for nonexistent dummy parcel, referral-free subscription check false, ride payment state `not_started`), rollback-only; pre/post synthetic data checks zero.
+- Production SECURITY DEFINER role/ownership coverage: **41/88 verified; 47 remain**. Remaining 47 marker triage: 38 caller/ownership, 1 admin guard (`fr_cancel_ride`), 8 public/approved-data surfaces needing owner privacy acceptance. Marker counts do not certify security.
+- Latest full CI on `428934eec3d41482fb43a4162ebe3c78d3cdc4c9`: source/workflow `45132193156`, TASKO/Laundry/Admin `45132193130`, Regression `45132193047`, Quality Gate `45132193105` all success; Phase 2 full UI-migration browser suite skipped. Prior exact counts on same scoped suite: 47/47 browser, 9/9 Node, 5/5 core.
+- Phase 2 still blocked by leaked-password protection, public/internal visibility owner confirmation, 47 remaining RPC checks, QA push/HTTP/concurrency, and real OTP/GPS/payment/device gates. No production DB/Auth/Edge changes, merge or deploy.
