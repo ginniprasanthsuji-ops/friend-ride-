@@ -3,3 +3,6 @@ export * from "./core/permissions.js";
 export * from "./core/state-machine.js";
 export * from "./core/session-context.js";
 export * from "./core/orchestrator.js";
+export * from "./core/intent-router.js";
+export * from "./core/ai-provider.js";
+export * from "./core/assistant-runtime.js";
