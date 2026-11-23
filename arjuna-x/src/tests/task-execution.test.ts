@@ -272,3 +272,11 @@ test("approval ID lists reject duplicate IDs after trimming", async () => {
   await assert.rejects(() => runtime.run([action], { specialApprovalActionIds: ["a1", "a1"] }), /specialApprovalActionIds contains duplicate action IDs/);
   assert.equal(executions, 0);
 });
+
+test("approval IDs must belong to actions in the current plan", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([action], { userConfirmedActionIds: ["other-action"] }), /IDs not present in this execution plan/);
+  await assert.rejects(() => runtime.run([action], { specialApprovalActionIds: ["other-action"] }), /IDs not present in this execution plan/);
+  assert.equal(executions, 0);
+});
