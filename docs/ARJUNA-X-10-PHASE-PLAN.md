@@ -790,3 +790,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Added a scoped 44px minimum height for common top action, location, marketplace/category pill and bottom-navigation controls to improve mobile touch accessibility. Added static regression checks.
 - CI #771/#772 (Pass 115) and #773 (Pass 116 stylesheet-isolation guard) verified SUCCESS. #774/#775 (Pass 117 focus contrast), #776/#777 (Pass 118 touch targets) were pending at this update.
 - Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 119 (accent-text contrast, 2026-11-23)
+
+- Updated small accent text (active navigation, home-section action links, role arrows and premium eyebrow), and secondary location/section text to contrast-safe Phase 3 tokens.
+- Added regression checks for these scoped text overrides.
+- CI #774/#775 (Pass 117 focus contrast) and #776/#777 (Pass 118 touch-target CSS/test) were verified SUCCESS. Pass 119 #778/#779 were pending at this update.
+- Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
