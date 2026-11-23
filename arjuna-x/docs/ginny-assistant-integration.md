@@ -84,3 +84,10 @@
 - Cancelled and empty outputs are suppressed.
 - Output is trimmed and capped at 4,000 characters before TTS.
 - Policy helper does not invoke a speech engine; native/web TTS integration is still required.
+
+
+## Multi-turn conversation state
+- Reducer tracks idle/sending/cancelled/error and bounded message history (100 messages).
+- Prevents concurrent submissions while sending and ignores assistant responses arriving after cancel.
+- Messages trim and cap at 8,000 characters; errors cap at 500.
+- Reset clears the local reducer history. Persistent history, deletion guarantees and backend/API cancellation remain unimplemented.
