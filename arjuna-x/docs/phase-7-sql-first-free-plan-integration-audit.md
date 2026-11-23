@@ -56,3 +56,19 @@ Project: FRIEND RIDE QA (pqsangtvietawkfgpgfu). No SQL mutations were executed.
 3. Check profiles UPDATE policy/trigger for privileged role/approval fields; existing QA guard function is present but body and trigger binding need confirmation.
 4. Inspect storage bucket policies and private KYC buckets separately.
 5. Route runtime must use database-backed identity/role, not client role values alone.
+
+## Selected SECURITY DEFINER function-body review (read-only)
+Reviewed definitions for accept_ride, admin_review_driver, fr_register_driver_partner, fr_tasko_provider_transition, fr_laundry_provider_transition, get_ride_customer_details_v2, get_ride_driver_details.
+Positive observations in these selected definitions:
+- all inspected functions set an empty search_path;
+- accept_ride validates authenticated approved driver, active-ride restriction and only accepts an unassigned requested ride;
+- admin_review_driver checks membership in admin_users and decision allowlist;
+- driver/partner registration requires auth.uid(), validates role/profile input and keeps approval pending;
+- TASKO/Laundry transitions require the assigned provider and validate state transitions;
+- customer/driver contact detail RPCs require auth and match ride participant + eligible ride status.
+Limitations / follow-up:
+- This is a selected-body review, not a full review of all 28 SECURITY DEFINER functions.
+- EXECUTE grants/ACLs were not checked yet; test unauthorized callers and grants before sign-off.
+- Registration RPC accepts sensitive identity fields; confirm KYC document storage/access and data minimization.
+- Review all function bodies for safe search_path, role/ownership checks, and privileged writes.
+- QA-only, read-only; no schema or data mutations.
