@@ -358,3 +358,20 @@ Combined with prior 15 production admin-RPC tests, verified production role/owne
 All four latest workflow records completed success at `a1aa499e96bb5b37677a03b2601df47cc983d120`: workflow/source regression `45125814431`, TASKO/Laundry/Admin `45125814474`, FRIEND RIDE regression `45125814548`, and Quality Gate `45125814422`. Jobs/steps API reports all required steps successful. The Phase 2 browser step passed; the full UI-migration browser suite was skipped by branch scope. The latest job metadata did not expose per-test counts; previously documented 47/47 Phase 2 browser tests and 9/9 Node + 5/5 core tests remain from prior log evidence, not newly extracted counts for these run IDs.
 
 Phase 2 remains **BLOCKED / NOT ACCEPTED**. Owner action is still required for leaked-password protection, intended public data surfaces, 23 internal/no-policy tables, QA push/concurrency/live delivery, real OTP/GPS/payment/device tests, and the remaining 63 production function tests. No production schema/Auth/function change, merge, or deployment.
+
+
+## 33. Additional production role/ownership boundary checks (2026-11-23)
+
+A second read-only, rollback-only authenticated transaction used the same synthetic subject. **11/11 assertions PASS** across five SECURITY DEFINER functions:
+
+- `fr_can_access_delivery_order`: ride, parcel, food, and shop IDs all returned false (4/4).
+- `fr_is_delivery_order_customer`: ride, parcel, food, and shop IDs all returned false (4/4).
+- `fr_can_read_partner_payment_qr`: synthetic object name returned false.
+- `fr_learn_teach_is_admin`: synthetic subject returned false.
+- `fr_customer_market_payment_details`: dummy order returned expected “Payment window is not active” exception.
+
+Combined verified production role/ownership coverage is now **30/88** authenticated-executable SECURITY DEFINER functions; **58 remain**. This is function coverage evidence only, not comprehensive security acceptance. Post-test checks again found zero synthetic rows in profiles, admin_users, rides, market orders, parcel orders, service requests, service providers, and driver locations. No permanent write.
+
+### CI status on current evidence head
+
+Current head at check: `c7ddfa65665b0357928d0c9d4d7d505b7841ee7c`. Workflow/source regression `45131877959` completed success. FRIEND RIDE Regression `45131878071`, TASKO/Laundry/Admin `45131878062`, and Quality Gate `45131878153` were in progress at the last check; duplicate reruns `45131871972` and `45131871896` were also in progress. Do not count these as final PASS until completed. Full UI-migration suite remains skipped by Phase 2 scope.
