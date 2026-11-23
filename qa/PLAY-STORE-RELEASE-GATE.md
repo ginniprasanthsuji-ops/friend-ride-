@@ -405,3 +405,13 @@ On current evidence head `e753d895cb79f79bbee81b3f1de44d1fe93486fe`, Regression 
 ## 18. Sequential Phase 2 gate correction (2026-11-23)
 
 A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95% for development continuation” while deferring security blockers. This was corrected in `qa/phase2-final-acceptance.md`: Phase 2 is **NOT accepted for Phase 3 advancement**. Current verified blockers remain production admin-RPC tests 15/88 (73 remaining), QA role/ownership tests 22/25 (3 visibility surfaces untested), leaked-password protection disabled, 23 internal no-policy tables owner confirmation, and live device/credential integration tests. The sequential sprint rule remains Phase 2 first. No merge/deployment.
+
+
+## 19. ARJUNA X Phase 2 continuation snapshot — 2026-11-23 12:59 IST
+
+- Phase 2 sequential gate is still **BLOCKED / NOT ACCEPTED**.
+- Fresh production role/ownership checks: **10/10 PASS** (5 expected role denials + 5 synthetic caller-scope zero-row checks), rollback-only transaction; synthetic data post-check 0 across 8 tables.
+- Production SECURITY DEFINER authenticated negative/ownership evidence: **25/88 verified, 63 remain**. QA: **22/25**, three public/approved-data visibility functions pending owner acceptance.
+- Latest CI on the pre-doc head `a1aa499e96bb5b37677a03b2601df47cc983d120`: workflow/source `45125814431`, TASKO/Laundry/Admin `45125814474`, FRIEND RIDE regression `45125814548`, Quality Gate `45125814422` all success. Full UI-migration suite skipped; Phase 3 branch CI not present.
+- Fresh production Advisor: 23 RLS-enabled/no-policy INFO, 6 anon + 88 authenticated SECURITY DEFINER WARN, leaked-password protection disabled WARN. QA: 1 anon + 25 authenticated warnings.
+- Remaining external/owner blockers: enable leaked-password protection; confirm public data visibility and 23 internal tables; finish 63 production role/ownership tests; test QA push/concurrency/HTTP and real OTP/GPS/payment/device flows. No schema/Auth/Edge changes, merge or live deploy.
