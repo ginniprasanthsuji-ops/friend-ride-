@@ -438,3 +438,35 @@ Phase 2 remains **BLOCKED / NOT ACCEPTED**. Leaked-password protection, owner vi
 - Follow-up job/log verification confirms all four runs for head 76e38b5167fb4db020d9bfcb0512a5fb1459a4e2 completed PASS: Regression 45139374563 (47/47 safe-browser); Quality 45139374743 (typecheck/core typecheck/runtime build PASS, 9/9 Node, 5/5 core, 47/47 safe-browser); TASKO/Laundry/Admin 45139374623 (4/4); source/workflow 45139374627 (25 inline scripts and learn-teach syntax). Full UI-migration suite skipped by Phase 2 scope.
 - Newer final documentation head 154ed19f259d9ff4b1ba9bcf0a0b87cbc95639d5 consists of documentation-only commits. The available GitHub Actions run-list wrapper returns only PR-triggered runs and cannot verify the newer push-triggered runs/checks; report those as **unverified**, not PASS. No code change since the verified code commit.
 - Current Phase 2 production role/ownership test evidence: **55/88; 33 remain**. Phase 2 remains NOT ACCEPTED; owner/Auth/privacy/device/QA-notification blockers remain open. No production changes, merge, or deployment.
+
+
+## 40. Fresh advisor, CI, dependency, and logo-asset recheck (2026-11-23)
+
+### Read-only Supabase snapshot
+- Production project `friend-ride` and QA project `FRIEND RIDE QA` both reported `ACTIVE_HEALTHY` in the project list. Health advisor returned no lints for either project.
+- Production security advisor: 23 RLS-enabled/no-policy INFO findings, 6 anon-executable SECURITY DEFINER WARN findings, 88 authenticated-executable SECURITY DEFINER WARN findings, and leaked-password protection DISABLED (1 WARN).
+- QA security advisor: 1 anon-executable and 25 authenticated-executable SECURITY DEFINER WARN findings.
+- Advisor findings are unchanged from the prior evidence snapshot. No production or QA schema/Auth/Edge changes were made in this run.
+
+### CI recheck on latest resolved documentation commit
+- Commit `154ed19f259d9ff4b1ba9bcf0a0b87cbc95639d5`: all four associated GitHub Actions runs completed success. Run IDs: source regression `45139530466`, Quality Gate `45139530573`, TASKO/Laundry/Admin `45139530763`, and FRIEND RIDE Regression `45139530426`.
+- Source regression job: 25 inline scripts checked; `learn-teach.js` syntax check passed.
+- Quality Gate: typecheck, core typecheck, runtime build, 9/9 Node tests, 5/5 core tests, 47/47 safe browser tests passed. Full UI-migration browser suite skipped by Phase 2 scope.
+- Regression: 47/47 safe browser tests passed; full UI-migration suite skipped.
+- TASKO/Laundry/Admin: 4/4 Playwright tests passed. Initial localhost readiness curls failed transiently before the server was ready; retry/readiness completed and the test step passed.
+- This verifies workflow/job success on the resolved documentation commit. It does not establish full UI/device integration or Phase 2 acceptance.
+
+### Dependency vulnerability blocker
+- The Quality Gate and Regression job logs show `npm install` audited 57 packages and reported **3 vulnerabilities (1 moderate, 2 critical)**. The same summary appeared in both jobs.
+- `package.json` has dev dependency ranges; no `package-lock.json` or `npm-shrinkwrap.json` was found on this branch. The log did not include full advisory/package details; `npm audit fix --force` was not run.
+- Add a reproducible lockfile and obtain the full audit report; remediate targeted dependency versions only after reviewing affected package paths and compatibility, then rerun all CI. This is a release blocker.
+
+### Original logo / UI asset check (Phase 3 follow-up only)
+- The inspected Phase 2 `index.html` still contains an `FR` text-mark launcher logo; no confirmed original logo asset is referenced in the inspected markup. `manifest.webmanifest` still uses light theme/background values `#f4f6fb`.
+- The original FRIEND RIDE icon logo was located in the user's Library as `Friend Ride Service Icon Logo.png` (navy/orange FR mark, wordmark, service icons, and friendride.in). It is available for later Phase 3 integration, but has not been copied/committed to the repository or applied to the app in this Phase 2 run.
+- Phase 3 remains held until Phase 2 acceptance. Preserve the original logo and Navy Blue + Orange + White design direction when UI work begins.
+
+### Decision
+- Production role/ownership evidence remains 55/88; 33 function reviews/tests or owner acceptance items remain.
+- Phase 2 remains **BLOCKED / NOT ACCEPTED**. Open items include Auth leaked-password setting, internal-table/public-data acceptance, remaining SECURITY DEFINER review/tests, QA notification HTTP/auth/concurrency/real FCM, real OTP/GPS/payment/push on devices, and the newly observed dependency vulnerabilities/reproducible lockfile.
+- No production mutation, merge, or live deployment.
