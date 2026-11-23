@@ -6,6 +6,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const design = fs.readFileSync(path.join(root, 'styles', 'friendride-phase3-design-system.css'), 'utf8');
 const learning = fs.readFileSync(path.join(root, 'learn-teach.css'), 'utf8');
+const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 
 test('Phase 3 design system exposes Navy/Orange/White token contract', () => {
   for (const token of ['--fr-navy:', '--fr-orange:', '--fr-surface:', '--fr-ink:', '--fr-border:']) {
@@ -40,5 +41,14 @@ test('Phase 3 palette and shared component selectors keep intended values', () =
   assert.match(design, /--fr-surface\s*:\s*#ffffff/i);
   for (const selector of ['.topbar', '.hero', '.btn', '.bottom', '.card', ':focus-visible']) {
     assert.ok(design.includes(selector), `missing shared selector contract: ${selector}`);
+  }
+});
+
+
+test('Phase 3 shell is integrated behind an explicit root scope', () => {
+  assert.match(index, /<body[^>]*class=["'][^"']*fr-phase3-shell/);
+  assert.match(index, /href=["']\.\/styles\/friendride-phase3-design-system\.css["']/);
+  for (const selector of ['.fr-phase3-shell .topbar', '.fr-phase3-shell .hero', '.fr-phase3-shell .btn', '.fr-phase3-shell .bottom']) {
+    assert.ok(design.includes(selector), `unscoped shell selector contract: ${selector}`);
   }
 });
