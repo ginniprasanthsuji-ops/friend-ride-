@@ -595,3 +595,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - CSS-only, scoped; no backend, API, auth, payments, route, data or schema changes. Commit `360224f975541b63c60f09bcf304cbbc652e2138`.
 - Pass 98 CI #740 success confirmed. Pass 99 CI #741 was in progress at last status check; Pass 100 CI pending/not yet surfaced.
 - Phase 3 remains incomplete; app-wide theme integration, visual device QA, route-by-route checks and regression evidence are still needed. Phase 2 remains HOLD / DEFERRED / NOT ACCEPTED.
+
+
+## Phase 3 — Pass 101 (learning accessibility states)
+
+- Added keyboard-visible focus styling across links/buttons/form controls, disabled-state affordance, status-chip borders, readable note line-height, empty-state border, and forced-colors fallback for learning module.
+- CSS-only additive scoped improvements; no logic/API/auth/payment/schema/data changes. Commit `dbc6cd8d1accd37270321802ff0426df4746de9f`.
+- CI #740 Pass 98, #741 Pass 99, and #742 Pass 100 are all confirmed successful. Pass 101 CI not yet surfaced at record time.
+- Phase 3 remains incomplete and app-wide rollout/device visual QA still pending. Phase 2 HOLD / DEFERRED / NOT ACCEPTED.
