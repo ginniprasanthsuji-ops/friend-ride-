@@ -164,3 +164,9 @@ test("empty or non-string action descriptions are rejected before execution", as
   await assert.rejects(() => runtime.run([{ ...action, description: 123 } as never]), /Action description is required/);
   assert.equal(executions, 0);
 });
+
+test("execution results use normalized action identifiers", async () => {
+  const runtime = new TaskExecutionRuntime({ async execute() { return "ok"; } });
+  const result = await runtime.run([{ ...action, id: "  action-normalized  " }]);
+  assert.equal(result[0]?.actionId, "action-normalized");
+});
