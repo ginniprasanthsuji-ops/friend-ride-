@@ -9,6 +9,7 @@ const LOCATION_SOURCES = new Set(['manual','device']);
 
 function normalizeLocationCandidate(candidate) {
   if (!candidate || typeof candidate !== 'object') return { ok:false, reason:'missing_location' };
+  if (candidate.latitude === null || candidate.latitude === undefined || candidate.latitude === '' || candidate.longitude === null || candidate.longitude === undefined || candidate.longitude === '') return { ok:false, reason:'invalid_coordinates' };
   const lat = Number(candidate.latitude);
   const lng = Number(candidate.longitude);
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return { ok:false, reason:'invalid_coordinates' };
