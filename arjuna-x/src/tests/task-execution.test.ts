@@ -341,3 +341,14 @@ test("redacts access, refresh, and private key fields in structured output", asy
   const result = await runtime.run([action]);
   assert.deepEqual(result[0]?.output, { accessKey: "[REDACTED]", refresh_key: "[REDACTED]", privateKey: "[REDACTED]", ordinary: "visible" });
 });
+
+
+test("error text redaction removes bearer, key=value, URL credentials and private-key blocks", async () => {
+  const message = "Bearer abc.def.ghi token=tok123 https://host/path?api_key=secret123 -----BEGIN PRIVATE KEY-----abc-----END PRIVATE KEY-----";
+  const runtime = new TaskExecutionRuntime({ async execute() { throw new Error(message); } });
+  const result = await runtime.run([action]);
+  const safe = result[0]?.error ?? "";
+  assert.doesNotMatch(safe, /abc\.def\.ghi|tok123|secret123|-----BEGIN PRIVATE KEY-----/);
+  assert.match(safe, /\[REDACTED\]/);
+  assert.match(safe, /\[REDACTED PRIVATE KEY\]/);
+});
