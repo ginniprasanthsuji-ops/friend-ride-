@@ -251,3 +251,27 @@ Phase 2 remains **BLOCKED / NOT ACCEPTED** pending owner Auth setting, full role
 - In a read-only transaction, `SET ROLE authenticated` with a synthetic JWT subject that has no `admin_users` membership was tested against all eight: `admin_list_driver_applications`, `admin_list_driver_documents`, `admin_review_driver`, `admin_set_driver_status`, `fr_admin_assign_service_provider`, `fr_admin_list_partner_applications`, `fr_admin_list_service_requests`, and `fr_admin_review_partner`. Each raised the expected admin-denial exception before any mutation. Transaction rolled back.
 - Post-test catalog/data checks found zero dummy profiles, driver locations, service requests, service providers, or synthetic admin membership. No Auth user was created; no production data changes were made.
 - This verified **8 of the 88** production authenticated-executable SECURITY DEFINER warnings (admin RPC subset). The remaining function-by-function role-negative review and owner risk acceptance remain open; anon/public function intent and leaked-password protection also remain open. Phase 2 is still blocked/not accepted.
+
+
+## 25. Fresh continuation snapshot — 2026-11-23 11:59 IST
+
+**Branch/head:** `arjuna-x/phase-2-security-closure` / `e11e4e81bf0a8368d6126f648cbf6dc0a3be4f82`. PR #39 remains open/draft. This run did not merge, deploy, read secrets, or modify production.
+
+### Latest verified CI on the branch head
+- GitHub Actions run `45119120888`, job `browser-regression`, completed **success** on the current branch head. Log confirms **47/47 Phase 2 safe-browser tests passed**; inline JavaScript/Version 10.1 integration checks and `npm install`/Chromium setup passed. Full UI-migration route suite was explicitly skipped by Phase 2 branch scope; this is not UI acceptance.
+- Combined commit-status API returned an empty list; workflow run and job records/logs are the evidence. No additional workflow results are inferred.
+
+### Fresh Supabase security-advisor/catalog snapshot (read-only)
+- Advisor observations at **2026-11-23 06:29:50 UTC (11:59:50 IST)**: production `friend-ride` has 23 RLS-enabled/no-policy INFO findings, 6 anon-executable SECURITY DEFINER WARN, 88 authenticated-executable SECURITY DEFINER WARN, and leaked-password protection disabled WARN. QA has 1 anon and 25 authenticated SECURITY DEFINER WARN.
+- Production catalog snapshot: 102 SECURITY DEFINER functions; 6 callable by anon and 88 callable by authenticated. The previously documented 8 production admin RPC non-admin negative tests remain verified; **80 authenticated-executable SECURITY DEFINER functions remain without those role-negative tests**. Marker counts (auth.uid/admin/role/approved-driver) are screening only and not proof of authorization.
+- Read-only source review this run covered 17 functions: 7 approved/public-list or public-feedback/business-details surfaces and 10 admin/participant/state-guarded functions. Review notes: approved provider listing returns provider phone data to authenticated callers without an auth.uid guard; approved-store geo/list and catalogue surfaces return public marketplace data (geo list includes coordinates); homepage feedback is limited to explicitly published rows; platform details returns GSTIN/legal fields. These surfaces require owner confirmation of intended visibility. The reviewed admin RPCs check admin membership; ride cancellation checks ride participants/admin; nearby-driver RPC requires customer/admin and caps radius at 15 km and location freshness at 5 minutes; TASKO provider transition checks assigned provider and state/amount constraints. This was source review only—not additional negative-role runtime testing or a privacy acceptance.
+- The 23 no-policy tables were previously rechecked for direct anon/authenticated CRUD grants: **0 grants found**; confirm they are intentionally service/internal before release. No schema/auth change was made in this snapshot.
+
+### Remaining Phase 2 gate (not accepted)
+1. Owner must enable Supabase Auth leaked-password protection and rerun Security Advisor (dashboard control not available through this read-only tool access).
+2. Complete role-negative/runtime review for the remaining **80** authenticated-executable SECURITY DEFINER functions, plus owner risk acceptance of the 6 anon-executable public surfaces and intended provider-phone/store-coordinate/catalogue/feedback/business-details visibility.
+3. Owner confirmation for all 23 RLS-enabled/no-policy internal tables.
+4. QA notification concurrency test, Edge HTTP/auth invocation, and real FCM delivery remain unverified; current QA has no test users/events/active push tokens.
+5. Real OTP, GPS, payment, push, customer/driver/partner/admin cross-role checks on supported physical devices require owner credentials/devices/test accounts.
+
+**No production DB/Auth/Edge Function change, merge, or live deployment occurred. Phase 2 remains BLOCKED / NOT ACCEPTED; Phase 3–9 are not advanced ahead of this gate.**
