@@ -58,3 +58,11 @@ No merge or live deployment.
 - Static triage of the remaining 50: 41 caller/ownership markers, 1 admin-guard marker (`fr_cancel_ride`), and 8 public/approved-list functions with no simple auth marker. These markers are triage only; source review/owner visibility acceptance remains required.
 - Latest CI at head `97211bdbf744b5c51f21ad5009c1846501f2b451`: workflow/source regression `45131985938` PASS; Regression `45131985922`, TASKO/Laundry/Admin `45131985913`, Quality Gate `45131986043` in progress. Full Phase 3 UI suite remains untested on its branch.
 - Phase 2 is still NOT ACCEPTED; owner settings/visibility/table acceptance, 50 remaining function checks, push/HTTP/device/credential gates remain pending.
+
+
+## Latest Phase 2 continuation — 2026-11-23
+
+- Three further production tests passed in rollback-only authenticated transaction: customer parcel-delivery OTP RPC returned expected no-parcel denial (no OTP issued); free-referral check returned false; ride-payment-state returned `not_started`. Read-only preconditions showed no synthetic parcel/referral/subscription/payment rows; post-check found zero synthetic data in 11 table groups.
+- Production verified role/ownership function coverage: **41/88; 47 remaining**. Remaining-function marker triage: 38 caller/ownership markers, 1 admin-guard (`fr_cancel_ride`), 8 public/approved-data surfaces requiring owner acceptance.
+- Latest full CI before this documentation update, head `428934eec3d41482fb43a4162ebe3c78d3cdc4c9`: source/workflow `45132193156`, TASKO/Laundry/Admin `45132193130`, Regression `45132193047`, Quality Gate `45132193105` all completed success. Phase 2 UI migration suite skipped. Exact latest test totals not available from job metadata; previous log evidence is 47/47 safe browser, 9/9 Node, 5/5 core.
+- Phase 2 still NOT ACCEPTED; owner settings/visibility/table acceptance, 47 remaining RPC tests, QA push/concurrency, and physical device/credential integration remain blockers.
