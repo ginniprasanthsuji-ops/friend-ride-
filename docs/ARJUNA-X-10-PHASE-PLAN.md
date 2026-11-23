@@ -453,3 +453,12 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - The latest verified code CI SHA remains `b3c0dd59b34af006664329d959337bc3a40a9188`; later status-plan documentation is not represented by that run. CI is successful for the notification cleanup code, not proof of device-level worker migration.
 - No safe additional code patch was identified without installed-device/service-worker migration evidence. Phase 2 remains **NOT ACCEPTED**. Remaining release gates are unchanged: official 512/maskable icon proof, installed PWA update/offline/background notification testing, notification architecture decision and device delivery evidence, QA backend integration E2E, complete QA SECDEF/RLS/Edge-secret review, and owner verification of branch protection/required checks.
 - No production/QA data changes, backend/schema/auth/payment changes, main merge, or deployment. Production remains untouched.
+
+
+## Pass 86 — Expanded QA SECURITY DEFINER review (read-only, 2026-11-23)
+
+- Requeried the QA project's complete executable SECURITY DEFINER function inventory: 25 functions are executable by authenticated; one `fr_public_homepage_feedback` is also executable by anon. This confirms advisor inventory; no production query/change.
+- Focused source review of `fr_customer_list_approved_service_providers` and `fr_customer_list_approved_stores_geo`: grants are authenticated-only; provider listing returns provider phone/service area and store listing returns business address/coordinates. These are business-facing fields, but release review should confirm user-facing privacy/consent and that no unnecessary sensitive fields are exposed. They do not grant anon execution in current ACL query.
+- `fr_public_homepage_feedback` is anon-executable and returns only published homepage feedback, max 20 rows, with display name capped to 80 characters and fallback label; release review still needs explicit consent/privacy/abuse checks for message text and public display.
+- Ride lifecycle/details functions reviewed in this pass require authenticated users and scope updates/queries to assigned ride/driver/customer plus permitted ride states. Admin assignment/review functions check `admin_users`. Registration RPC validates authenticated role, profile and role-specific fields. This is source-level sampling, not full exhaustive review of all 25.
+- Security review status remains **INCOMPLETE**. No function, grant, RLS, schema, or data was changed. Production remains untouched. Phase 2 NOT ACCEPTED; no main merge/deploy.
