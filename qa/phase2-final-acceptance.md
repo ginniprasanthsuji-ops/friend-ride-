@@ -27,5 +27,9 @@ Scope: QA-only; production/main remains untouched.
 4. Full UI-migration browser regression suite is skipped in current runs.
 5. manifest.json and manifest.webmanifest have differing start_url, scope, and theme/background settings; resolve/verify before release.
 
-## Decision
-Phase 2 automated QA closure accepted at 95% for development continuation. Remaining live/security/integration items are deferred to Phase 9/10 release gate. Do not merge to main or deploy production based on this acceptance. Auth/RLS and full regression remain mandatory before release.
+## Decision — corrected sequential gate
+**Phase 2 is NOT accepted for advancement to Phase 3.** This file records the automated QA checks and isolation evidence only; the earlier phrase “accepted at 95% for development continuation” and deferral of unresolved Phase 2 security blockers to Phase 9/10 is withdrawn because it conflicts with the sprint's sequential gate.
+
+Fresh evidence (2026-11-23): production admin-RPC role-negative coverage is 15/88 authenticated-executable SECURITY DEFINER functions; 73 remain untested. QA coverage is 22/25, with 3 public/approved-data visibility surfaces untested. Leaked-password protection remains disabled, 23 RLS/no-policy internal tables require owner confirmation, and real OTP/GPS/payment/push/device checks are pending. Phase 2 must close these blockers before Phase 3 starts.
+
+No merge or live deployment.
