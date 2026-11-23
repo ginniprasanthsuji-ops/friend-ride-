@@ -74,14 +74,14 @@ export class TaskExecutionRuntime {
       let attempts = 0;
       while (attempts <= actionRetries) {
         if (options.signal?.aborted) {
-          results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled before attempt" });
+          results.push({ actionId: action.id.trim(), status: "SKIPPED", attempts, error: "Execution cancelled before attempt" });
           break;
         }
         attempts += 1;
         try {
           const output = await this.executor.execute(action, options.signal);
           if (options.signal?.aborted) {
-            results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled after action completion" });
+            results.push({ actionId: action.id.trim(), status: "SKIPPED", attempts, error: "Execution cancelled after action completion" });
             break;
           }
           results.push({ actionId: action.id.trim(), status: "SUCCEEDED", attempts, output });
@@ -90,7 +90,7 @@ export class TaskExecutionRuntime {
           const rawMessage = error instanceof Error ? error.message : String(error);
           const message = rawMessage.slice(0, 500);
           if (options.signal?.aborted) {
-            results.push({ actionId: action.id, status: "SKIPPED", attempts, error: "Execution cancelled during action" });
+            results.push({ actionId: action.id.trim(), status: "SKIPPED", attempts, error: "Execution cancelled during action" });
             break;
           }
           if (attempts > actionRetries) {
