@@ -9,7 +9,7 @@ Branch: `arjuna-x/phase-2-repository-assets-inventory`
 - Phase 3 design-system stylesheet is integrated at the shell level and the body carries `fr-phase3-shell`.
 - Automated static baseline guard: `tests/phase3-design-system.test.cjs`.
 - Runtime smoke: `qa/phase3-shell-visual-smoke.spec.js` (stylesheet load, shell class, inherited palette tokens on all 58 pages, body background, orange CTA contrast and keyboard focus indicator).
-- CI #780 verified SUCCESS for the 58-page baseline guard. Runtime smoke CI #781/#782 is pending at this inventory update.
+- CI #780 was previously reported SUCCESS for the 58-page baseline guard. Runtime smoke status was not re-verified at this inventory update; check the current branch commit before acceptance.
 - This proves CSS shell integration/inheritance only. It does **not** constitute screenshot-based, route-by-route visual acceptance or physical-device QA.
 
 ## Route checklist
@@ -49,7 +49,7 @@ Branch: `arjuna-x/phase-2-repository-assets-inventory`
 ### Home services, TASKO/GIGGER and laundry
 - [ ] `homeServices`
 - [ ] `laundryServices`
-- [ ] `technicianRegister)
+- [ ] `technicianRegister`
 
 ### Customer and driver/partner dashboards
 - [ ] `customerDashboard`
