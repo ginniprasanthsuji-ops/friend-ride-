@@ -97,3 +97,11 @@ test('Phase 3 role launcher uses scoped Navy/Orange/White palette', () => {
     assert.ok(design.includes(selector), `missing role launcher palette selector: ${selector}`);
   }
 });
+
+
+test('Phase 3 component rules remain shell-scoped (root token block is the only global rule)', () => {
+  const selectorLines = design.split(/\n/).map(line => line.trim()).filter(line => line.includes('{') && !line.startsWith('@') && !line.startsWith(':root') && !line.startsWith('/*') && !line.startsWith('*'));
+  for (const selector of selectorLines) {
+    assert.ok(selector.startsWith('.fr-phase3-shell'), `unexpected unscoped Phase 3 rule: ${selector}`);
+  }
+});
