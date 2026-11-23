@@ -716,9 +716,16 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 
 ## Phase 3 — Pass 108 (controlled shell integration, 2026-11-23)
 
-- Implemented the first integration-safe app-shell step on the QA branch: added the Phase 3 design-system stylesheet after the existing inline CSS and before learning-module CSS; applied explicit `fr-phase3-shell` class to the app body.
+- Implemented the first integration-safe app-shell step on the QA branch: added the Phase 3 design-system stylesheet after existing inline CSS and before learning-module CSS; applied explicit `fr-phase3-shell` class to the app body.
 - Scoped broad design-system selectors and responsive/safe-area rules to the shell root to avoid affecting unrelated documents; corrected a selector-scope issue during review. The `:root` token definitions remain global, while component rules are root-scoped.
 - Extended Phase 3 Node regression checks to assert shell root, stylesheet integration, scoped component selectors, safe-area and reduced-motion coverage, and absence of duplicate scope nesting.
-- QA branch code commits: `e1df7b8b` (initial stylesheet integration), `107830fd` (HTML integration), `23803056` and `3e47736e` (selector scoping corrections), `70605d5b`, `46ccd325`, `f6253794`, `33768d8a` (regression test integration and syntax/newline corrections). Latest HEAD: `33768d8ab424fc8212057c98a7eb0018be498020`.
-- CI run **#760 / 45101678558** was queued for latest HEAD at verification; earlier intermediate commits produced run #754 failure and #755–#759 were pending/in progress. Therefore latest code and test suite are **not yet runtime-verified**; wait for #760 and inspect its jobs/logs before acceptance.
+- Code/test commit sequence: `e1df7b8b`, `107830fd`, `23803056`, `3e47736e`, `70605d5b`, `46ccd325`, `f6253794`, `33768d8a`. CI #760 verified SUCCESS on `33768d8ab424fc8212057c98a7eb0018be498020` (typecheck, core typecheck, runtime build, unit, core, browser regression).
 - No business logic, route, API, auth, payment, backend/schema, main, or production deployment changes. Phase 3 remains IN PROGRESS; Phase 2 remains HOLD / DEFERRED / NOT ACCEPTED.
+
+## Phase 3 — Pass 109 (supporting component palette, 2026-11-23)
+
+- Freshly inspected the QA branch and existing Phase 3 shell integration.
+- Added shell-scoped palette refinements for notices, status badges, success status, tags, stock markers, fresh markers and links; all selectors remain scoped to `fr-phase3-shell`.
+- Added Node regression coverage for the supporting component palette.
+- CI runs #761 and #762 were triggered by the CSS/test commits and were pending at the time of this documentation update; verify both and prefer the latest branch HEAD result.
+- Phase 3 remains IN PROGRESS pending CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
