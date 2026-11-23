@@ -73,7 +73,10 @@ export class TaskExecutionRuntime {
       if (ids && ids.some((id) => !seenIds.has(id.trim()))) throw new Error(`${label} contains IDs not present in this execution plan`);
     }
     if (options.signal !== undefined && (!options.signal || typeof options.signal.aborted !== "boolean" || typeof options.signal.addEventListener !== "function")) throw new Error("signal must be a valid AbortSignal");
-    const confirmed = new Set((options.userConfirmedActionIds ?? []).map((id) => id.trim()));
+    const confirmedIds = new Set((options.userConfirmedActionIds ?? []).map((id) => id.trim()));
+    const specialIds = new Set((options.specialApprovalActionIds ?? []).map((id) => id.trim()));
+    if ([...confirmedIds].some((id) => specialIds.has(id))) throw new Error("Action IDs cannot have both confirmation and special approval grants");
+    const confirmed = confirmedIds;
     const specialApproved = new Set((options.specialApprovalActionIds ?? []).map((id) => id.trim()));
     const results: ActionExecutionResult[] = [];
 
