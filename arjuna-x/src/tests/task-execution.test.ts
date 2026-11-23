@@ -244,3 +244,14 @@ test("runtime rejects malformed cancellation signal before executor", async () =
   await assert.rejects(() => runtime.run([action], { signal: { aborted: false } as AbortSignal }), /signal must be a valid AbortSignal/);
   assert.equal(executions, 0);
 });
+
+test("valid cancellation signal is passed to executor and execution completes", async () => {
+  const controller = new AbortController();
+  let receivedSignal: AbortSignal | undefined;
+  const runtime = new TaskExecutionRuntime({
+    async execute(_current, signal) { receivedSignal = signal; return "done"; },
+  });
+  const result = await runtime.run([action], { signal: controller.signal });
+  assert.equal(receivedSignal, controller.signal);
+  assert.equal(result[0]?.status, "SUCCEEDED");
+});
