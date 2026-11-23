@@ -72,3 +72,16 @@ Limitations / follow-up:
 - Registration RPC accepts sensitive identity fields; confirm KYC document storage/access and data minimization.
 - Review all function bodies for safe search_path, role/ownership checks, and privileged writes.
 - QA-only, read-only; no schema or data mutations.
+
+## Additional QA SQL audits for Phase 1–7 continuation (read-only)
+- Public base-table RLS coverage: 21/21 tables have RLS enabled; 0 are FORCE RLS. Policy counts were returned per table; tables show policies rather than blanket access.
+- SECURITY DEFINER ACL metadata: 28 functions. Authenticated EXECUTE appears granted to workflow functions; anon EXECUTE is observed on fr_public_homepage_feedback only. Notification-preference bootstrap, notification-claim batch, and privileged-field guard are not granted to authenticated in the reported ACLs. ACLs are metadata; body review is still required.
+- profiles has a BEFORE UPDATE trigger qa_guard_profile_privileged_fields calling qa_guard_profile_privileged_fields(). Trigger presence confirmed; trigger body not yet reviewed.
+- Storage buckets query returned no rows in QA project. This is a significant QA readiness concern: confirm whether KYC/profile uploads are expected in this project and whether bucket setup was omitted. No buckets/policies were created.
+- Extensions installed: pg_cron 1.6.4, pg_stat_statements 1.11, pgcrypto 1.3, plpgsql 1.0, supabase_vault 0.3.2, uuid-ossp 1.1.
+- No data/schema mutation, production query, migration, merge or deployment.
+## Priority blockers from this SQL checkpoint
+1. QA storage buckets absent (verify project and app environment before considering KYC upload flow testable).
+2. Review all SECURITY DEFINER function bodies and execute ACLs, especially admin and notification workflows.
+3. Inspect profile guard trigger function body; test role/approval-field tampering.
+4. Run actual auth-role integration tests in controlled QA identities; metadata alone does not prove behavior.
