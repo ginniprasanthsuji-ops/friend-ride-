@@ -7,7 +7,7 @@
   --fr-radius-card:18px; --fr-radius-control:12px; --fr-shadow-card:0 5px 18px rgba(7,28,70,.07);
   --fr-focus:0 0 0 3px rgba(255,107,0,.22);
 }
-.fr-phase3-shell body{background:var(--fr-bg);color:var(--fr-ink)}
+.fr-phase3-shell{background:var(--fr-bg);color:var(--fr-ink)}
 .fr-phase3-shell .card, .fr-phase3-shell .feature-box, .fr-phase3-shell .stat, .fr-phase3-shell .kpi, .fr-phase3-shell .offer-card, .fr-phase3-shell .listrow, .fr-phase3-shell .fr-payment-method{
   background:var(--fr-surface);border-color:var(--fr-border);box-shadow:var(--fr-shadow-card);color:var(--fr-ink)
 }
@@ -24,29 +24,29 @@
 .fr-phase3-shell .bottom button.active, .fr-phase3-shell .premium-bottom button.active{color:var(--fr-orange)}
 .fr-phase3-shell .tile, .fr-phase3-shell .home-more-grid button{border-color:var(--fr-border);color:var(--fr-ink)}
 .fr-phase3-shell :focus-visible{outline:2px solid var(--fr-orange);outline-offset:2px}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){.fr-phase3-shell{scroll-behavior:auto}.fr-phase3-shell *, .fr-phase3-shell *::before, .fr-phase3-shell *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
 /* Pass 98 — viewport/safe-area shell hardening. Additive and behavior-neutral. */
-.fr-phase3-shell body{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
-.fr-phase3-shell .topbar{padding-top:calc(11px + env(safe-area-inset-top))}
-.fr-phase3-shell .bottom{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
-.fr-phase3-shell .drawer{padding-top:calc(17px + env(safe-area-inset-top));padding-bottom:calc(25px + env(safe-area-inset-bottom))}
-.fr-phase3-shell .modal{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
-.fr-phase3-shell #rideMap, .fr-phase3-shell #trackingMap, .fr-phase3-shell .market-map{max-width:100%}
+.fr-phase3-shell .fr-phase3-shell{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+.fr-phase3-shell .fr-phase3-shell .topbar{padding-top:calc(11px + env(safe-area-inset-top))}
+.fr-phase3-shell .fr-phase3-shell .bottom{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+.fr-phase3-shell .fr-phase3-shell .drawer{padding-top:calc(17px + env(safe-area-inset-top));padding-bottom:calc(25px + env(safe-area-inset-bottom))}
+.fr-phase3-shell .fr-phase3-shell .modal{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.fr-phase3-shell .fr-phase3-shell #rideMap, .fr-phase3-shell .fr-phase3-shell #trackingMap, .fr-phase3-shell .fr-phase3-shell .market-map{max-width:100%}
 @media(max-width:380px){
-  main{padding:10px}
-  .card{padding:14px;border-radius:16px}
-  .topbar{gap:8px;padding-left:10px;padding-right:10px}
-  .iconbtn{width:40px;height:40px}
-  .brand b{font-size:14px}
-  .brand small{font-size:10px}
-  .top-action{padding:9px 10px}
-  .grid{gap:8px}
-  .tile{padding:12px;min-height:106px}
-  .home-pro-services{gap:7px}
-  .home-pro-service{padding:10px 4px}
+  .fr-phase3-shell main{padding:10px}
+  .fr-phase3-shell .card{padding:14px;border-radius:16px}
+  .fr-phase3-shell .topbar{gap:8px;padding-left:10px;padding-right:10px}
+  .fr-phase3-shell .iconbtn{width:40px;height:40px}
+  .fr-phase3-shell .brand b{font-size:14px}
+  .fr-phase3-shell .brand small{font-size:10px}
+  .fr-phase3-shell .top-action{padding:9px 10px}
+  .fr-phase3-shell .grid{gap:8px}
+  .fr-phase3-shell .tile{padding:12px;min-height:106px}
+  .fr-phase3-shell .home-pro-services{gap:7px}
+  .fr-phase3-shell .home-pro-service{padding:10px 4px}
 }
 @media(min-width:650px){
-  body{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
-  .bottom{max-width:920px;margin:0 auto;left:0;right:0}
+  .fr-phase3-shell{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+  .fr-phase3-shell .bottom{max-width:920px;margin:0 auto;left:0;right:0}
 }
