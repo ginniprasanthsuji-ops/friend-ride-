@@ -1,0 +1,18 @@
+const assert=require("node:assert/strict");
+const {validateAuditEvent,validateTimeline,buildQaReport}=require("../qa/observability-audit-report-contract.cjs");
+const base=(o={})=>({event:"qa.started",module:"phase8",status:"started",timestamp:"2026-11-24T00:00:00Z",request_id:"req-12345678",actor_role:"qa",...o});
+assert.equal(validateAuditEvent(base()).valid,true);
+assert.equal(validateAuditEvent(base({event:"unknown.event"})).valid,false);
+assert.equal(validateAuditEvent(base({password:"secret"})).valid,false);
+assert.equal(validateAuditEvent(base({message_body:"private"})).valid,false);
+assert.equal(validateAuditEvent(base({request_id:"bad"})).valid,false);
+assert.equal(validateAuditEvent(base({timestamp:"not-date"})).valid,false);
+assert.equal(validateAuditEvent(base({actor_role:"superuser"})).valid,false);
+assert.equal(validateAuditEvent(base({error_code:"bad code"})).valid,false);
+assert.equal(validateTimeline([base(),base({event:"qa.completed",status:"completed",request_id:"req-22345678",timestamp:"2026-11-24T00:01:00Z"})]).valid,true);
+assert.equal(validateTimeline([base({timestamp:"2026-11-24T00:02:00Z"}),base({request_id:"req-22345679",timestamp:"2026-11-24T00:01:00Z"})]).valid,false);
+assert.equal(validateTimeline([base(),base({request_id:"req-12345678"})]).valid,false);
+assert.equal(buildQaReport({phase:8,scope:"QA",commit_refs:[],files_verified:[],tests_authored:[],tests_executed:[],runtime_status:"not_run",limitations:[]}).valid,true);
+assert.equal(buildQaReport({phase:8}).valid,false);
+assert.equal(buildQaReport({phase:"eight",scope:"QA",commit_refs:[],files_verified:[],tests_authored:[],tests_executed:[],runtime_status:"passed",limitations:[]}).valid,false);
+console.log("Phase 8.16 assertions authored (execution pending).");
