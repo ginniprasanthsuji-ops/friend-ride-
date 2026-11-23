@@ -460,3 +460,9 @@ A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95
 - Production role/ownership evidence now 55/88; 33 remaining. Remaining triage: 24 caller/ownership-marker functions, 1 admin-guard, 8 public/approved-data surfaces pending owner acceptance.
 - CI on the then-current documentation head was in progress: Quality type/unit and source/workflow jobs PASS; browser regression and TASKO/Laundry/Admin were still running. Newest head final CI remains pending.
 - Release readiness BLOCKED and Phase 2 NOT accepted. Owner Auth/privacy/table confirmations, remaining 33 function reviews/tests, QA push HTTP/auth/concurrency, and physical device/credential integrations remain blockers. No production changes, merge, or deployment.
+
+
+## 27. CI completion correction — docs head 76e38 (2026-11-23)
+- All four workflows on 76e38b5167fb4db020d9bfcb0512a5fb1459a4e2 verified completed PASS: Regression 47/47 safe browser; Quality 9/9 Node, 5/5 core, 47/47 safe browser, typechecks/build; TASKO/Laundry/Admin 4/4; source regression 25 inline scripts plus learn-teach syntax. Full UI migration suite skipped.
+- Latest documentation-only head after that CI cannot be verified through the current Actions-list connector (it filters to PR-triggered runs); no code changes since verified code head. Latest docs-head CI remains unverified.
+- Release readiness BLOCKED. Production role/ownership test coverage 55/88, 33 remain; this is not acceptance. Owner/Auth/privacy/table approvals, QA push/concurrency/live delivery, and real-device/credential checks remain open. No production changes, merge, or deployment.
