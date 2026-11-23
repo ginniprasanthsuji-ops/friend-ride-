@@ -33,3 +33,12 @@ test('Phase 3 responsive and touch-target CSS contract remains present', () => {
   assert.match(learning, /min-height\s*:\s*44px/);
   assert.match(learning, /min-height\s*:\s*42px/);
 });
+
+test('Phase 3 palette and shared component selectors keep intended values', () => {
+  assert.match(design, /--fr-navy\s*:\s*#071c46/i);
+  assert.match(design, /--fr-orange\s*:\s*#ff6b00/i);
+  assert.match(design, /--fr-surface\s*:\s*#ffffff/i);
+  for (const selector of ['.topbar', '.hero', '.btn', '.bottom', '.card', ':focus-visible']) {
+    assert.ok(design.includes(selector), `missing shared selector contract: ${selector}`);
+  }
+});
