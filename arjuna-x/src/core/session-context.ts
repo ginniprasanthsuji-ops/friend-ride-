@@ -47,10 +47,11 @@ export class SessionContextStore {
   /** Returns a detached bounded fact snapshot, preventing callers from mutating session state. */
   getFactsSnapshot(sessionId: string, maxFacts = 20, maxValueChars = 500): Record<string, string> {
     if (!Number.isInteger(maxFacts) || maxFacts < 0 || maxFacts > 100) throw new Error("maxFacts must be between 0 and 100");
-    if (!Number.isInteger(maxValueChars) || maxValueChars < 1 || maxValueChars > this.maxMessageChars) throw new Error("maxValueChars is out of bounds");
+    if (!Number.isInteger(maxValueChars) || maxValueChars < 1 || maxValueChars > 8000) throw new Error("maxValueChars is out of bounds");
+    const boundedValueChars = Math.min(maxValueChars, this.maxMessageChars);
     return Object.fromEntries(
       Object.entries(this.requireSession(sessionId).facts).slice(-maxFacts)
-        .map(([key, value]) => [key.slice(0, 80), value.slice(0, maxValueChars)]),
+        .map(([key, value]) => [key.slice(0, 80), value.slice(0, boundedValueChars)]),
     );
   }
 
