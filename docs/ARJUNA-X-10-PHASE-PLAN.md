@@ -783,3 +783,10 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Updated the focus indicator to use darker orange `#c84b00` (about 4.7:1 against white) for visible keyboard outlines and focused input borders; retained the subtle focus glow. Added regression checks.
 - CI #771/#772 verified SUCCESS for Pass 115 role-launcher palette. #773 Pass 116 isolation guard, #774 Pass 117 CSS and #775 Pass 117 test are pending at this update.
 - Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
+
+
+## Phase 3 — Pass 118 (touch-target floor, 2026-11-23)
+
+- Added a scoped 44px minimum height for common top action, location, marketplace/category pill and bottom-navigation controls to improve mobile touch accessibility. Added static regression checks.
+- CI #771/#772 (Pass 115) and #773 (Pass 116 stylesheet-isolation guard) verified SUCCESS. #774/#775 (Pass 117 focus contrast), #776/#777 (Pass 118 touch targets) were pending at this update.
+- Phase 3 remains IN PROGRESS pending latest CI, route-level visual review and device/browser acceptance. Phase 2 remains HOLD / NOT ACCEPTED. No main merge or production deployment.
