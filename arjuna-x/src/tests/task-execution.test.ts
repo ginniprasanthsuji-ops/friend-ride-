@@ -179,3 +179,10 @@ test("cancelled result paths preserve normalized action IDs", async () => {
   assert.equal(result[0]?.actionId, "cancelled-id");
   assert.equal(result[0]?.status, "SKIPPED");
 });
+
+test("invalid planned action status is rejected before execution", async () => {
+  let executions = 0;
+  const runtime = new TaskExecutionRuntime({ async execute() { executions++; return "ok"; } });
+  await assert.rejects(() => runtime.run([{ ...action, status: "INVALID" as never }]), /Invalid task status/);
+  assert.equal(executions, 0);
+});
