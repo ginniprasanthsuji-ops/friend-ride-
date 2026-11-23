@@ -422,3 +422,11 @@ Phase 2 remains NOT ACCEPTED. Phase 9 notification architecture is now direction
 - Source reference search found no `firebase-messaging-sw.js` registration and no `sw.js` registration in repository. `index.html` registers only `service-worker.js` (including notification opt-in). Root `sw.js` is a legacy notification worker that deletes other caches during activation; `firebase-messaging-sw.js` imports Firebase compat SDK and uses the production Firebase project. They were NOT deleted because past installed-client registration and update/unregister behavior cannot be proven without browser/device testing.
 - Branch protection endpoint verification was attempted but GitHub integration returned 403 `Resource not accessible by integration`; owner-side settings verification is blocked by permissions.
 - Phase 2 inventory remains incomplete/NOT ACCEPTED: duplicate worker historical migration/device test; official 512/maskable fallback assets or launcher device proof; choose/approve WebPush-only architecture vs QA-safe FCM implementation; device install/update/offline and push tests; QA backend E2E; full RLS/security/Edge-secret review; branch protection owner verification. No main merge or production deployment.
+
+
+## Pass 82 — QA Supabase advisor baseline (read-only, 2026-11-23)
+
+- Ran Supabase security/performance/health advisors against QA project `FRIEND RIDE QA` (`pqsangtvietawkfgpgfu`) only. Health advisor returned no lints.
+- Security advisor reports **1 anon-executable SECURITY DEFINER function** (`public.fr_public_homepage_feedback`) and **25 authenticated-executable SECURITY DEFINER functions**. These are advisor warnings, not confirmed exploitable vulnerabilities; functions require manual review for auth guards, argument validation, ownership/admin checks and intentional grants. No SQL/schema/RLS changes were made.
+- Performance advisor baseline: **17 unindexed foreign keys**, **40 RLS auth-initplan warnings**, **12 unused indexes**, and **5 multiple-permissive-policy warnings**. These are performance review items; do not drop indexes or rewrite RLS without workload and regression evidence.
+- Production project was not queried or changed. Phase 2 remains NOT ACCEPTED until the security-function review and remaining inventory/device gates are closed or formally risk-accepted by the project owner.
