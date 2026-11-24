@@ -34,3 +34,23 @@ test('Phase 11 routing: learning category routes to learning module, not generic
 test('Phase 11 role dashboards are not falsely claimed as live backend dashboards', () => {
   assert.ok(app.includes('Learning module backend / dashboard scripts'));
 });
+
+test('Phase 11 registration: role-specific fields are controlled and disabled when hidden', () => {
+  assert.ok(app.includes("frSetRegistrationGroup('driverRegDocs',registering&&role==='driver')"));
+  assert.ok(app.includes("frSetRegistrationGroup('partnerRegFields',registering&&role==='partner')"));
+  assert.ok(app.includes("frSetRegistrationGroup('customerRegPhotoFields',registering&&role==='customer')"));
+  assert.ok(app.includes("el.querySelectorAll('input,select,textarea,button').forEach(control=>{control.disabled=!visible;})"));
+});
+
+test('Phase 11 registration: common and role-specific fields are not exposed across roles', () => {
+  assert.ok(app.includes("frSetRegistrationGroup('regAvatarFields',registering&&['customer','driver','partner'].includes(role))"));
+  assert.ok(app.includes("frSetRegistrationGroup('driverExtraFields',registering&&role==='driver')"));
+  assert.ok(app.includes("frSetRegistrationGroup('partnerExtraFields',registering&&role==='partner')"));
+});
+
+test('Phase 11 page isolation: active page is exclusive and hidden pages are inert', () => {
+  assert.ok(app.includes("page.classList.toggle('active',isActive)"));
+  assert.ok(app.includes("page.setAttribute('aria-hidden',isActive?'false':'true')"));
+  assert.ok(app.includes("page.inert=!isActive"));
+  assert.ok(app.includes("observer.observe(document.querySelector('main')||document.body"));
+});
