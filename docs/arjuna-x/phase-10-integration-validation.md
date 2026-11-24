@@ -238,3 +238,11 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Whitespace variants cannot bypass global event-ID replay protection or per-ride cooldown.
 - [x] Deterministic regression test added; QA guard only, no production behavior or side effects.
 - CI validation pending.
+
+
+### Canonical terminal reset and capacity recovery
+- [x] Terminal reset trims ride ID to the same canonical form used by warning evaluation.
+- [x] Whitespace variants cannot leave a ride tracking slot unreleased after terminal state.
+- [x] Reset frees ride capacity for another ride without clearing global event replay history.
+- [x] Added deterministic regression; QA-only, no production effects.
+- CI validation pending.
