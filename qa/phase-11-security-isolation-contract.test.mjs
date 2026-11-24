@@ -86,3 +86,8 @@ test('Phase 11 browser specs use the Tier-A local-only network fixture', () => {
   assert.ok(localFixture.includes("requestUrl.origin === localOrigin"));
   assert.ok(localFixture.includes("route.abort('blockedbyclient')"));
 });
+
+
+test('Phase 11 QA safety: browser service workers are blocked to prevent bypassing request interception', () => {
+  assert.ok(playwrightConfig.includes("serviceWorkers: 'block'"));
+});
