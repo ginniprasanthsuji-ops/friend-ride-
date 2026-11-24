@@ -23,6 +23,9 @@ Build a predictable, testable runtime layer for ARJUNA X that coordinates safe a
 - Diagnostics sanitizer: event-type and field allowlists, bounded values, rejects invalid contexts; ignores payloads/prompts/tokens/secret-like fields. No automatic logging or telemetry transport.
 - Privacy regression tests added to CI.
 
+- Cross-module integration suite covers lifecycle, correlation context, sanitized diagnostics, retry decision and safe fallback in combined request scenarios, including non-idempotent payment timeout and policy-blocked cases.
+- Integration regression suite added to CI.
+
 ## Remaining workstreams
 1. Typed runtime request/result contract and integration surface.
 2. Harden lifecycle edge cases and concurrency semantics.
