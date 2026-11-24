@@ -131,3 +131,11 @@ test('Phase 11 browser coverage count is fixed at four registration plus one pag
   assert.equal((registrationSpec.match(/\\btest\\(/g) || []).length, 4);
   assert.equal((pageIsolationSpec.match(/\\btest\\(/g) || []).length, 1);
 });
+
+
+test('Phase 11 local-only fixture records and blocks every non-local origin', () => {
+  assert.ok(localFixture.includes('const blockedOrigins = []'));
+  assert.ok(localFixture.includes('blockedOrigins.push(requestUrl.origin)'));
+  assert.ok(localFixture.includes("route.abort('blockedbyclient')"));
+  assert.ok(localFixture.includes('page.__frBlockedOrigins = blockedOrigins'));
+});
