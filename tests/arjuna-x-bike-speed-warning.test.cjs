@@ -74,3 +74,14 @@ test('Bike speed warning: Telugu alert copy and warning tone are proposed withou
   assert.deepEqual(result.recipients, ['driver', 'customer']);
   assert.equal(result.sideEffects, false, 'QA decision must not deliver notification or play tone');
 });
+
+
+test('Bike speed policy: fractional threshold boundary is deterministic', () => {
+  const below = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 49.999, accuracyMeters: 5, nowMs: 1 });
+  const exact = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 50, accuracyMeters: 5, nowMs: 2 });
+  const above = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 50.001, accuracyMeters: 5, nowMs: 3 });
+  assert.equal(below.status, 'within_limit');
+  assert.equal(exact.status, 'within_limit');
+  assert.equal(above.status, 'warning_proposal');
+  for (const result of [below, exact, above]) assert.equal(result.sideEffects, false);
+});
