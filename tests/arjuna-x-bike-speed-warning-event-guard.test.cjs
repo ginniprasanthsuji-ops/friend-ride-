@@ -39,3 +39,24 @@ test('Phase 10 warning-event guard: invalid capacity configuration throws', () =
   assert.throws(() => new BikeSpeedWarningEventGuard({ maxEvents: 0 }), /invalid_max_events/);
   assert.throws(() => new BikeSpeedWarningEventGuard({ maxRides: -1 }), /invalid_max_rides/);
 });
+
+test('Phase 10 warning-event guard: stale timestamp is rejected without advancing state', () => {
+  const guard = new BikeSpeedWarningEventGuard();
+  assert.equal(guard.evaluate({ rideId: 'ride-1', eventId: 'evt-1', nowMs: 20_000 }).status, 'proposal_accepted');
+  assert.deepEqual(guard.evaluate({ rideId: 'ride-1', eventId: 'evt-2', nowMs: 19_999 }), { status: 'blocked', reason: 'stale_event_time', sideEffects: false });
+  assert.equal(guard.evaluate({ rideId: 'ride-1', eventId: 'evt-3', nowMs: 80_000 }).status, 'proposal_accepted');
+});
+
+test('Phase 10 warning-event guard: terminal ride state clears cooldown only, not replay history', () => {
+  const guard = new BikeSpeedWarningEventGuard({ cooldownMs: 60_000, maxEvents: 10, maxRides: 1 });
+  assert.equal(guard.evaluate({ rideId: 'ride-1', eventId: 'evt-1', nowMs: 1000 }).status, 'proposal_accepted');
+  assert.deepEqual(guard.terminateRide({ rideId: 'ride-1', terminalState: 'completed' }), { status: 'reset', rideId: 'ride-1', terminalState: 'completed', sideEffects: false });
+  assert.equal(guard.evaluate({ rideId: 'ride-1', eventId: 'evt-2', nowMs: 2000 }).status, 'proposal_accepted', 'terminal reset removes cooldown');
+  assert.deepEqual(guard.evaluate({ rideId: 'ride-1', eventId: 'evt-1', nowMs: 2001 }), { status: 'blocked', reason: 'duplicate_event_id', sideEffects: false });
+});
+
+test('Phase 10 warning-event guard: terminal reset rejects unknown states and invalid IDs', () => {
+  const guard = new BikeSpeedWarningEventGuard();
+  assert.deepEqual(guard.terminateRide({ rideId: 'ride', terminalState: 'active' }), { status: 'blocked', reason: 'invalid_terminal_context', sideEffects: false });
+  assert.deepEqual(guard.terminateRide({ rideId: '', terminalState: 'cancelled' }), { status: 'blocked', reason: 'invalid_terminal_context', sideEffects: false });
+});
