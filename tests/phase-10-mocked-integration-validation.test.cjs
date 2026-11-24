@@ -293,3 +293,28 @@ test('Phase 10 session-bound contract: lifecycle source is authoritative and cal
   assert.equal(inactive.status, 'blocked');
   assert.equal(inactive.reason, 'session_not_active');
 });
+
+test('Phase 10 session-bound role matrix: customer-only ride selection enforced for all roles', () => {
+  const { evaluateSessionBoundRequest } = require('../qa/arjuna-x-session-bound-runtime.cjs');
+  for (const role of ['customer', 'driver', 'partner', 'admin']) {
+    const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 2, maxRequestsPerSession: 2 });
+    life.openSession('s-role-' + role, role);
+    const ride = evaluateSessionBoundRequest({
+      lifecycle: life, sessionId: 's-role-' + role, requestSessionId: 's-role-' + role,
+      intent: { type: 'select_ride', rideType: 'bike' }
+    });
+    if (role === 'customer') {
+      assert.equal(ride.status, 'proposal');
+      assert.equal(ride.sideEffects, false);
+    } else {
+      assert.equal(ride.status, 'blocked');
+      assert.equal(ride.sideEffects, false);
+    }
+    const navigation = evaluateSessionBoundRequest({
+      lifecycle: life, sessionId: 's-role-' + role, requestSessionId: 's-role-' + role,
+      intent: { type: 'navigate', target: 'profile' }
+    });
+    assert.equal(navigation.status, 'proposal');
+    assert.equal(navigation.sideEffects, false);
+  }
+});
