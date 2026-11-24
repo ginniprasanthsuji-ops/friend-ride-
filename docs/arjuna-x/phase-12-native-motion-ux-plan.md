@@ -1,7 +1,7 @@
 # Phase 12 — Native Motion & UX Safety
 
 ## Status
-- Progress: 40%
+- Progress: 45%
 - UI-only motion layer committed and CI-verified.
 - QA branch only; no merge/deployment.
 
@@ -29,7 +29,15 @@
 - Reduced-motion rules disable Phase 12 animations and transitions.
 - Next safe improvement: apply shimmer only to dedicated, noninteractive placeholder surfaces in selected loading states, then verify that placeholders are removed/replaced correctly and do not interfere with async error or empty states.
 
+## Selected Loading Placeholder Implementation (2026-11-24)
+- Opt-in shimmer applied to three loading placeholders only: partner order list, customer store catalogue, and customer shop orders.
+- Placeholders use status roles and accessible labels.
+- Existing async result paths remain in place: success renders results, empty results render the existing empty-state UI, and failures render existing error notices.
+- No service logic or request flow changed.
+
 ## Verification
+- Extended Node contract tests cover selected placeholder application, CSS opt-in behavior, reduced-motion disabling, and expected success/empty/error paths.
+- Tests have not been executed in this environment; CI status is not claimed.
 - Added a dedicated Node test contract for opt-in shimmer CSS, non-interactive placeholder behavior, and reduced-motion disabling; test file committed, but not executed in this environment.
 - Phase 12 motion contract test extended to drawer/backdrop and reduced-motion behavior.
 - Latest full QA run after drawer motion: SUCCESS (run 45371951789).
