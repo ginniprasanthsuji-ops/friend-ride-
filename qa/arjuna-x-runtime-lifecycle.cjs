@@ -5,7 +5,7 @@
  * Local lifecycle coordination only: no backend, network, booking, payment, GPS or mic effects.
  */
 const SAFE_ROLES = new Set(['customer', 'driver', 'partner', 'admin']);
-const REQUEST_STATES = new Set(['running', 'completed', 'failed', 'cancelled']);
+const REQUEST_STATES = new Set(['running', 'completed', 'failed', 'cancelled', 'timed_out']);
 
 function validId(value, label) {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > 128) {
@@ -78,6 +78,19 @@ class RuntimeSessionLifecycle {
     record.endedAt = this.now();
     session.lastActivityAt = record.endedAt;
     return { status: outcome };
+  }
+
+  timeoutRequest(sessionId, requestId) {
+    const session = this._getActive(sessionId);
+    if (!session) return { status: 'blocked', reason: 'session_not_active' };
+    const record = session.requests.get(validId(requestId, 'requestId'));
+    if (!record) return { status: 'blocked', reason: 'request_not_found' };
+    if (record.status !== 'running') return { status: 'blocked', reason: 'request_not_running' };
+    record.controller.abort();
+    record.status = 'timed_out';
+    record.endedAt = this.now();
+    session.lastActivityAt = record.endedAt;
+    return { status: 'timed_out' };
   }
 
   cancelRequest(sessionId, requestId) {
