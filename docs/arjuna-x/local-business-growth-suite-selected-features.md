@@ -47,3 +47,11 @@ Status: planning/contract stage. This document records the user's selected featu
 - Selection confirmed: 5 of 5 modules.
 - Design contract recorded.
 - Implementation not yet started; no production deployment or merge.
+
+
+## Coupon Market addition (requested)
+- Store creates coupon with title, terms, type, face value, sale price, minimum purchase, validity window, inventory cap, and per-customer limit.
+- Customer browses active coupons, buys through existing payment flow, and receives a unique coupon QR/token only after trusted payment verification.
+- Store partner redeems one-time token; backend validates coupon validity, store ownership, expiry, and duplicate redemption atomically.
+- Admin approval/reporting and coupon sales/redeem metrics.
+- Schema proposal committed separately; trusted purchase issuance, payment confirmation, and redemption RPCs/UI remain pending. Do not deploy this migration yet.
