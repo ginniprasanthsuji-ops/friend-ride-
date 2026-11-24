@@ -24,3 +24,18 @@ test('Phase 10 warning-event guard: invalid IDs and time fail closed', () => {
   assert.deepEqual(guard.evaluate({ rideId: 'ride', eventId: 'evt', nowMs: -1 }), { status: 'blocked', reason: 'invalid_event_context', sideEffects: false });
   assert.deepEqual(guard.evaluate({ rideId: 'ride', eventId: 'evt', nowMs: 1.5 }), { status: 'blocked', reason: 'invalid_event_context', sideEffects: false });
 });
+
+test('Phase 10 warning-event guard: capacity limits fail closed and do not grow unbounded', () => {
+  const eventLimited = new BikeSpeedWarningEventGuard({ maxEvents: 1, maxRides: 2 });
+  assert.equal(eventLimited.evaluate({ rideId: 'ride-1', eventId: 'evt-1', nowMs: 1 }).status, 'proposal_accepted');
+  assert.deepEqual(eventLimited.evaluate({ rideId: 'ride-1', eventId: 'evt-2', nowMs: 60_001 }), { status: 'blocked', reason: 'event_capacity_reached', sideEffects: false });
+
+  const rideLimited = new BikeSpeedWarningEventGuard({ maxEvents: 5, maxRides: 1 });
+  assert.equal(rideLimited.evaluate({ rideId: 'ride-1', eventId: 'evt-1', nowMs: 1 }).status, 'proposal_accepted');
+  assert.deepEqual(rideLimited.evaluate({ rideId: 'ride-2', eventId: 'evt-2', nowMs: 1 }), { status: 'blocked', reason: 'ride_capacity_reached', sideEffects: false });
+});
+
+test('Phase 10 warning-event guard: invalid capacity configuration throws', () => {
+  assert.throws(() => new BikeSpeedWarningEventGuard({ maxEvents: 0 }), /invalid_max_events/);
+  assert.throws(() => new BikeSpeedWarningEventGuard({ maxRides: -1 }), /invalid_max_rides/);
+});
