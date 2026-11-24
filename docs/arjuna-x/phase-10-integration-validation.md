@@ -93,3 +93,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Timeout terminal state rejects completion and same request-ID replay.
 - [x] TTL expiry boundary is exact; expired session cannot be revived with same ID.
 - [x] These scenarios remain deterministic and mock-only.
+
+
+## Authoritative role/session binding regression checkpoint
+- [x] Runtime bridge obtains role from lifecycle authority; customer-only ride-selection proposal is enforced across customer/driver/partner/admin matrix.
+- [x] Cross-session request ID mismatch blocks.
+- [x] Invalid lifecycle source fails closed.
+- [x] All matrix outcomes are proposal/block only with side effects disabled.
