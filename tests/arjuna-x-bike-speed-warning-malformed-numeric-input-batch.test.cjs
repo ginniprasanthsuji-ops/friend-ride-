@@ -46,7 +46,11 @@ test('Phase 10 malformed numeric GPS and time inputs fail closed in a determinis
     assert.equal(result.sideEffects, false);
   }
 
-  for (const lastWarningAtMs of [NaN, Infinity, -Infinity, null, '1000', -1]) {
+  const defaultedOptionalInputs = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 51, accuracyMeters: 5 });
+  assert.equal(defaultedOptionalInputs.status, 'warning_proposal');
+  assert.equal(defaultedOptionalInputs.sideEffects, false);
+
+  for (const lastWarningAtMs of [NaN, Infinity, -Infinity, '1000', -1]) {
     const result = evaluateBikeSpeedWarning({
       rideType: 'bike', speedKmh: 51, accuracyMeters: 5, sampleAgeMs: 100,
       nowMs: 2000, lastWarningAtMs
