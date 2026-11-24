@@ -1,6 +1,6 @@
 # ARJUNA X Phase 9 — Runtime Orchestration & Reliability
 
-**Status:** Started — scope/checkpoint only  
+**Status:** Started — runtime policy adapter and unit tests implemented; CI verification pending  
 **Branch:** `arjuna-x/phase-7-ai-intelligence-safety`  
 **Safety:** QA branch only. No production/main merge, deployment, live Supabase access, schema/auth/RLS/payment changes, or external provider calls without explicit approval.
 
