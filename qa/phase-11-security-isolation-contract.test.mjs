@@ -162,3 +162,11 @@ test('Phase 11 QA entry point requires local preflight before browser tests', ()
   const scripts = JSON.parse(packageJson).scripts;
   assert.ok(scripts.test.startsWith('node scripts/qa-local-preflight.cjs && playwright test'));
 });
+
+
+test('Phase 11 preflight rejects hosted URLs and never follows redirects', () => {
+  assert.ok(preflight.includes("const hosts = new Set(['localhost', '127.0.0.1', '::1', '[::1]')"));
+  assert.ok(preflight.includes("redirect: 'manual'"));
+  assert.ok(preflight.includes('only localhost/loopback URLs are allowed'));
+  assert.ok(preflight.includes('process.exit(2)'));
+});
