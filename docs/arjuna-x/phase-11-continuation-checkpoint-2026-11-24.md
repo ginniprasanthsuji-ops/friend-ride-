@@ -87,3 +87,9 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - Added a static assertion that local QA preflight uses manual redirect handling and maintains the localhost/loopback hostname allowlist.
 - Static contract suite now has 15 authored checks (not executed).
+
+
+## Browser Scenario Coverage Contract
+
+- Added a static check that the four role-registration scenarios and one page-isolation scenario remain present in the browser specs.
+- Static contract suite now has 16 authored checks (execution not verified).
