@@ -165,3 +165,14 @@ test('Phase 11 privacy gate rejects non-identifier strings with spaces and email
     assert.equal(JSON.stringify(result).includes(unsafe), false);
   }
 });
+
+
+test('Phase 11 direct sanitizer rejects phone-like numeric strings independently of the privacy gate', () => {
+  const result = sanitizeDiagnosticEvent({
+    type: 'request_failed', context,
+    fields: { module: 'runtime', operation: 'retry', status: 'failed', errorCode: '9876543210' }
+  });
+  assert.equal(result.accepted, true);
+  assert.equal(result.event.fields.errorCode, undefined);
+  assert.equal(JSON.stringify(result).includes('9876543210'), false);
+});
