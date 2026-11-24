@@ -44,3 +44,30 @@ test('Phase 11 integration audit: unsafe failure inputs are rejected without ech
   assert.equal(JSON.stringify(result).includes('user@example.com'), false);
   assert.equal(JSON.stringify(result).includes('9876543210'), false);
 });
+
+
+test('Phase 11 integration audit: direct sanitizer drops unknown and malformed fields', () => {
+  const result = sanitizeDiagnosticEvent({ type: 'request_started', context, fields: { module: 'runtime', prompt: 'private payload', operation: 'retry\\nsecret', durationMs: Infinity, attempt: -1 } });
+  assert.equal(result.accepted, true);
+  assert.deepEqual(result.event.fields, { module: 'runtime' });
+});
+
+test('Phase 11 integration audit: privacy gate rejects role spoofing and unsafe numeric bounds', () => {
+  for (const fields of [{ role: 'root' }, { attempt: -1 }, { durationMs: 100000001 }, { attempt: NaN }]) {
+    const result = evaluatePrivacyGate({ type: 'request_started', context, fields });
+    assert.equal(result.accepted, false);
+    assert.equal(JSON.stringify(result).includes('root'), false);
+  }
+});
+
+test('Phase 11 integration audit: direct sanitizer and gate agree on phone PII rejection', () => {
+  const values = ['9876543210', '+91 98765 43210', 'ref9876543210'];
+  for (const value of values) {
+    const gate = evaluatePrivacyGate({ type: 'request_failed', context, fields: { errorCode: value } });
+    const direct = sanitizeDiagnosticEvent({ type: 'request_failed', context, fields: { errorCode: value } });
+    assert.equal(gate.accepted, false);
+    assert.equal(direct.event.fields.errorCode, undefined);
+    assert.equal(JSON.stringify(gate).includes(value), false);
+    assert.equal(JSON.stringify(direct).includes(value), false);
+  }
+});
