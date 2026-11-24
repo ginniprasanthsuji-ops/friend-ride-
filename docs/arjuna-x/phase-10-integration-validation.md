@@ -16,6 +16,10 @@ Phase 10 connects the Phase 9 pure-policy modules in test-only scenarios. Mock a
 - [x] Role restrictions and booking confirmation gate.
 - [x] Session mismatch guard.
 - [x] Closing a session aborts running requests and blocks late completion.
+- [x] Cross-module workflow matrix (navigation, ride selection, booking review, unknown intent).
+- [x] Recovery matrix (completed operation, confirmation, unknown error).
+- [x] Retry attempt ceiling and unknown-error fail-closed.
+- [x] Role/session binding mismatch matrix.
 - [x] CI run and Phase 10 regression inventory pass (Run #68, commit `771acfbefd`).
 - [ ] Live provider integration readiness reviewed separately and approved explicitly.
 
