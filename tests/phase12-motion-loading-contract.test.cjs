@@ -85,3 +85,12 @@ test('Phase 12: quote acceptance displays subtotal and capped platform fee previ
   assert.match(html, /actual payment collection is not yet integrated/);
   assert.match(html, /if\(!confirm\('Accept Partner quote\?/);
 });
+
+test('Phase 12: quote fee preview subtotal reads confirmed line prices and quantities', () => {
+  const accept = html.slice(html.indexOf('async function frCustomerAcceptQuote'), html.indexOf('async function frCustomerSendCounter'));
+  assert.match(accept, /row\.querySelector\('b'\)/);
+  assert.match(accept, /₹\(\[0-9\]\+\(\?:\.[0-9\]\{1,2\}\)\?\)/);
+  assert.match(accept, /×\\s*\(\\d\+\)/);
+  assert.match(accept, /Math\.round\(Number\(match\[1\]\)\*100\)\*qty/);
+  assert.match(accept, /frPlatformChargePaise\(quotePaise\)/);
+});
