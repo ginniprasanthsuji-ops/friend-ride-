@@ -1,13 +1,17 @@
 'use strict';
 
 /**
- * Phase 10 contract bridge: derive authorization role from an active lifecycle
- * session, not caller-provided request fields. Pure local validation only.
+ * Phase 10 contract bridge: resolve role from the lifecycle manager itself.
+ * Caller-supplied session snapshots/roles are intentionally not accepted.
  */
 const { evaluateRuntimeRequest, assertSessionIsolation } = require('./arjuna-x-runtime-policy.cjs');
 
-function evaluateSessionBoundRequest({ sessionSnapshot, requestSessionId, intent, permissions = [], correlationId } = {}) {
-  if (!sessionSnapshot || typeof sessionSnapshot !== 'object' || sessionSnapshot.status !== 'active') {
+function evaluateSessionBoundRequest({ lifecycle, sessionId, requestSessionId, intent, permissions = [], correlationId } = {}) {
+  if (!lifecycle || typeof lifecycle.snapshot !== 'function') {
+    return { status: 'blocked', reason: 'invalid_lifecycle_source', sideEffects: false };
+  }
+  const sessionSnapshot = lifecycle.snapshot(sessionId);
+  if (!sessionSnapshot || sessionSnapshot.status !== 'active') {
     return { status: 'blocked', reason: 'session_not_active', sideEffects: false };
   }
   const isolation = assertSessionIsolation(sessionSnapshot.sessionId, requestSessionId);
