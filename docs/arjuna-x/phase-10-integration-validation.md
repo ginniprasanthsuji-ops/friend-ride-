@@ -115,3 +115,12 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Warning tone key remains `bike_speed_limit_warning`.
 - [x] Intended recipients: driver and customer.
 - [x] QA only: no TTS playback, notification dispatch, device access, or ride mutation.
+
+
+## Phase 10 warning-event deduplication and cooldown checkpoint
+- [x] Added QA-only per-ride event guard to reject repeated event IDs.
+- [x] Per-ride cooldown suppresses distinct warning events during 60 seconds.
+- [x] Ride IDs isolate cooldown state; exact cooldown boundary allows a new proposal.
+- [x] Invalid event context fails closed.
+- [x] Pure QA guard: no notification, sound, GPS, device, SQL, or ride mutation.
+- [ ] CI checkpoint for warning-event guard pending.
