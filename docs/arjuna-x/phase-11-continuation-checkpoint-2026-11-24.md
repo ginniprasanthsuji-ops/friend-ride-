@@ -52,5 +52,13 @@ No merge, deployment, live payment, database mutation, or production change made
 ## QA Preflight Integration
 
 - Reviewed `scripts/qa-local-preflight.cjs`: requires explicit base URL, allows loopback only, checks HTTP response and HTML content, redirects are not followed.
-- Integrated preflight into FRIEND RIDE regression workflow before Playwright browser tests, using the local 127.0.0.1 server target.
+- Confirmed `npm test` invokes `scripts/qa-local-preflight.cjs` before Playwright. Removed redundant workflow-level preflight invocation; CI runs the guard once via the test script.
 - This integration is committed/configured but not executed in this session; no PASS claim.
+
+
+## Configuration Audit Continuation
+
+- Verified package `test` script runs localhost preflight before `playwright test`.
+- Detected and removed redundant CI preflight step so the guard executes once per regression job.
+- `package-lock.json` was not found at the branch root; workflow currently uses `npm install` (no lockfile-backed reproducibility claim).
+- No workflow run/status evidence is available for the latest workflow commit.
