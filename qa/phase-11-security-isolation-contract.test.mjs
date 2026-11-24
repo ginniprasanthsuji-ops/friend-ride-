@@ -130,8 +130,8 @@ test('Phase 11 CI: regression artifacts have bounded retention', () => {
 
 
 test('Phase 11 browser coverage count is fixed at four registration plus one page-isolation scenario', () => {
-  assert.equal((registrationSpec.match(/\\btest\\(/g) || []).length, 4);
-  assert.equal((pageIsolationSpec.match(/\\btest\\(/g) || []).length, 1);
+  assert.equal((registrationSpec.match(/\btest\(/g) || []).length, 4);
+  assert.equal((pageIsolationSpec.match(/\btest\(/g) || []).length, 1);
 });
 
 
