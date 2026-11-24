@@ -121,3 +121,28 @@ test('Phase 11 privacy gate module remains pure and dependency-limited', () => {
   }
   assert.equal(source.includes('evaluatePrivacyGate'), true);
 });
+
+test('Phase 11 privacy gate rejects arrays, class instances and prototype-polluted shapes', () => {
+  assert.equal(evaluatePrivacyGate([]).accepted, false);
+  assert.equal(evaluatePrivacyGate({ type: 'request_started', context, fields: [] }).accepted, false);
+  class CustomFields { constructor() { this.module = 'runtime'; } }
+  assert.equal(evaluatePrivacyGate({ type: 'request_started', context, fields: new CustomFields() }).accepted, false);
+  const polluted = Object.create({ prompt: 'inherited secret' });
+  polluted.module = 'runtime';
+  assert.equal(evaluatePrivacyGate({ type: 'request_started', context, fields: polluted }).accepted, false);
+  const topLevelLeak = evaluatePrivacyGate({ type: 'request_started', context, fields: {}, prompt: 'raw prompt' });
+  assert.equal(topLevelLeak.accepted, false);
+});
+
+test('Phase 11 privacy gate safely accepts null-prototype allowlisted records', () => {
+  const nullFields = Object.create(null);
+  nullFields.module = 'runtime';
+  nullFields.status = 'started';
+  const nullInput = Object.create(null);
+  nullInput.type = 'request_started';
+  nullInput.context = context;
+  nullInput.fields = nullFields;
+  const result = evaluatePrivacyGate(nullInput);
+  assert.equal(result.accepted, true);
+  assert.deepEqual(result.event.fields, { module: 'runtime', status: 'started' });
+});
