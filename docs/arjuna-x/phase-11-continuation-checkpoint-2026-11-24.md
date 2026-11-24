@@ -62,3 +62,10 @@ No merge, deployment, live payment, database mutation, or production change made
 - Detected and removed redundant CI preflight step so the guard executes once per regression job.
 - `package-lock.json` was not found at the branch root; workflow currently uses `npm install` (no lockfile-backed reproducibility claim).
 - No workflow run/status evidence is available for the latest workflow commit.
+
+
+## Browser Network Isolation Review
+
+- Reviewed `qa/local-only-fixture.cjs`: intercepts browser requests and blocks origins outside the configured local test server origin.
+- Applied this fixture to both Phase 11 registration-isolation and page-isolation browser specs. Those tests now inherit Tier-A external-network blocking.
+- Test files updated, but tests remain unexecuted; this is configuration-level safety evidence only.
