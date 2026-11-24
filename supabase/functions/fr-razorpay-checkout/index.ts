@@ -1,5 +1,5 @@
 // FRIEND RIDE Razorpay Standard Checkout — QA branch implementation
-// Configure Supabase Edge Function secrets before deploying:
+// Configure Supabase Edge Function secrets before deployment:
 // RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, SUPABASE_URL, SUPABASE_ANON_KEY
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,9 +9,10 @@ const corsHeaders = {
 };
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: corsHeaders });
 const encoder = new TextEncoder();
+const allowedPlans: Record<string, number> = { Basic: 299, Growth: 599, Premium: 999 };
 
 async function authenticatedUser(req: Request, supabaseUrl: string, anonKey: string) {
-  const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "");
+  const token = req.headers.get("Authorization")?.replace(/^Bearer\\s+/i, "");
   if (!token) return null;
   const response = await fetch(supabaseUrl + "/auth/v1/user", {
     headers: { apikey: anonKey, Authorization: "Bearer " + token },
@@ -19,7 +20,6 @@ async function authenticatedUser(req: Request, supabaseUrl: string, anonKey: str
   if (!response.ok) return null;
   return await response.json();
 }
-
 function bytesToHex(bytes: Uint8Array) {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
@@ -33,11 +33,15 @@ function constantTimeEqual(a: string, b: string) {
   for (let i = 0; i < a.length; i++) mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return mismatch === 0;
 }
+async function razorpayGet(path: string, keyId: string, keySecret: string) {
+  return await fetch("https://api.razorpay.com/v1/" + path, {
+    headers: { Authorization: "Basic " + btoa(keyId + ":" + keySecret) },
+  });
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json(405, { error: "Method not allowed" });
-
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const keyId = Deno.env.get("RAZORPAY_KEY_ID");
@@ -53,17 +57,13 @@ Deno.serve(async (req) => {
     if (action === "create-order") {
       const amount = Number(body.amount);
       const plan = String(body.plan || "");
-      const allowedPlans: Record<string, number> = { Basic: 299, Growth: 599, Premium: 999 };
-      if (!Number.isInteger(amount) || amount < 10000 || allowedPlans[plan] !== amount) {
+      if (!Number.isInteger(amount) || amount < 100 || allowedPlans[plan] !== amount) {
         return json(400, { error: "Invalid subscription plan or amount." });
       }
       const receipt = ("frsub_" + String(user.id).replace(/[^a-zA-Z0-9]/g, "").slice(0, 10) + "_" + Date.now()).slice(0, 40);
       const response = await fetch("https://api.razorpay.com/v1/orders", {
         method: "POST",
-        headers: {
-          Authorization: "Basic " + btoa(keyId + ":" + keySecret),
-          "Content-Type": "application/json",
-        },
+        headers: { Authorization: "Basic " + btoa(keyId + ":" + keySecret), "Content-Type": "application/json" },
         body: JSON.stringify({ amount, currency: "INR", receipt, notes: { user_id: user.id, plan, product: "FRIEND RIDE subscription" } }),
       });
       const result = await response.json().catch(() => ({}));
@@ -79,9 +79,24 @@ Deno.serve(async (req) => {
       if (!orderId || !paymentId || !signature) return json(400, { error: "Missing payment verification fields." });
       const expected = await hmacSha256(keySecret, orderId + "|" + paymentId);
       if (!constantTimeEqual(expected, signature)) return json(400, { verified: false, error: "Payment signature mismatch." });
-      // Signature verification is confirmed. Subscription persistence/activation must be connected
-      // to the existing subscription data model before treating this response as Active.
-      return json(200, { verified: true, payment_id: paymentId, order_id: orderId, activation: "pending_backend_mapping" });
+
+      const orderResponse = await razorpayGet("orders/" + encodeURIComponent(orderId), keyId, keySecret);
+      if (!orderResponse.ok) return json(400, { verified: false, error: "Could not validate Razorpay order." });
+      const order = await orderResponse.json();
+      const plan = String(order?.notes?.plan || "");
+      if (order?.notes?.user_id !== user.id || allowedPlans[plan] !== Number(order?.amount) / 100 || order?.currency !== "INR") {
+        return json(400, { verified: false, error: "Order does not match this account or approved plan." });
+      }
+
+      const paymentResponse = await razorpayGet("payments/" + encodeURIComponent(paymentId), keyId, keySecret);
+      if (!paymentResponse.ok) return json(400, { verified: false, error: "Could not validate Razorpay payment." });
+      const payment = await paymentResponse.json();
+      if (payment?.order_id !== orderId || payment?.status !== "captured" || payment?.amount !== order.amount || payment?.currency !== order.currency) {
+        return json(400, { verified: false, error: "Payment is not captured or does not match the order." });
+      }
+      // Verified/captured only. Subscription persistence and activation require mapping to
+      // the existing backend subscription model before a paid plan can be marked Active.
+      return json(200, { verified: true, payment_id: paymentId, order_id: orderId, plan, amount: order.amount, activation: "pending_backend_mapping" });
     }
     return json(400, { error: "Unsupported action." });
   } catch (error) {
