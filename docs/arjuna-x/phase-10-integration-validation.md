@@ -100,3 +100,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Cross-session request ID mismatch blocks.
 - [x] Invalid lifecycle source fails closed.
 - [x] All matrix outcomes are proposal/block only with side effects disabled.
+
+
+## Telugu bike-speed alert contract
+- [x] Over-limit proposal includes Telugu safety warning text: "హెచ్చరిక! వేగ పరిమితి దాటింది. దయచేసి వేగం తగ్గించండి."
+- [x] Proposal carries tone key `bike_speed_limit_warning` for the app alert sound integration.
+- [x] Driver and customer are the intended recipients.
+- [x] QA policy only: no notification delivery, sound playback, GPS access, or ride mutation is performed.
