@@ -34,7 +34,7 @@ function sanitizeDiagnosticEvent({ type, context, fields = {} } = {}) {
     for (const key of Object.keys(fields || {})) {
       if (!SAFE_FIELDS.has(key)) continue;
       const value = fields[key];
-      if (typeof value === 'string' && value.length <= 96 && ID_PATTERN.test(value) && !/^\\d{8,}$/.test(value)) safeFields[key] = value;
+      if (typeof value === 'string' && value.length <= 96 && ID_PATTERN.test(value) && !/^\d{8,}$/.test(value)) safeFields[key] = value;
       else if (typeof value === 'number' && Number.isFinite(value) && value >= 0 && ['attempt', 'durationMs'].includes(key)) safeFields[key] = value;
     }
     return { accepted: true, event: Object.freeze({ type, context: safeContext, fields: Object.freeze(safeFields) }) };
