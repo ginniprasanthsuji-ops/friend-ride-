@@ -163,3 +163,9 @@ No merge, deployment, live payment, database mutation, or production change made
 - Browser scenarios authored: 5; execution evidence not available.
 - Latest queried commit returned no workflow run/status evidence.
 - Phase 11 remains at 98% pending test execution and final closeout.
+
+
+## Contract Regex Correction
+
+- Corrected the browser scenario-count assertion regex to count actual `test(` declarations rather than literal backslash sequences.
+- Static suite remains 24 authored checks; still not executed.
