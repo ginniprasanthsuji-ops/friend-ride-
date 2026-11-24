@@ -19,8 +19,11 @@ test('Phase 10 final guard audit: terminal reset clears cooldown only, rejects i
   assert.deepEqual(guard.terminateRide({ rideId: ' ride-X ', terminalState: 'cancelled' }), {
     status: 'reset', rideId: 'ride-X', terminalState: 'cancelled', sideEffects: false
   });
-  assert.equal(guard.evaluate({ rideId: 'ride-X', eventId: 'event-Z', nowMs: 301 }).status, 'proposal_accepted');
+  assert.equal(guard.evaluate({ rideId: 'ride-X', eventId: 'event-W', nowMs: 301 }).status, 'proposal_accepted');
   assert.deepEqual(guard.evaluate({ rideId: 'ride-X', eventId: 'event-X', nowMs: 302 }), {
+    status: 'blocked', reason: 'duplicate_event_id', sideEffects: false
+  });
+  assert.deepEqual(guard.evaluate({ rideId: 'ride-X', eventId: 'event-Z', nowMs: 303 }), {
     status: 'blocked', reason: 'duplicate_event_id', sideEffects: false
   });
   assert.equal(guard.seenEventIds.has('event-X'), true);
