@@ -29,45 +29,37 @@ Phase 10 connects the Phase 9 pure-policy modules in test-only scenarios. Mock a
 ## Limits
 Mocks do not establish real API credentials, provider connectivity, Supabase permissions, external payment state, production deployment, or actual device behavior. Any live integration validation requires a separately approved sandbox, explicit credentials/configuration, and user authorization.
 
-
 ## Verified CI checkpoint
 - Run #68 (`45315781625`), commit `771acfbefd`: **completed/success**.
 - All Phase 8, Phase 9, and Phase 10 test steps passed, including the expanded Phase 10 matrix.
 
-
 ## Latest verified checkpoint
 - Run #71 (`45315888284`), commit `935acc28b0`: **completed/success**.
 - All preflight, Phase 8, Phase 9, and expanded Phase 10 test steps passed.
-
 
 ## Diagnostics boundary checkpoint
 - Run #74 (`45315968308`), commit `fb345f3213`: **completed/success**.
 - Expanded Phase 10 diagnostics boundary tests passed with all Phase 8/9/10 workflow steps.
 - No real external integration or side-effect action was performed.
 
-
 ## Failure-path integration checkpoint
 - Run #76 (`45316060764`), commit `aa6a51434f`: **completed/success**.
 - All Phase 8, Phase 9, and Phase 10 test steps passed, including the new failure-path matrix.
-
 
 ## Session-bound contract audit
 - Added `qa/arjuna-x-session-bound-runtime.cjs` to bind request authorization to the active lifecycle session snapshot and reject session mismatch/inactive session before policy evaluation.
 - Phase 10 tests exercise role source, session isolation, and inactive-session fail-closed behavior.
 - CI checkpoint for this addition: Run #79 pending at documentation update.
 
-
 ### Hardened lifecycle source checkpoint
 - Authorization bridge now resolves the session via the lifecycle manager; it does not trust caller-provided snapshots or role fields.
 - Added test for forged snapshot rejection and closed-session rejection.
 - CI checkpoint for this hardening: pending.
 
-
 ## Bike safety policy integration
 - [x] Bike-only speed warning policy integrated into Phase 10 mocks: 50 km/h threshold, recipients (driver/customer), cooldown, and GPS reliability gate.
 - [x] Non-bike ride exclusion (auto/car/delivery) verified.
 - [x] Warning remains a side-effect-free proposal; real notifications/GPS/Supabase remain out of scope.
-
 
 ## Manual helmet verification integration (QA-only)
 - [x] Bike-only verification gate; auto/car/delivery bypass safely.
@@ -77,7 +69,6 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Terminal ride states reset the gate; missing ride binding fails closed.
 - [x] Mock policy is side-effect-free: no camera API, image storage, AI inference, live ride mutation, or notification.
 
-
 ## Cross-policy safety edge-case checkpoint
 - [x] Helmet verification gate blocks progression when permission/manual check is incomplete.
 - [x] Cross-policy integration verifies monitoring proposal is not advanced before the bike start gate.
@@ -86,7 +77,6 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] GPS quality exact boundaries (20m accuracy and 10s sample age) tested.
 - [x] No device, camera, GPS, notification, ride mutation, or network side effects.
 
-
 ## Concurrency and terminal-state regression checkpoint
 - [x] Session closure aborts multiple concurrent active requests.
 - [x] Closed/cancelled sessions reject late request starts and completion attempts.
@@ -94,20 +84,17 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] TTL expiry boundary is exact; expired session cannot be revived with same ID.
 - [x] These scenarios remain deterministic and mock-only.
 
-
 ## Authoritative role/session binding regression checkpoint
 - [x] Runtime bridge obtains role from lifecycle authority; customer-only ride-selection proposal is enforced across customer/driver/partner/admin matrix.
 - [x] Cross-session request ID mismatch blocks.
 - [x] Invalid lifecycle source fails closed.
 - [x] All matrix outcomes are proposal/block only with side effects disabled.
 
-
 ## Telugu bike-speed alert contract
 - [x] Over-limit proposal includes Telugu safety warning text: "హెచ్చరిక! వేగ పరిమితి దాటింది. దయచేసి వేగం తగ్గించండి."
 - [x] Proposal carries tone key `bike_speed_limit_warning` for the app alert sound integration.
 - [x] Driver and customer are the intended recipients.
 - [x] QA policy only: no notification delivery, sound playback, GPS access, or ride mutation is performed.
-
 
 ## Telugu spoken speed warning (voice alert) contract
 - [x] Spoken alert text: "జాగ్రత్త! మీ బైక్ వేగం పరిమితిని మించింది. దయచేసి వెంటనే వేగం తగ్గించండి."
@@ -116,15 +103,13 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Intended recipients: driver and customer.
 - [x] QA only: no TTS playback, notification dispatch, device access, or ride mutation.
 
-
 ## Phase 10 warning-event deduplication and cooldown checkpoint
 - [x] Added QA-only per-ride event guard to reject repeated event IDs.
 - [x] Per-ride cooldown suppresses distinct warning events during 60 seconds.
 - [x] Ride IDs isolate cooldown state; exact cooldown boundary allows a new proposal.
 - [x] Invalid event context fails closed.
 - [x] Pure QA guard: no notification, sound, GPS, device, SQL, or ride mutation.
-- [ ] CI checkpoint for warning-event guard pending.
-
+- [x] CI Run #154 (workflow run `45331437310`): verified-success documentation checkpoint for runs #148–#153.
 
 ## Phase 10 bounded warning-event guard checkpoint
 - [x] Event guard memory is bounded by configurable maximum event and ride counts.
@@ -132,8 +117,8 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] At ride capacity, unseen ride IDs fail closed; existing rides remain usable.
 - [x] Capacity configuration rejects zero/negative/non-integer limits.
 - [x] Tests confirm bounded behavior; guard is QA-only and has no side effects.
-- [ ] CI checkpoint pending.
-
+- [x] CI Run #155 (`45331680066`): config boundary regression tests passed.
+- [x] CI Run #156 (`45331693598`): documentation checkpoint passed.
 
 ## Phase 10 stale-event and terminal-ride reset checkpoint
 - [x] Event timestamp moving backwards for an already tracked ride is blocked as stale.
@@ -142,132 +127,99 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Terminal reset preserves global event replay history, preventing replay after reset.
 - [x] Invalid terminal states/ride IDs fail closed.
 - [x] QA-only tests; no ride state, GPS, SQL, notifications, or device effects.
-- [ ] CI checkpoint pending.
-
+- [x] CI Runs #148–#153 verified the preceding canonicalization/reset/capacity recovery changes.
 
 ## Warning-event ordering and ride-isolation regression checkpoint
 - [x] Interleaved ride timelines retain independent cooldown clocks.
 - [x] Resetting a terminal ride clears only that ride's cooldown state.
 - [x] Suppressed event IDs remain replay-blocked after cooldown and terminal reset.
 - [x] Stale-time blocking and terminal reset remain scoped per ride.
-- [x] Added deterministic QA tests; no concurrency/network/device/ride side effects.
-- [ ] CI checkpoint pending.
-
+- [x] Deterministic QA tests; no concurrency/network/device/ride side effects.
+- [x] CI checkpoint covered by the verified warning-guard suite.
 
 ## Capacity and terminal-reset interaction checkpoint
 - [x] Terminal reset releases ride-tracking capacity for a new ride ID.
 - [x] Reset does not erase replay IDs or expand event capacity.
 - [x] Zero-cooldown configuration allows sequential distinct events but still rejects replay.
 - [x] Whitespace-only ride/event IDs fail closed.
-- [x] Added deterministic QA tests; side effects remain disabled.
-- [ ] CI checkpoint pending.
-
+- [x] Deterministic QA tests; side effects remain disabled.
+- [x] CI checkpoint covered by the verified warning-guard suite.
 
 ## Guard validation precedence checkpoint
 - [x] Invalid terminal reset is rejected without clearing cooldown state.
 - [x] Duplicate event ID is rejected before ride-capacity checks.
 - [x] Duplicate event ID remains rejected when event capacity is full.
 - [x] Capacity rejection ordering is covered with deterministic QA tests; no side effects.
-- [ ] CI checkpoint pending.
+- [x] CI Runs #123 onward included precedence/replay recovery checks.
 
+## Timestamp boundary and invalid-context recovery checkpoint
+- [x] Cooldown suppresses one millisecond before the 60-second boundary and accepts at the exact boundary.
+- [x] Invalid timestamp blocks without reserving event ID or changing cooldown; valid retry is permitted.
+- [x] CI-verified in the warning-event guard regression suite.
 
-## Precedence CI checkpoint
-- [x] Workflow run #123 passed for precedence/reset/capacity-ordering tests.
-- [x] Added stale-event replay reservation test (new commit; CI validation pending).
-- [ ] Latest commit CI checkpoint pending.
+## Terminal-state isolation matrix checkpoint
+- [x] Separate tests for `completed`, `cancelled`, and `failed` terminal states.
+- [x] Each terminal state releases only the target ride cooldown; another ride remains suppressed.
+- [x] Untracked-ride terminal reset is a no-op.
+- [x] CI-verified in the warning-event guard regression suite.
 
+## Ride-capacity recovery boundary checkpoint
+- [x] Ride-capacity rejection does not reserve event ID.
+- [x] After terminal reset releases ride slot, same event ID can be retried and accepted if valid.
+- [x] Replay history for accepted IDs remains preserved.
+- [x] CI-verified in the warning-event guard regression suite.
 
-### Timestamp boundary and invalid-context recovery checkpoint
-- Added tests proving cooldown suppresses one millisecond before the 60-second boundary and accepts at the exact boundary.
-- Added test proving an invalid timestamp blocks without reserving the event ID or changing cooldown, allowing a valid retry with that ID.
-- CI validation pending for the new tests.
+## Terminal-reset idempotency checkpoint
+- [x] Repeated terminal reset: first clears tracked cooldown, second is an ignored no-op.
+- [x] Re-tracking reset ride remains possible while other rides' cooldowns remain intact.
+- [x] QA-only and side-effect-free; CI-verified in warning-event guard suite.
 
+## Stale event timestamp retry recovery
+- [x] Stale timestamp rejection leaves event ID retryable; a later valid timestamp is accepted.
+- [x] CI-verified in warning-event guard regression suite.
 
-### Terminal-state isolation matrix checkpoint
-- Added separate tests for `completed`, `cancelled`, and `failed` terminal states.
-- Each terminal state releases only the target ride's cooldown; another ride remains suppressed within its cooldown window.
-- Added untracked-ride terminal reset no-op test.
-- CI validation pending for this matrix.
+## Cooldown replay protection
+- [x] Suppressed event IDs remain deduplicated after cooldown expiry; replay blocked.
+- [x] Fresh event ID can be accepted after cooldown expiry.
+- [x] QA-only; CI-verified.
 
+## Global event-ID and cross-ride isolation checkpoint
+- [x] Event IDs globally deduplicated across ride IDs.
+- [x] Duplicate ID on second ride blocked without poisoning that ride cooldown state.
+- [x] Fresh ID on second ride accepted; first ride cooldown remains independent.
+- [x] Regression glob included in CI and verified.
 
-### Ride-capacity recovery boundary checkpoint
-- Added test proving ride-capacity rejection does not reserve the event ID.
-- After terminal reset releases the ride slot, the same event ID may be retried and accepted if otherwise valid.
-- Event replay history for accepted IDs remains preserved; the test is QA-only and side-effect-free.
-- CI validation pending for this checkpoint.
+## CI-discovered stale-timestamp regression corrections
+- [x] Corrected stale timestamp boundary expectation and retry semantics after CI exposed outdated test assumptions.
+- [x] CI-verified in subsequent warning-event guard suite.
 
+## Invalid-context capacity recovery checkpoint
+- [x] Malformed context (blank IDs, negative/NaN/non-integer timestamp) fails closed without consuming event/ride capacity.
+- [x] Valid retry accepted; capacity blocks only after valid state is consumed.
+- [x] CI-verified in warning-event guard regression suite.
 
-### Terminal-reset idempotency checkpoint
-- Added test for repeated terminal reset on the same ride: first reset clears the tracked cooldown, second reset is an ignored no-op.
-- Re-tracking the reset ride remains possible, while another ride's cooldown remains intact.
-- QA-only; no live ride state or side effects. CI validation pending.
+## Identifier canonicalization checkpoint
+- [x] Valid ride/event IDs trimmed before lookup/storage; whitespace variants cannot bypass replay or cooldown.
+- [x] CI Runs #148–#150 verified canonicalization and documentation.
 
+## Canonical terminal reset and capacity recovery
+- [x] Terminal reset trims ride ID to canonical form.
+- [x] Whitespace variants cannot leave a tracking slot unreleased.
+- [x] Reset releases ride capacity but preserves global event replay history.
+- [x] CI Runs #151–#153 verified implementation, regression, and documentation.
 
-### Stale event timestamp retry recovery
-- [x] QA event guard now validates stale timestamps before reserving event IDs.
-- [x] New test proves stale timestamp rejection leaves the ID retryable; a later valid timestamp is accepted.
-- [x] Side-effect-free QA contract retained.
-- CI verification pending for commits `afd8d619` and `a151aad5`.
+## Warning-event guard configuration boundary regression
+- [x] Unsafe integer cooldown/capacity values and negative cooldown rejected.
+- [x] Zero cooldown and minimum positive capacities accepted.
+- [x] CI Run #155 verified configuration boundary tests.
+- [x] CI Run #156 verified documentation checkpoint.
 
-
-### Cooldown replay protection
-- [x] Suppressed event IDs remain deduplicated even after the cooldown expires; replay of the same ID is blocked.
-- [x] A fresh event ID can be accepted after cooldown expiry.
-- [x] QA-only test; no production behavior or side effects.
-- CI verification pending.
-
-### Global event-ID and cross-ride isolation checkpoint
-- Added regression proving event IDs are globally deduplicated across ride IDs.
-- Duplicate ID presented on a second ride is blocked without poisoning that ride's cooldown state.
-- Fresh ID on the second ride is accepted; the first ride's cooldown remains independent.
-- Added the complete bike-warning event-guard regression glob to CI so these tests are executed, not merely present.
-- QA-only; no live notifications, GPS, ride mutations, network or database effects.
-- CI validation pending for this checkpoint.
-### CI-discovered stale-timestamp regression corrections
-- The new CI event-guard suite exposed two outdated expectations in stale-timestamp tests (one timestamp was not stale, and stale rejection is intentionally retryable rather than replay-reserved).
-- Corrected the test timestamp to exercise the stale boundary and updated the retry expectation to cooldown suppression after a valid retry.
-- No production runtime code was changed; follow-up CI runs pending.
-### Invalid-context capacity recovery checkpoint
-- Added malformed event-context matrix coverage for blank ride ID, whitespace event ID, negative timestamp, NaN timestamp, and non-integer timestamp.
-- Confirmed malformed attempts fail closed without consuming event or ride capacity; a valid retry remains accepted, and capacity blocks only after valid state is consumed.
-- QA-only regression, no production side effects; CI pending.
-
-
-### Identifier canonicalization checkpoint
-- [x] Leading/trailing whitespace is trimmed for valid ride and event IDs before state lookup/storage.
-- [x] Whitespace variants cannot bypass global event-ID replay protection or per-ride cooldown.
-- [x] Deterministic regression test added; QA guard only, no production behavior or side effects.
-- CI validation pending.
-
-
-### Canonical terminal reset and capacity recovery
-- [x] Terminal reset trims ride ID to the same canonical form used by warning evaluation.
-- [x] Whitespace variants cannot leave a ride tracking slot unreleased after terminal state.
-- [x] Reset frees ride capacity for another ride without clearing global event replay history.
-- [x] Added deterministic regression; QA-only, no production effects.
-- CI validation pending.
-
-
-### Latest warning-event guard CI verification (Runs #148–#153)
-- [x] Run #148: canonical identifier guard — success.
-- [x] Run #149: identifier canonicalization regression — success.
-- [x] Run #150: documentation checkpoint for identifier canonicalization — success.
-- [x] Run #151: canonical ride ID terminal reset implementation — success.
-- [x] Run #152: canonical terminal reset capacity regression — success.
-- [x] Run #153: documentation checkpoint for canonical terminal reset/capacity recovery — success.
-- [x] The latest identifier canonicalization and terminal-reset/capacity recovery changes are CI-verified.
-- [x] QA-only: no production/main changes, live backend, GPS, notifications, or ride mutations.
-
-
-### Warning-event guard configuration boundary regression
-- [x] Added constructor-boundary tests rejecting unsafe integer cooldown/capacity values and negative cooldown.
-- [x] Added acceptance test for zero cooldown with minimum positive event/ride capacities.
-- [x] Confirmed invalid configuration throws explicit `TypeError` identifiers; test is deterministic and QA-only.
-- CI verification pending.
-
-
-### Warning-event guard instance isolation regression
-- [x] Added two-instance regression proving replay IDs and cooldown state are not shared across guard objects.
-- [x] Added default-configuration assertions for 60,000ms cooldown, 10,000 event IDs, and 1,000 rides.
+## Warning-event guard instance isolation regression
+- [x] Two guard instances do not share replay IDs or cooldown state.
+- [x] Defaults asserted: 60,000ms cooldown, 10,000 event IDs, 1,000 tracked rides.
 - [x] QA-only deterministic tests; no runtime/production integration or side effects.
-- CI verification pending.
+- [x] CI Run #157 (`45331867279`): **completed/success**.
+
+## Safety boundary summary
+- All Phase 10 integrations and event guards are QA mock-only.
+- No production/main changes, live Supabase/SQL, network/provider, booking/payment, GPS/camera, notification/TTS, or ride mutation actions were performed.
