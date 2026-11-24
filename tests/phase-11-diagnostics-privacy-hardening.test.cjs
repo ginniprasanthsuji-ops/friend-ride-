@@ -146,3 +146,22 @@ test('Phase 11 privacy gate safely accepts null-prototype allowlisted records', 
   assert.equal(result.accepted, true);
   assert.deepEqual(result.event.fields, { module: 'runtime', status: 'started' });
 });
+
+
+test('Phase 11 privacy gate rejects phone-like numeric strings in allowlisted fields', () => {
+  const result = evaluatePrivacyGate({
+    type: 'request_failed', context,
+    fields: { module: 'runtime', operation: 'retry', status: 'failed', errorCode: '9876543210' }
+  });
+  assert.equal(result.accepted, false);
+  assert.equal(result.reason, 'unsafe_string_field');
+  assert.equal(JSON.stringify(result).includes('9876543210'), false);
+});
+
+test('Phase 11 privacy gate rejects non-identifier strings with spaces and email markers', () => {
+  for (const unsafe of ['private@example.com', 'user phone 9876543210', 'raw user prompt']) {
+    const result = evaluatePrivacyGate({ type: 'request_started', context, fields: { operation: unsafe } });
+    assert.equal(result.accepted, false);
+    assert.equal(JSON.stringify(result).includes(unsafe), false);
+  }
+});
