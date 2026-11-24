@@ -175,3 +175,9 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Workflow run #123 passed for precedence/reset/capacity-ordering tests.
 - [x] Added stale-event replay reservation test (new commit; CI validation pending).
 - [ ] Latest commit CI checkpoint pending.
+
+
+### Timestamp boundary and invalid-context recovery checkpoint
+- Added tests proving cooldown suppresses one millisecond before the 60-second boundary and accepts at the exact boundary.
+- Added test proving an invalid timestamp blocks without reserving the event ID or changing cooldown, allowing a valid retry with that ID.
+- CI validation pending for the new tests.
