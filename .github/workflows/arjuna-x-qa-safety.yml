@@ -29,3 +29,5 @@ jobs:
         run: node --test tests/phase-9-recovery-policy.test.cjs
       - name: Run ARJUNA X Phase 9 diagnostics context tests
         run: node --test tests/phase-9-diagnostics-context.test.cjs
+      - name: Run ARJUNA X Phase 9 runtime integration tests
+        run: node --test tests/phase-9-runtime-integration.test.cjs
