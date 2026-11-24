@@ -1,6 +1,6 @@
 # ARJUNA X Phase 10 — Integration Validation
 
-**Status:** Local mocked integration validation harness added; CI result pending.
+**Status:** Mocked integration validation and expanded regression matrix added; latest CI result pending.
 **Branch:** `arjuna-x/phase-7-ai-intelligence-safety`
 **Safety:** QA-only. No live Supabase, provider, payment, booking, GPS, microphone, network or production actions.
 
@@ -13,6 +13,9 @@ Phase 10 connects the Phase 9 pure-policy modules in test-only scenarios. Mock a
 - [x] Payment-like non-idempotent timeout: retry is denied and reconciliation is required.
 - [x] Side-effecting intent is blocked by policy and diagnostic fields redact prompt/token/address values.
 - [x] Invalid correlation context fails closed.
+- [x] Role restrictions and booking confirmation gate.
+- [x] Session mismatch guard.
+- [x] Closing a session aborts running requests and blocks late completion.
 - [ ] CI run and full Phase 10 regression inventory pass.
 - [ ] Live provider integration readiness reviewed separately and approved explicitly.
 
