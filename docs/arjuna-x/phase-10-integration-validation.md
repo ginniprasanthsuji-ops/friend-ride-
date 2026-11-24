@@ -107,3 +107,11 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Proposal carries tone key `bike_speed_limit_warning` for the app alert sound integration.
 - [x] Driver and customer are the intended recipients.
 - [x] QA policy only: no notification delivery, sound playback, GPS access, or ride mutation is performed.
+
+
+## Telugu spoken speed warning (voice alert) contract
+- [x] Spoken alert text: "జాగ్రత్త! మీ బైక్ వేగం పరిమితిని మించింది. దయచేసి వెంటనే వేగం తగ్గించండి."
+- [x] Locale: `te-IN` (Telugu India) for text-to-speech integration.
+- [x] Warning tone key remains `bike_speed_limit_warning`.
+- [x] Intended recipients: driver and customer.
+- [x] QA only: no TTS playback, notification dispatch, device access, or ride mutation.
