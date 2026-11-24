@@ -99,3 +99,14 @@
 - Regression execution checkpoint: QA run #731 reached Browser Regression Tests and failed; JavaScript validation, npm install, Chromium setup, and local static server steps succeeded. Detailed failing assertion could not be retrieved through the available GitHub connection; do not claim a pass or infer the failure. The workflow now uses branch-scoped concurrency to cancel duplicate regression runs.
 
 - Root cause confirmed for regression failures: the workflow was running the entire legacy Playwright QA directory, including Dark + Gold tests and role-flow tests that are incompatible with this QA branch's current UI/runtime baseline. 22 failures were from that mismatched suite while 36 tests passed. CI was narrowed for Phase 12 to run the Node contract/safety suite plus the targeted local TASKO/Laundry browser regression. This is scope correction, not a claim that the full legacy suite passes; broader compatibility remains separately tracked.
+
+
+## Approved FRIEND RIDE Commission Model (2026-11-24)
+- **Rides:** customer-side platform fee = 2.5% of fare (cap ₹25); driver-side commission = 1.5% of fare.
+- **Shop/Partner orders:** customer-side platform fee = 2.5% of confirmed subtotal (cap ₹25); shop/partner-side commission = 1.5% of confirmed subtotal.
+- Customer-side fee is added to customer payable; it is not deducted from the driver/shop/partner amount.
+- Provider-side 1.5% commission is deducted from provider settlement.
+- Example ₹500: customer fee ₹12.50; provider commission ₹7.50; provider net ₹492.50; customer payable ₹512.50; FRIEND RIDE gross fee revenue ₹20.00, before any applicable taxes/refunds/adjustments.
+- Example ₹1,000: customer fee ₹25 (cap); provider commission ₹15; provider net ₹985; customer payable ₹1,025; FRIEND RIDE gross fee revenue ₹40.00, before any applicable taxes/refunds/adjustments.
+- Collection is not confirmed/automated by this approval: with no payment gateway/settlement RPC wired and verified, amounts must remain tracked as pending until manual or supported payment collection is confirmed. Never display pending amounts as collected revenue.
+- This is an approved pricing requirement, not yet implemented or verified in the ride/shop settlement code. Next implementation task is to trace each fare/order checkout and settlement path on the QA branch, apply both sides consistently, add contract tests, and leave production untouched.
