@@ -1,7 +1,7 @@
 # Phase 12 — Native Motion & UX Safety
 
 ## Status
-- Progress: 50%
+- Progress: 55%
 - UI-only motion layer committed and CI-verified.
 - QA branch only; no merge/deployment.
 
@@ -39,6 +39,12 @@
 - Extended opt-in shimmer to customer homepage ratings, admin complaints/feedback, driver KYC document review, partner applications, approved-store status, and store payment details loading surfaces.
 - Added accessibility status roles/labels to runtime loading placeholders. Existing result/error/empty rendering and API calls remain unchanged.
 - Contract tests extended for the additional loading surfaces; tests remain unexecuted locally and CI is not verified.
+
+## Motion Performance Audit (2026-11-24)
+- Removed the blanket `.card` entry animation that replayed across all cards whenever shared styling applied. Card motion is now opt-in via `.fr12-animate-card`; page-level navigation motion remains.
+- Reduced-motion handling includes the opt-in card class.
+- Added a contract test to guard against restoring global card animation.
+- No runtime benchmark was run; CI/test execution remains unverified.
 
 ## Verification
 - Extended Node contract tests cover selected placeholder application, CSS opt-in behavior, reduced-motion disabling, and expected success/empty/error paths.
