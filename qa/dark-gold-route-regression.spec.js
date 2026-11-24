@@ -44,7 +44,7 @@ test.describe('FRIEND RIDE Phase 12 motion and route safety', () => {
   test('customer auth entry opens modal without losing role context', async ({ page }) => {
     await page.evaluate(() => window.openAuth('login', 'customer'));
     await expect(page.locator('#authModal')).toHaveClass(/show/);
-    const role = await page.evaluate(() => window.selectedRole);
+    const role = await page.evaluate(() => localStorage.getItem('friendride_selected_role'));
     expect(role).toBe('customer');
   });
 });
