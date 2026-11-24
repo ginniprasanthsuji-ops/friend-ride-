@@ -168,6 +168,10 @@ button:active,.btn:active,[role="button"]:active,.active span{transform:none!imp
 .drawer-backdrop.show{animation:fr12-backdrop-fade 150ms ease-out both}
 .drawer-backdrop.show .drawer{animation:fr12-drawer-enter 180ms cubic-bezier(.2,.75,.25,1) both}
 @media(prefers-reduced-motion:reduce){.drawer-backdrop.show,.drawer-backdrop.show .drawer{animation:none!important}}
+
+/* Phase 12 accessibility polish: visible keyboard focus and non-motion feedback */
+:where(button,.btn,[role="button"],a,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #d59b24!important;outline-offset:3px!important;box-shadow:0 0 0 2px rgba(255,255,255,.9)!important}
+@media(prefers-reduced-motion:reduce){.fr12-skeleton{background-image:none!important;background-color:#eee9f5!important;color:inherit!important}}
 </style><style>
 /* FRIEND RIDE visual refresh: colourful marketplace-style home */
 body{background:#fffaf7;color:#171717;padding-bottom:100px}
