@@ -67,3 +67,12 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Bike-only speed warning policy integrated into Phase 10 mocks: 50 km/h threshold, recipients (driver/customer), cooldown, and GPS reliability gate.
 - [x] Non-bike ride exclusion (auto/car/delivery) verified.
 - [x] Warning remains a side-effect-free proposal; real notifications/GPS/Supabase remain out of scope.
+
+
+## Manual helmet verification integration (QA-only)
+- [x] Bike-only verification gate; auto/car/delivery bypass safely.
+- [x] Camera permission missing/denied blocks bike ride start.
+- [x] Permission grant alone is insufficient; manual capture/check must be completed.
+- [x] Verification is bound to a ride ID; mismatched ride/session is blocked.
+- [x] Terminal ride states reset the gate; missing ride binding fails closed.
+- [x] Mock policy is side-effect-free: no camera API, image storage, AI inference, live ride mutation, or notification.
