@@ -64,3 +64,14 @@ Status: planning/contract stage. This document records the user's selected featu
 - **FR app:** surfaces eligible coupons in Customer home, Ride booking before confirmation, Coupon Market, and notification banners (opt-in); show clear expiry, terms, eligibility, and capped availability.
 - Ride coupons should have usage limits, validity, service/area constraints where supported, minimum fare, maximum discount, per-user cap, and eligibility/abuse protections. Do not allow client-side fare manipulation; discount is calculated and applied server-side before booking/payment.
 - Driver coupon campaigns must not let drivers alter fare rules, claim fake rides, self-redeem, or reward unverified trips. Admin controls approval, caps, suspension, and reporting. Promotion success measured by verified completed rides and incremental usage—not coupon claims alone.
+
+
+## Paid Coupon Market — confirmed requirement
+- Coupons can be sold to customers (paid coupon purchase), not only distributed free.
+- Issuers/sellers: Store Partner, Admin, and Driver (Driver paid coupons require approval and eligible ride-campaign scope).
+- Coupon categories: store/product/service coupon, ride discount coupon, prepaid value coupon, percent/amount discount, BOGO, and pass where supported.
+- Customer-facing listing must show sale price, coupon value/benefit, savings, terms, minimum purchase, expiry, quantity/limits, eligible merchant/service, and seller/issuer.
+- Checkout uses the existing payment integration; coupon is redeemable only after trusted payment verification.
+- My Coupons wallet provides unique QR/token and status; redemption is backend-validated and one-time, matched to the store or ride eligibility.
+- Admin approval, campaign controls, fraud limits, refund/expiry policy, and verified sales/redemption reports.
+- No assumed commissions or revenue share without explicit configured rules.
