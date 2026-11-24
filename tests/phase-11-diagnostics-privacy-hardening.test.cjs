@@ -176,3 +176,15 @@ test('Phase 11 direct sanitizer rejects phone-like numeric strings independently
   assert.equal(result.event.fields.errorCode, undefined);
   assert.equal(JSON.stringify(result).includes('9876543210'), false);
 });
+
+
+test('Phase 11 privacy controls reject phone-like values with common separators', () => {
+  for (const unsafe of ['9876543210', '+91 98765 43210', '98765-43210', '(987) 654-3210']) {
+    const gated = evaluatePrivacyGate({ type: 'request_started', context, fields: { operation: unsafe } });
+    assert.equal(gated.accepted, false, unsafe);
+    const direct = sanitizeDiagnosticEvent({ type: 'request_started', context, fields: { operation: unsafe } });
+    assert.equal(direct.event.fields.operation, undefined, unsafe);
+    assert.equal(JSON.stringify(gated).includes(unsafe), false);
+    assert.equal(JSON.stringify(direct).includes(unsafe), false);
+  }
+});
