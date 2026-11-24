@@ -39,7 +39,7 @@ test('allowlist rejects malformed or injected action objects', () => {
 
 test('normalization handles case, punctuation and invisible characters safely', () => {
   assert.deepEqual(parseVoiceIntent('  MY ORDERS!!  '), {type:'navigate',target:'orders'});
-  assert.deepEqual(parseVoiceIntent('home\\u200B'), {type:'navigate',target:'home'});
+  assert.deepEqual(parseVoiceIntent('home\u200B'), {type:'navigate',target:'home'});
 });
 
 test('voice booking words remain review-only across variants', () => {
