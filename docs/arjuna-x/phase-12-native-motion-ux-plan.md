@@ -91,3 +91,5 @@
 
 - Audit checkpoint: the FRIEND RIDE Regression workflow's push trigger currently excludes this Phase 12 QA branch (it lists main and ui/full-native-dark-gold-2026-11-21). Manual workflow dispatch exists, but no QA-branch run was found in the recent workflow runs queried; no test or CI pass is claimed.
 - Added contract coverage for quote-preview subtotal parsing: confirmed line price text, quantity multiplication, paise rounding, and fee helper usage. Test source updated but execution remains pending.
+
+- Accessibility polish: keyboard-visible gold focus rings added to buttons, links, form fields, and tabindex controls. Reduced-motion preference now removes shimmer movement and uses a static placeholder fill. Contract test added; execution pending.
