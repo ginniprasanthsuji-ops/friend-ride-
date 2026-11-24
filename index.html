@@ -752,8 +752,8 @@ body{padding-bottom:105px}
 const SUPABASE_URL='https://fglyplxcczdjtfwobtzh.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:'friend-ride-auth-v1'}});
-let selectedRole=(()=>{try{const r=localStorage.getItem('friendride_selected_role');return ['customer','driver','partner','admin'].includes(r)?r:'customer';}catch(_){return 'customer';}})(),currentUser=null,currentProfile=null,afterLoginAction=null,rideVehicle='Bike',online=false,rideMap=null,trackingMap=null,pickupMarker=null,dropMarker=null,driverMarker=null,pickupCoords=null,dropCoords=null,driverWatchId=null;
-const $=id=>document.getElementById(id);
+var selectedRole=(()=>{try{const r=localStorage.getItem('friendride_selected_role');return ['customer','driver','partner','admin'].includes(r)?r:'customer';}catch(_){return 'customer';}})(),currentUser=null,currentProfile=null,afterLoginAction=null,rideVehicle='Bike',online=false,rideMap=null,trackingMap=null,pickupMarker=null,dropMarker=null,driverMarker=null,pickupCoords=null,dropCoords=null,driverWatchId=null;
+var $=id=>document.getElementById(id);
 function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function showMessage(msg,type='error'){const el=$('message');if(!el)return;el.textContent=msg;el.className='show '+type;}
 function clearMessage(){const el=$('message');if(el){el.className='';el.textContent='';}}
@@ -965,7 +965,7 @@ function chooseRole(r){
  document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===selectedRole));
  switchAuth(frAuthMode);
 }
-let frSelectedCustomerAvatar='male';
+var frSelectedCustomerAvatar='male';
 function frSetAvatarGender(gender){const g=gender==='female'?'female':'male';frSelectedCustomerAvatar=g;const el=$('regCustomerGender'),av=$('regCustomerAvatar');if(el)el.value=g;if(av)av.value=g;document.querySelectorAll('.fr-avatar-pick').forEach(b=>b.classList.toggle('active',b.dataset.gender===g));}
 function frCheckPrescriptionFile(input){const f=input?.files?.[0];const status=$('prescriptionFileStatus');if(!f){if(status)status.textContent='Prescription medicine cart కోసం ఫైల్ అవసరం.';return;}const ok=f.type==='application/pdf'||f.type.startsWith('image/');if(!ok||f.size>10*1024*1024){alert('JPG, PNG లేదా PDF మాత్రమే. గరిష్ఠ ఫైల్ పరిమాణం 10 MB.');input.value='';if(status)status.textContent='Valid prescription file ఎంచుకోండి.';return;}if(status)status.textContent='Selected: '+f.name;}
 function frPreviewCustomerPhoto(input){const f=input?.files?.[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>3*1024*1024){alert('Customer photo JPG/PNG/WEBP formatలో 3 MB లోపు ఉండాలి.');input.value='';$('regCustomerPhotoPreview')?.classList.add('hide');return;}const reader=new FileReader();reader.onload=()=>{$('regCustomerPhotoImg').src=reader.result;$('regCustomerPhotoPreview').classList.remove('hide');};reader.readAsDataURL(f);}
