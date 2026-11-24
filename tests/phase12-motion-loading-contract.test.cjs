@@ -94,3 +94,8 @@ test('Phase 12: quote fee preview subtotal reads confirmed line prices and quant
   assert.match(accept, /Math\.round\(Number\(match\[1\]\)\*100\)\*qty/);
   assert.match(accept, /frPlatformChargePaise\(quotePaise\)/);
 });
+
+test('Phase 12: visible keyboard focus and reduced-motion shimmer fallback are present', () => {
+  assert.match(html, /:where\(button,\.btn,\[role="button"\],a,input,select,textarea,\[tabindex\]\):focus-visible/);
+  assert.match(html, /prefers-reduced-motion:reduce[\s\S]*?\.fr12-skeleton[\s\S]*?background-image:none!important/);
+});
