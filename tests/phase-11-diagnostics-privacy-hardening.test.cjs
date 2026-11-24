@@ -116,8 +116,8 @@ test('Phase 11 privacy gate module remains pure and dependency-limited', () => {
   const fs = require('node:fs');
   const path = require('node:path');
   const source = fs.readFileSync(path.resolve(__dirname, '../qa/arjuna-x-diagnostics-privacy-policy.cjs'), 'utf8');
-  assert.doesNotMatch(source, /\\b(fetch|XMLHttpRequest|WebSocket)\\s*\\(/);
-  assert.doesNotMatch(source, /\\b(setTimeout|setInterval)\\s*\\(/);
-  assert.doesNotMatch(source, /\\b(console\\.(log|info|warn|error)|sendTelemetry|trackEvent)\\s*\\(/);
-  assert.match(source, /evaluatePrivacyGate/);
+  for (const forbidden of ['fetch(', 'XMLHttpRequest', 'WebSocket(', 'setTimeout(', 'setInterval(', 'console.log(', 'console.info(', 'console.warn(', 'console.error(', 'sendTelemetry(', 'trackEvent(']) {
+    assert.equal(source.includes(forbidden), false, 'forbidden side-effect marker: ' + forbidden);
+  }
+  assert.equal(source.includes('evaluatePrivacyGate'), true);
 });
