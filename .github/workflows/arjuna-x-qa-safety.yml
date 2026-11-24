@@ -33,6 +33,8 @@ jobs:
         run: node --test tests/phase-9-runtime-integration.test.cjs
       - name: Run ARJUNA X Phase 9 architecture safety audit
         run: node --test tests/phase-9-architecture-safety.test.cjs
+      - name: Run ARJUNA X bike warning event-guard regression tests
+        run: node --test tests/arjuna-x-bike-speed-warning-event-guard-*.test.cjs
       - name: Run ARJUNA X Phase 10 mocked integration validation
         run: node --test tests/phase-10-mocked-integration-validation.test.cjs
       - name: Run ARJUNA X bike speed warning policy tests
