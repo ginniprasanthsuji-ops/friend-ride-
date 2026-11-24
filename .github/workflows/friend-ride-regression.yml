@@ -40,6 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: friend-ride-regression-report
+          retention-days: 7
           path: |
             playwright-report/
             test-results/
