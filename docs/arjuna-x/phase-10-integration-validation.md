@@ -257,3 +257,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Run #153: documentation checkpoint for canonical terminal reset/capacity recovery — success.
 - [x] The latest identifier canonicalization and terminal-reset/capacity recovery changes are CI-verified.
 - [x] QA-only: no production/main changes, live backend, GPS, notifications, or ride mutations.
+
+
+### Warning-event guard configuration boundary regression
+- [x] Added constructor-boundary tests rejecting unsafe integer cooldown/capacity values and negative cooldown.
+- [x] Added acceptance test for zero cooldown with minimum positive event/ride capacities.
+- [x] Confirmed invalid configuration throws explicit `TypeError` identifiers; test is deterministic and QA-only.
+- CI verification pending.
