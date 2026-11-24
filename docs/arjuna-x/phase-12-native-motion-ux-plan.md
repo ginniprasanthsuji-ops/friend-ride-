@@ -27,8 +27,16 @@
 - Initial workflow run exposed test-source escaping issue; corrected.
 - Corrected motion contract tests and full QA workflow passed.
 
+## Continuation checkpoint (2026-11-24)
+- Re-audited current inline CSS motion layer and Phase 12 contract tests.
+- Existing modal state is display-driven (.modal.show); modal panel entry animation is already scoped to .modal.show .modalbox.
+- Drawer/backdrop entry animation is scoped to .drawer-backdrop.show and respects reduced-motion.
+- Shimmer remains opt-in; existing loading states are not automatically animated to avoid affecting live workflows.
+- No CSS rewrite was made in this checkpoint: index.html is a very large single-file app, and a full-file replacement through the GitHub Contents API is unnecessarily risky for this narrow audit.
+- Latest branch CI before this checkpoint: QA Safety run #331 SUCCESS; FRIEND RIDE Regression #836 SUCCESS.
+
 ## Remaining
-1. Continue modal/loading state audit and apply motion only where safe.
+1. Safe modal/backdrop motion extension and targeted contract test.
 2. Verify no repeated-entry animation causes visual noise or performance issues.
 3. Browser/mobile regression checks if available.
 4. Final phase review and checkpoint.
