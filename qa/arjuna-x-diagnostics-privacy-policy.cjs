@@ -6,6 +6,7 @@
  */
 const { sanitizeDiagnosticEvent, ID_PATTERN, looksLikePhoneNumber } = require('./arjuna-x-diagnostics-context.cjs');
 const SAFE_INPUT_KEYS = new Set(['type', 'context', 'fields']);
+const SAFE_CONTEXT_KEYS = new Set(['correlationId', 'requestId', 'sessionId', 'role']);
 const SAFE_STRING_FIELDS = new Set(['module', 'operation', 'role', 'status', 'errorCode']);
 const SAFE_NUMERIC_FIELDS = new Set(['attempt', 'durationMs']);
 const MAX_FIELDS = 7;
@@ -22,6 +23,16 @@ function evaluatePrivacyGate(input) {
     for (const key of Object.keys(input)) {
       if (!SAFE_INPUT_KEYS.has(key)) return { accepted: false, reason: 'input_field_not_allowlisted' };
     }
+    const rawContext = input.context;
+    if (!isSafeRecord(rawContext)) return { accepted: false, reason: 'invalid_context' };
+    for (const key of Object.keys(rawContext)) {
+      if (!SAFE_CONTEXT_KEYS.has(key)) return { accepted: false, reason: 'context_field_not_allowlisted' };
+    }
+    for (const key of ['correlationId', 'requestId', 'sessionId']) {
+      const value = rawContext[key];
+      if (typeof value !== 'string' || value.length > 128 || !ID_PATTERN.test(value)) return { accepted: false, reason: 'unsafe_context_id' };
+    }
+    if (rawContext.role !== undefined && (typeof rawContext.role !== 'string' || !['customer', 'driver', 'partner', 'admin', 'system'].includes(rawContext.role))) return { accepted: false, reason: 'unsafe_context_role' };
     const rawFields = input.fields === undefined ? {} : input.fields;
     if (!isSafeRecord(rawFields)) return { accepted: false, reason: 'invalid_fields' };
     const rawKeys = Object.keys(rawFields);
