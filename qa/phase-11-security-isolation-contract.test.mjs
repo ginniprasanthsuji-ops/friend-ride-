@@ -125,3 +125,9 @@ test('Phase 11 CI: regression reports upload even when the job fails', () => {
 test('Phase 11 CI: regression artifacts have bounded retention', () => {
   assert.ok(workflow.includes('retention-days: 7'));
 });
+
+
+test('Phase 11 browser coverage count is fixed at four registration plus one page-isolation scenario', () => {
+  assert.equal((registrationSpec.match(/\\btest\\(/g) || []).length, 4);
+  assert.equal((pageIsolationSpec.match(/\\btest\\(/g) || []).length, 1);
+});
