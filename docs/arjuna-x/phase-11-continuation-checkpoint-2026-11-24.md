@@ -120,3 +120,9 @@ No merge, deployment, live payment, database mutation, or production change made
 - Static contract now asserts exactly 4 registration tests and 1 page-isolation test.
 - Contract suite: 20 authored checks (not executed).
 - Browser scenarios: 5 authored tests (not executed).
+
+
+## Local Network Block Tracking
+
+- Added static contract ensuring the Playwright local-only fixture records attempted non-local origins and aborts them.
+- Static contract suite: 21 authored checks (not executed).
