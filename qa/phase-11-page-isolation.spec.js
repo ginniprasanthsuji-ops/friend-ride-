@@ -1,0 +1,20 @@
+const { test, expect } = require('@playwright/test');
+
+test.describe('Phase 11 single-page dashboard isolation', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  test('showPage leaves exactly one active page and marks other pages hidden/inert', async ({ page }) => {
+    await page.evaluate(() => window.showPage('ride'));
+    await expect(page.locator('main .page.active')).toHaveCount(1);
+    await expect(page.locator('#ride')).toHaveAttribute('aria-hidden', 'false');
+    const hiddenState = await page.locator('main .page:not(.active)').evaluateAll(nodes =>
+      nodes.every(n => n.getAttribute('aria-hidden') === 'true' && (n.inert === true))
+    );
+    expect(hiddenState).toBe(true);
+    await page.evaluate(() => window.showPage('home'));
+    await expect(page.locator('main .page.active')).toHaveCount(1);
+    await expect(page.locator('#home')).toHaveAttribute('aria-hidden', 'false');
+  });
+});
