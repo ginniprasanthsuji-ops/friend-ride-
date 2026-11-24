@@ -6,6 +6,10 @@ const localOrigin = new URL(process.env.FRIEND_RIDE_BASE_URL).origin;
 const test = base.extend({
   page: async ({ page }, use) => {
     const blockedOrigins = [];
+    await page.addInitScript(() => {
+      // Minimal local-only Supabase SDK stub so inline app initialization can run without external network.
+      if (!window.supabase) window.supabase = { createClient: () => ({ auth: { signOut: async () => ({}) }, from: () => ({ select: () => ({ limit: async () => ({ data: [], error: null }) }) }, rpc: async () => ({ data: null, error: null }) }) };
+    });
     await page.route('**/*', async route => {
       const requestUrl = new URL(route.request().url());
       if (requestUrl.origin === localOrigin) return route.continue();
