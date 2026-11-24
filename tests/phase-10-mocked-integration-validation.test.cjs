@@ -318,3 +318,34 @@ test('Phase 10 session-bound role matrix: customer-only ride selection enforced 
     assert.equal(navigation.sideEffects, false);
   }
 });
+
+
+test('Phase 10 bike safety integration: speed warning policy is bike-only and notification remains a proposal', () => {
+  const { evaluateBikeSpeedWarning } = require('../qa/arjuna-x-bike-speed-warning.cjs');
+  const overLimit = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 55, accuracyMeters: 4, sampleAgeMs: 1000, nowMs: 5000 });
+  assert.equal(overLimit.status, 'warning_proposal');
+  assert.deepEqual(overLimit.recipients, ['driver', 'customer']);
+  assert.equal(overLimit.sideEffects, false, 'mock policy must not send notifications');
+
+  for (const rideType of ['auto', 'car', 'delivery']) {
+    const excluded = evaluateBikeSpeedWarning({ rideType, speedKmh: 80, accuracyMeters: 4, sampleAgeMs: 1000, nowMs: 5000 });
+    assert.equal(excluded.status, 'ignored');
+    assert.deepEqual(excluded.recipients, []);
+    assert.equal(excluded.sideEffects, false);
+  }
+});
+
+test('Phase 10 bike safety integration: threshold, cooldown, and unreliable GPS are fail-safe', () => {
+  const { evaluateBikeSpeedWarning } = require('../qa/arjuna-x-bike-speed-warning.cjs');
+  const threshold = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 50, accuracyMeters: 3, nowMs: 6000 });
+  assert.equal(threshold.status, 'within_limit');
+
+  const cooldown = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 67, accuracyMeters: 3, sampleAgeMs: 1000, nowMs: 50000, lastWarningAtMs: 10000 });
+  assert.equal(cooldown.status, 'warning_suppressed');
+  assert.equal(cooldown.sideEffects, false);
+
+  const unreliable = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 90, accuracyMeters: 40, sampleAgeMs: 1000, nowMs: 6000 });
+  assert.equal(unreliable.status, 'blocked');
+  assert.equal(unreliable.reason, 'gps_sample_unreliable');
+  assert.deepEqual(unreliable.recipients, []);
+});
