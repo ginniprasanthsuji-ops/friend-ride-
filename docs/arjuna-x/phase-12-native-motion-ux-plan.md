@@ -84,3 +84,5 @@
 - Test assertions cover ₹100, ₹500, ₹1,000, ₹2,000, ₹3,000 and negative input behavior.
 - Test execution remains unavailable through the connected GitHub tools; latest commit status is empty, so no CI pass is claimed.
 - Backend collection remains explicitly out of scope until a matching QA order/payment RPC exists and is reviewed; production remains untouched.
+
+- Follow-up: cart now also displays Estimated Payable (subtotal + capped 2.5% platform fee) once partner price is confirmed; empty-cart preview resets to ₹0.00.
