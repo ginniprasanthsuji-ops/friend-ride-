@@ -38,3 +38,27 @@ test('Bike speed policy: unreliable/stale GPS fails closed', () => {
   assert.equal(evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 70, accuracyMeters: 5, sampleAgeMs: 15_000 }).reason, 'gps_sample_unreliable');
   assert.equal(evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: NaN, accuracyMeters: 5 }).reason, 'invalid_gps_sample');
 });
+
+
+test('Bike speed policy: invalid speed, GPS accuracy, and time values fail closed', () => {
+  const invalid = [
+    { speedKmh: -1, accuracyMeters: 5, nowMs: 100 },
+    { speedKmh: 55, accuracyMeters: -1, nowMs: 100 },
+    { speedKmh: 55, accuracyMeters: 5, nowMs: NaN },
+    { speedKmh: 55, accuracyMeters: 5, nowMs: -1 },
+    { speedKmh: 55, accuracyMeters: 5, nowMs: 100, lastWarningAtMs: Infinity }
+  ];
+  for (const input of invalid) {
+    const result = evaluateBikeSpeedWarning({ rideType: 'bike', ...input });
+    assert.equal(result.status, 'blocked');
+    assert.equal(result.reason, 'invalid_gps_sample');
+    assert.deepEqual(result.recipients, []);
+    assert.equal(result.sideEffects, false);
+  }
+});
+
+test('Bike speed policy: exact GPS quality boundaries are accepted', () => {
+  const result = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 51, accuracyMeters: 20, sampleAgeMs: 10000, nowMs: 10000 });
+  assert.equal(result.status, 'warning_proposal');
+  assert.equal(result.sideEffects, false);
+});
