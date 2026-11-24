@@ -143,3 +143,12 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Invalid terminal states/ride IDs fail closed.
 - [x] QA-only tests; no ride state, GPS, SQL, notifications, or device effects.
 - [ ] CI checkpoint pending.
+
+
+## Warning-event ordering and ride-isolation regression checkpoint
+- [x] Interleaved ride timelines retain independent cooldown clocks.
+- [x] Resetting a terminal ride clears only that ride's cooldown state.
+- [x] Suppressed event IDs remain replay-blocked after cooldown and terminal reset.
+- [x] Stale-time blocking and terminal reset remain scoped per ride.
+- [x] Added deterministic QA tests; no concurrency/network/device/ride side effects.
+- [ ] CI checkpoint pending.
