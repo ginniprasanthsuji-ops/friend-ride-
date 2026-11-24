@@ -36,3 +36,31 @@ test('allowlist rejects malformed or injected action objects', () => {
   assert.equal(isAllowedIntent({type:'select_ride',rideType:'truck'}), false);
   assert.equal(isAllowedIntent({type:'review_booking',requiresConfirmation:true,execution:'book_now'}), false);
 });
+
+test('normalization handles case, punctuation and invisible characters safely', () => {
+  assert.deepEqual(parseVoiceIntent('  MY ORDERS!!  '), {type:'navigate',target:'orders'});
+  assert.deepEqual(parseVoiceIntent('home\\u200B'), {type:'navigate',target:'home'});
+});
+
+test('voice booking words remain review-only across variants', () => {
+  for (const command of ['book','booking','confirm','confirm booking','బుకింగ్','కన్ఫర్మ్']) {
+    const intent = parseVoiceIntent(command);
+    assert.equal(intent.type, 'review_booking', command);
+    assert.equal(intent.execution, 'none', command);
+    assert.equal(isAllowedIntent(intent), true, command);
+  }
+});
+
+test('voice never triggers payment, cancellation, or unknown admin actions', () => {
+  for (const command of ['pay','payment','pay now','చెల్లించు','cancel ride','cancel booking','రైడ్ రద్దు','open admin','delete account','send otp']) {
+    const intent = parseVoiceIntent(command);
+    assert.ok(['blocked_action','unknown'].includes(intent.type), command);
+    assert.equal(isAllowedIntent(intent), true, command);
+  }
+});
+
+test('location sharing or arbitrary address injection is not interpreted as an action', () => {
+  for (const command of ['send my location to everyone','share gps','set pickup to 12 Main Street','drop at home']) {
+    assert.deepEqual(parseVoiceIntent(command), {type:'unknown',reason:'not_allowlisted'});
+  }
+});
