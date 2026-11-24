@@ -201,3 +201,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - Added test for repeated terminal reset on the same ride: first reset clears the tracked cooldown, second reset is an ignored no-op.
 - Re-tracking the reset ride remains possible, while another ride's cooldown remains intact.
 - QA-only; no live ride state or side effects. CI validation pending.
+
+
+### Stale event timestamp retry recovery
+- [x] QA event guard now validates stale timestamps before reserving event IDs.
+- [x] New test proves stale timestamp rejection leaves the ID retryable; a later valid timestamp is accepted.
+- [x] Side-effect-free QA contract retained.
+- CI verification pending for commits `afd8d619` and `a151aad5`.
