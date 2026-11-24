@@ -371,3 +371,44 @@ test('Phase 10 bike safety cross-policy integration: helmet gate must pass befor
   assert.equal(speedDecision.status, 'warning_proposal');
   assert.equal(speedDecision.sideEffects, false);
 });
+
+
+test('Phase 10 concurrency safety: session close aborts all running requests and rejects replay', () => {
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 2, maxRequestsPerSession: 4 });
+  life.openSession('s-concurrency-close', 'customer');
+  const reqA = life.beginRequest('s-concurrency-close', 'r-a');
+  const reqB = life.beginRequest('s-concurrency-close', 'r-b');
+  const reqC = life.beginRequest('s-concurrency-close', 'r-c');
+  assert.equal(reqA.status, 'started');
+  assert.equal(reqB.status, 'started');
+  assert.equal(reqC.status, 'started');
+
+  assert.equal(life.closeSession('s-concurrency-close', 'cancelled').status, 'cancelled');
+  for (const started of [reqA, reqB, reqC]) assert.equal(started.signal.aborted, true);
+  assert.deepEqual(life.beginRequest('s-concurrency-close', 'r-a'), { status: 'blocked', reason: 'session_not_active' });
+  assert.deepEqual(life.finishRequest('s-concurrency-close', 'r-b'), { status: 'blocked', reason: 'session_not_active' });
+});
+
+test('Phase 10 timeout terminal state rejects completion and duplicate replay', () => {
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 1, maxRequestsPerSession: 3 });
+  life.openSession('s-timeout-terminal', 'driver');
+  const active = life.beginRequest('s-timeout-terminal', 'r-timeout-terminal');
+  assert.equal(life.timeoutRequest('s-timeout-terminal', 'r-timeout-terminal').status, 'timed_out');
+  assert.equal(active.signal.aborted, true);
+  assert.deepEqual(life.finishRequest('s-timeout-terminal', 'r-timeout-terminal'), { status: 'blocked', reason: 'request_not_running' });
+  assert.deepEqual(life.beginRequest('s-timeout-terminal', 'r-timeout-terminal'), { status: 'duplicate', reason: 'request_id_already_used' });
+  const snapshot = life.snapshot('s-timeout-terminal');
+  assert.equal(snapshot.requests[0].status, 'timed_out');
+});
+
+test('Phase 10 expiry boundary is exact and expired sessions cannot be revived', () => {
+  let clock = 2000;
+  const life = new RuntimeSessionLifecycle({ ttlMs: 25, maxSessions: 2, maxRequestsPerSession: 2, now: () => clock });
+  life.openSession('s-expiry-boundary', 'partner');
+  const running = life.beginRequest('s-expiry-boundary', 'r-expiry-boundary');
+  clock = 2025;
+  assert.deepEqual(life.beginRequest('s-expiry-boundary', 'r-late'), { status: 'blocked', reason: 'session_not_active' });
+  assert.equal(running.signal.aborted, true);
+  assert.equal(life.snapshot('s-expiry-boundary'), undefined);
+  assert.throws(() => life.openSession('s-expiry-boundary', 'partner'), /already exists/);
+});
