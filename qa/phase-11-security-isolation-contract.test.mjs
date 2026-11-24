@@ -70,7 +70,7 @@ test('Phase 11 QA safety: Playwright discovery is limited to browser spec files'
 });
 
 test('Phase 11 QA safety: browser tests are restricted to localhost/loopback', () => {
-  assert.ok(playwrightConfig.includes("new Set(['localhost', '127.0.0.1', '::1', '[::1]')"));
+  assert.ok(playwrightConfig.includes("new Set(['localhost', '127.0.0.1', '::1', '[::1]'])"));
   assert.ok(preflight.includes('only localhost/loopback URLs are allowed'));
   assert.ok(preflight.includes('FRIEND_RIDE_BASE_URL must be explicitly set'));
 });
@@ -165,7 +165,7 @@ test('Phase 11 QA entry point requires local preflight before browser tests', ()
 
 
 test('Phase 11 preflight rejects hosted URLs and never follows redirects', () => {
-  assert.ok(preflight.includes("const hosts = new Set(['localhost', '127.0.0.1', '::1', '[::1]')"));
+  assert.ok(preflight.includes("const hosts = new Set(['localhost', '127.0.0.1', '::1', '[::1]'])"));
   assert.ok(preflight.includes("redirect: 'manual'"));
   assert.ok(preflight.includes('only localhost/loopback URLs are allowed'));
   assert.ok(preflight.includes('process.exit(2)'));
