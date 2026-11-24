@@ -11,6 +11,12 @@ const SAFE_EVENT_TYPES = new Set([
 ]);
 const SAFE_FIELDS = new Set(['module', 'operation', 'role', 'status', 'errorCode', 'attempt', 'durationMs']);
 
+function looksLikePhoneNumber(value) {
+  if (typeof value !== 'string') return false;
+  const digits = value.replace(/[+().\s-]/g, '');
+  return /^\d{8,15}$/.test(digits) && /^[+0-9().\s-]+$/.test(value);
+}
+
 function validId(value, label) {
   if (typeof value !== 'string' || !ID_PATTERN.test(value)) throw new Error(label + ' is invalid');
   return value;
@@ -34,7 +40,7 @@ function sanitizeDiagnosticEvent({ type, context, fields = {} } = {}) {
     for (const key of Object.keys(fields || {})) {
       if (!SAFE_FIELDS.has(key)) continue;
       const value = fields[key];
-      if (typeof value === 'string' && value.length <= 96 && ID_PATTERN.test(value) && !/^\d{8,}$/.test(value)) safeFields[key] = value;
+      if (typeof value === 'string' && value.length <= 96 && ID_PATTERN.test(value) && !looksLikePhoneNumber(value)) safeFields[key] = value;
       else if (typeof value === 'number' && Number.isFinite(value) && value >= 0 && ['attempt', 'durationMs'].includes(key)) safeFields[key] = value;
     }
     return { accepted: true, event: Object.freeze({ type, context: safeContext, fields: Object.freeze(safeFields) }) };
@@ -43,4 +49,4 @@ function sanitizeDiagnosticEvent({ type, context, fields = {} } = {}) {
   }
 }
 
-module.exports = { createCorrelationContext, sanitizeDiagnosticEvent, ID_PATTERN, SAFE_EVENT_TYPES, SAFE_FIELDS };
+module.exports = { createCorrelationContext, sanitizeDiagnosticEvent, ID_PATTERN, SAFE_EVENT_TYPES, SAFE_FIELDS, looksLikePhoneNumber };
