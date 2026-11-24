@@ -32,11 +32,23 @@ class BikeSpeedWarningEventGuard {
     }
     this.seenEventIds.add(eventId);
     const last = this.lastProposalAtByRide.get(rideId);
+    if (last !== undefined && nowMs < last) {
+      return { status: 'blocked', reason: 'stale_event_time', sideEffects: false };
+    }
     if (last !== undefined && nowMs - last < this.cooldownMs) {
       return { status: 'suppressed', reason: 'ride_cooldown', sideEffects: false };
     }
     this.lastProposalAtByRide.set(rideId, nowMs);
     return { status: 'proposal_accepted', rideId, eventId, cooldownMs: this.cooldownMs, sideEffects: false };
+  }
+
+  terminateRide({ rideId, terminalState } = {}) {
+    if (typeof rideId !== 'string' || !rideId.trim() || !['completed', 'cancelled', 'failed'].includes(terminalState)) {
+      return { status: 'blocked', reason: 'invalid_terminal_context', sideEffects: false };
+    }
+    if (!this.lastProposalAtByRide.has(rideId)) return { status: 'ignored', reason: 'ride_not_tracked', sideEffects: false };
+    this.lastProposalAtByRide.delete(rideId);
+    return { status: 'reset', rideId, terminalState, sideEffects: false };
   }
 }
 
