@@ -53,3 +53,20 @@ test('Phase 12: customer platform charge is 2.5% capped at ₹25', () => {
   assert.match(html, /frPlatformChargePreview/);
   assert.match(html, /Final platform charge is calculated after Partner price confirmation/);
 });
+
+
+test('Phase 12: platform charge math examples and cap are exact', () => {
+  const vm = require('node:vm');
+  const start = html.indexOf('function frPlatformChargePaise(');
+  const end = html.indexOf('function renderMarketCart()', start);
+  assert.ok(start >= 0 && end > start, 'platform fee helper should exist before cart renderer');
+  const sandbox = {};
+  vm.runInNewContext(html.slice(start, end), sandbox);
+  const fee = sandbox.frPlatformChargePaise;
+  assert.equal(fee(10000), 250); // ₹100 -> ₹2.50
+  assert.equal(fee(50000), 1250); // ₹500 -> ₹12.50
+  assert.equal(fee(100000), 2500); // ₹1,000 -> ₹25 cap
+  assert.equal(fee(200000), 2500); // ₹2,000 -> cap
+  assert.equal(fee(300000), 2500); // ₹3,000 -> cap
+  assert.equal(fee(-10000), 0); // no negative subtotal
+});
