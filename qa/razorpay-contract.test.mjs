@@ -6,34 +6,14 @@ const app = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const edge = await readFile(new URL('../supabase/functions/fr-razorpay-checkout/index.ts', import.meta.url), 'utf8');
 
 test('FRONTEND: Razorpay Standard Checkout calls order and verify endpoints', () => {
-  assert.match(app, /checkout\\.js/);
-  assert.match(app, /action:'create-order'/);
-  assert.match(app, /action:'verify-payment'/);
-  assert.match(app, /razorpay_order_id/);
-  assert.match(app, /payment\\.failed/);
-  assert.match(app, /ondismiss/);
-  assert.doesNotMatch(app, /RAZORPAY_KEY_SECRET|Jf0mTU8wLBJJ84GuOkkMug4t/);
+  for (const marker of ['checkout.js', "action:'create-order'", "action:'verify-payment'", 'razorpay_order_id', "payment.failed", 'ondismiss']) assert.ok(app.includes(marker), 'missing frontend marker: '+marker);
+  assert.ok(!app.includes('RAZORPAY_KEY_SECRET') && !app.includes('Jf0mTU8wLBJJ84GuOkkMug4t'), 'secret must not be in frontend source');
 });
 
 test('BACKEND: order creation authenticates and restricts approved plans', () => {
-  assert.match(edge, /\\/auth\\/v1\\/user/);
-  assert.match(edge, /api\\.razorpay\\.com\\/v1\\/orders/);
-  assert.match(edge, /amount < 100/);
-  assert.match(edge, /Basic: 299/);
-  assert.match(edge, /Growth: 599/);
-  assert.match(edge, /Premium: 999/);
-  assert.match(edge, /401/);
+  for (const marker of ['/auth/v1/user', 'api.razorpay.com/v1/orders', 'amount < 100', 'Basic: 299', 'Growth: 599', 'Premium: 999', '401']) assert.ok(edge.includes(marker), 'missing backend marker: '+marker);
 });
 
 test('BACKEND: signature, order ownership, and captured payment are verified', () => {
-  assert.match(edge, /HMAC/);
-  assert.match(edge, /orderId \\+ "\\|" \\+ paymentId/);
-  assert.match(edge, /constantTimeEqual/);
-  assert.match(edge, /orders\\/.*encodeURIComponent/);
-  assert.match(edge, /notes\\?\\.user_id|notes\\.user_id/);
-  assert.match(edge, /payments\\/.*encodeURIComponent/);
-  assert.match(edge, /status !== "captured"/);
-  assert.match(edge, /payment\\?\\.order_id/);
-  assert.match(edge, /payment\\?\\.amount !== order\\.amount/);
-  assert.match(edge, /400/);
+  for (const marker of ['HMAC', 'orderId + "|" + paymentId', 'constantTimeEqual', 'orders/" + encodeURIComponent(orderId)', 'order?.notes?.user_id !== user.id', 'payments/" + encodeURIComponent(paymentId)', 'payment?.status !== "captured"', 'payment?.order_id !== orderId', 'payment?.amount !== order.amount', '400']) assert.ok(edge.includes(marker), 'missing verification marker: '+marker);
 });
