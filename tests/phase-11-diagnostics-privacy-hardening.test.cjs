@@ -82,3 +82,32 @@ test('Phase 11 privacy hardening: context getter failures are fail-closed', () =
   assert.equal(result.reason, 'invalid_context');
   assert.equal(JSON.stringify(result).includes('private getter payload'), false);
 });
+
+const { evaluatePrivacyGate } = require('../qa/arjuna-x-diagnostics-privacy-policy.cjs');
+
+test('Phase 11 privacy gate accepts bounded safe fields and marks no side effects', () => {
+  const result = evaluatePrivacyGate({
+    type: 'request_failed', context,
+    fields: { module: 'runtime', operation: 'retry', status: 'failed', errorCode: 'SAFE_CODE', attempt: 1, durationMs: 300 }
+  });
+  assert.equal(result.accepted, true);
+  assert.equal(result.sideEffects, false);
+  assert.equal(result.event.fields.errorCode, 'SAFE_CODE');
+});
+
+test('Phase 11 privacy gate rejects field-count, value-length and numeric boundaries', () => {
+  const tooLong = evaluatePrivacyGate({ type: 'request_started', context, fields: { module: 'x'.repeat(65) } });
+  assert.equal(tooLong.accepted, false);
+  const outOfRange = evaluatePrivacyGate({ type: 'retry_decided', context, fields: { attempt: 100000001 } });
+  assert.equal(outOfRange.accepted, false);
+  const fieldLimit = evaluatePrivacyGate({ type: 'request_started', context, fields: { module:'a',operation:'b',role:'customer',status:'ok',errorCode:'c',attempt:1,durationMs:2,extra:'no' } });
+  assert.equal(fieldLimit.accepted, false);
+});
+
+test('Phase 11 privacy gate fails closed on hostile objects and unknown fields', () => {
+  const hostile = {};
+  Object.defineProperty(hostile, 'fields', { enumerable: true, get() { throw new Error('sensitive getter'); } });
+  assert.equal(evaluatePrivacyGate(hostile).accepted, false);
+  const unknown = evaluatePrivacyGate({ type:'request_started', context, fields:{ prompt:'not allowed' } });
+  assert.equal(unknown.accepted, false);
+});
