@@ -55,3 +55,12 @@ Status: planning/contract stage. This document records the user's selected featu
 - Store partner redeems one-time token; backend validates coupon validity, store ownership, expiry, and duplicate redemption atomically.
 - Admin approval/reporting and coupon sales/redeem metrics.
 - Schema proposal committed separately; trusted purchase issuance, payment confirmation, and redemption RPCs/UI remain pending. Do not deploy this migration yet.
+
+
+## Coupon issuers and ride-growth promotion (user clarification)
+- **Store Partners:** create shop/product/service coupons and publish through approval/activation workflow.
+- **Admin:** create platform-wide campaigns, ride coupons, category/service coupons, first-ride/new-user campaigns, festival promotions, referral-linked promotions, and targeted offers. Admin campaigns use the trusted admin path.
+- **Drivers:** may create driver-specific promotional coupons subject to Admin approval; coupons can promote ride bookings (e.g. limited discount/credit or special fare campaign). Driver attribution and redemption are recorded to prevent misuse and evaluate ride lift.
+- **FR app:** surfaces eligible coupons in Customer home, Ride booking before confirmation, Coupon Market, and notification banners (opt-in); show clear expiry, terms, eligibility, and capped availability.
+- Ride coupons should have usage limits, validity, service/area constraints where supported, minimum fare, maximum discount, per-user cap, and eligibility/abuse protections. Do not allow client-side fare manipulation; discount is calculated and applied server-side before booking/payment.
+- Driver coupon campaigns must not let drivers alter fare rules, claim fake rides, self-redeem, or reward unverified trips. Admin controls approval, caps, suspension, and reporting. Promotion success measured by verified completed rides and incremental usage—not coupon claims alone.
