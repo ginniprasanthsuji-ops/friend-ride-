@@ -50,5 +50,5 @@ test('session isolation rejects cross-session requests', () => {
 test('diagnostics redact arbitrary strings and keep compact codes', () => {
   const diagnostic=safeDiagnostic('bad code / phone 9876543210','correlation:9876543210');
   assert.match(diagnostic.code,/^[a-z0-9_]+$/i);
-  assert.doesNotMatch(JSON.stringify(diagnostic),/9876543210|phone|:/);
+  assert.doesNotMatch(JSON.stringify(diagnostic),/9876543210|phone/i);\n  assert.equal(diagnostic.correlationId, undefined);
 });
