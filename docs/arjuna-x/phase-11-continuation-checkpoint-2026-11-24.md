@@ -21,7 +21,8 @@ Previous checkpoint: 97%, with 5/5 targeted security checks reported PASS. The s
 - Expanded `qa/phase-11-security-isolation-contract.test.mjs` to nine Node test cases: Admin membership, role allowlist, driver approval, Learning isolation/routing, dashboard limitation disclosure, role-specific registration fields, and page isolation/inert state.
 - Added `qa/phase-11-registration-isolation.spec.js` with four browser tests for Customer, Driver, Partner and Admin registration field visibility/disabled controls.
 - Added `qa/phase-11-page-isolation.spec.js` to verify exactly one active page and hidden pages are aria-hidden/inert after navigation.
-- CI workflow includes Phase 11 Node contract tests; Playwright suite is also included through existing `npm test`.
+- CI workflow includes Phase 11 Node contract tests; Playwright suite is included through existing `npm test`.
+- Updated `playwright.config.cjs` to explicitly discover `.spec.js`, `.spec.cjs`, and `.spec.ts` files only, preventing standalone Node `.test.mjs` contract suite from being incorrectly picked up by Playwright.
 - Tests are authored but not executed here. No CI run verified.
 
 ## Remaining before Phase 11 close
