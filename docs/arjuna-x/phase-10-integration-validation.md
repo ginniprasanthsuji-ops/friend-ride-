@@ -208,3 +208,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] New test proves stale timestamp rejection leaves the ID retryable; a later valid timestamp is accepted.
 - [x] Side-effect-free QA contract retained.
 - CI verification pending for commits `afd8d619` and `a151aad5`.
+
+
+### Cooldown replay protection
+- [x] Suppressed event IDs remain deduplicated even after the cooldown expires; replay of the same ID is blocked.
+- [x] A fresh event ID can be accepted after cooldown expiry.
+- [x] QA-only test; no production behavior or side effects.
+- CI verification pending.
