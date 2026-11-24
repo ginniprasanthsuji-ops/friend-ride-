@@ -1,7 +1,7 @@
 # Phase 12 — Native Motion & UX Safety
 
 ## Status
-- Progress: 20%
+- Progress: 30%
 - UI-only motion layer committed and CI-verified.
 - QA branch only; no merge/deployment.
 
@@ -17,16 +17,18 @@
 - Touch/press feedback for buttons and role-button elements.
 - Active control micro-transition.
 - CSS shimmer class for loading placeholders (opt-in class; existing loading UI not automatically converted).
+- Drawer/backdrop fade + slide entry animation added.
 - `prefers-reduced-motion: reduce` disables the new animation/transition effects.
 - No JS dependencies or backend/auth/schema/payment changes.
 
 ## Verification
-- Phase 12 motion contract test added to QA workflow.
+- Phase 12 motion contract test extended to drawer/backdrop and reduced-motion behavior.
+- Latest full QA run after drawer motion: SUCCESS (run 45371951789).
 - Initial workflow run exposed test-source escaping issue; corrected.
 - Corrected motion contract tests and full QA workflow passed.
 
 ## Remaining
-1. Audit navigation/modal/loading state usage and apply motion only where safe.
+1. Continue navigation/modal/loading state audit and apply motion only where safe.
 2. Verify no repeated-entry animation causes visual noise or performance issues.
 3. Browser/mobile regression checks if available.
 4. Final phase review and checkpoint.
