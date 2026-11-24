@@ -106,3 +106,9 @@ test('Phase 11 browser regression specs contain the intended 5 isolation scenari
   assert.ok(registrationSpec.includes('Admin registration mode does not expose customer, driver, or partner registration fields'));
   assert.ok(pageIsolationSpec.includes('showPage leaves exactly one active page and marks other pages hidden/inert'));
 });
+
+
+test('Phase 11 CI: preflight is run through npm test only, not duplicated as a workflow step', () => {
+  assert.ok(workflow.includes('run: npm test'));
+  assert.ok(!workflow.includes('run: node scripts/qa-local-preflight.cjs'));
+});
