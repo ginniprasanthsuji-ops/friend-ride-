@@ -215,3 +215,11 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] A fresh event ID can be accepted after cooldown expiry.
 - [x] QA-only test; no production behavior or side effects.
 - CI verification pending.
+
+### Global event-ID and cross-ride isolation checkpoint
+- Added regression proving event IDs are globally deduplicated across ride IDs.
+- Duplicate ID presented on a second ride is blocked without poisoning that ride's cooldown state.
+- Fresh ID on the second ride is accepted; the first ride's cooldown remains independent.
+- Added the complete bike-warning event-guard regression glob to CI so these tests are executed, not merely present.
+- QA-only; no live notifications, GPS, ride mutations, network or database effects.
+- CI validation pending for this checkpoint.
