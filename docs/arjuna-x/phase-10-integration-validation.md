@@ -152,3 +152,12 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Stale-time blocking and terminal reset remain scoped per ride.
 - [x] Added deterministic QA tests; no concurrency/network/device/ride side effects.
 - [ ] CI checkpoint pending.
+
+
+## Capacity and terminal-reset interaction checkpoint
+- [x] Terminal reset releases ride-tracking capacity for a new ride ID.
+- [x] Reset does not erase replay IDs or expand event capacity.
+- [x] Zero-cooldown configuration allows sequential distinct events but still rejects replay.
+- [x] Whitespace-only ride/event IDs fail closed.
+- [x] Added deterministic QA tests; side effects remain disabled.
+- [ ] CI checkpoint pending.
