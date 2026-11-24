@@ -19,6 +19,6 @@ test('Phase 10 guard: max timestamp reset recovery is isolated across rides and 
     status: 'blocked', reason: 'stale_event_time', sideEffects: false
   });
   assert.deepEqual(guard.evaluate({ rideId: 'ride-b', eventId: 'a-max', nowMs: 11 }), {
-    status: 'blocked', reason: 'duplicate_event', sideEffects: false
+    status: 'blocked', reason: 'duplicate_event_id', sideEffects: false
   });
 });
