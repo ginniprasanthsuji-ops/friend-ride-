@@ -112,3 +112,11 @@ test('Phase 11 CI: preflight is run through npm test only, not duplicated as a w
   assert.ok(workflow.includes('run: npm test'));
   assert.ok(!workflow.includes('run: node scripts/qa-local-preflight.cjs'));
 });
+
+
+test('Phase 11 CI: regression reports upload even when the job fails', () => {
+  assert.ok(workflow.includes('if: always()'));
+  assert.ok(workflow.includes('playwright-report/'));
+  assert.ok(workflow.includes('test-results/'));
+  assert.ok(workflow.includes('if-no-files-found: ignore'));
+});
