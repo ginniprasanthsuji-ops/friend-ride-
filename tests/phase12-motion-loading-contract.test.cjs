@@ -70,3 +70,11 @@ test('Phase 12: platform charge math examples and cap are exact', () => {
   assert.equal(fee(300000), 2500); // ₹3,000 -> cap
   assert.equal(fee(-10000), 0); // no negative subtotal
 });
+
+
+test('Phase 12: estimated payable includes subtotal and capped platform charge', () => {
+  assert.match(html, /Estimated Payable \(Subtotal \+ Platform Charge\)/);
+  assert.match(html, /frEstimatedPayable/);
+  assert.match(html, /frCartSubtotal\+frPlatformChargeRupees\(frCartSubtotal\)/);
+  assert.match(html, /frEstimatedPayable[^\n]*₹0\.00/);
+});
