@@ -1467,11 +1467,11 @@ function addMarketCart(name,partner,pricing){
  renderMarketCart();showMessage('Item కార్ట్‌లో చేరింది. '+storeName+' ధర నిర్ధారణ కోసం వేచి ఉంది.','good');
 }
 function frChangeCartQty(i,delta){if(!frMarketCart[i])return;frMarketCart[i].qty+=delta;if(frMarketCart[i].qty<=0)frMarketCart.splice(i,1);renderMarketCart();}
-function renderMarketCart(){
+function frPlatformChargePaise(orderAmountPaise){const amount=Math.max(0,Math.round(Number(orderAmountPaise)||0));return Math.min(2500,Math.round(amount*0.025));} function frPlatformChargeRupees(orderAmountRupees){return frPlatformChargePaise(Math.round(Math.max(0,Number(orderAmountRupees)||0)*100))/100;} function renderMarketCart(){
  const el=$('marketCartItems');if(!el)return;
- if(!frMarketCart.length){el.innerHTML='<div class="market-empty">మీ Cart ఖాళీగా ఉంది. Store Catalogue నుంచి వస్తువులు జోడించండి.</div>';$('marketCartTotal').textContent='₹0.00';const p=$('frPaymentOptions');if(p)p.style.display='none';frCartUpdateBadges();return;}
+ if(!frMarketCart.length){el.innerHTML='<div class="market-empty">మీ Cart ఖాళీగా ఉంది. Store Catalogue నుంచి వస్తువులు జోడించండి.</div>';$('marketCartTotal').textContent='₹0.00';if($('frPlatformChargePreview'))$('frPlatformChargePreview').textContent='₹0.00';const p=$('frPaymentOptions');if(p)p.style.display='none';frCartUpdateBadges();return;}
  el.innerHTML=frMarketCart.map((x,i)=>`<div class="fr-cart-line"><div><b>${safe(x.name)}</b><small>${safe(x.partner)} • Partner price confirmation pending</small><div class="fr-qty-control"><button onclick="frChangeCartQty(${i},-1)">−</button><b>${x.qty}</b><button onclick="frChangeCartQty(${i},1)">＋</button></div></div><div style="text-align:right"><b>${x.price==null?'Ask Store':'₹'+(Number(x.price)*x.qty).toFixed(2)}</b><button class="btn light" style="width:auto;padding:5px 9px;margin-top:8px" onclick="frChangeCartQty(${i},-${x.qty})">Remove</button></div></div>`).join('');
- $('marketCartTotal').textContent=frMarketCart.some(x=>x.price==null)?'Partner quote pending':'₹'+frMarketCart.reduce((n,x)=>n+x.price*x.qty,0).toFixed(2);
+ const frCartSubtotal=frMarketCart.some(x=>x.price==null)?null:frMarketCart.reduce((n,x)=>n+x.price*x.qty,0);$('marketCartTotal').textContent=frCartSubtotal==null?'Partner quote pending':'₹'+frCartSubtotal.toFixed(2);if($('frPlatformChargePreview'))$('frPlatformChargePreview').textContent=frCartSubtotal==null?'Partner quote pending':'₹'+frPlatformChargeRupees(frCartSubtotal).toFixed(2);
  const p=$('frPaymentOptions');if(p)p.style.display='none';frCartUpdateBadges();
 }
 async function frLoadStorePaymentOptions(storeId){
