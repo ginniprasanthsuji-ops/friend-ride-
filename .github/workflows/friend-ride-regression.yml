@@ -32,10 +32,12 @@ jobs:
           done
           cat /tmp/friend-ride-server.log
           exit 1
-      - name: Run browser regression tests
+      - name: Run Phase 12 contract and safety tests
+        run: npm run test:unit
+      - name: Run targeted local browser regression tests
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
-        run: npm test
+        run: npx playwright test qa/tasko-laundry-main-regression.spec.js
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
