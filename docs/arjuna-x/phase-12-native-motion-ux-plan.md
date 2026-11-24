@@ -1,7 +1,7 @@
 # Phase 12 — Native Motion & UX Safety
 
 ## Status
-- Progress: 45%
+- Progress: 50%
 - UI-only motion layer committed and CI-verified.
 - QA branch only; no merge/deployment.
 
@@ -34,6 +34,11 @@
 - Placeholders use status roles and accessible labels.
 - Existing async result paths remain in place: success renders results, empty results render the existing empty-state UI, and failures render existing error notices.
 - No service logic or request flow changed.
+
+## Additional Loading Surfaces (2026-11-24)
+- Extended opt-in shimmer to customer homepage ratings, admin complaints/feedback, driver KYC document review, partner applications, approved-store status, and store payment details loading surfaces.
+- Added accessibility status roles/labels to runtime loading placeholders. Existing result/error/empty rendering and API calls remain unchanged.
+- Contract tests extended for the additional loading surfaces; tests remain unexecuted locally and CI is not verified.
 
 ## Verification
 - Extended Node contract tests cover selected placeholder application, CSS opt-in behavior, reduced-motion disabling, and expected success/empty/error paths.
