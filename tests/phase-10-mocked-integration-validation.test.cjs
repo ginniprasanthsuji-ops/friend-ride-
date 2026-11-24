@@ -114,7 +114,7 @@ test('Phase 10 integration matrix: session close aborts running request and prev
   const started = life.beginRequest('s-close', 'r-close');
   assert.equal(started.status, 'started');
   assert.equal(started.signal.aborted, false);
-  assert.equal(life.closeSession('s-close'), 'closed');
+  assert.equal(life.closeSession('s-close').status, 'closed');
   assert.equal(started.signal.aborted, true);
   assert.equal(life.finishRequest('s-close', 'r-close').status, 'blocked');
   assert.equal(life.beginRequest('s-close', 'r-late').status, 'blocked');
