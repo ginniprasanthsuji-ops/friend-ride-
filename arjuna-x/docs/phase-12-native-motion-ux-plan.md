@@ -32,8 +32,8 @@ Establish and verify a lightweight, native-app-like motion system for FRIEND RID
 - [x] Document baseline gaps and select minimal motion primitives.
 - [x] Implement first UI-only motion layer: page/card/modal entrance, touch feedback, CSS shimmer contract, reduced-motion overrides.
 - [x] Add dependency-free contract tests for motion and reduced-motion safety.
-- [ ] Run CI and browser regression checks; report exact verified results.
+- [x] Strengthen motion contract tests for short duration, compositor-friendly transforms/opacity, and reduced-motion coverage.\n- [ ] Run CI and browser regression checks; report exact verified results.
 - [ ] Final closeout and checkpoint.
 
 ## Progress
-Phase 12 progress: **20%**. Initial audit completed; first motion primitives and contract tests implemented. GitHub Actions run `45369800954` completed **SUCCESS**. More UX integration and regression review remain.
+Phase 12 progress: **40%**. Initial motion primitives, drawer/backdrop transitions, and strengthened performance/reduced-motion contracts are implemented. CI/browser regression re-run is pending.
