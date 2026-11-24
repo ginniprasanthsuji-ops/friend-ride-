@@ -1,7 +1,7 @@
 # Phase 12 — Native Motion & UX Safety
 
 ## Status
-- Progress: 30%
+- Progress: 40%
 - UI-only motion layer committed and CI-verified.
 - QA branch only; no merge/deployment.
 
