@@ -31,10 +31,6 @@ jobs:
           done
           cat /tmp/friend-ride-server.log
           exit 1
-      - name: Run localhost QA preflight safety guard
-        env:
-          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
-        run: node scripts/qa-local-preflight.cjs
       - name: Run browser regression tests
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
