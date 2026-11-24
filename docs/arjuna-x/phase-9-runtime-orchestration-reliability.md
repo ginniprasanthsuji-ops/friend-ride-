@@ -32,6 +32,8 @@ Build a predictable, testable runtime layer for ARJUNA X that coordinates safe a
 - Lifecycle stress coverage: bounded session capacity with 200 requests across 20 isolated sessions; mixed terminal outcomes verified.
 - Terminal-order race regression: first terminal action wins; later cancel/timeout/finish attempts are blocked. Session close blocks late request completion and timeout.
 
+- Architecture side-effect audit added to CI: verifies Phase 9 policy modules contain no network calls, timer scheduling, telemetry/logging emission, or external-provider imports. Audit test corrected and confirmed passing in CI Run #59.
+
 ## Remaining workstreams
 1. Typed runtime request/result contract and integration surface.
 2. Harden lifecycle edge cases and concurrency semantics.
