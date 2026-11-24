@@ -119,3 +119,63 @@ test('Phase 10 integration matrix: session close aborts running request and prev
   assert.equal(life.finishRequest('s-close', 'r-close').status, 'blocked');
   assert.equal(life.beginRequest('s-close', 'r-late').status, 'blocked');
 });
+
+test('Phase 10 cross-module workflow matrix: navigation, ride selection, booking review, unknown intent', () => {
+  const navigation = evaluateRuntimeRequest({ sessionId: 's-matrix', role: 'customer', permissions: [], intent: { type: 'navigate', target: 'orders' } });
+  assert.equal(navigation.status, 'proposal');
+  assert.equal(navigation.action.target, 'orders');
+  assert.equal(navigation.sideEffects, false);
+
+  const ride = evaluateRuntimeRequest({ sessionId: 's-matrix', role: 'customer', permissions: [], intent: { type: 'select_ride', rideType: 'car' } });
+  assert.equal(ride.status, 'proposal');
+  assert.equal(ride.action.rideType, 'car');
+  assert.equal(ride.sideEffects, false);
+
+  const review = evaluateRuntimeRequest({ sessionId: 's-matrix', role: 'customer', permissions: [], intent: { type: 'review_booking', requiresConfirmation: true, execution: 'none' } });
+  assert.equal(review.status, 'confirmation_required');
+  assert.equal(review.sideEffects, false);
+
+  const unknown = evaluateRuntimeRequest({ sessionId: 's-matrix', role: 'customer', permissions: [], intent: { type: 'unknown', payload: 'ignored' } });
+  assert.equal(unknown.status, 'blocked');
+  assert.equal(unknown.sideEffects, false);
+});
+
+test('Phase 10 recovery matrix: completed operations, confirmation, and unknown errors fail closed', () => {
+  const completed = decideRecovery({ errorCode: 'TIMEOUT', operationCompleted: true });
+  assert.equal(completed.recover, false);
+  assert.equal(completed.fallback, 'return_completion_status');
+  assert.equal(completed.reconcileRequired, false);
+
+  const confirmed = decideRecovery({ errorCode: 'NETWORK_UNAVAILABLE', userConfirmed: true });
+  assert.equal(confirmed.recover, false);
+  assert.equal(confirmed.reason, 'confirmation_does_not_authorize_automatic_replay');
+
+  const unknown = decideRecovery({ errorCode: 'UNRECOGNIZED_ERROR' });
+  assert.equal(unknown.recover, true);
+  assert.equal(unknown.fallback, 'return_generic_failure');
+});
+
+test('Phase 10 retry matrix: attempt ceiling and unknown errors deny retries', () => {
+  const ceiling = decideRetry({ attempt: 3, maxAttempts: 3, idempotent: true, errorCode: 'TIMEOUT' });
+  assert.equal(ceiling.retry, false);
+  assert.equal(ceiling.reason, 'attempt_limit_reached');
+
+  const unknown = decideRetry({ attempt: 1, maxAttempts: 3, idempotent: true, errorCode: 'UNRECOGNIZED_ERROR' });
+  assert.equal(unknown.retry, false);
+  assert.equal(unknown.reason, 'unknown_error_fail_closed');
+});
+
+test('Phase 10 role/session binding matrix: session role is authoritative and mismatched request is blocked', () => {
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 3, maxRequestsPerSession: 3 });
+  life.openSession('s-customer-bound', 'customer');
+  const session = life.snapshot('s-customer-bound');
+  assert.equal(session.role, 'customer');
+
+  const driverIntent = evaluateRuntimeRequest({ sessionId: session.sessionId, role: 'driver', permissions: [], intent: { type: 'select_ride', rideType: 'bike' } });
+  assert.equal(driverIntent.status, 'blocked');
+  assert.equal(driverIntent.sideEffects, false);
+
+  const binding = require('../qa/arjuna-x-runtime-policy.cjs').assertSessionIsolation(session.sessionId, 'different-session');
+  assert.equal(binding.status, 'blocked');
+  assert.equal(binding.sideEffects, false);
+});
