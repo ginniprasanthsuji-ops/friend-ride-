@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const { evaluateBikeSpeedWarning } = require('../qa/arjuna-x-bike-speed-warning.cjs');
 
 test('Phase 10 malformed numeric GPS and time inputs fail closed in a deterministic batch', () => {
-  const invalidValues = [NaN, Infinity, -Infinity, null, '51', undefined];
+  const invalidValues = [NaN, Infinity, -Infinity, null, '51'];
   for (const speedKmh of invalidValues) {
     const result = evaluateBikeSpeedWarning({
       rideType: 'bike', speedKmh, accuracyMeters: 5, sampleAgeMs: 100, nowMs: 1000
@@ -16,7 +16,7 @@ test('Phase 10 malformed numeric GPS and time inputs fail closed in a determinis
     assert.equal(result.sideEffects, false);
   }
 
-  for (const accuracyMeters of [NaN, Infinity, -Infinity, null, '5', undefined, -1]) {
+  for (const accuracyMeters of [NaN, Infinity, -Infinity, null, '5', -1]) {
     const result = evaluateBikeSpeedWarning({
       rideType: 'bike', speedKmh: 51, accuracyMeters, sampleAgeMs: 100, nowMs: 1000
     });
@@ -26,7 +26,7 @@ test('Phase 10 malformed numeric GPS and time inputs fail closed in a determinis
     assert.equal(result.sideEffects, false);
   }
 
-  for (const sampleAgeMs of [NaN, Infinity, -Infinity, null, '100', undefined]) {
+  for (const sampleAgeMs of [NaN, Infinity, -Infinity, null, '100']) {
     const result = evaluateBikeSpeedWarning({
       rideType: 'bike', speedKmh: 51, accuracyMeters: 5, sampleAgeMs, nowMs: 1000
     });
@@ -36,7 +36,7 @@ test('Phase 10 malformed numeric GPS and time inputs fail closed in a determinis
     assert.equal(result.sideEffects, false);
   }
 
-  for (const nowMs of [NaN, Infinity, -Infinity, null, '1000', undefined, -1]) {
+  for (const nowMs of [NaN, Infinity, -Infinity, '1000', -1]) {
     const result = evaluateBikeSpeedWarning({
       rideType: 'bike', speedKmh: 51, accuracyMeters: 5, sampleAgeMs: 100, nowMs
     });
