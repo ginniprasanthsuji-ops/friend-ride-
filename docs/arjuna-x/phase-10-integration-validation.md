@@ -169,3 +169,9 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Duplicate event ID remains rejected when event capacity is full.
 - [x] Capacity rejection ordering is covered with deterministic QA tests; no side effects.
 - [ ] CI checkpoint pending.
+
+
+## Precedence CI checkpoint
+- [x] Workflow run #123 passed for precedence/reset/capacity-ordering tests.
+- [x] Added stale-event replay reservation test (new commit; CI validation pending).
+- [ ] Latest commit CI checkpoint pending.
