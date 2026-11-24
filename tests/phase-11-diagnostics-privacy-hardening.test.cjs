@@ -1,4 +1,3 @@
-const test = require('node:test');
 'use strict';
 
 const test = require('node:test');
