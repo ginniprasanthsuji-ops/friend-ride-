@@ -16,6 +16,9 @@ Build a predictable, testable runtime layer for ARJUNA X that coordinates safe a
 - Retry policy helper: bounded exponential-backoff decisions for explicitly idempotent transient errors only; unknown, auth, policy, payment and mutation errors fail closed. Policy helper does not execute retries or timers.
 - Retry policy regression tests added to QA workflow.
 
+- Safe recovery policy helper: typed safe fallbacks for non-mutating failures; completed operations are not replayed; committed side effects and external-effect actions require reconciliation and fail closed.
+- Recovery regression tests added to QA workflow.
+
 ## Remaining workstreams
 1. Typed runtime request/result contract and integration surface.
 2. Harden lifecycle edge cases and concurrency semantics.
