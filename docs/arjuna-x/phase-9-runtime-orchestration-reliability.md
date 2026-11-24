@@ -13,10 +13,13 @@ Build a predictable, testable runtime layer for ARJUNA X that coordinates safe a
 - Runtime lifecycle module: role-bound session open/close, request-ID duplicate prevention, request completion/failure states, cancellation through AbortSignal, TTL expiry, bounded session/request capacity.
 - Tests added for lifecycle and policy; QA workflow now runs both suites.
 
+- Retry policy helper: bounded exponential-backoff decisions for explicitly idempotent transient errors only; unknown, auth, policy, payment and mutation errors fail closed. Policy helper does not execute retries or timers.
+- Retry policy regression tests added to QA workflow.
+
 ## Remaining workstreams
 1. Typed runtime request/result contract and integration surface.
 2. Harden lifecycle edge cases and concurrency semantics.
-3. Timeout/error handling, retry policy (idempotent local only), and fail-closed fallback.
+3. Integrate retry decision policy into a controlled runtime caller only after idempotency classification is verified.
 4. Observability: correlation IDs and redaction review.
 5. Local mocked browser integration readiness and regression coverage.
 
