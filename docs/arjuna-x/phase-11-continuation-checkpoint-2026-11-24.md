@@ -100,3 +100,9 @@ No merge, deployment, live payment, database mutation, or production change made
 - Found workflow explicitly ran QA preflight and `npm test` also invokes it; removed the redundant workflow step.
 - Added a static contract to guard against duplicate preflight execution.
 - Static contract suite now has 17 authored checks (not executed).
+
+
+## Failure Report Retention Contract
+
+- Added a static contract asserting Playwright reports and test-results are configured for artifact upload with `if: always()`, including after a failed regression job.
+- Static contract suite now has 18 authored checks (not executed).
