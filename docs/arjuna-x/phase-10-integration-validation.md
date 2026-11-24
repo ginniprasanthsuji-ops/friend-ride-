@@ -124,3 +124,12 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Invalid event context fails closed.
 - [x] Pure QA guard: no notification, sound, GPS, device, SQL, or ride mutation.
 - [ ] CI checkpoint for warning-event guard pending.
+
+
+## Phase 10 bounded warning-event guard checkpoint
+- [x] Event guard memory is bounded by configurable maximum event and ride counts.
+- [x] At event capacity, new warning proposals fail closed without evicting replay IDs.
+- [x] At ride capacity, unseen ride IDs fail closed; existing rides remain usable.
+- [x] Capacity configuration rejects zero/negative/non-integer limits.
+- [x] Tests confirm bounded behavior; guard is QA-only and has no side effects.
+- [ ] CI checkpoint pending.
