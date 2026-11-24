@@ -201,3 +201,58 @@ test('Phase 10 diagnostics boundary matrix: event allowlist, context validation,
   assert.deepEqual(safe.event.fields, { module: 'runtime', status: 'completed', attempt: 2, durationMs: 50, errorCode: 'TIMEOUT' });
   assert.equal(JSON.stringify(safe).includes('should-not-log'), false);
 });
+
+test('Phase 10 failure-path integration: blocked policy request is marked failed with sanitized diagnostic', () => {
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 2, maxRequestsPerSession: 2 });
+  life.openSession('s-fail', 'customer');
+  const started = life.beginRequest('s-fail', 'r-blocked');
+  assert.equal(started.status, 'started');
+
+  const decision = evaluateRuntimeRequest({ sessionId: 's-fail', role: 'customer', permissions: [], correlationId: 'c-blocked', intent: { type: 'pay', amount: 500 } });
+  assert.equal(decision.status, 'blocked');
+  assert.equal(decision.sideEffects, false);
+  assert.equal(life.finishRequest('s-fail', 'r-blocked', 'failed').status, 'failed');
+
+  const ctx = createCorrelationContext({ correlationId: 'c-blocked', requestId: 'r-blocked', sessionId: 's-fail', role: 'customer' });
+  const event = sanitizeDiagnosticEvent({ type: 'policy_blocked', context: ctx, fields: { module: 'runtime', operation: 'policy', status: 'blocked', errorCode: 'POLICY_BLOCKED', amount: 500 } });
+  assert.equal(event.accepted, true);
+  assert.deepEqual(event.event.fields, { module: 'runtime', operation: 'policy', status: 'blocked', errorCode: 'POLICY_BLOCKED' });
+});
+
+test('Phase 10 timeout integration: lifecycle cancellation, recovery decision, and diagnostic correlate', () => {
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 2, maxRequestsPerSession: 2 });
+  life.openSession('s-timeout', 'customer');
+  const started = life.beginRequest('s-timeout', 'r-timeout');
+  assert.equal(started.status, 'started');
+  assert.equal(life.timeoutRequest('s-timeout', 'r-timeout').status, 'timed_out');
+  assert.equal(started.signal.aborted, true);
+
+  const recovery = decideRecovery({ errorCode: 'TIMEOUT', operationCompleted: false, sideEffectCommitted: false });
+  assert.equal(recovery.recover, true);
+  assert.equal(recovery.fallback, 'return_timeout_status');
+
+  const ctx = createCorrelationContext({ correlationId: 'c-timeout', requestId: 'r-timeout', sessionId: 's-timeout', role: 'customer' });
+  const diagnostic = sanitizeDiagnosticEvent({ type: 'request_timed_out', context: ctx, fields: { module: 'runtime', operation: 'mock-read', status: 'timed_out', durationMs: 120 } });
+  assert.equal(diagnostic.accepted, true);
+  assert.equal(diagnostic.event.context.requestId, 'r-timeout');
+});
+
+test('Phase 10 capacity integration: duplicate request and request cap are rejected without creating extra work', () => {
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 1, maxRequestsPerSession: 1 });
+  life.openSession('s-cap', 'partner');
+  assert.equal(life.beginRequest('s-cap', 'r-one').status, 'started');
+  assert.equal(life.beginRequest('s-cap', 'r-one').status, 'duplicate');
+  assert.equal(life.beginRequest('s-cap', 'r-two').status, 'blocked');
+  assert.equal(life.snapshot('s-cap').requestCount, 1);
+});
+
+test('Phase 10 TTL integration: expired session blocks request and aborts active signal', () => {
+  let now = 1000;
+  const life = new RuntimeSessionLifecycle({ ttlMs: 50, maxSessions: 2, maxRequestsPerSession: 2, now: () => now });
+  life.openSession('s-ttl', 'driver');
+  const started = life.beginRequest('s-ttl', 'r-active');
+  now = 1051;
+  assert.equal(life.beginRequest('s-ttl', 'r-new').status, 'blocked');
+  assert.equal(started.signal.aborted, true);
+  assert.equal(life.snapshot('s-ttl'), undefined);
+});
