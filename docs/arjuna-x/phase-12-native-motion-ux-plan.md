@@ -110,3 +110,12 @@
 - Example ₹1,000: customer fee ₹25 (cap); provider commission ₹15; provider net ₹985; customer payable ₹1,025; FRIEND RIDE gross fee revenue ₹40.00, before any applicable taxes/refunds/adjustments.
 - Collection is not confirmed/automated by this approval: with no payment gateway/settlement RPC wired and verified, amounts must remain tracked as pending until manual or supported payment collection is confirmed. Never display pending amounts as collected revenue.
 - This is an approved pricing requirement, not yet implemented or verified in the ride/shop settlement code. Next implementation task is to trace each fare/order checkout and settlement path on the QA branch, apply both sides consistently, add contract tests, and leave production untouched.
+
+
+## Continuation checkpoint — Phase 12 (2026-11-24)
+- Reviewed current phase plan and identified remaining work as safe loading-placeholder lifecycle review, repeat-entry motion-noise/performance review, mobile/browser regression, and final checkpoint.
+- This continuation is documentation-only: no app runtime files, backend, schema, auth, payments, or production settings changed.
+- Current percentage remains **60%** until targeted tests and browser/mobile verification are completed.
+- Test execution and CI status for this continuation are **not verified**; no pass is claimed.
+- Next targeted audit: verify each shimmer placeholder is non-interactive, has accessible status semantics, and is replaced on success, empty, and error outcomes; verify reduced-motion static fallback and no repeated animation on re-entry.
+- QA branch only; no merge or deployment.
