@@ -220,3 +220,13 @@ test('Phase 11 privacy gate enforces allowlisted diagnostic roles', () => {
     assert.equal(result.accepted, true, role);
   }
 });
+
+
+test('Phase 11 privacy gate rejects context arrays, classes, unknown keys and malformed IDs', () => {
+  assert.equal(evaluatePrivacyGate({ type:'request_started', context:[], fields:{} }).accepted, false);
+  class ContextClass { constructor() { this.correlationId='c'; this.requestId='r'; this.sessionId='s'; this.role='system'; } }
+  assert.equal(evaluatePrivacyGate({ type:'request_started', context:new ContextClass(), fields:{} }).accepted, false);
+  assert.equal(evaluatePrivacyGate({ type:'request_started', context:{ ...context, secret:'leak' }, fields:{} }).accepted, false);
+  assert.equal(evaluatePrivacyGate({ type:'request_started', context:{ ...context, requestId:'bad id' }, fields:{} }).accepted, false);
+  assert.equal(evaluatePrivacyGate({ type:'request_started', context:{ ...context, role:'root' }, fields:{} }).accepted, false);
+});
