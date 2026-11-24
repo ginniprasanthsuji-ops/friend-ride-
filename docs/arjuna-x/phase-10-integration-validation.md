@@ -235,4 +235,4 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Earlier timestamp is rejected as stale while the ride remains tracked.
 - [x] Terminal reset clears ride time-tracking and permits a fresh timestamp timeline.
 - [x] Global event replay history remains preserved.
-- [ ] CI Run #161 pending verification.
+- [x] CI Run #161 (`45332580198`): **completed/success**.
