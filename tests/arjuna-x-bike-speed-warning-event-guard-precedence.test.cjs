@@ -25,7 +25,7 @@ test('Phase 10 guard: duplicate event ID remains rejected after event capacity i
   assert.deepEqual(guard.evaluate({ rideId: 'ride-2', eventId: 'event-2', nowMs: 2 }), { status: 'blocked', reason: 'event_capacity_reached', sideEffects: false });
 });
 
-test('Phase 10 guard: stale event ID is reserved and cannot be replayed later', () => {
+test('Phase 10 guard: stale timestamp rejection does not reserve ID; valid retry is cooldown-suppressed', () => {
   const guard = new BikeSpeedWarningEventGuard({ cooldownMs: 60_000 });
   assert.equal(guard.evaluate({ rideId: 'ride-1', eventId: 'event-1', nowMs: 100 }).status, 'proposal_accepted');
   assert.deepEqual(guard.evaluate({ rideId: 'ride-1', eventId: 'stale-event', nowMs: 99 }), { status: 'blocked', reason: 'stale_event_time', sideEffects: false });
