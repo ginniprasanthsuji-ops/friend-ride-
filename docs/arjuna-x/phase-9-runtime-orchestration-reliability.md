@@ -26,6 +26,9 @@ Build a predictable, testable runtime layer for ARJUNA X that coordinates safe a
 - Cross-module integration suite covers lifecycle, correlation context, sanitized diagnostics, retry decision and safe fallback in combined request scenarios, including non-idempotent payment timeout and policy-blocked cases.
 - Integration regression suite added to CI.
 
+- Lifecycle edge-case coverage expanded: concurrent sessions sharing request IDs remain isolated; same-session parallel requests independently finish; terminal-state transitions are blocked; malformed/unknown identifiers fail safely; snapshot mutation does not affect internal state.
+- Added lifecycle regression tests for these concurrency and isolation scenarios.
+
 ## Remaining workstreams
 1. Typed runtime request/result contract and integration surface.
 2. Harden lifecycle edge cases and concurrency semantics.
