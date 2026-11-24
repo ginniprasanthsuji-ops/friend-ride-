@@ -76,3 +76,12 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Verification is bound to a ride ID; mismatched ride/session is blocked.
 - [x] Terminal ride states reset the gate; missing ride binding fails closed.
 - [x] Mock policy is side-effect-free: no camera API, image storage, AI inference, live ride mutation, or notification.
+
+
+## Cross-policy safety edge-case checkpoint
+- [x] Helmet verification gate blocks progression when permission/manual check is incomplete.
+- [x] Cross-policy integration verifies monitoring proposal is not advanced before the bike start gate.
+- [x] Valid helmet gate permits mocked speed-policy evaluation; still proposal-only.
+- [x] Invalid speed, accuracy, timestamps, or prior-warning timestamp fail closed.
+- [x] GPS quality exact boundaries (20m accuracy and 10s sample age) tested.
+- [x] No device, camera, GPS, notification, ride mutation, or network side effects.
