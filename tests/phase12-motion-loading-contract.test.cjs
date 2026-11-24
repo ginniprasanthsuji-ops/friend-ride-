@@ -14,3 +14,19 @@ test('Phase 12: reduced motion disables shimmer and entry motion', () => {
   assert.match(html, /@media\\s*\\(prefers-reduced-motion:\\s*reduce\\)[\\s\\S]{0,500}fr12-skeleton[\\s\\S]*animation:\\s*none\\s*!important/i);
   assert.match(html, /@media\\s*\\(prefers-reduced-motion:\\s*reduce\\)[\\s\\S]*?\\.page\\.active[\\s\\S]*?animation:\\s*none\\s*!important/i);
 });
+
+test('Phase 12: shimmer is applied only to selected loading placeholders', () => {
+  assert.match(html, /Orders loading…[^<]*<\/div>/);
+  assert.match(html, /fr12-skeleton[^>]*role="status"[^>]*aria-label="Loading partner orders"/);
+  assert.match(html, /fr12-skeleton[^>]*aria-label="Loading store catalogue"/);
+  assert.match(html, /fr12-skeleton[^>]*aria-label="Loading customer shop orders"/);
+});
+
+test('Phase 12: selected loading placeholders have empty and error replacements', () => {
+  const partner = html.slice(html.indexOf('async function loadPartnerOrders'), html.indexOf('async function loadPartnerOrders') + 4000);
+  const catalogue = html.slice(html.indexOf('async function renderCustomerCatalogue'), html.indexOf('async function renderCustomerCatalogue') + 3500);
+  const orders = html.slice(html.indexOf('async function frLoadCustomerMarketOrders'), html.indexOf('async function frLoadCustomerMarketOrders') + 4000);
+  assert.match(partner, /empty-state[\s\S]*catch\(e\)[\s\S]*Orders load కాలేదు/);
+  assert.match(catalogue, /market-empty[\s\S]*catch\(e\)[\s\S]*Catalogue Load కాలేదు/);
+  assert.match(orders, /empty-state[\s\S]*catch\(e\)[\s\S]*Shop Orders load కాలేదు/);
+});
