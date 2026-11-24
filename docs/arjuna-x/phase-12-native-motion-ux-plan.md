@@ -1,7 +1,7 @@
 # Phase 12 — Native Motion & UX Safety
 
 ## Status
-- Progress: 55%
+- Progress: 60%
 - UI-only motion layer committed and CI-verified.
 - QA branch only; no merge/deployment.
 
@@ -76,4 +76,11 @@
 - The cart preview is withheld while partner prices are pending.
 - UI explicitly says final fee is calculated after partner price confirmation and that no additional charges are added unless Admin configures them.
 - Important limitation: this is a frontend preview only. Actual collection/settlement is not yet wired or verified in the QA Supabase RPC; the QA project did not expose the expected market-order RPCs when inspected. No production project was queried or changed.
-- Platform charge contract test added; tests not executed in this environment.
+- Platform charge contract test added, including numeric examples and cap assertions; tests not executed in this environment.
+
+
+## Platform Charge QA Contract (2026-11-24)
+- Added numeric test coverage using Node's built-in VM to execute the frontend fee helper in isolation.
+- Test assertions cover ₹100, ₹500, ₹1,000, ₹2,000, ₹3,000 and negative input behavior.
+- Test execution remains unavailable through the connected GitHub tools; latest commit status is empty, so no CI pass is claimed.
+- Backend collection remains explicitly out of scope until a matching QA order/payment RPC exists and is reviewed; production remains untouched.
