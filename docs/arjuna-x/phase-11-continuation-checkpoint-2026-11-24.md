@@ -81,3 +81,9 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - Added static contract assertion that Playwright configuration blocks service workers, reducing request-interception bypass risk during local-only browser tests.
 - Static contract suite now has 14 authored checks (not yet executed).
+
+
+## Local Preflight Redirect Guard
+
+- Added a static assertion that local QA preflight uses manual redirect handling and maintains the localhost/loopback hostname allowlist.
+- Static contract suite now has 15 authored checks (not executed).
