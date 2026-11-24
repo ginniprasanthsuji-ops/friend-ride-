@@ -69,3 +69,9 @@ No merge, deployment, live payment, database mutation, or production change made
 - Reviewed `qa/local-only-fixture.cjs`: intercepts browser requests and blocks origins outside the configured local test server origin.
 - Applied this fixture to both Phase 11 registration-isolation and page-isolation browser specs. Those tests now inherit Tier-A external-network blocking.
 - Test files updated, but tests remain unexecuted; this is configuration-level safety evidence only.
+
+
+## Network Isolation Contract Coverage
+
+- Added a static contract test that asserts both Phase 11 browser specs import the Tier-A local-only fixture and that the fixture blocks non-local-origin requests.
+- Static contract suite authored count is now 13 (execution not verified).
