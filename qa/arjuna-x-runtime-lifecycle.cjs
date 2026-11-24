@@ -33,7 +33,7 @@ class RuntimeSessionLifecycle {
     if (!SAFE_ROLES.has(role)) throw new Error('Invalid role');
     this._expireStale();
     if (this.sessions.has(id)) throw new Error('Session already exists');
-    if (this.sessions.size >= this.maxSessions) throw new Error('Session capacity reached');
+    if ([...this.sessions.values()].filter((s) => s.status === 'active').length >= this.maxSessions) throw new Error('Session capacity reached');
     const time = this.now();
     const session = { id, role, status: 'active', createdAt: time, lastActivityAt: time, requests: new Map() };
     this.sessions.set(id, session);
