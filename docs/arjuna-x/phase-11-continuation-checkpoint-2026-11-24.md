@@ -5,7 +5,7 @@ QA-only. Production untouched.
 
 ## Progress
 **Estimated Phase 11 progress: 98%** (not a verified CI pass).
-Previous checkpoint: 97%, with 5/5 targeted security checks reported PASS. This continuation adds a six-case static contract suite; it has been committed but not run in this tool session.
+Previous checkpoint: 97%, with 5/5 targeted security checks reported PASS. This continuation expands the static contract suite from six to nine cases covering registration field visibility/disabled state and exclusive page isolation. Tests are committed but not run in this tool session.
 
 ## Existing security/UX guardrails reviewed
 - Admin membership check uses `admin_users` membership as authoritative.
@@ -18,7 +18,7 @@ Previous checkpoint: 97%, with 5/5 targeted security checks reported PASS. This 
 - Learning dashboards are clearly not represented as live backend dashboards when scripts/data are unavailable.
 
 ## This continuation
-- Added `qa/phase-11-security-isolation-contract.test.mjs` with six Node test cases covering the static markers above.
+- Expanded `qa/phase-11-security-isolation-contract.test.mjs` to nine Node test cases: Admin membership, role allowlist, driver approval, Learning isolation/routing, dashboard limitation disclosure, role-specific registration fields, and page isolation/inert state.
 - Tests are authored but not executed here. No CI run verified.
 
 ## Remaining before Phase 11 close
