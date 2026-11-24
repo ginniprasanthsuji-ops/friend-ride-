@@ -14,8 +14,7 @@ const has = (fragment) => assert.ok(css.includes(fragment), 'missing CSS contrac
 test('Phase 12 motion layer provides page/card/modal entry transitions', () => {
   has('fr12-page-enter');
   has('fr12-card-enter');
-  const motionRules = css.slice(0, css.indexOf('@media(prefers-motion:reduce)'));
-  assert.ok(!motionRules.includes('.card{animation:fr12-card-enter'), 'card motion must be scoped to active page');
+  assert.ok(/\.page\.active\s+\.card\{animation:fr12-card-enter/.test(css), 'card motion must be scoped to active page');
   has('fr12-modal-enter');
   has('fr12-drawer-enter');
   has('fr12-backdrop-fade');
@@ -30,7 +29,7 @@ test('Phase 12 motion layer provides touch feedback', () => {
   has('transform:scale(.975)');
   has('.bottom .active span{transition:background-color 160ms ease,transform 160ms ease}');
   has('.bottom .active span{transform:translateY(-1px)}');
-  assert.ok(!css.includes('.active span{transform:translateY(-1px)}'), 'active-span motion must be scoped to bottom navigation');
+  assert.ok(/\.bottom\s+\.active\s+span\{transform:translateY\(-1px\)\}/.test(css), 'active-span motion must be scoped to bottom navigation');
 });
 
 test('Phase 12 shimmer is CSS-only and reduced-motion disables motion', () => {
