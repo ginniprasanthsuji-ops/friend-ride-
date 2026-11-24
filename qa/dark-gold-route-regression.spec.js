@@ -160,4 +160,29 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     expect(routeResults.filter(r => !r.exists).map(r => r.id)).toEqual([]);
     expect(routeResults.filter(r => !r.active).map(r => ({ id: r.id, error: r.error || null }))).toEqual([]);
   });
+
+  test('reduced-motion preference suppresses decorative motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const result = await page.evaluate(() => {
+      const style = document.createElement('style');
+      style.textContent = '.fr-motion-qa-probe { animation: fr-motion-qa 2s ease; transition: opacity 2s; } @keyframes fr-motion-qa { from { opacity: 0; } to { opacity: 1; } }';
+      document.head.appendChild(style);
+      const probe = document.createElement('div');
+      probe.className = 'fr-motion-qa-probe';
+      document.body.appendChild(probe);
+      const computed = getComputedStyle(probe);
+      return { animationDuration: computed.animationDuration, transitionDuration: computed.transitionDuration, reduced: matchMedia('(prefers-reduced-motion: reduce)').matches };
+    });
+    expect(result.reduced).toBe(true);
+    expect(result.animationDuration).toBe('0s');
+    expect(result.transitionDuration).toBe('0s');
+  });
+
+  test('small viewport primary navigation stays within screen width', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    const metrics = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, document: document.documentElement.scrollWidth, nav: document.querySelector('.premium-bottom')?.getBoundingClientRect().width || 0 }));
+    expect(metrics.nav).toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(metrics.document).toBeLessThanOrEqual(metrics.viewport + 8);
+  });
+
 });
