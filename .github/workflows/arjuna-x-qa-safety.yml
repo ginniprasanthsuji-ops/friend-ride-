@@ -38,6 +38,6 @@ jobs:
       - name: Run ARJUNA X Phase 10 mocked integration validation
         run: node --test tests/phase-10-mocked-integration-validation.test.cjs
       - name: Run ARJUNA X bike speed warning policy tests
-        run: node --test tests/arjuna-x-bike-speed-warning.test.cjs
+        run: node --test tests/arjuna-x-bike-speed-warning.test.cjs tests/arjuna-x-bike-speed-warning-gps-cooldown-edge-batch.test.cjs
       - name: Run ARJUNA X helmet verification policy tests
         run: node --test tests/arjuna-x-helmet-verification.test.cjs
