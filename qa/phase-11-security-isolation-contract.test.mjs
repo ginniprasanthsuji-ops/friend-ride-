@@ -6,6 +6,9 @@ const app = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const playwrightConfig = await readFile(new URL('../playwright.config.cjs', import.meta.url), 'utf8');
 const preflight = await readFile(new URL('../scripts/qa-local-preflight.cjs', import.meta.url), 'utf8');
 const workflow = await readFile(new URL('../.github/workflows/friend-ride-regression.yml', import.meta.url), 'utf8');
+const registrationSpec = await readFile(new URL('./phase-11-registration-isolation.spec.js', import.meta.url), 'utf8');
+const pageIsolationSpec = await readFile(new URL('./phase-11-page-isolation.spec.js', import.meta.url), 'utf8');
+const localFixture = await readFile(new URL('./local-only-fixture.cjs', import.meta.url), 'utf8');
 
 test('Phase 11 security: admin authorization is based on admin_users membership', () => {
   assert.ok(app.includes("from('admin_users').select('user_id')"));
@@ -74,4 +77,12 @@ test('Phase 11 CI: workflow runs contracts and browser tests against local serve
   assert.ok(workflow.includes('node --test qa/phase-11-security-isolation-contract.test.mjs'));
   assert.ok(workflow.includes('FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/'));
   assert.ok(workflow.includes('run: npm test'));
+});
+
+
+test('Phase 11 browser specs use the Tier-A local-only network fixture', () => {
+  assert.ok(registrationSpec.includes("require('./local-only-fixture.cjs')"));
+  assert.ok(pageIsolationSpec.includes("require('./local-only-fixture.cjs')"));
+  assert.ok(localFixture.includes("requestUrl.origin === localOrigin"));
+  assert.ok(localFixture.includes("route.abort('blockedbyclient')"));
 });
