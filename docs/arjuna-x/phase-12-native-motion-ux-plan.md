@@ -1,7 +1,7 @@
 # Phase 12 — Native Motion & UX Safety
 
 ## Status
-- Progress: 40%
+- Progress: 45%
 - UI-only motion layer committed and CI-verified.
 - QA branch only; no merge/deployment.
 
@@ -15,7 +15,7 @@
 - Card entry fade/slide animation.
 - Modal panel entry fade/slide/scale animation.
 - Touch/press feedback for buttons and role-button elements.
-- Active control micro-transition.
+- Active bottom-navigation micro-transition scoped to the bottom bar (avoids unrelated active spans).
 - CSS shimmer class for loading placeholders (opt-in class; existing loading UI not automatically converted).
 - Drawer/backdrop fade + slide entry animation added.
 - `prefers-reduced-motion: reduce` disables the new animation/transition effects.
@@ -28,7 +28,7 @@
 - Corrected motion contract tests and full QA workflow passed.
 
 ## Remaining
-1. Continue navigation/modal/loading state audit and apply motion only where safe.
+1. Continue modal/loading state audit and apply motion only where safe.
 2. Verify no repeated-entry animation causes visual noise or performance issues.
 3. Browser/mobile regression checks if available.
 4. Final phase review and checkpoint.
