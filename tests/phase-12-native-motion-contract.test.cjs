@@ -14,10 +14,12 @@ const has = (fragment) => assert.ok(css.includes(fragment), 'missing CSS contrac
 test('Phase 12 motion layer provides page/card/modal entry transitions', () => {
   has('fr12-page-enter');
   has('fr12-card-enter');
+  assert.ok(!css.includes('.card{animation:fr12-card-enter'), 'card motion must be scoped to active page');
   has('fr12-modal-enter');
   has('fr12-drawer-enter');
   has('fr12-backdrop-fade');
   has('.page.active{animation:fr12-page-enter');
+  has('.page.active .card{animation:fr12-card-enter');
   has('.modal.show .modalbox{animation:fr12-modal-enter');
 });
 
