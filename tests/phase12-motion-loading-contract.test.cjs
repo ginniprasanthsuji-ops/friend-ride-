@@ -39,3 +39,9 @@ test('Phase 12: shimmer covers additional non-interactive loading surfaces', () 
   assert.match(html, /Loading approved stores/);
   assert.match(html, /Loading store payment details/);
 });
+
+test('Phase 12: card motion is opt-in to reduce global animation churn', () => {
+  assert.match(html, /\.fr12-animate-card\s*\{\s*animation:\s*fr12-card-enter/i);
+  assert.doesNotMatch(html, /(^|\n)\.card\s*\{\s*animation:\s*fr12-card-enter/i);
+  assert.match(html, /prefers-reduced-motion:\s*reduce[\s\S]*?\.fr12-animate-card[\s\S]*?animation:\s*none/i);
+});
