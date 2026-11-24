@@ -41,3 +41,9 @@ No merge, deployment, live payment, database mutation, or production change made
 - Compared `main` with `arjuna-x/phase-7-ai-intelligence-safety`: branch is reported diverged, 581 commits ahead and 2 commits behind `main` at review time.
 - This is not a merge approval. Keep Phase 11 QA changes isolated on the branch; do not merge or deploy until divergence is reviewed and reconciled.
 - CI execution evidence is still unavailable; Phase 11 remains open.
+
+
+## CI Trigger Gap Found
+
+- `.github/workflows/arjuna-x-core-ci.yml` push trigger targets `arjuna-x/implementation-foundation`, not this Phase 11 branch. Its `workflow_dispatch` remains available, but automatic core CI is not triggered by pushes to the Phase 11 branch. Do not claim core CI ran.
+- The branch-specific QA safety workflow and FRIEND RIDE regression workflow are configured for the current branch; run evidence remains unavailable.
