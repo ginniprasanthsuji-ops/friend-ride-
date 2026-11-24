@@ -133,3 +133,13 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Capacity configuration rejects zero/negative/non-integer limits.
 - [x] Tests confirm bounded behavior; guard is QA-only and has no side effects.
 - [ ] CI checkpoint pending.
+
+
+## Phase 10 stale-event and terminal-ride reset checkpoint
+- [x] Event timestamp moving backwards for an already tracked ride is blocked as stale.
+- [x] Stale events do not advance cooldown state.
+- [x] Completed/cancelled/failed ride terminal events clear that ride's cooldown entry.
+- [x] Terminal reset preserves global event replay history, preventing replay after reset.
+- [x] Invalid terminal states/ride IDs fail closed.
+- [x] QA-only tests; no ride state, GPS, SQL, notifications, or device effects.
+- [ ] CI checkpoint pending.
