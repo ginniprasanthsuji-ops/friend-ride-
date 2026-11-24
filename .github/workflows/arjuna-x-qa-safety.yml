@@ -19,3 +19,5 @@ jobs:
         run: node --test tests/qa-preflight-safety.test.cjs
       - name: Run ARJUNA X Phase 8 voice intent contract tests
         run: node --test tests/voice-intent-contract.test.cjs
+      - name: Run ARJUNA X Phase 9 runtime policy tests
+        run: node --test tests/phase-9-runtime-policy.test.cjs
