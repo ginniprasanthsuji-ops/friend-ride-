@@ -27,6 +27,9 @@ test('Phase 12 motion layer provides touch feedback', () => {
   has('button:active');
   has('.btn:active');
   has('transform:scale(.975)');
+  has('.bottom .active span{transition:background-color 160ms ease,transform 160ms ease}');
+  has('.bottom .active span{transform:translateY(-1px)}');
+  assert.ok(!css.includes('.active span{transform:translateY(-1px)}'), 'active-span motion must be scoped to bottom navigation');
 });
 
 test('Phase 12 shimmer is CSS-only and reduced-motion disables motion', () => {
@@ -50,6 +53,6 @@ test('Phase 12 motion uses short compositor-friendly opacity/transform transitio
 
 test('Phase 12 reduced-motion override covers drawer, button feedback, and skeleton shimmer', () => {
   has('.drawer-backdrop.show,.drawer-backdrop.show .drawer{animation:none!important}');
-  has('button:active,.btn:active,[role="button"]:active,.active span{transform:none!important}');
+  has('button:active,.btn:active,[role="button"]:active,.bottom .active span{transform:none!important}');
   has('.page.active,.card,.modal.show .modalbox,.fr12-skeleton{animation:none!important}');
 });
