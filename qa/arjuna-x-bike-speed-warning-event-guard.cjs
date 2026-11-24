@@ -49,6 +49,7 @@ class BikeSpeedWarningEventGuard {
     if (typeof rideId !== 'string' || !rideId.trim() || !['completed', 'cancelled', 'failed'].includes(terminalState)) {
       return { status: 'blocked', reason: 'invalid_terminal_context', sideEffects: false };
     }
+    rideId = rideId.trim();
     if (!this.lastProposalAtByRide.has(rideId)) return { status: 'ignored', reason: 'ride_not_tracked', sideEffects: false };
     this.lastProposalAtByRide.delete(rideId);
     return { status: 'reset', rideId, terminalState, sideEffects: false };
