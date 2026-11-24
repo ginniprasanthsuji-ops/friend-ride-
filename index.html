@@ -153,13 +153,13 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 .modal.show .modalbox{animation:fr12-modal-enter 200ms cubic-bezier(.2,.75,.25,1) both}
 button,.btn,[role="button"]{-webkit-tap-highlight-color:transparent;transition:transform 120ms ease,filter 120ms ease,opacity 120ms ease}
 button:active,.btn:active,[role="button"]:active{transform:scale(.975);filter:brightness(.97)}
-.active span{transition:background-color 160ms ease,transform 160ms ease}
-.active span{transform:translateY(-1px)}
+.bottom .active span{transition:background-color 160ms ease,transform 160ms ease}
+.bottom .active span{transform:translateY(-1px)}
 .fr12-skeleton{color:transparent!important;border-radius:10px;background:linear-gradient(90deg,#eee9f5 25%,#f8f5fb 50%,#eee9f5 75%);background-size:200% 100%;animation:fr12-shimmer 1.25s linear infinite;pointer-events:none}
 @media(prefers-reduced-motion:reduce){
 .page.active,.card,.modal.show .modalbox,.fr12-skeleton{animation:none!important}
 button,.btn,[role="button"],.active span{transition:none!important}
-button:active,.btn:active,[role="button"]:active,.active span{transform:none!important}
+button:active,.btn:active,[role="button"]:active,.bottom .active span{transform:none!important}
 }
 
 /* Phase 12 follow-up: drawer/backdrop motion, preserving existing show/hide state */
