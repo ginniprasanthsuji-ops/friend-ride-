@@ -24,7 +24,7 @@ Phase 10 connects the Phase 9 pure-policy modules in test-only scenarios. Mock a
 - [ ] Live provider integration readiness reviewed separately and approved explicitly.
 - [x] Failure-path integration: blocked policy request, timeout/cancellation/recovery, request capacity/duplicate guards, TTL expiry and abort.
 - [x] Diagnostic event allowlist, missing-context, invalid-role, and field-sanitization boundary matrix.
-- [x] Session-bound contract bridge: role sourced from active session snapshot, request/session mismatch blocked, inactive session blocked.
+- [x] Session-bound contract bridge: role resolved directly from lifecycle manager (caller snapshots rejected), request/session mismatch blocked, inactive session blocked.
 
 ## Limits
 Mocks do not establish real API credentials, provider connectivity, Supabase permissions, external payment state, production deployment, or actual device behavior. Any live integration validation requires a separately approved sandbox, explicit credentials/configuration, and user authorization.
@@ -55,3 +55,9 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - Added `qa/arjuna-x-session-bound-runtime.cjs` to bind request authorization to the active lifecycle session snapshot and reject session mismatch/inactive session before policy evaluation.
 - Phase 10 tests exercise role source, session isolation, and inactive-session fail-closed behavior.
 - CI checkpoint for this addition: Run #79 pending at documentation update.
+
+
+### Hardened lifecycle source checkpoint
+- Authorization bridge now resolves the session via the lifecycle manager; it does not trust caller-provided snapshots or role fields.
+- Added test for forged snapshot rejection and closed-session rejection.
+- CI checkpoint for this hardening: pending.
