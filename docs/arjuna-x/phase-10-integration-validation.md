@@ -181,3 +181,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - Added tests proving cooldown suppresses one millisecond before the 60-second boundary and accepts at the exact boundary.
 - Added test proving an invalid timestamp blocks without reserving the event ID or changing cooldown, allowing a valid retry with that ID.
 - CI validation pending for the new tests.
+
+
+### Terminal-state isolation matrix checkpoint
+- Added separate tests for `completed`, `cancelled`, and `failed` terminal states.
+- Each terminal state releases only the target ride's cooldown; another ride remains suppressed within its cooldown window.
+- Added untracked-ride terminal reset no-op test.
+- CI validation pending for this matrix.
