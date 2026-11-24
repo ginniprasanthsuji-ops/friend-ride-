@@ -139,3 +139,11 @@ test('Phase 11 local-only fixture records and blocks every non-local origin', ()
   assert.ok(localFixture.includes("route.abort('blockedbyclient')"));
   assert.ok(localFixture.includes('page.__frBlockedOrigins = blockedOrigins'));
 });
+
+
+test('Phase 11 CI: workflow supports branch push, manual dispatch, and scheduled regression', () => {
+  assert.ok(workflow.includes('arjuna-x/phase-7-ai-intelligence-safety'));
+  assert.ok(workflow.includes('workflow_dispatch:'));
+  assert.ok(workflow.includes('schedule:'));
+  assert.ok(workflow.includes("cron: '17 2 * * *'"));
+});
