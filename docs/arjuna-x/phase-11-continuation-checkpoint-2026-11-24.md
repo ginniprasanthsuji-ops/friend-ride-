@@ -93,3 +93,10 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - Added a static check that the four role-registration scenarios and one page-isolation scenario remain present in the browser specs.
 - Static contract suite now has 16 authored checks (execution not verified).
+
+
+## Duplicate Preflight Cleanup
+
+- Found workflow explicitly ran QA preflight and `npm test` also invokes it; removed the redundant workflow step.
+- Added a static contract to guard against duplicate preflight execution.
+- Static contract suite now has 17 authored checks (not executed).
