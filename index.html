@@ -161,6 +161,13 @@ button:active,.btn:active,[role="button"]:active{transform:scale(.975);filter:br
 button,.btn,[role="button"],.active span{transition:none!important}
 button:active,.btn:active,[role="button"]:active,.active span{transform:none!important}
 }
+
+/* Phase 12 follow-up: drawer/backdrop motion, preserving existing show/hide state */
+@keyframes fr12-backdrop-fade{from{opacity:0}to{opacity:1}}
+@keyframes fr12-drawer-enter{from{opacity:.85;transform:translate3d(-18px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.drawer-backdrop.show{animation:fr12-backdrop-fade 150ms ease-out both}
+.drawer-backdrop.show .drawer{animation:fr12-drawer-enter 180ms cubic-bezier(.2,.75,.25,1) both}
+@media(prefers-reduced-motion:reduce){.drawer-backdrop.show,.drawer-backdrop.show .drawer{animation:none!important}}
 </style><style>
 /* FRIEND RIDE visual refresh: colourful marketplace-style home */
 body{background:#fffaf7;color:#171717;padding-bottom:100px}
