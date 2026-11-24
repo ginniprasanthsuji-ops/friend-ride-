@@ -65,7 +65,7 @@ test('Phase 11 page isolation: active page is exclusive and hidden pages are ine
 
 
 test('Phase 11 QA safety: Playwright discovery is limited to browser spec files', () => {
-  assert.ok(playwrightConfig.includes("testMatch: ['**/*.spec.js', '**/*.spec.cjs', '**/*.spec.ts']"));
+  assert.ok(playwrightConfig.includes("testMatch: ['phase-11-registration-isolation.spec.js', 'phase-11-page-isolation.spec.js']"));
   assert.ok(!playwrightConfig.includes('**/*.test.mjs'));
 });
 
