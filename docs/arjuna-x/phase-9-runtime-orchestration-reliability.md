@@ -29,6 +29,9 @@ Build a predictable, testable runtime layer for ARJUNA X that coordinates safe a
 - Lifecycle edge-case coverage expanded: concurrent sessions sharing request IDs remain isolated; same-session parallel requests independently finish; terminal-state transitions are blocked; malformed/unknown identifiers fail safely; snapshot mutation does not affect internal state.
 - Added lifecycle regression tests for these concurrency and isolation scenarios.
 
+- Lifecycle stress coverage: bounded session capacity with 200 requests across 20 isolated sessions; mixed terminal outcomes verified.
+- Terminal-order race regression: first terminal action wins; later cancel/timeout/finish attempts are blocked. Session close blocks late request completion and timeout.
+
 ## Remaining workstreams
 1. Typed runtime request/result contract and integration surface.
 2. Harden lifecycle edge cases and concurrency semantics.
