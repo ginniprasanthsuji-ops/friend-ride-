@@ -145,3 +145,21 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - Added static check confirming `npm test` requires local-only preflight before Playwright execution.
 - Static contract suite: 24 authored checks (not executed).
+
+
+## Local Execution Instructions (Safe, Branch QA)
+
+1. Check out the Phase 11 branch only.
+2. Install dependencies with `npm install`.
+3. Start a local static server at `http://127.0.0.1:4173/` (CI uses `http-server`).
+4. Run static contracts: `node --test qa/phase-11-security-isolation-contract.test.mjs`.
+5. Run browser tests: `FRIEND_RIDE_BASE_URL=http://127.0.0.1:4173/ npm test`.
+6. Do not point these tests at hosted, production, or non-loopback targets; preflight and Playwright configuration block them.
+
+
+## Current Evidence
+
+- Static checks authored: 24; execution evidence not available from connected GitHub Actions.
+- Browser scenarios authored: 5; execution evidence not available.
+- Latest queried commit returned no workflow run/status evidence.
+- Phase 11 remains at 98% pending test execution and final closeout.
