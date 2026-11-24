@@ -231,3 +231,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - Added malformed event-context matrix coverage for blank ride ID, whitespace event ID, negative timestamp, NaN timestamp, and non-integer timestamp.
 - Confirmed malformed attempts fail closed without consuming event or ride capacity; a valid retry remains accepted, and capacity blocks only after valid state is consumed.
 - QA-only regression, no production side effects; CI pending.
+
+
+### Identifier canonicalization checkpoint
+- [x] Leading/trailing whitespace is trimmed for valid ride and event IDs before state lookup/storage.
+- [x] Whitespace variants cannot bypass global event-ID replay protection or per-ride cooldown.
+- [x] Deterministic regression test added; QA guard only, no production behavior or side effects.
+- CI validation pending.
