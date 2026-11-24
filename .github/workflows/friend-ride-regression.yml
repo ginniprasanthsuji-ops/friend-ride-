@@ -37,7 +37,7 @@ jobs:
       - name: Run targeted local browser regression tests
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
-        run: npx playwright test qa/tasko-laundry-main-regression.spec.js
+        run: npx playwright test qa/tasko-laundry-main-regression.spec.js qa/dark-gold-route-regression.spec.js
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
