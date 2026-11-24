@@ -169,3 +169,9 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - Corrected the browser scenario-count assertion regex to count actual `test(` declarations rather than literal backslash sequences.
 - Static suite remains 24 authored checks; still not executed.
+
+
+## Hosted Target Rejection Contract
+
+- Added static contract asserting local-host allowlist, redirect-manual behavior, and hard rejection of hosted targets.
+- Static suite now has 25 authored checks (not executed).
