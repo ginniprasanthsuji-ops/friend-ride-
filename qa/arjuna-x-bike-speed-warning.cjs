@@ -11,7 +11,7 @@ const MAX_SAMPLE_AGE_MS = 10_000;
 
 function evaluateBikeSpeedWarning({ rideType, speedKmh, accuracyMeters, sampleAgeMs = 0, nowMs = 0, lastWarningAtMs = null } = {}) {
   if (rideType !== 'bike') return { status: 'ignored', reason: 'ride_type_not_bike', recipients: [], sideEffects: false };
-  if (!Number.isFinite(speedKmh) || !Number.isFinite(accuracyMeters) || !Number.isFinite(sampleAgeMs)) {
+  if (!Number.isFinite(speedKmh) || speedKmh < 0 || !Number.isFinite(accuracyMeters) || accuracyMeters < 0 || !Number.isFinite(sampleAgeMs) || !Number.isFinite(nowMs) || nowMs < 0 || (lastWarningAtMs !== null && (!Number.isFinite(lastWarningAtMs) || lastWarningAtMs < 0))) {
     return { status: 'blocked', reason: 'invalid_gps_sample', recipients: [], sideEffects: false };
   }
   if (accuracyMeters > MAX_GPS_ACCURACY_METERS || sampleAgeMs < 0 || sampleAgeMs > MAX_SAMPLE_AGE_MS) {
