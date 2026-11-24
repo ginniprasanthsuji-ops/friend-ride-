@@ -62,3 +62,13 @@ test('Bike speed policy: exact GPS quality boundaries are accepted', () => {
   assert.equal(result.status, 'warning_proposal');
   assert.equal(result.sideEffects, false);
 });
+
+
+test('Bike speed warning: Telugu alert copy and warning tone are proposed without playback/delivery side effects', () => {
+  const result = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 58, accuracyMeters: 5, sampleAgeMs: 1000, nowMs: 2000 });
+  assert.equal(result.status, 'warning_proposal');
+  assert.equal(result.warningTextTelugu, 'హెచ్చరిక! వేగ పరిమితి దాటింది. దయచేసి వేగం తగ్గించండి.');
+  assert.equal(result.warningToneKey, 'bike_speed_limit_warning');
+  assert.deepEqual(result.recipients, ['driver', 'customer']);
+  assert.equal(result.sideEffects, false, 'QA decision must not deliver notification or play tone');
+});
