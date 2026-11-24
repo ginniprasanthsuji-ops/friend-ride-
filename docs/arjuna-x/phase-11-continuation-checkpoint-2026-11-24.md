@@ -47,3 +47,10 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - `.github/workflows/arjuna-x-core-ci.yml` push trigger targets `arjuna-x/implementation-foundation`, not this Phase 11 branch. Its `workflow_dispatch` remains available, but automatic core CI is not triggered by pushes to the Phase 11 branch. Do not claim core CI ran.
 - The branch-specific QA safety workflow and FRIEND RIDE regression workflow are configured for the current branch; run evidence remains unavailable.
+
+
+## QA Preflight Integration
+
+- Reviewed `scripts/qa-local-preflight.cjs`: requires explicit base URL, allows loopback only, checks HTTP response and HTML content, redirects are not followed.
+- Integrated preflight into FRIEND RIDE regression workflow before Playwright browser tests, using the local 127.0.0.1 server target.
+- This integration is committed/configured but not executed in this session; no PASS claim.
