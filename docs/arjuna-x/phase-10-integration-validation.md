@@ -188,3 +188,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - Each terminal state releases only the target ride's cooldown; another ride remains suppressed within its cooldown window.
 - Added untracked-ride terminal reset no-op test.
 - CI validation pending for this matrix.
+
+
+### Ride-capacity recovery boundary checkpoint
+- Added test proving ride-capacity rejection does not reserve the event ID.
+- After terminal reset releases the ride slot, the same event ID may be retried and accepted if otherwise valid.
+- Event replay history for accepted IDs remains preserved; the test is QA-only and side-effect-free.
+- CI validation pending for this checkpoint.
