@@ -4,7 +4,7 @@ begin;
 
 create table if not exists public.fr_store_coupons (
   id uuid primary key default gen_random_uuid(),
-  store_partner_user_id uuid not null references auth.users(id) on delete cascade,
+  issuer_type text not null default 'store' check (issuer_type in ('store','driver','admin')),\n  issuer_user_id uuid references auth.users(id) on delete set null,\n  store_partner_user_id uuid references auth.users(id) on delete cascade,\n  coupon_scope text not null default 'store' check (coupon_scope in ('store','ride','service','platform')),\n  target_service text,\n  check ((issuer_type='store' and store_partner_user_id is not null) or (issuer_type in ('driver','admin') and store_partner_user_id is null)),
   title text not null,
   description text,
   coupon_type text not null check (coupon_type in ('value_coupon','percent_discount','amount_discount','buy_one_get_one','custom')),
@@ -27,7 +27,7 @@ create table if not exists public.fr_store_coupons (
 create index if not exists fr_store_coupons_live_idx
   on public.fr_store_coupons(status,starts_at,expires_at);
 create index if not exists fr_store_coupons_partner_idx
-  on public.fr_store_coupons(store_partner_user_id,created_at desc);
+  on public.fr_store_coupons(issuer_type,issuer_user_id,created_at desc);
 
 create table if not exists public.fr_coupon_purchases (
   id uuid primary key default gen_random_uuid(),
@@ -69,13 +69,13 @@ alter table public.fr_store_coupons enable row level security;
 alter table public.fr_coupon_purchases enable row level security;
 alter table public.fr_issued_coupons enable row level security;
 
--- Partners can create their own draft coupons and read their own coupon inventory.
+-- Store/driver issuer ownership reads; creation and activation are handled through role-checked RPCs. Admin issuance also uses trusted RPC.
 drop policy if exists fr_coupons_partner_read on public.fr_store_coupons;
 create policy fr_coupons_partner_read on public.fr_store_coupons
-  for select to authenticated using (store_partner_user_id=auth.uid());
+  for select to authenticated using (issuer_user_id=auth.uid() or store_partner_user_id=auth.uid());
 drop policy if exists fr_coupons_partner_create_draft on public.fr_store_coupons;
 create policy fr_coupons_partner_create_draft on public.fr_store_coupons
-  for insert to authenticated with check (store_partner_user_id=auth.uid() and status='draft' and sold_count=0);
+  for insert to authenticated with check (issuer_user_id=auth.uid() and issuer_type in ('store','driver') and status='draft' and sold_count=0);
 -- Customers see only coupons available for sale, within dates.
 drop policy if exists fr_coupons_customer_read_active on public.fr_store_coupons;
 create policy fr_coupons_customer_read_active on public.fr_store_coupons
