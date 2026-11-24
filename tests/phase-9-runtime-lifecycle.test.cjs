@@ -32,6 +32,16 @@ test('cancel request aborts its signal and prevents finish-after-cancel', () => 
   assert.deepEqual(lifecycle.finishRequest('s-1', 'r-1'), { status: 'blocked', reason: 'request_not_running' });
 });
 
+test('request timeout aborts in-flight work and records timed_out state', () => {
+  const lifecycle = new RuntimeSessionLifecycle();
+  lifecycle.openSession('s-1', 'customer');
+  const begun = lifecycle.beginRequest('s-1', 'r-1');
+  assert.equal(lifecycle.timeoutRequest('s-1', 'r-1').status, 'timed_out');
+  assert.equal(begun.signal.aborted, true);
+  assert.equal(lifecycle.snapshot('s-1').requests[0].status, 'timed_out');
+  assert.deepEqual(lifecycle.finishRequest('s-1', 'r-1'), { status: 'blocked', reason: 'request_not_running' });
+});
+
 test('session closure cancels all in-flight requests and blocks new work', () => {
   const lifecycle = new RuntimeSessionLifecycle();
   lifecycle.openSession('s-1', 'partner');
