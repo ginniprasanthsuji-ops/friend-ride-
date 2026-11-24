@@ -15,6 +15,8 @@ test('Phase 12 motion layer provides page/card/modal entry transitions', () => {
   has('fr12-page-enter');
   has('fr12-card-enter');
   has('fr12-modal-enter');
+  has('fr12-drawer-enter');
+  has('fr12-backdrop-fade');
   has('.page.active{animation:fr12-page-enter');
   has('.modal.show .modalbox{animation:fr12-modal-enter');
 });
@@ -31,4 +33,5 @@ test('Phase 12 shimmer is CSS-only and reduced-motion disables motion', () => {
   has('prefers-reduced-motion:reduce');
   has('animation:none!important');
   has('transition:none!important');
+  has('.drawer-backdrop.show,.drawer-backdrop.show .drawer{animation:none!important}');
 });
