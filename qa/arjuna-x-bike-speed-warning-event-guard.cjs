@@ -30,11 +30,11 @@ class BikeSpeedWarningEventGuard {
     if (!this.lastProposalAtByRide.has(rideId) && this.lastProposalAtByRide.size >= this.maxRides) {
       return { status: 'blocked', reason: 'ride_capacity_reached', sideEffects: false };
     }
-    this.seenEventIds.add(eventId);
     const last = this.lastProposalAtByRide.get(rideId);
     if (last !== undefined && nowMs < last) {
       return { status: 'blocked', reason: 'stale_event_time', sideEffects: false };
     }
+    this.seenEventIds.add(eventId);
     if (last !== undefined && nowMs - last < this.cooldownMs) {
       return { status: 'suppressed', reason: 'ride_cooldown', sideEffects: false };
     }
