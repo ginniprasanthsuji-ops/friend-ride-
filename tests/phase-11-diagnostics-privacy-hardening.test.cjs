@@ -111,3 +111,13 @@ test('Phase 11 privacy gate fails closed on hostile objects and unknown fields',
   const unknown = evaluatePrivacyGate({ type:'request_started', context, fields:{ prompt:'not allowed' } });
   assert.equal(unknown.accepted, false);
 });
+
+test('Phase 11 privacy gate module remains pure and dependency-limited', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = fs.readFileSync(path.resolve(__dirname, '../qa/arjuna-x-diagnostics-privacy-policy.cjs'), 'utf8');
+  assert.doesNotMatch(source, /\\b(fetch|XMLHttpRequest|WebSocket)\\s*\\(/);
+  assert.doesNotMatch(source, /\\b(setTimeout|setInterval)\\s*\\(/);
+  assert.doesNotMatch(source, /\\b(console\\.(log|info|warn|error)|sendTelemetry|trackEvent)\\s*\\(/);
+  assert.match(source, /evaluatePrivacyGate/);
+});
