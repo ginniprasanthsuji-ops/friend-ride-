@@ -35,3 +35,19 @@ test('Phase 12 shimmer is CSS-only and reduced-motion disables motion', () => {
   has('transition:none!important');
   has('.drawer-backdrop.show,.drawer-backdrop.show .drawer{animation:none!important}');
 });
+
+
+test('Phase 12 motion uses short compositor-friendly opacity/transform transitions', () => {
+  has('translate3d');
+  has('opacity');
+  has('180ms');
+  has('220ms');
+  assert.ok(!css.includes('fr12-page-enter 600ms'), 'page entry motion must remain short');
+  assert.ok(!css.includes('fr12-card-enter 600ms'), 'card entry motion must remain short');
+});
+
+test('Phase 12 reduced-motion override covers drawer, button feedback, and skeleton shimmer', () => {
+  has('.drawer-backdrop.show,.drawer-backdrop.show .drawer{animation:none!important}');
+  has('button:active,.btn:active,[role="button"]:active,.active span{transform:none!important}');
+  has('.page.active,.card,.modal.show .modalbox,.fr12-skeleton{animation:none!important}');
+});
