@@ -21,9 +21,9 @@ Example local file is `.env.example`; it contains placeholders only. `.env` and 
 2. Set the four Supabase Edge Function secrets above using the Supabase dashboard or CLI.
 3. Deploy `supabase/functions/fr-razorpay-checkout` to the FRIEND RIDE QA Supabase project; keep live mode disabled.
 4. Use the QA app and login to a test Partner account. Choose Basic/Growth/Premium; the server creates the order and the modal opens.
-5. Complete a Razorpay test payment, then confirm the frontend shows signature verification result.
+5. Complete a Razorpay test payment. Server verifies signature, fetched order ownership/plan/currency, payment-to-order linkage, amount, and captured status.
 6. Try cancel, failed payment, unauthorized request, tampered signature, and invalid amount.
-7. Confirm verified payment is **not** displayed as Active subscription until subscription database mapping/activation is implemented.
+7. Confirm verified/captured payment is **not** displayed as Active subscription until subscription database mapping/activation is implemented.
 
 ## QA contract test
 Run: `node --test qa/razorpay-contract.test.mjs`
