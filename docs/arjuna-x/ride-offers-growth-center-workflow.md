@@ -100,3 +100,16 @@ draft -> pending_approval -> approved -> scheduled -> active -> paused -> expire
 
 ## Current implementation status
 Workflow is documented. SQL proposal, role enforcement RPCs, campaign UI, integration, and QA execution are still pending. No live schema execution or deployment.
+
+
+## Coupon Sale Market (user confirmed)
+- Coupon Market supports **paid coupon sale**, not only free promo coupons.
+- Sellers/issuers: Store Partners sell store/product/service coupons; Admin sells or issues platform/ride coupons; Drivers may submit paid ride promotion coupons only when Admin-approved and allowed by campaign rules.
+- Customer browsing shows coupon face value/benefit, sale price, savings, terms, expiry, seller/issuer, available quantity, and eligible service/store.
+- Purchase checkout uses the existing payment system. Coupon is issued only after trusted payment verification. Payment pending/failed must not create redeemable coupons.
+- Customer Wallet lists purchased coupons, QR/token, expiry and status.
+- Redemption is one-time and backend-verified; store coupon redeem only by matching store; ride coupon applies to eligible ride quote/booking. No duplicate use.
+- Admin controls approval, pricing/discount guardrails, seller permissions, campaign caps, pause/revoke, refund/cancellation policy, and reports.
+- Sales/discount/revenue/commission reports must use verified records only; no invented numbers.
+- Paid coupons may be a prepaid value coupon or discounted offer coupon. Clearly display whether a coupon is a fixed value, percentage discount, amount discount, BOGO, ride discount, or pass; terms/expiry/minimum purchase are mandatory.
+- Do not claim or apply any revenue-share/commission rule until Admin has explicitly configured and backend implementation supports it.
