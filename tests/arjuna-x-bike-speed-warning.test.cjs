@@ -69,6 +69,8 @@ test('Bike speed warning: Telugu alert copy and warning tone are proposed withou
   assert.equal(result.status, 'warning_proposal');
   assert.equal(result.warningTextTelugu, 'హెచ్చరిక! వేగ పరిమితి దాటింది. దయచేసి వేగం తగ్గించండి.');
   assert.equal(result.warningToneKey, 'bike_speed_limit_warning');
+  assert.equal(result.voiceAlertTelugu, 'జాగ్రత్త! మీ బైక్ వేగం పరిమితిని మించింది. దయచేసి వెంటనే వేగం తగ్గించండి.');
+  assert.equal(result.voiceAlertLocale, 'te-IN');
   assert.deepEqual(result.recipients, ['driver', 'customer']);
   assert.equal(result.sideEffects, false, 'QA decision must not deliver notification or play tone');
 });
