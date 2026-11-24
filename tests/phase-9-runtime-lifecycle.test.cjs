@@ -73,3 +73,60 @@ test('request cap and constructor validation fail closed', () => {
   lifecycle.beginRequest('s-1', 'r-1');
   assert.deepEqual(lifecycle.beginRequest('s-1', 'r-2'), { status: 'blocked', reason: 'request_limit_reached' });
 });
+
+test('parallel sessions isolate identical request IDs and role state', () => {
+  const lifecycle = new RuntimeSessionLifecycle({ maxSessions: 2 });
+  lifecycle.openSession('s-customer', 'customer');
+  lifecycle.openSession('s-driver', 'driver');
+  const customer = lifecycle.beginRequest('s-customer', 'same-id');
+  const driver = lifecycle.beginRequest('s-driver', 'same-id');
+  assert.equal(customer.status, 'started');
+  assert.equal(driver.status, 'started');
+  assert.notEqual(customer.signal, driver.signal);
+  assert.equal(lifecycle.finishRequest('s-customer', 'same-id', 'completed').status, 'completed');
+  assert.equal(lifecycle.snapshot('s-driver').requests[0].status, 'running');
+});
+
+test('parallel requests in one session can finish independently', () => {
+  const lifecycle = new RuntimeSessionLifecycle();
+  lifecycle.openSession('s-parallel', 'partner');
+  const a = lifecycle.beginRequest('s-parallel', 'r-a');
+  const b = lifecycle.beginRequest('s-parallel', 'r-b');
+  assert.equal(a.status, 'started');
+  assert.equal(b.status, 'started');
+  assert.equal(lifecycle.finishRequest('s-parallel', 'r-a', 'failed').status, 'failed');
+  assert.equal(lifecycle.snapshot('s-parallel').requests.find(r => r.id === 'r-b').status, 'running');
+  assert.equal(lifecycle.finishRequest('s-parallel', 'r-b', 'completed').status, 'completed');
+});
+
+test('terminal requests cannot be changed again and invalid outcome is rejected', () => {
+  const lifecycle = new RuntimeSessionLifecycle();
+  lifecycle.openSession('s-terminal', 'admin');
+  lifecycle.beginRequest('s-terminal', 'r-terminal');
+  assert.throws(() => lifecycle.finishRequest('s-terminal', 'r-terminal', 'cancelled'), /outcome/);
+  assert.equal(lifecycle.finishRequest('s-terminal', 'r-terminal', 'completed').status, 'completed');
+  assert.deepEqual(lifecycle.cancelRequest('s-terminal', 'r-terminal'), { status: 'blocked', reason: 'request_not_running' });
+  assert.deepEqual(lifecycle.timeoutRequest('s-terminal', 'r-terminal'), { status: 'blocked', reason: 'request_not_running' });
+});
+
+test('unknown session and request return blocked statuses; malformed IDs reject safely', () => {
+  const lifecycle = new RuntimeSessionLifecycle();
+  assert.deepEqual(lifecycle.beginRequest('missing', 'r-1'), { status: 'blocked', reason: 'session_not_active' });
+  lifecycle.openSession('s-edge', 'customer');
+  assert.deepEqual(lifecycle.finishRequest('s-edge', 'missing-r'), { status: 'blocked', reason: 'request_not_found' });
+  assert.throws(() => lifecycle.beginRequest('s-edge', '   '), /requestId/);
+  assert.deepEqual(lifecycle.snapshot('missing'), undefined);
+});
+
+test('snapshot exposes no abort controllers and mutations do not alter internal state', () => {
+  const lifecycle = new RuntimeSessionLifecycle();
+  lifecycle.openSession('s-safe', 'customer');
+  lifecycle.beginRequest('s-safe', 'r-safe');
+  const snap = lifecycle.snapshot('s-safe');
+  assert.equal(JSON.stringify(snap).includes('AbortController'), false);
+  snap.requests[0].status = 'completed';
+  snap.requests.push({ id: 'fake' });
+  const fresh = lifecycle.snapshot('s-safe');
+  assert.equal(fresh.requests[0].status, 'running');
+  assert.equal(fresh.requests.length, 1);
+});
