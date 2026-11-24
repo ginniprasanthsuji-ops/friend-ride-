@@ -202,9 +202,21 @@ test('Phase 11 privacy gate rejects long digit sequences embedded in identifier-
 });
 
 test('Phase 11 privacy gate rejects control characters in allowlisted strings', () => {
-  for (const unsafe of ['runtime\\nsecret', 'operation\\u0000x', 'status\\rhidden']) {
+  for (const unsafe of ['runtime\nsecret', 'operation\u0000x', 'status\rhidden']) {
     const result = evaluatePrivacyGate({ type: 'request_started', context, fields: { operation: unsafe } });
     assert.equal(result.accepted, false);
     assert.equal(JSON.stringify(result).includes(unsafe), false);
+  }
+});
+
+
+test('Phase 11 privacy gate enforces allowlisted diagnostic roles', () => {
+  for (const role of ['superuser', 'root', 'customer-private', '']) {
+    const result = evaluatePrivacyGate({ type: 'request_started', context, fields: { role } });
+    assert.equal(result.accepted, false, role);
+  }
+  for (const role of ['customer', 'driver', 'partner', 'admin', 'system']) {
+    const result = evaluatePrivacyGate({ type: 'request_started', context, fields: { role } });
+    assert.equal(result.accepted, true, role);
   }
 });
