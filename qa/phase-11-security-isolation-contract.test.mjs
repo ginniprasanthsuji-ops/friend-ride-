@@ -147,3 +147,9 @@ test('Phase 11 CI: workflow supports branch push, manual dispatch, and scheduled
   assert.ok(workflow.includes('schedule:'));
   assert.ok(workflow.includes("cron: '17 2 * * *'"));
 });
+
+
+test('Phase 11 CI: regression job has bounded execution and pinned Node major', () => {
+  assert.ok(workflow.includes('timeout-minutes: 15'));
+  assert.ok(workflow.includes('node-version: 22'));
+});
