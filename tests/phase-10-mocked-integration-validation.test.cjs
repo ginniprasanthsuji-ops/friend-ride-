@@ -412,3 +412,46 @@ test('Phase 10 expiry boundary is exact and expired sessions cannot be revived',
   assert.equal(life.snapshot('s-expiry-boundary'), undefined);
   assert.throws(() => life.openSession('s-expiry-boundary', 'partner'), /already exists/);
 });
+
+
+test('Phase 10 authoritative role binding matrix: only customer may propose ride selection', () => {
+  const { evaluateSessionBoundRequest } = require('../qa/arjuna-x-session-bound-runtime.cjs');
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 4, maxRequestsPerSession: 2 });
+  const roles = ['customer', 'driver', 'partner', 'admin'];
+  for (const role of roles) life.openSession('s-role-' + role, role);
+  for (const role of roles) {
+    const result = evaluateSessionBoundRequest({
+      lifecycle: life,
+      sessionId: 's-role-' + role,
+      requestSessionId: 's-role-' + role,
+      intent: { type: 'select_ride', rideType: 'bike' }
+    });
+    if (role === 'customer') {
+      assert.equal(result.status, 'proposal');
+      assert.equal(result.sideEffects, false);
+    } else {
+      assert.equal(result.status, 'blocked');
+      assert.equal(result.reason, 'intent_not_allowed');
+      assert.equal(result.sideEffects, false);
+    }
+  }
+});
+
+test('Phase 10 session-bound bridge denies cross-session request and invalid lifecycle', () => {
+  const { evaluateSessionBoundRequest } = require('../qa/arjuna-x-session-bound-runtime.cjs');
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 2, maxRequestsPerSession: 2 });
+  life.openSession('s-bound-one', 'customer');
+  const mismatch = evaluateSessionBoundRequest({
+    lifecycle: life,
+    sessionId: 's-bound-one',
+    requestSessionId: 's-bound-other',
+    intent: { type: 'navigate', target: 'home' }
+  });
+  assert.equal(mismatch.status, 'blocked');
+  assert.equal(mismatch.reason, 'session_mismatch');
+  assert.equal(mismatch.sideEffects, false);
+  const invalid = evaluateSessionBoundRequest({ lifecycle: {}, sessionId: 's-bound-one', requestSessionId: 's-bound-one', intent: { type: 'navigate', target: 'home' } });
+  assert.equal(invalid.status, 'blocked');
+  assert.equal(invalid.reason, 'invalid_lifecycle_source');
+  assert.equal(invalid.sideEffects, false);
+});
