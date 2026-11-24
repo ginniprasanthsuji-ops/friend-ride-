@@ -39,6 +39,8 @@ jobs:
         run: node --test tests/phase-11-diagnostics-privacy-hardening.test.cjs
       - name: Run ARJUNA X Phase 11 diagnostics integration audit tests
         run: node --test tests/phase-11-diagnostics-integration-audit.test.cjs
+      - name: Run ARJUNA X Phase 12 native motion contract tests
+        run: node --test tests/phase-12-native-motion-contract.test.cjs
       - name: Run ARJUNA X Phase 10 mocked integration validation
         run: node --test tests/phase-10-mocked-integration-validation.test.cjs
       - name: Run ARJUNA X bike speed warning policy tests
