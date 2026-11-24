@@ -161,3 +161,11 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Whitespace-only ride/event IDs fail closed.
 - [x] Added deterministic QA tests; side effects remain disabled.
 - [ ] CI checkpoint pending.
+
+
+## Guard validation precedence checkpoint
+- [x] Invalid terminal reset is rejected without clearing cooldown state.
+- [x] Duplicate event ID is rejected before ride-capacity checks.
+- [x] Duplicate event ID remains rejected when event capacity is full.
+- [x] Capacity rejection ordering is covered with deterministic QA tests; no side effects.
+- [ ] CI checkpoint pending.
