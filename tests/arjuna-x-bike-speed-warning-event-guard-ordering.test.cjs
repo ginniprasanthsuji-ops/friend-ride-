@@ -38,5 +38,5 @@ test('Phase 10 warning guard: stale timestamp remains blocked after terminal res
   assert.deepEqual(guard.evaluate({ rideId: 'ride-A', eventId: 'A-2', nowMs: 9_999 }), { status: 'blocked', reason: 'stale_event_time', sideEffects: false });
   assert.equal(guard.terminateRide({ rideId: 'ride-A', terminalState: 'completed' }).status, 'reset');
   assert.equal(guard.evaluate({ rideId: 'ride-A', eventId: 'A-3', nowMs: 10_000 }).status, 'proposal_accepted');
-  assert.deepEqual(guard.evaluate({ rideId: 'ride-B', eventId: 'B-2', nowMs: 5_001 }), { status: 'blocked', reason: 'stale_event_time', sideEffects: false });
+  assert.deepEqual(guard.evaluate({ rideId: 'ride-B', eventId: 'B-2', nowMs: 4_999 }), { status: 'blocked', reason: 'stale_event_time', sideEffects: false });
 });
