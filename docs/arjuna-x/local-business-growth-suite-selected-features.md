@@ -75,3 +75,7 @@ Status: planning/contract stage. This document records the user's selected featu
 - My Coupons wallet provides unique QR/token and status; redemption is backend-validated and one-time, matched to the store or ride eligibility.
 - Admin approval, campaign controls, fraud limits, refund/expiry policy, and verified sales/redemption reports.
 - No assumed commissions or revenue share without explicit configured rules.
+
+
+## Phase 13 scope confirmation (latest user selection)
+Phase 13 specifically includes selected items **#2 Flash Sale, #5 Refer a Friend, #8 Birthday & Special Day Offers, #9 Customer Feedback & Reviews**, plus **FR Coupon Market Direct-to-Store Payment + Automatic Recognition**. The previously selected Digital Loyalty Card (#1) remains recorded in the broader selected-features list, but is not part of this Phase 13 scope unless reselected.
