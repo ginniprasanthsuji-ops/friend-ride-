@@ -71,3 +71,19 @@ test('Phase 11 integration audit: direct sanitizer and gate agree on phone PII r
     assert.equal(JSON.stringify(direct).includes(value), false);
   }
 });
+
+
+test('Phase 11 integration audit: sanitizer and gate source remain side-effect free', () => {
+  const contextSource = fs.readFileSync(path.resolve(__dirname, '../qa/arjuna-x-diagnostics-context.cjs'), 'utf8');
+  const policySource = fs.readFileSync(path.resolve(__dirname, '../qa/arjuna-x-diagnostics-privacy-policy.cjs'), 'utf8');
+  const forbidden = ['fetch(', 'XMLHttpRequest', 'WebSocket(', 'navigator.sendBeacon', 'console.', 'sendTelemetry(', 'trackEvent(', 'localStorage', 'sessionStorage', 'setTimeout(', 'setInterval('];
+  for (const source of [contextSource, policySource]) for (const marker of forbidden) assert.equal(source.includes(marker), false, 'side-effect marker: ' + marker);
+});
+
+test('Phase 11 integration audit: context schema rejection never echoes extra metadata', () => {
+  const input = { type:'request_started', context:{ ...context, secret:'private-value' }, fields:{} };
+  const result = evaluatePrivacyGate(input);
+  assert.equal(result.accepted, false);
+  assert.equal(JSON.stringify(result).includes('private-value'), false);
+  assert.equal(JSON.stringify(result).includes('secret'), false);
+});
