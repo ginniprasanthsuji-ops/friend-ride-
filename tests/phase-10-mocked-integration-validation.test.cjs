@@ -179,3 +179,25 @@ test('Phase 10 role/session binding matrix: session role is authoritative and mi
   assert.equal(binding.status, 'blocked');
   assert.equal(binding.sideEffects, false);
 });
+
+test('Phase 10 diagnostics boundary matrix: event allowlist, context validation, field filtering', () => {
+  const context = createCorrelationContext({ correlationId: 'c-safe', requestId: 'r-safe', sessionId: 's-safe', role: 'unknown-role' });
+  assert.equal(context.role, 'unknown');
+
+  const deniedType = sanitizeDiagnosticEvent({ type: 'raw_prompt_dump', context, fields: { status: 'ok' } });
+  assert.equal(deniedType.accepted, false);
+  assert.equal(deniedType.reason, 'event_type_not_allowlisted');
+
+  const missingContext = sanitizeDiagnosticEvent({ type: 'request_started', fields: { status: 'ok' } });
+  assert.equal(missingContext.accepted, false);
+  assert.equal(missingContext.reason, 'missing_context');
+
+  const safe = sanitizeDiagnosticEvent({ type: 'request_completed', context, fields: {
+    module: 'runtime', status: 'completed', attempt: 2, durationMs: 50,
+    errorCode: 'TIMEOUT', prompt: 'should-not-log', token: 'should-not-log',
+    negativeDuration: -5, oversized: 'x'.repeat(100)
+  } });
+  assert.equal(safe.accepted, true);
+  assert.deepEqual(safe.event.fields, { module: 'runtime', status: 'completed', attempt: 2, durationMs: 50, errorCode: 'TIMEOUT' });
+  assert.equal(JSON.stringify(safe).includes('should-not-log'), false);
+});
