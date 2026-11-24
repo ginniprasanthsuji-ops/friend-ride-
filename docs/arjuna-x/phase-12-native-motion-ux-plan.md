@@ -95,3 +95,5 @@
 - Accessibility polish: keyboard-visible gold focus rings added to buttons, links, form fields, and tabindex controls. Reduced-motion preference now removes shimmer movement and uses a static placeholder fill. Contract test added; execution pending.
 
 - Accessibility polish checkpoint: keyboard-focus-visible outlines added across interactive controls and links. Reduced-motion shimmer fallback removes the animated gradient while retaining a static loading surface. Contract tests added for focus visibility and drawer/press feedback reduced-motion behavior; test execution remains pending.
+
+- Regression execution checkpoint: QA run #731 reached Browser Regression Tests and failed; JavaScript validation, npm install, Chromium setup, and local static server steps succeeded. Detailed failing assertion could not be retrieved through the available GitHub connection; do not claim a pass or infer the failure. The workflow now uses branch-scoped concurrency to cancel duplicate regression runs.
