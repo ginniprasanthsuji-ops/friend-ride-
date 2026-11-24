@@ -2,7 +2,8 @@ const { test, expect } = require('./local-only-fixture.cjs');
 
 test.describe('Phase 11 single-page dashboard isolation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.goto('./', { waitUntil: 'load' });
+    await page.waitForFunction(() => typeof window.showPage === 'function', { timeout: 10000 });
   });
 
   test('showPage leaves exactly one active page and marks other pages hidden/inert', async ({ page }) => {
