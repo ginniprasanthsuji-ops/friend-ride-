@@ -5,7 +5,7 @@ QA-only. Production untouched.
 
 ## Progress
 **Estimated Phase 11 progress: 98%** (not a verified CI pass).
-Previous checkpoint: 97%, with 5/5 targeted security checks reported PASS. The static contract suite is at nine checks. Additional browser tests now cover four role-specific registration scenarios and single-active-page isolation. These tests are committed but not executed in this tool session.
+Previous checkpoint: 97%, with 5/5 targeted security checks reported PASS. The static contract suite is at twelve checks. Additional browser tests now cover four role-specific registration scenarios and single-active-page isolation. These tests are committed but not executed in this tool session.
 
 ## Existing security/UX guardrails reviewed
 - Admin membership check uses `admin_users` membership as authoritative.
@@ -18,11 +18,11 @@ Previous checkpoint: 97%, with 5/5 targeted security checks reported PASS. The s
 - Learning dashboards are clearly not represented as live backend dashboards when scripts/data are unavailable.
 
 ## This continuation
-- Expanded `qa/phase-11-security-isolation-contract.test.mjs` to nine Node test cases: Admin membership, role allowlist, driver approval, Learning isolation/routing, dashboard limitation disclosure, role-specific registration fields, and page isolation/inert state.
+- Expanded `qa/phase-11-security-isolation-contract.test.mjs` to twelve Node test cases: Admin membership, role allowlist, driver approval, Learning isolation/routing, dashboard limitation disclosure, role-specific registration fields, page isolation/inert state, Playwright test discovery, localhost-only target guard, and CI local-server configuration.
 - Added `qa/phase-11-registration-isolation.spec.js` with four browser tests for Customer, Driver, Partner and Admin registration field visibility/disabled controls.
 - Added `qa/phase-11-page-isolation.spec.js` to verify exactly one active page and hidden pages are aria-hidden/inert after navigation.
 - CI workflow includes Phase 11 Node contract tests; Playwright suite is included through existing `npm test`.
-- Updated `playwright.config.cjs` to explicitly discover `.spec.js`, `.spec.cjs`, and `.spec.ts` files only, preventing standalone Node `.test.mjs` contract suite from being incorrectly picked up by Playwright. Added three more static contracts for this discovery rule, localhost-only browser target, and CI local-server configuration.
+- Updated `playwright.config.cjs` to explicitly discover `.spec.js`, `.spec.cjs`, and `.spec.ts` files only, preventing standalone Node `.test.mjs` contract suite from being incorrectly picked up by Playwright. Added three additional static contracts for this discovery rule, localhost-only browser target, and CI local-server configuration.
 - Tests are authored but not executed here. No CI run verified.
 
 ## Remaining before Phase 11 close
