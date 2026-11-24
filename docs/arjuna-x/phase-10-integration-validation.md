@@ -30,3 +30,8 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 ## Verified CI checkpoint
 - Run #68 (`45315781625`), commit `771acfbefd`: **completed/success**.
 - All Phase 8, Phase 9, and Phase 10 test steps passed, including the expanded Phase 10 matrix.
+
+
+## Latest verified checkpoint
+- Run #71 (`45315888284`), commit `935acc28b0`: **completed/success**.
+- All preflight, Phase 8, Phase 9, and expanded Phase 10 test steps passed.
