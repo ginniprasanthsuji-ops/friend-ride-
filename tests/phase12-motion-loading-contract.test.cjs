@@ -45,3 +45,11 @@ test('Phase 12: card motion is opt-in to reduce global animation churn', () => {
   assert.doesNotMatch(html, /(^|\n)\.card\s*\{\s*animation:\s*fr12-card-enter/i);
   assert.match(html, /prefers-reduced-motion:\s*reduce[\s\S]*?\.fr12-animate-card[\s\S]*?animation:\s*none/i);
 });
+
+
+test('Phase 12: customer platform charge is 2.5% capped at ₹25', () => {
+  assert.match(html, /function frPlatformChargePaise\(orderAmountPaise\)[\s\S]*?Math\.min\(2500,Math\.round\(amount\*0\.025\)\)/);
+  assert.match(html, /Platform Charge \(2\.5%, max ₹25\)/);
+  assert.match(html, /frPlatformChargePreview/);
+  assert.match(html, /Final platform charge is calculated after Partner price confirmation/);
+});
