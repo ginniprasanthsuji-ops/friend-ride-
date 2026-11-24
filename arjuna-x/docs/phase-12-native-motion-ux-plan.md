@@ -28,12 +28,12 @@ Establish and verify a lightweight, native-app-like motion system for FRIEND RID
 - Preserve Telugu-first UX and existing feature functionality.
 
 ## Phase 12 checkpoints
-- [ ] Inventory current navigation, CSS animations/transitions, loading UI, modal/sheet behavior, and reduced-motion support.
-- [ ] Document baseline gaps and select minimal motion primitives.
-- [ ] Implement motion primitives in isolated UI-only changes.
-- [ ] Add regression checks for reduced-motion, interaction feedback, and transition safety.
+- [x] Inventory current navigation, CSS animations/transitions, loading UI, modal/sheet behavior, and reduced-motion support (initial audit).
+- [x] Document baseline gaps and select minimal motion primitives.
+- [x] Implement first UI-only motion layer: page/card/modal entrance, touch feedback, CSS shimmer contract, reduced-motion overrides.
+- [x] Add dependency-free contract tests for motion and reduced-motion safety.
 - [ ] Run CI and browser regression checks; report exact verified results.
 - [ ] Final closeout and checkpoint.
 
 ## Progress
-Phase 12 has started. Initial scope and safety guardrails documented; implementation awaits baseline inventory.
+Phase 12 progress: **20%**. Initial audit completed; first motion primitives and contract tests implemented. GitHub Actions run `45369800954` completed **SUCCESS**. More UX integration and regression review remain.
