@@ -61,3 +61,9 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - Authorization bridge now resolves the session via the lifecycle manager; it does not trust caller-provided snapshots or role fields.
 - Added test for forged snapshot rejection and closed-session rejection.
 - CI checkpoint for this hardening: pending.
+
+
+## Bike safety policy integration
+- [x] Bike-only speed warning policy integrated into Phase 10 mocks: 50 km/h threshold, recipients (driver/customer), cooldown, and GPS reliability gate.
+- [x] Non-bike ride exclusion (auto/car/delivery) verified.
+- [x] Warning remains a side-effect-free proposal; real notifications/GPS/Supabase remain out of scope.
