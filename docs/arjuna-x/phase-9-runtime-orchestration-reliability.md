@@ -1,30 +1,34 @@
 # ARJUNA X Phase 9 — Runtime Orchestration & Reliability
 
-**Status:** Started — runtime policy adapter and unit tests implemented; CI verification pending  
+**Status:** Runtime policy adapter and lifecycle module added; regression CI queued for commit `1b2739fb79cc4ea28dcd5f5ad710d71457b15b72`  
 **Branch:** `arjuna-x/phase-7-ai-intelligence-safety`  
 **Safety:** QA branch only. No production/main merge, deployment, live Supabase access, schema/auth/RLS/payment changes, or external provider calls without explicit approval.
 
 ## Objective
 Build a predictable, testable runtime layer for ARJUNA X that coordinates safe assistant requests and approved app intents while failing closed on uncertain inputs and preserving explicit user confirmation.
 
-## Workstreams
-1. **Typed runtime request/result contract** — stable types for input, normalized intent, action proposal, runtime outcome, and safe error states.
-2. **Policy gate** — validate allowlisted actions, role/permission context, and confirmation requirements before producing an action proposal; no direct side effects.
-3. **Context/session isolation** — prevent cross-session or cross-user context leakage; avoid logging sensitive content.
-4. **Reliability behavior** — deterministic normalization, bounded retries only for idempotent local operations, timeout/error handling, cancellation, and fail-closed fallback.
-5. **Observability** — privacy-safe diagnostic codes and correlation IDs; redact PII and secrets.
-6. **QA** — dependency-free unit tests and local mocked Playwright tests; test unknown inputs, malformed payloads, role mismatch, cancellation, duplicate requests, and failure paths.
-7. **Integration readiness** — keep FRIEND RIDE navigation/review integration behind the Phase 8 contract; no booking, payment, cancellation, GPS, microphone, or provider execution in this phase without separately approved safeguards.
+## Implemented checkpoint
+- Runtime policy adapter: allowlisted navigation proposals; customer-only ride-selection proposals; booking-review confirmation gate; unknown, malformed, unauthorized, injected and side-effecting intents fail closed.
+- Session mismatch guard and privacy-safe diagnostic codes.
+- Runtime lifecycle module: role-bound session open/close, request-ID duplicate prevention, request completion/failure states, cancellation through AbortSignal, TTL expiry, bounded session/request capacity.
+- Tests added for lifecycle and policy; QA workflow now runs both suites.
+
+## Remaining workstreams
+1. Typed runtime request/result contract and integration surface.
+2. Harden lifecycle edge cases and concurrency semantics.
+3. Timeout/error handling, retry policy (idempotent local only), and fail-closed fallback.
+4. Observability: correlation IDs and redaction review.
+5. Local mocked browser integration readiness and regression coverage.
 
 ## Acceptance criteria
-- Runtime interfaces are typed and documented.
+- Runtime interfaces are typed/documented where integrated.
 - Policy gate rejects unknown, ambiguous, unauthorized, and unconfirmed side-effect requests.
 - No direct external network, backend, payment, ride mutation, mic, or GPS side effects in unit-test scope.
-- Context/session isolation tests pass.
+- Context/session isolation and lifecycle tests pass.
 - Diagnostic output contains no user PII, tokens, addresses, or secrets.
 - QA tests run and CI results are recorded accurately before declaring completion.
 
-## Phase 9 initial checkpoint
-- Phase 9 scope and acceptance criteria recorded.
-- Implementation and test work remains pending.
-- Phase 8 GitHub Actions runs currently show failures; Phase 8 CI must be repaired/verified independently and must not be represented as green.
+## Latest CI checkpoint
+- Run: `45308620363`
+- Status at checkpoint: **queued** (not PASS).
+- Branch/commit: `arjuna-x/phase-7-ai-intelligence-safety` / `1b2739fb79cc4ea28dcd5f5ad710d71457b15b72`.
