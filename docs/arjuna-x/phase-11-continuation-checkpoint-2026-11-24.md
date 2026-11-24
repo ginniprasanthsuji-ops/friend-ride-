@@ -132,3 +132,10 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - Added static check for Phase 11 branch push trigger, manual workflow dispatch, and daily scheduled regression trigger.
 - Static contract suite: 22 authored checks (not executed).
+
+
+## CI Runtime Bound Contract
+
+- Added static guard for 15-minute job timeout and Node.js 22 runtime.
+- Contract suite: 23 authored checks (not executed).
+- Workflow dispatch capability was not available through connected GitHub actions; no run started.
