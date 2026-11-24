@@ -120,3 +120,8 @@ test('Phase 11 CI: regression reports upload even when the job fails', () => {
   assert.ok(workflow.includes('test-results/'));
   assert.ok(workflow.includes('if-no-files-found: ignore'));
 });
+
+
+test('Phase 11 CI: regression artifacts have bounded retention', () => {
+  assert.ok(workflow.includes('retention-days: 7'));
+});
