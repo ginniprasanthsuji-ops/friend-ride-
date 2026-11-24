@@ -223,3 +223,16 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 ## Safety boundary summary
 - All Phase 10 integrations and event guards are QA mock-only.
 - No production/main changes, live Supabase/SQL, network/provider, booking/payment, GPS/camera, notification/TTS, or ride mutation actions were performed.
+
+## Maximum safe cooldown boundary checkpoint
+- [x] Cooldown configured at `Number.MAX_SAFE_INTEGER` is accepted by the QA guard.
+- [x] One millisecond before the cooldown boundary remains suppressed.
+- [x] Exact boundary is accepted without unsafe arithmetic.
+- [x] CI Run #160 (`45332498239`): **completed/success**.
+
+## Maximum safe timestamp and terminal-reset recovery checkpoint
+- [x] Maximum safe timestamp is accepted as a valid event time.
+- [x] Earlier timestamp is rejected as stale while the ride remains tracked.
+- [x] Terminal reset clears ride time-tracking and permits a fresh timestamp timeline.
+- [x] Global event replay history remains preserved.
+- [ ] CI Run #161 pending verification.
