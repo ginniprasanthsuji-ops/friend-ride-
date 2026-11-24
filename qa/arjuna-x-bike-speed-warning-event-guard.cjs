@@ -25,6 +25,9 @@ class BikeSpeedWarningEventGuard {
     if (typeof rideId !== 'string' || !rideId.trim() || typeof eventId !== 'string' || !eventId.trim() || !Number.isSafeInteger(nowMs) || nowMs < 0) {
       return { status: 'blocked', reason: 'invalid_event_context', sideEffects: false };
     }
+    // Canonicalize identifiers to avoid whitespace variants bypassing deduplication/cooldown.
+    rideId = rideId.trim();
+    eventId = eventId.trim();
     if (this.seenEventIds.has(eventId)) return { status: 'blocked', reason: 'duplicate_event_id', sideEffects: false };
     if (this.seenEventIds.size >= this.maxEvents) return { status: 'blocked', reason: 'event_capacity_reached', sideEffects: false };
     if (!this.lastProposalAtByRide.has(rideId) && this.lastProposalAtByRide.size >= this.maxRides) {
