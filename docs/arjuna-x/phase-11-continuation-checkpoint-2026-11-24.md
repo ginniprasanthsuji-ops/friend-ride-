@@ -139,3 +139,9 @@ No merge, deployment, live payment, database mutation, or production change made
 - Added static guard for 15-minute job timeout and Node.js 22 runtime.
 - Contract suite: 23 authored checks (not executed).
 - Workflow dispatch capability was not available through connected GitHub actions; no run started.
+
+
+## QA Entry Point Guard
+
+- Added static check confirming `npm test` requires local-only preflight before Playwright execution.
+- Static contract suite: 24 authored checks (not executed).
