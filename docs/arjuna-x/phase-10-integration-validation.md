@@ -85,3 +85,11 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Invalid speed, accuracy, timestamps, or prior-warning timestamp fail closed.
 - [x] GPS quality exact boundaries (20m accuracy and 10s sample age) tested.
 - [x] No device, camera, GPS, notification, ride mutation, or network side effects.
+
+
+## Concurrency and terminal-state regression checkpoint
+- [x] Session closure aborts multiple concurrent active requests.
+- [x] Closed/cancelled sessions reject late request starts and completion attempts.
+- [x] Timeout terminal state rejects completion and same request-ID replay.
+- [x] TTL expiry boundary is exact; expired session cannot be revived with same ID.
+- [x] These scenarios remain deterministic and mock-only.
