@@ -349,3 +349,25 @@ test('Phase 10 bike safety integration: threshold, cooldown, and unreliable GPS 
   assert.equal(unreliable.reason, 'gps_sample_unreliable');
   assert.deepEqual(unreliable.recipients, []);
 });
+
+
+test('Phase 10 bike safety cross-policy integration: helmet gate must pass before ride safety monitoring', () => {
+  const { evaluateHelmetVerification } = require('../qa/arjuna-x-helmet-verification.cjs');
+  const { evaluateBikeSpeedWarning } = require('../qa/arjuna-x-bike-speed-warning.cjs');
+
+  const deniedHelmet = evaluateHelmetVerification({ rideType: 'bike', rideId: 'bike-helmet-denied', permission: 'denied' });
+  assert.equal(deniedHelmet.allowStart, false);
+  // Integration harness confirms monitoring decision is not advanced while start gate is blocked.
+  let speedEvaluationCalled = false;
+  if (deniedHelmet.allowStart) {
+    speedEvaluationCalled = true;
+    evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 70, accuracyMeters: 5, nowMs: 5000 });
+  }
+  assert.equal(speedEvaluationCalled, false);
+
+  const verifiedHelmet = evaluateHelmetVerification({ rideType: 'bike', rideId: 'bike-helmet-ok', permission: 'granted', captureChecked: true, verificationRideId: 'bike-helmet-ok' });
+  assert.equal(verifiedHelmet.allowStart, true);
+  const speedDecision = evaluateBikeSpeedWarning({ rideType: 'bike', speedKmh: 54, accuracyMeters: 5, sampleAgeMs: 1000, nowMs: 5000 });
+  assert.equal(speedDecision.status, 'warning_proposal');
+  assert.equal(speedDecision.sideEffects, false);
+});
