@@ -97,10 +97,13 @@ create policy fr_store_reviews_customer_insert on public.fr_store_reviews
   for insert to authenticated with check (customer_user_id=auth.uid() and status='pending' and partner_reply is null);
 
 -- Store owner manages their own sales only; activation/redemption workflows should be RPC-guarded.
-drop policy if exists fr_flash_sales_partner_manage on public.fr_store_flash_sales;
-create policy fr_flash_sales_partner_manage on public.fr_store_flash_sales
-  for all to authenticated using (store_partner_user_id=auth.uid())
-  with check (store_partner_user_id=auth.uid());
+drop policy if exists fr_flash_sales_partner_read on public.fr_store_flash_sales;
+create policy fr_flash_sales_partner_read on public.fr_store_flash_sales
+  for select to authenticated using (store_partner_user_id=auth.uid());
+drop policy if exists fr_flash_sales_partner_insert_draft on public.fr_store_flash_sales;
+create policy fr_flash_sales_partner_insert_draft on public.fr_store_flash_sales
+  for insert to authenticated with check (store_partner_user_id=auth.uid() and status='draft' and claimed_count=0);
+-- No direct partner update/delete policy: activation, pausing, counters, and claim enforcement must be handled by reviewed RPCs.
 drop policy if exists fr_flash_sales_customer_read on public.fr_store_flash_sales;
 create policy fr_flash_sales_customer_read on public.fr_store_flash_sales
   for select to authenticated using (status='active' and starts_at<=now() and ends_at>now());
@@ -113,10 +116,10 @@ create policy fr_loyalty_account_partner_read on public.fr_store_loyalty_account
   for select to authenticated using (store_partner_user_id=auth.uid());
 drop policy if exists fr_loyalty_ledger_customer_read on public.fr_store_loyalty_ledger;
 create policy fr_loyalty_ledger_customer_read on public.fr_store_loyalty_ledger
-  for select to authenticated using (exists(select 1 from public.fr_store_loyalty_accounts a where a.id=account_id and a.customer_user_id=auth.uid()));
+  for select to authenticated using (exists(select 1 from public.fr_store_loyalty_accounts a where a.id=fr_store_loyalty_ledger.account_id and a.customer_user_id=auth.uid()));
 drop policy if exists fr_loyalty_ledger_partner_read on public.fr_store_loyalty_ledger;
 create policy fr_loyalty_ledger_partner_read on public.fr_store_loyalty_ledger
-  for select to authenticated using (exists(select 1 from public.fr_store_loyalty_accounts a where a.id=account_id and a.store_partner_user_id=auth.uid()));
+  for select to authenticated using (exists(select 1 from public.fr_store_loyalty_accounts a where a.id=fr_store_loyalty_ledger.account_id and a.store_partner_user_id=auth.uid()));
 
 drop policy if exists fr_special_offer_preferences_self_manage on public.fr_customer_special_offer_preferences;
 create policy fr_special_offer_preferences_self_manage on public.fr_customer_special_offer_preferences
