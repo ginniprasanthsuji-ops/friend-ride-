@@ -1182,7 +1182,7 @@ function sharePartnerReferral(){const t='Join FRIEND RIDE as a local business pa
 async function loadPartnerOrders(status='all'){
  const el=$('partnerOrderList');if(!el)return;
  if(!currentUser||currentProfile?.role!=='partner'){el.textContent='Partner Login అవసరం.';return;}
- el.innerHTML='<div class="notice">Orders loading…</div>';
+ el.innerHTML='<div class="notice fr12-skeleton" role="status" aria-label="Loading partner orders">Orders loading…</div>';
  try{
   const dbStatus=status==='new'?'quote_requested':(status==='all'?null:status);
   const {data,error}=await sb.rpc('fr_partner_list_market_orders',{p_status:dbStatus});if(error)throw error;
@@ -2722,7 +2722,7 @@ async function togglePartnerItemAvailability(i){const x=localCatalogue[i];if(!x)
 async function renderCustomerCatalogue(){
  if(!frActiveStore)return;
  const grid=$('customerCatalogueGrid');if(!grid)return;
- grid.innerHTML='<div class="notice">Partner Catalogue loading…</div>';
+ grid.innerHTML='<div class="notice fr12-skeleton" role="status" aria-label="Loading store catalogue">Partner Catalogue loading…</div>';
  try{
   const {data,error}=await sb.rpc('fr_customer_list_partner_catalogue',{p_store_id:frActiveStore.id});if(error)throw error;
   const q=($('customerCatalogueSearch')?.value||'').toLowerCase();
@@ -2779,7 +2779,7 @@ async function frPartnerSendQuote(orderId){
 // Customer order history with partner quote acceptance / counter-price actions.
 async function frLoadCustomerMarketOrders(){
  const el=$('frCustomerMarketOrders');if(!el||!currentUser)return;
- el.innerHTML='<div class="notice">Shop Orders loading…</div>';
+ el.innerHTML='<div class="notice fr12-skeleton" role="status" aria-label="Loading customer shop orders">Shop Orders loading…</div>';
  try{const {data,error}=await sb.rpc('fr_customer_list_market_orders');if(error)throw error;
   if(!data?.length){el.innerHTML='<div class="empty-state">Shop Orders ఇంకా లేవు.</div>';return;}
   el.innerHTML=data.map(o=>{const items=Array.isArray(o.items)?o.items:[];const lines=items.map(i=>`<div class="listrow"><span>${safe(i.item_name)} × ${safe(i.quantity)}</span><b>${i.partner_quote_paise==null?'Price pending':'₹'+frPaiseToRupees(i.partner_quote_paise)}</b>${o.status==='quoted'?`<input id="frCounter_${i.id}" type="number" min="0.01" step="0.01" placeholder="మీ counter price ₹" style="max-width:140px">`:''}</div>`).join('');
