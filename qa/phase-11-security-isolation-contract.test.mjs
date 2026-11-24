@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
+const packageJson = await readFile(new URL('../package.json', import.meta.url), 'utf8');
+const testFile = await readFile(new URL('./phase-11-security-isolation-contract.test.mjs', import.meta.url), 'utf8');
 const app = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const playwrightConfig = await readFile(new URL('../playwright.config.cjs', import.meta.url), 'utf8');
 const preflight = await readFile(new URL('../scripts/qa-local-preflight.cjs', import.meta.url), 'utf8');
@@ -152,4 +154,11 @@ test('Phase 11 CI: workflow supports branch push, manual dispatch, and scheduled
 test('Phase 11 CI: regression job has bounded execution and pinned Node major', () => {
   assert.ok(workflow.includes('timeout-minutes: 15'));
   assert.ok(workflow.includes('node-version: 22'));
+});
+
+
+test('Phase 11 QA entry point requires local preflight before browser tests', () => {
+  assert.ok(testFile.includes("const packageJson = await readFile(new URL('../package.json', import.meta.url), 'utf8')"));
+  const scripts = JSON.parse(packageJson).scripts;
+  assert.ok(scripts.test.startsWith('node scripts/qa-local-preflight.cjs && playwright test'));
 });
