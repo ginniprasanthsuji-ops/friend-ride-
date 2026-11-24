@@ -97,7 +97,7 @@ test('Phase 11 QA safety: browser service workers are blocked to prevent bypassi
 
 test('Phase 11 QA safety: preflight redirect handling does not follow external redirects', () => {
   assert.ok(preflight.includes("redirect: 'manual'"));
-  assert.ok(preflight.includes("new Set(['localhost', '127.0.0.1', '::1', '[::1]')"));
+  assert.ok(preflight.includes("new Set(['localhost', '127.0.0.1', '::1', '[::1]'])"));
 });
 
 
