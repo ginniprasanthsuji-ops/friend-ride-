@@ -88,3 +88,6 @@
 - Follow-up: cart now also displays Estimated Payable (subtotal + capped 2.5% platform fee) once partner price is confirmed; empty-cart preview resets to ₹0.00.
 
 - Quote acceptance now displays an informational subtotal, 2.5% platform fee capped at ₹25, and subtotal-plus-fee preview in the confirmation prompt before the customer accepts Partner quotes. The prompt clearly states that the platform fee is not yet actually collected. Contract test added; not executed.
+
+- Audit checkpoint: the FRIEND RIDE Regression workflow's push trigger currently excludes this Phase 12 QA branch (it lists main and ui/full-native-dark-gold-2026-11-21). Manual workflow dispatch exists, but no QA-branch run was found in the recent workflow runs queried; no test or CI pass is claimed.
+- Added contract coverage for quote-preview subtotal parsing: confirmed line price text, quantity multiplication, paise rounding, and fee helper usage. Test source updated but execution remains pending.
