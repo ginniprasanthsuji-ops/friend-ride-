@@ -78,3 +78,10 @@ test('Phase 12: estimated payable includes subtotal and capped platform charge',
   assert.match(html, /frCartSubtotal\+frPlatformChargeRupees\(frCartSubtotal\)/);
   assert.match(html, /frEstimatedPayable[^\n]*₹0\.00/);
 });
+
+
+test('Phase 12: quote acceptance displays subtotal and capped platform fee preview before accept', () => {
+  assert.match(html, /async function frCustomerAcceptQuote[\s\S]*?Platform charge preview \(2\.5%, capped at ₹25\)/);
+  assert.match(html, /actual payment collection is not yet integrated/);
+  assert.match(html, /if\(!confirm\('Accept Partner quote\?/);
+});
