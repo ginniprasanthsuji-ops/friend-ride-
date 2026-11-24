@@ -83,3 +83,39 @@ test('Phase 10 mocked integration validation: session mismatch and invalid conte
   assert.equal(context.role, 'driver');
   assert.throws(() => createCorrelationContext({ correlationId: 'bad id', requestId: 'r', sessionId: 's', role: 'customer' }));
 });
+
+test('Phase 10 integration matrix: role restrictions and confirmation gate', () => {
+  const driverRide = evaluateRuntimeRequest({ sessionId: 's-role', role: 'driver', permissions: [], intent: { type: 'select_ride', rideType: 'bike' } });
+  assert.equal(driverRide.status, 'blocked');
+  assert.equal(driverRide.sideEffects, false);
+
+  const customerRide = evaluateRuntimeRequest({ sessionId: 's-role', role: 'customer', permissions: [], intent: { type: 'select_ride', rideType: 'auto' } });
+  assert.equal(customerRide.status, 'proposal');
+  assert.equal(customerRide.sideEffects, false);
+
+  const bookingReview = evaluateRuntimeRequest({ sessionId: 's-role', role: 'customer', permissions: [], intent: { type: 'review_booking', requiresConfirmation: true, execution: 'none' } });
+  assert.equal(bookingReview.status, 'confirmation_required');
+  assert.equal(bookingReview.confirmation, 'explicit_in_app');
+  assert.equal(bookingReview.sideEffects, false);
+});
+
+test('Phase 10 integration matrix: session isolation guard rejects mismatched sessions', () => {
+  const { assertSessionIsolation } = require('../qa/arjuna-x-runtime-policy.cjs');
+  assert.deepEqual(assertSessionIsolation('session-A', 'session-A'), { status: 'ok', sideEffects: false });
+  const mismatch = assertSessionIsolation('session-A', 'session-B');
+  assert.equal(mismatch.status, 'blocked');
+  assert.equal(mismatch.reason, 'session_mismatch');
+  assert.equal(mismatch.sideEffects, false);
+});
+
+test('Phase 10 integration matrix: session close aborts running request and prevents late completion', () => {
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 2, maxRequestsPerSession: 2 });
+  life.openSession('s-close', 'customer');
+  const started = life.beginRequest('s-close', 'r-close');
+  assert.equal(started.status, 'started');
+  assert.equal(started.signal.aborted, false);
+  assert.equal(life.closeSession('s-close'), 'closed');
+  assert.equal(started.signal.aborted, true);
+  assert.equal(life.finishRequest('s-close', 'r-close').status, 'blocked');
+  assert.equal(life.beginRequest('s-close', 'r-late').status, 'blocked');
+});
