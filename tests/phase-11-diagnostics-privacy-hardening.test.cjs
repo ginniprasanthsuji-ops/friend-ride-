@@ -43,3 +43,42 @@ test('Phase 11 privacy hardening: unsafe or oversized diagnostic values are drop
   assert.equal(result.accepted, true);
   assert.deepEqual(result.event.fields, { module: 'runtime', operation: 'safe-op', status: 'completed' });
 });
+
+test('Phase 11 privacy hardening: nested payloads, arrays, Unicode and oversized values never pass', () => {
+  const result = sanitizeDiagnosticEvent({
+    type: 'retry_decided', context: { ...context, phone: '9999999999', accessToken: 'do-not-copy' },
+    fields: {
+      module: 'runtime', operation: 'retry', status: 'decided',
+      errorCode: { detail: 'nested secret' }, role: ['customer', 'driver'],
+      attempt: 2, durationMs: 120, prompt: '🚨 private prompt', oversized: 'x'.repeat(200)
+    }
+  });
+  assert.equal(result.accepted, true);
+  assert.deepEqual(result.event.context, context);
+  assert.deepEqual(result.event.fields, { module: 'runtime', operation: 'retry', status: 'decided', attempt: 2, durationMs: 120 });
+  assert.equal(JSON.stringify(result).includes('do-not-copy'), false);
+  assert.equal(JSON.stringify(result).includes('nested secret'), false);
+});
+
+test('Phase 11 privacy hardening: output objects are immutable and isolated from caller mutation', () => {
+  const inputFields = { module: 'runtime', operation: 'safe-op', status: 'started' };
+  const inputContext = { ...context, unexpected: 'private-extra' };
+  const result = sanitizeDiagnosticEvent({ type: 'request_started', context: inputContext, fields: inputFields });
+  assert.equal(result.accepted, true);
+  inputFields.status = 'tampered';
+  inputContext.role = 'admin';
+  assert.equal(result.event.fields.status, 'started');
+  assert.equal(result.event.context.role, 'customer');
+  assert.equal(Object.isFrozen(result.event), true);
+  assert.equal(Object.isFrozen(result.event.context), true);
+  assert.equal(Object.isFrozen(result.event.fields), true);
+});
+
+test('Phase 11 privacy hardening: context getter failures are fail-closed', () => {
+  const hostile = { ...context };
+  Object.defineProperty(hostile, 'requestId', { enumerable: true, get() { throw new Error('private getter payload'); } });
+  const result = sanitizeDiagnosticEvent({ type: 'request_started', context: hostile });
+  assert.equal(result.accepted, false);
+  assert.equal(result.reason, 'invalid_context');
+  assert.equal(JSON.stringify(result).includes('private getter payload'), false);
+});
