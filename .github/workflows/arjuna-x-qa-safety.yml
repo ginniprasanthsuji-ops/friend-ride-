@@ -21,3 +21,5 @@ jobs:
         run: node --test tests/voice-intent-contract.test.cjs
       - name: Run ARJUNA X Phase 9 runtime policy tests
         run: node --test tests/phase-9-runtime-policy.test.cjs
+      - name: Run ARJUNA X Phase 9 runtime lifecycle tests
+        run: node --test tests/phase-9-runtime-lifecycle.test.cjs
