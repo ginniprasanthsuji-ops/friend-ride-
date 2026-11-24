@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const app = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+const playwrightConfig = await readFile(new URL('../playwright.config.cjs', import.meta.url), 'utf8');
+const preflight = await readFile(new URL('../scripts/qa-local-preflight.cjs', import.meta.url), 'utf8');
+const workflow = await readFile(new URL('../.github/workflows/friend-ride-regression.yml', import.meta.url), 'utf8');
 
 test('Phase 11 security: admin authorization is based on admin_users membership', () => {
   assert.ok(app.includes("from('admin_users').select('user_id')"));
@@ -53,4 +56,22 @@ test('Phase 11 page isolation: active page is exclusive and hidden pages are ine
   assert.ok(app.includes("page.setAttribute('aria-hidden',isActive?'false':'true')"));
   assert.ok(app.includes("page.inert=!isActive"));
   assert.ok(app.includes("observer.observe(document.querySelector('main')||document.body"));
+});
+
+
+test('Phase 11 QA safety: Playwright discovery is limited to browser spec files', () => {
+  assert.ok(playwrightConfig.includes("testMatch: ['**/*.spec.js', '**/*.spec.cjs', '**/*.spec.ts']"));
+  assert.ok(!playwrightConfig.includes('**/*.test.mjs'));
+});
+
+test('Phase 11 QA safety: browser tests are restricted to localhost/loopback', () => {
+  assert.ok(playwrightConfig.includes("new Set(['localhost', '127.0.0.1', '::1', '[::1]')"));
+  assert.ok(preflight.includes('only localhost/loopback URLs are allowed'));
+  assert.ok(preflight.includes('FRIEND_RIDE_BASE_URL must be explicitly set'));
+});
+
+test('Phase 11 CI: workflow runs contracts and browser tests against local server', () => {
+  assert.ok(workflow.includes('node --test qa/phase-11-security-isolation-contract.test.mjs'));
+  assert.ok(workflow.includes('FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/'));
+  assert.ok(workflow.includes('run: npm test'));
 });
