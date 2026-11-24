@@ -17,3 +17,5 @@ jobs:
           node-version: 22
       - name: Run dependency-free preflight safety tests
         run: node --test tests/qa-preflight-safety.test.cjs
+      - name: Run ARJUNA X Phase 8 voice intent contract tests
+        run: node --test tests/voice-intent-contract.test.cjs
