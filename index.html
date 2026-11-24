@@ -149,7 +149,7 @@ hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 @keyframes fr12-modal-enter{from{opacity:0;transform:translate3d(0,16px,0) scale(.985)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
 @keyframes fr12-shimmer{100%{background-position:-200% 0}}
 .page.active{animation:fr12-page-enter 180ms cubic-bezier(.2,.75,.25,1) both}
-.card{animation:fr12-card-enter 220ms cubic-bezier(.2,.75,.25,1) both}
+.page.active .card{animation:fr12-card-enter 220ms cubic-bezier(.2,.75,.25,1) both}
 .modal.show .modalbox{animation:fr12-modal-enter 200ms cubic-bezier(.2,.75,.25,1) both}
 button,.btn,[role="button"]{-webkit-tap-highlight-color:transparent;transition:transform 120ms ease,filter 120ms ease,opacity 120ms ease}
 button:active,.btn:active,[role="button"]:active{transform:scale(.975);filter:brightness(.97)}
