@@ -14,7 +14,7 @@ const SAFE_FIELDS = new Set(['module', 'operation', 'role', 'status', 'errorCode
 function looksLikePhoneNumber(value) {
   if (typeof value !== 'string') return false;
   const digits = value.replace(/[+().\s-]/g, '');
-  return /^\d{8,15}$/.test(digits) && /^[+0-9().\s-]+$/.test(value);
+  return /^\d{8,15}$/.test(digits) || /\d{8,}/.test(value);
 }
 
 function validId(value, label) {
