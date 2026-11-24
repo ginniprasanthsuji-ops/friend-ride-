@@ -195,3 +195,9 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - After terminal reset releases the ride slot, the same event ID may be retried and accepted if otherwise valid.
 - Event replay history for accepted IDs remains preserved; the test is QA-only and side-effect-free.
 - CI validation pending for this checkpoint.
+
+
+### Terminal-reset idempotency checkpoint
+- Added test for repeated terminal reset on the same ride: first reset clears the tracked cooldown, second reset is an ignored no-op.
+- Re-tracking the reset ride remains possible, while another ride's cooldown remains intact.
+- QA-only; no live ride state or side effects. CI validation pending.
