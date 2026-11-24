@@ -2,7 +2,8 @@ const { test, expect } = require('./local-only-fixture.cjs');
 
 test.describe('Phase 11 role-specific registration isolation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.goto('./', { waitUntil: 'load' });
+    await page.waitForFunction(() => typeof window.frRoleAuthSelfTest === 'function', { timeout: 10000 });
   });
 
   test('Customer registration shows customer-only photo and hides driver/partner documents', async ({ page }) => {
