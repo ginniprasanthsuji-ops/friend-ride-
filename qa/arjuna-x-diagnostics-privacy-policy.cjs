@@ -4,7 +4,7 @@
  * ARJUNA X Phase 11 privacy gate.
  * Pure fail-closed adapter. It never emits raw input, telemetry, or side effects.
  */
-const { sanitizeDiagnosticEvent } = require('./arjuna-x-diagnostics-context.cjs');
+const { sanitizeDiagnosticEvent, ID_PATTERN } = require('./arjuna-x-diagnostics-context.cjs');
 const SAFE_INPUT_KEYS = new Set(['type', 'context', 'fields']);
 const SAFE_STRING_FIELDS = new Set(['module', 'operation', 'role', 'status', 'errorCode']);
 const SAFE_NUMERIC_FIELDS = new Set(['attempt', 'durationMs']);
@@ -29,7 +29,7 @@ function evaluatePrivacyGate(input) {
     for (const key of rawKeys) {
       if (!SAFE_STRING_FIELDS.has(key) && !SAFE_NUMERIC_FIELDS.has(key)) return { accepted: false, reason: 'field_not_allowlisted' };
       const value = rawFields[key];
-      if (SAFE_STRING_FIELDS.has(key) && (typeof value !== 'string' || value.length > 64)) return { accepted: false, reason: 'unsafe_string_field' };
+      if (SAFE_STRING_FIELDS.has(key) && (typeof value !== 'string' || value.length > 64 || !ID_PATTERN.test(value) || /^\\d{8,}$/.test(value))) return { accepted: false, reason: 'unsafe_string_field' };
       if (SAFE_NUMERIC_FIELDS.has(key) && (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 100000000)) return { accepted: false, reason: 'unsafe_numeric_field' };
     }
     const safe = sanitizeDiagnosticEvent(input);
