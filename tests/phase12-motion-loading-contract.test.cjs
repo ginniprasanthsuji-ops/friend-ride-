@@ -99,3 +99,10 @@ test('Phase 12: visible keyboard focus and reduced-motion shimmer fallback are p
   assert.match(html, /:where\(button,\.btn,\[role="button"\],a,input,select,textarea,\[tabindex\]\):focus-visible/);
   assert.match(html, /prefers-reduced-motion:reduce[\s\S]*?\.fr12-skeleton[\s\S]*?background-image:none!important/);
 });
+
+test('Phase 12: drawer transitions and interactive feedback honor reduced motion', () => {
+  const motion = html.slice(html.indexOf('/* Phase 12: lightweight native-feel motion layer'), html.indexOf('</style>', html.indexOf('/* Phase 12: lightweight native-feel motion layer')));
+  assert.match(motion, /button:active[\s\S]*?transform:scale\(\.975\)/);
+  assert.match(motion, /prefers-reduced-motion:reduce[\s\S]*?button:active[\s\S]*?transform:none!important/);
+  assert.match(html, /prefers-reduced-motion:reduce\)\{\.drawer-backdrop\.show,\.drawer-backdrop\.show \.drawer\{animation:none!important\}\}/);
+});
