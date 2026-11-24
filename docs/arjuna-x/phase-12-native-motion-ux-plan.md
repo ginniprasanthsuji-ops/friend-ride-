@@ -93,3 +93,5 @@
 - Added contract coverage for quote-preview subtotal parsing: confirmed line price text, quantity multiplication, paise rounding, and fee helper usage. Test source updated but execution remains pending.
 
 - Accessibility polish: keyboard-visible gold focus rings added to buttons, links, form fields, and tabindex controls. Reduced-motion preference now removes shimmer movement and uses a static placeholder fill. Contract test added; execution pending.
+
+- Accessibility polish checkpoint: keyboard-focus-visible outlines added across interactive controls and links. Reduced-motion shimmer fallback removes the animated gradient while retaining a static loading surface. Contract tests added for focus visibility and drawer/press feedback reduced-motion behavior; test execution remains pending.
