@@ -41,6 +41,22 @@ test.describe('FRIEND RIDE Phase 12 motion and route safety', () => {
     expect(widths.page).toBeLessThanOrEqual(widths.viewport + 8);
   });
 
+  test('repeated route switching keeps one active page and replays entry motion', async ({ page }) => {
+    const sequence = ['home', 'ride', 'shops', 'wallet', 'home', 'tracking', 'home'];
+    const checks = await page.evaluate(ids => {
+      window.currentProfile = { role: 'customer' };
+      return ids.map(id => {
+        window.showPage(id);
+        const activePages = [...document.querySelectorAll('.page.active')].map(el => el.id);
+        const page = document.getElementById(id);
+        const animation = getComputedStyle(page).animationName;
+        return { id, activePages, animation };
+      });
+    }, sequence);
+    expect(checks.every(c => c.activePages.length === 1 && c.activePages[0] === c.id)).toBe(true);
+    expect(checks.every(c => c.animation.includes('fr12-page-enter'))).toBe(true);
+  });
+
   test('customer auth entry opens modal without losing role context', async ({ page }) => {
     await page.evaluate(() => window.openAuth('login', 'customer'));
     await expect(page.locator('#authModal')).toHaveClass(/show/);
