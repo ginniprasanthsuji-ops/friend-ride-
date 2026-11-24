@@ -8,7 +8,15 @@ const test = base.extend({
     const blockedOrigins = [];
     await page.addInitScript(() => {
       // Minimal local-only Supabase SDK stub so inline app initialization can run without external network.
-      if (!window.supabase) window.supabase = { createClient: () => ({ auth: { signOut: async () => ({}) }, from: () => ({ select: () => ({ limit: async () => ({ data: [], error: null }) }) }, rpc: async () => ({ data: null, error: null }) }) };
+      if (!window.supabase) {
+        window.supabase = {
+          createClient: () => ({
+            auth: { signOut: async () => ({}) },
+            from: () => ({ select: () => ({ limit: async () => ({ data: [], error: null }) }) }),
+            rpc: async () => ({ data: null, error: null })
+          })
+        };
+      }
     });
     await page.route('**/*', async route => {
       const requestUrl = new URL(route.request().url());
