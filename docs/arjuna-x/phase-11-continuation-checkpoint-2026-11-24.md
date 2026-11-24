@@ -106,3 +106,10 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - Added a static contract asserting Playwright reports and test-results are configured for artifact upload with `if: always()`, including after a failed regression job.
 - Static contract suite now has 18 authored checks (not executed).
+
+
+## Artifact Retention Bound
+
+- Regression report artifacts are now configured with a seven-day retention period.
+- Added a static contract to verify the retention value remains bounded.
+- Static contract suite now has 19 authored checks (not executed).
