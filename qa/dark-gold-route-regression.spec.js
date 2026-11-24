@@ -57,6 +57,22 @@ test.describe('FRIEND RIDE Phase 12 motion and route safety', () => {
     expect(checks.every(c => c.animation.includes('fr12-page-enter'))).toBe(true);
   });
 
+  test('route visibility semantics match active state', async ({ page }) => {
+    const result = await page.evaluate(() => {
+      window.currentProfile = { role: 'customer' };
+      window.showPage('ride');
+      return [...document.querySelectorAll('main .page')].map(p => ({
+        id: p.id,
+        active: p.classList.contains('active'),
+        ariaHidden: p.getAttribute('aria-hidden'),
+        inert: 'inert' in p ? p.inert : null
+      }));
+    });
+    expect(result.filter(p => p.active)).toHaveLength(1);
+    expect(result.find(p => p.id === 'ride')).toMatchObject({ active: true, ariaHidden: 'false', inert: false });
+    expect(result.filter(p => !p.active).every(p => p.ariaHidden === 'true' && p.inert === true)).toBe(true);
+  });
+
   test('customer auth entry opens modal without losing role context', async ({ page }) => {
     await page.evaluate(() => window.openAuth('login', 'customer'));
     await expect(page.locator('#authModal')).toHaveClass(/show/);
