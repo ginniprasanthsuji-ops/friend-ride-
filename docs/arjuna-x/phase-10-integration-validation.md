@@ -223,3 +223,7 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - Added the complete bike-warning event-guard regression glob to CI so these tests are executed, not merely present.
 - QA-only; no live notifications, GPS, ride mutations, network or database effects.
 - CI validation pending for this checkpoint.
+### CI-discovered stale-timestamp regression corrections
+- The new CI event-guard suite exposed two outdated expectations in stale-timestamp tests (one timestamp was not stale, and stale rejection is intentionally retryable rather than replay-reserved).
+- Corrected the test timestamp to exercise the stale boundary and updated the retry expectation to cooldown suppression after a valid retry.
+- No production runtime code was changed; follow-up CI runs pending.
