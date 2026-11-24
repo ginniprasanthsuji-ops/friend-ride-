@@ -86,3 +86,5 @@
 - Backend collection remains explicitly out of scope until a matching QA order/payment RPC exists and is reviewed; production remains untouched.
 
 - Follow-up: cart now also displays Estimated Payable (subtotal + capped 2.5% platform fee) once partner price is confirmed; empty-cart preview resets to ₹0.00.
+
+- Quote acceptance now displays an informational subtotal, 2.5% platform fee capped at ₹25, and subtotal-plus-fee preview in the confirmation prompt before the customer accepts Partner quotes. The prompt clearly states that the platform fee is not yet actually collected. Contract test added; not executed.
