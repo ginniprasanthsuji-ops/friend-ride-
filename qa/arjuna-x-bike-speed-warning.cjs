@@ -28,6 +28,8 @@ function evaluateBikeSpeedWarning({ rideType, speedKmh, accuracyMeters, sampleAg
     measuredSpeedKmh: speedKmh,
     recipients: ['driver', 'customer'],
     warningTextTelugu: 'హెచ్చరిక! వేగ పరిమితి దాటింది. దయచేసి వేగం తగ్గించండి.',
+    voiceAlertTelugu: 'జాగ్రత్త! మీ బైక్ వేగం పరిమితిని మించింది. దయచేసి వెంటనే వేగం తగ్గించండి.',
+    voiceAlertLocale: 'te-IN',
     warningToneKey: 'bike_speed_limit_warning',
     cooldownMs: WARNING_COOLDOWN_MS,
     sideEffects: false
