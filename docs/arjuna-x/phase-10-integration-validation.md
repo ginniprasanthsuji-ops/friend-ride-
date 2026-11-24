@@ -264,3 +264,10 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Added acceptance test for zero cooldown with minimum positive event/ride capacities.
 - [x] Confirmed invalid configuration throws explicit `TypeError` identifiers; test is deterministic and QA-only.
 - CI verification pending.
+
+
+### Warning-event guard instance isolation regression
+- [x] Added two-instance regression proving replay IDs and cooldown state are not shared across guard objects.
+- [x] Added default-configuration assertions for 60,000ms cooldown, 10,000 event IDs, and 1,000 rides.
+- [x] QA-only deterministic tests; no runtime/production integration or side effects.
+- CI verification pending.
