@@ -256,3 +256,39 @@ test('Phase 10 TTL integration: expired session blocks request and aborts active
   assert.equal(started.signal.aborted, true);
   assert.equal(life.snapshot('s-ttl'), undefined);
 });
+
+test('Phase 10 session-bound contract: role comes from active session and caller cannot override it', () => {
+  const { evaluateSessionBoundRequest } = require('../qa/arjuna-x-session-bound-runtime.cjs');
+  const life = new RuntimeSessionLifecycle({ ttlMs: 60000, maxSessions: 2, maxRequestsPerSession: 2 });
+  life.openSession('s-bound-role', 'customer');
+  const snapshot = life.snapshot('s-bound-role');
+
+  const customerRequest = evaluateSessionBoundRequest({
+    sessionSnapshot: snapshot, requestSessionId: 's-bound-role',
+    intent: { type: 'select_ride', rideType: 'auto' }
+  });
+  assert.equal(customerRequest.status, 'proposal');
+  assert.equal(customerRequest.action.rideType, 'auto');
+  assert.equal(customerRequest.sideEffects, false);
+
+  const callerRoleOverride = evaluateSessionBoundRequest({
+    sessionSnapshot: snapshot, requestSessionId: 's-bound-role',
+    intent: { type: 'select_ride', rideType: 'bike' }, callerRole: 'driver'
+  });
+  assert.equal(callerRoleOverride.status, 'proposal', 'session customer role remains authoritative');
+
+  const mismatchedSession = evaluateSessionBoundRequest({
+    sessionSnapshot: snapshot, requestSessionId: 's-other',
+    intent: { type: 'navigate', target: 'home' }
+  });
+  assert.equal(mismatchedSession.status, 'blocked');
+  assert.equal(mismatchedSession.reason, 'session_mismatch');
+  assert.equal(mismatchedSession.sideEffects, false);
+
+  const inactive = evaluateSessionBoundRequest({
+    sessionSnapshot: { ...snapshot, status: 'closed' }, requestSessionId: 's-bound-role',
+    intent: { type: 'navigate', target: 'home' }
+  });
+  assert.equal(inactive.status, 'blocked');
+  assert.equal(inactive.reason, 'session_not_active');
+});
