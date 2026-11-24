@@ -97,3 +97,12 @@ test('Phase 11 QA safety: preflight redirect handling does not follow external r
   assert.ok(preflight.includes("redirect: 'manual'"));
   assert.ok(preflight.includes("new Set(['localhost', '127.0.0.1', '::1', '[::1]')"));
 });
+
+
+test('Phase 11 browser regression specs contain the intended 5 isolation scenarios', () => {
+  assert.ok(registrationSpec.includes('Customer registration shows customer-only photo'));
+  assert.ok(registrationSpec.includes('Driver registration exposes required driver document controls only'));
+  assert.ok(registrationSpec.includes('Partner registration exposes partner controls'));
+  assert.ok(registrationSpec.includes('Admin registration mode does not expose customer, driver, or partner registration fields'));
+  assert.ok(pageIsolationSpec.includes('showPage leaves exactly one active page and marks other pages hidden/inert'));
+});
