@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./local-only-fixture.cjs');
 
 test.describe('Phase 11 role-specific registration isolation', () => {
   test.beforeEach(async ({ page }) => {
