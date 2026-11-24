@@ -22,6 +22,7 @@ Phase 10 connects the Phase 9 pure-policy modules in test-only scenarios. Mock a
 - [x] Role/session binding mismatch matrix.
 - [x] CI run and Phase 10 regression inventory pass (Run #68, commit `771acfbefd`).
 - [ ] Live provider integration readiness reviewed separately and approved explicitly.
+- [x] Failure-path integration: blocked policy request, timeout/cancellation/recovery, request capacity/duplicate guards, TTL expiry and abort.
 - [x] Diagnostic event allowlist, missing-context, invalid-role, and field-sanitization boundary matrix.
 
 ## Limits
@@ -42,3 +43,8 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - Run #74 (`45315968308`), commit `fb345f3213`: **completed/success**.
 - Expanded Phase 10 diagnostics boundary tests passed with all Phase 8/9/10 workflow steps.
 - No real external integration or side-effect action was performed.
+
+
+## Failure-path integration checkpoint
+- Run #76 (`45316060764`), commit `aa6a51434f`: **completed/success**.
+- All Phase 8, Phase 9, and Phase 10 test steps passed, including the new failure-path matrix.
