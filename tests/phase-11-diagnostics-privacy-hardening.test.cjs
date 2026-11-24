@@ -188,3 +188,23 @@ test('Phase 11 privacy controls reject phone-like values with common separators'
     assert.equal(JSON.stringify(direct).includes(unsafe), false);
   }
 });
+
+
+test('Phase 11 privacy gate rejects long digit sequences embedded in identifier-like strings', () => {
+  for (const unsafe of ['request9876543210', 'txn-123456789012', 'ref:9876543210']) {
+    const gated = evaluatePrivacyGate({ type: 'request_started', context, fields: { operation: unsafe } });
+    assert.equal(gated.accepted, false, unsafe);
+    const direct = sanitizeDiagnosticEvent({ type: 'request_started', context, fields: { operation: unsafe } });
+    assert.equal(direct.event.fields.operation, undefined, unsafe);
+    assert.equal(JSON.stringify(gated).includes(unsafe), false);
+    assert.equal(JSON.stringify(direct).includes(unsafe), false);
+  }
+});
+
+test('Phase 11 privacy gate rejects control characters in allowlisted strings', () => {
+  for (const unsafe of ['runtime\\nsecret', 'operation\\u0000x', 'status\\rhidden']) {
+    const result = evaluatePrivacyGate({ type: 'request_started', context, fields: { operation: unsafe } });
+    assert.equal(result.accepted, false);
+    assert.equal(JSON.stringify(result).includes(unsafe), false);
+  }
+});
