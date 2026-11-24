@@ -113,3 +113,10 @@ No merge, deployment, live payment, database mutation, or production change made
 - Regression report artifacts are now configured with a seven-day retention period.
 - Added a static contract to verify the retention value remains bounded.
 - Static contract suite now has 19 authored checks (not executed).
+
+
+## Browser Scenario Count Contract
+
+- Static contract now asserts exactly 4 registration tests and 1 page-isolation test.
+- Contract suite: 20 authored checks (not executed).
+- Browser scenarios: 5 authored tests (not executed).
