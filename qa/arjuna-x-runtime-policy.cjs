@@ -9,12 +9,9 @@ const SAFE_RIDES = new Set(['bike','auto','car']);
 const ROLES = new Set(['customer','driver','partner','admin']);
 
 function safeDiagnostic(code, correlationId) {
-  return {
-    code: String(code || 'runtime_error').replace(/[^a-z0-9_]/gi, '').slice(0, 48) || 'runtime_error',
-    correlationId: typeof correlationId === 'string'
-      ? correlationId.replace(/[^a-z0-9_-]/gi, '').slice(0, 40)
-      : undefined
-  };
+  const knownCodes = new Set(['invalid_request','missing_session','invalid_role','invalid_permissions','invalid_intent','proposal_navigation','proposal_ride_selection','confirmation_required','blocked_intent','policy_denied','session_mismatch']);
+  const safeCorrelation = typeof correlationId === 'string' && /^[a-z][a-z0-9_-]{0,39}$/i.test(correlationId) ? correlationId : undefined;
+  return { code: knownCodes.has(code) ? code : 'runtime_error', correlationId: safeCorrelation };
 }
 
 function evaluateRuntimeRequest(request) {
@@ -35,13 +32,13 @@ function evaluateRuntimeRequest(request) {
     return {status:'blocked', reason:'invalid_intent', diagnostic:safeDiagnostic('invalid_intent', correlationId)};
   }
 
-  if (intent.type === 'navigate' && SAFE_NAV.has(intent.target)) {
+  if (intent.type === 'navigate' && Object.keys(intent).sort().join(',') === 'target,type' && SAFE_NAV.has(intent.target)) {
     return {status:'proposal', action:{type:'navigate', target:intent.target}, sideEffects:false, diagnostic:safeDiagnostic('proposal_navigation', correlationId)};
   }
-  if (intent.type === 'select_ride' && SAFE_RIDES.has(intent.rideType) && role === 'customer') {
+  if (intent.type === 'select_ride' && Object.keys(intent).sort().join(',') === 'rideType,type' && SAFE_RIDES.has(intent.rideType) && role === 'customer') {
     return {status:'proposal', action:{type:'select_ride', rideType:intent.rideType}, sideEffects:false, diagnostic:safeDiagnostic('proposal_ride_selection', correlationId)};
   }
-  if (intent.type === 'review_booking' && intent.requiresConfirmation === true && intent.execution === 'none' && role === 'customer') {
+  if (intent.type === 'review_booking' && Object.keys(intent).sort().join(',') === 'execution,requiresConfirmation,type' && intent.requiresConfirmation === true && intent.execution === 'none' && role === 'customer') {
     return {status:'confirmation_required', action:{type:'review_booking'}, sideEffects:false, confirmation:'explicit_in_app', diagnostic:safeDiagnostic('confirmation_required', correlationId)};
   }
   if (intent.type === 'unknown' || intent.type === 'blocked_action') {
