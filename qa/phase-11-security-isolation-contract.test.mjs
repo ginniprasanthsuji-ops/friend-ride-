@@ -91,3 +91,9 @@ test('Phase 11 browser specs use the Tier-A local-only network fixture', () => {
 test('Phase 11 QA safety: browser service workers are blocked to prevent bypassing request interception', () => {
   assert.ok(playwrightConfig.includes("serviceWorkers: 'block'"));
 });
+
+
+test('Phase 11 QA safety: preflight redirect handling does not follow external redirects', () => {
+  assert.ok(preflight.includes("redirect: 'manual'"));
+  assert.ok(preflight.includes("new Set(['localhost', '127.0.0.1', '::1', '[::1]')"));
+});
