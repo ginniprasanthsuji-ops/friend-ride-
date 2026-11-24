@@ -4,26 +4,31 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-const css = (html.match(/<style[^>]*>([\\s\\S]*?)<\\/style>/i) || [])[1] || '';
+const styleStart = html.indexOf('<style');
+const contentStart = html.indexOf('>', styleStart) + 1;
+const styleEnd = html.indexOf('</style>', contentStart);
+const css = html.slice(contentStart, styleEnd);
 
-test('Phase 12 motion layer provides lightweight page/card/modal entry transitions', () => {
-  assert.match(css, /fr12-page-enter/);
-  assert.match(css, /fr12-card-enter/);
-  assert.match(css, /fr12-modal-enter/);
-  assert.match(css, /\\.page\\.active\\s*\\{[^}]*animation:/);
-  assert.match(css, /\\.modal\\.show\\s+\\.modalbox\\s*\\{[^}]*animation:/);
+const has = (fragment) => assert.ok(css.includes(fragment), 'missing CSS contract: ' + fragment);
+
+test('Phase 12 motion layer provides page/card/modal entry transitions', () => {
+  has('fr12-page-enter');
+  has('fr12-card-enter');
+  has('fr12-modal-enter');
+  has('.page.active{animation:fr12-page-enter');
+  has('.modal.show .modalbox{animation:fr12-modal-enter');
 });
 
-test('Phase 12 motion layer provides touch feedback without requiring JS dependencies', () => {
-  assert.match(css, /button:active/);
-  assert.match(css, /\\.btn:active/);
-  assert.match(css, /transform:\s*scale\\(\\.975\\)/);
+test('Phase 12 motion layer provides touch feedback', () => {
+  has('button:active');
+  has('.btn:active');
+  has('transform:scale(.975)');
 });
 
-test('Phase 12 loading shimmer is CSS-only and reduced-motion disables animation', () => {
-  assert.match(css, /fr12-skeleton/);
-  assert.match(css, /fr12-shimmer/);
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.match(css, /animation:\s*none!important/);
-  assert.match(css, /transition:\s*none!important/);
+test('Phase 12 shimmer is CSS-only and reduced-motion disables motion', () => {
+  has('fr12-skeleton');
+  has('fr12-shimmer');
+  has('prefers-reduced-motion:reduce');
+  has('animation:none!important');
+  has('transition:none!important');
 });
