@@ -30,3 +30,12 @@ test('Phase 12: selected loading placeholders have empty and error replacements'
   assert.match(catalogue, /market-empty[\s\S]*catch\(e\)[\s\S]*Catalogue Load కాలేదు/);
   assert.match(orders, /empty-state[\s\S]*catch\(e\)[\s\S]*Shop Orders load కాలేదు/);
 });
+
+test('Phase 12: shimmer covers additional non-interactive loading surfaces', () => {
+  assert.match(html, /frHomepageRatingsList[^\n]*fr12-skeleton/);
+  assert.match(html, /frAdminSupportList[^\n]*fr12-skeleton/);
+  assert.match(html, /Loading driver KYC documents/);
+  assert.match(html, /Loading partner applications/);
+  assert.match(html, /Loading approved stores/);
+  assert.match(html, /Loading store payment details/);
+});
