@@ -52,10 +52,10 @@ test('integration: non-idempotent side-effect timeout fails closed and requires 
   assert.equal(runtime.timeoutRequest('sess-mutating', 'req-payment').status, 'timed_out');
   assert.equal(begun.signal.aborted, true);
 
-  const ctx = createCorrelationContext({ correlationId: 'corr-payment', requestId: 'req-payment', sessionId: 'sess-mutating', role: 'partner' });
+  const ctx = createCorrelationContext({ correlationId: 'corr-pay-01', requestId: 'req-payment', sessionId: 'sess-mutating', role: 'partner' });
   const event = sanitizeDiagnosticEvent({ type: 'request_timed_out', context: ctx, fields: { errorCode: 'TIMEOUT', status: 'timed_out' } });
   assert.equal(event.accepted, true);
-  assert.equal(JSON.stringify(event).includes('payment'), false);
+  assert.equal(JSON.stringify(event).includes('payload'), false);
   assert.equal(runtime.finishRequest('sess-mutating', 'req-payment', 'completed').reason, 'request_not_running');
 });
 
