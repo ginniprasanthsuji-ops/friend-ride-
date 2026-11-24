@@ -53,3 +53,16 @@ Build a predictable, testable runtime layer for ARJUNA X that coordinates safe a
 - Run: `45308620363`
 - Status at checkpoint: **queued** (not PASS).
 - Branch/commit: `arjuna-x/phase-7-ai-intelligence-safety` / `1b2739fb79cc4ea28dcd5f5ad710d71457b15b72`.
+
+
+## Phase 9 final regression audit checklist
+- [x] Runtime request/session lifecycle and terminal state controls
+- [x] Retry decisions restricted to explicitly idempotent transient errors
+- [x] Recovery policy fail-closed for committed or non-idempotent side effects
+- [x] Correlation context role binding and privacy allowlist
+- [x] Runtime integration paths: success/fallback, mutation timeout, policy block
+- [x] Concurrency/session isolation and 200-request stress regression
+- [x] Terminal ordering and close/cancel/timeout late-action blocks
+- [x] CI architecture audit for network/timer/telemetry/provider side effects
+- [x] CI inventory gate ensuring all Phase 9 suites are wired and present
+- [ ] Final CI run after regression audit additions
