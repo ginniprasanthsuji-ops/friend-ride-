@@ -4,7 +4,7 @@
  * ARJUNA X Phase 11 privacy gate.
  * Pure fail-closed adapter. It never emits raw input, telemetry, or side effects.
  */
-const { sanitizeDiagnosticEvent, ID_PATTERN } = require('./arjuna-x-diagnostics-context.cjs');
+const { sanitizeDiagnosticEvent, ID_PATTERN, looksLikePhoneNumber } = require('./arjuna-x-diagnostics-context.cjs');
 const SAFE_INPUT_KEYS = new Set(['type', 'context', 'fields']);
 const SAFE_STRING_FIELDS = new Set(['module', 'operation', 'role', 'status', 'errorCode']);
 const SAFE_NUMERIC_FIELDS = new Set(['attempt', 'durationMs']);
