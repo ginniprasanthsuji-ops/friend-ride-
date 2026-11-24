@@ -1,7 +1,7 @@
 # Phase 12 — Native Motion & UX Safety
 
 ## Status
-- Progress: 35%
+- Progress: 40%
 - UI-only motion layer committed and CI-verified.
 - QA branch only; no merge/deployment.
 
@@ -30,6 +30,7 @@
 - Next safe improvement: apply shimmer only to dedicated, noninteractive placeholder surfaces in selected loading states, then verify that placeholders are removed/replaced correctly and do not interfere with async error or empty states.
 
 ## Verification
+- Added a dedicated Node test contract for opt-in shimmer CSS, non-interactive placeholder behavior, and reduced-motion disabling; test file committed, but not executed in this environment.
 - Phase 12 motion contract test extended to drawer/backdrop and reduced-motion behavior.
 - Latest full QA run after drawer motion: SUCCESS (run 45371951789).
 - Initial workflow run exposed test-source escaping issue; corrected.
