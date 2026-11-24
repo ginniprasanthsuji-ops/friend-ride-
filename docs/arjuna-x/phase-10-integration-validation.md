@@ -246,3 +246,14 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - [x] Reset frees ride capacity for another ride without clearing global event replay history.
 - [x] Added deterministic regression; QA-only, no production effects.
 - CI validation pending.
+
+
+### Latest warning-event guard CI verification (Runs #148–#153)
+- [x] Run #148: canonical identifier guard — success.
+- [x] Run #149: identifier canonicalization regression — success.
+- [x] Run #150: documentation checkpoint for identifier canonicalization — success.
+- [x] Run #151: canonical ride ID terminal reset implementation — success.
+- [x] Run #152: canonical terminal reset capacity regression — success.
+- [x] Run #153: documentation checkpoint for canonical terminal reset/capacity recovery — success.
+- [x] The latest identifier canonicalization and terminal-reset/capacity recovery changes are CI-verified.
+- [x] QA-only: no production/main changes, live backend, GPS, notifications, or ride mutations.
