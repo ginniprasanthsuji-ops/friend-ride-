@@ -227,3 +227,7 @@ Mocks do not establish real API credentials, provider connectivity, Supabase per
 - The new CI event-guard suite exposed two outdated expectations in stale-timestamp tests (one timestamp was not stale, and stale rejection is intentionally retryable rather than replay-reserved).
 - Corrected the test timestamp to exercise the stale boundary and updated the retry expectation to cooldown suppression after a valid retry.
 - No production runtime code was changed; follow-up CI runs pending.
+### Invalid-context capacity recovery checkpoint
+- Added malformed event-context matrix coverage for blank ride ID, whitespace event ID, negative timestamp, NaN timestamp, and non-integer timestamp.
+- Confirmed malformed attempts fail closed without consuming event or ride capacity; a valid retry remains accepted, and capacity blocks only after valid state is consumed.
+- QA-only regression, no production side effects; CI pending.
