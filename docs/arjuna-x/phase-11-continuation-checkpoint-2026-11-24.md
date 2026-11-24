@@ -126,3 +126,9 @@ No merge, deployment, live payment, database mutation, or production change made
 
 - Added static contract ensuring the Playwright local-only fixture records attempted non-local origins and aborts them.
 - Static contract suite: 21 authored checks (not executed).
+
+
+## Workflow Trigger Coverage Contract
+
+- Added static check for Phase 11 branch push trigger, manual workflow dispatch, and daily scheduled regression trigger.
+- Static contract suite: 22 authored checks (not executed).
