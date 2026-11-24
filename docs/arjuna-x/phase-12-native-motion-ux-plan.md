@@ -68,3 +68,12 @@
 - No fabricated GPS movement or status.
 - Preserve backend, database schema, auth and payment behavior.
 - Respect reduced-motion settings.
+
+
+## Customer platform charge preview (2026-11-24)
+- Added a customer cart preview for platform charge: 2.5% of confirmed order subtotal, capped at ₹25 (2500 paise).
+- Examples: ₹100 → ₹2.50; ₹500 → ₹12.50; ₹1,000 → ₹25; ₹2,000+ → ₹25.
+- The cart preview is withheld while partner prices are pending.
+- UI explicitly says final fee is calculated after partner price confirmation and that no additional charges are added unless Admin configures them.
+- Important limitation: this is a frontend preview only. Actual collection/settlement is not yet wired or verified in the QA Supabase RPC; the QA project did not expose the expected market-order RPCs when inspected. No production project was queried or changed.
+- Platform charge contract test added; tests not executed in this environment.
