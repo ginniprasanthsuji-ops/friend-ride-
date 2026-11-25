@@ -75,7 +75,7 @@ test('Phase 11 QA safety: browser specs fail if any external-origin request was 
 });
 
 test('Phase 11 QA safety: Playwright discovery is limited to browser spec files', () => {
-  assert.ok(playwrightConfig.includes("testMatch: ['phase-11-registration-isolation.spec.js', 'phase-11-page-isolation.spec.js']"));
+  assert.ok(playwrightConfig.includes("testMatch: ['phase-11-registration-isolation.spec.js', 'phase-11-page-isolation.spec.js', 'phase-7b-session-runtime-bridge.spec.cjs']"));
   assert.ok(!playwrightConfig.includes('**/*.test.mjs'));
 });
 
@@ -229,8 +229,10 @@ test('Phase 7B QA: synthetic session flow tests cover auth race, gates, and erro
     'approved driver profile is accepted',
     'invalid restore resets to anonymous and clears private state',
     'profile loader failure fails closed and resets session',
-    'notification loader failure clears private notifications without leaking error data'
+    'notification loader failure clears private notifications without leaking error data',
+    'identity switch clears old realtime listeners before B session is established',
+    'logout invalidates pending notification loader and clears private state'
   ];
   for (const name of names) assert.ok(sessionFlowTests.includes(name), name);
-  assert.equal((sessionFlowTests.match(/\\btest\\(/g) || []).length, 12);
+  assert.equal((sessionFlowTests.match(/\\btest\\(/g) || []).length, 14);
 });
