@@ -142,3 +142,12 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Verified SQL function SECURITY DEFINER; anon execute=false; authenticated execute=true; static checks PASS for panel, script include, load/save and revoke paths. RLS policy verification query run separately.
 - Commits: UI `b5a723a3`, JS `1e6b484c`, consent revoke `216358b5`, calendar validation migration `a2921903`.
 - Pending: consent-targeted campaign activation, customer UI browser testing, store reviews, direct store coupon recognition, regression QA.
+
+## Phase 13 Task 6 — Store Reviews moderation foundation
+- Added `fr_store_reviews`: customer/partner IDs, 1–5 rating, optional review text, moderation status, purchase_verified=false, admin note/reviewer/time; one review per customer/store.
+- RLS policies: public reads approved reviews, owner/admin reads, customer insert only as pending/unverified and only for profile role customer + partner role, owner update only while pending, admin policy.
+- Secure moderation RPC approves/rejects pending reviews; SECURITY DEFINER, anon execute=false, authenticated execute=true (RPC enforces Admin). Purchase-verified stays false.
+- Customer Offers page includes review submit form; Admin Dashboard tile/page includes review queue and moderation actions.
+- Static checks PASS for page/card/tile/script/submission/moderation handlers. Browser/E2E tests pending.
+- **Important limitation:** partner UUID entry currently required and order verification is not integrated. Reviews must not be described as verified purchases. Future order integration should add verification before enabling verified-purchase badge.
+- Migration commit `baddabc3`; index commit `161fd77e`; JS commit `cfac2671`.
