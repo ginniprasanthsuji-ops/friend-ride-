@@ -3,6 +3,9 @@ Date: 2026-11-25
 Branch: arjuna-x/phase-7-ai-intelligence-safety
 Scope: QA Supabase only. Production untouched.
 
+## Confirmed product scope
+FRIEND RIDE Ticket Helper is a small train journey discovery helper (direct search, alternatives, connecting train legs, Leg 1 / Leg 2, junction and transfer details). Selecting a route opens/redirects the customer to official IRCTC to independently book. No IRCTC integration, partnership, API, prefill, or booking automation is intended.
+
 ## Implemented in this checkpoint
 - QA table `public.fr_train_saved_itineraries` applied.
 - Owner-only SELECT, INSERT, DELETE RLS policies for authenticated users.
