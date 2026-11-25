@@ -91,3 +91,17 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - **Important limitation:** reservation is not yet tied to the store checkout/order table. UI explicitly labels reservation as not order/payment confirmation. Checkout integration and authenticated browser end-to-end tests remain pending.
 - Commits: UI/index `b9002842`; asset `daf96f01`; globals fix `a33b9c43`.
 - Task 3 status: foundation and UI integration PASS; order/checkout integration and E2E QA PENDING.
+
+## Phase 13 Task 4 — Customer Referral foundation (2026-11-25)
+- Supabase migration applied: `phase13_customer_referral_foundation`.
+- Created `fr_customer_referral_codes` (one unique customer code per customer) and `fr_customer_referrals` (referred-customer unique, referrer/referred IDs, eligibility count/status, ₹50 reward record, admin review fields).
+- RLS enabled on both tables; verified each has 2 policies. Participant read access is restricted to involved users/admin; direct client writes are not enabled by policies.
+- Secure RPC `fr_customer_referral_get_or_create_code()` creates/returns a code only for authenticated customer-role profile; execute granted to authenticated, revoked from public/anon.
+- Added customer Offers page card to fetch, copy, and share code.
+- Static checks: UI asset included; card and functions present; referral insert is not done client-side.
+- **Pending:** referred-code capture during customer signup, referral binding RPC, completed-order eligibility trigger/workflow, anti-abuse/self-referral checks beyond schema, admin approval queue UI, actual ₹50 ledger credit. Do not show rewards as credited until backend payout/ledger integration exists.
+- Migration GitHub commit: `27eff64f`; UI commit: `8a304a98`; JS commit: `2d750b8c`.
+
+## Phase 13 order-schema discovery checkpoint
+- Store-order candidates include `fr_market_orders`, `shop_orders`, `fr_food_orders`; schema/units/status differ. `fr_market_orders` stores subtotal and total in paise; `shop_orders` stores numeric rupees. Current HTML contains market-order partner/customer flows referencing `fr_market_orders`.
+- Checkout/payment integration is deferred until a specific authoritative store checkout/order flow and status transitions are mapped. No order/payment tables were changed.
