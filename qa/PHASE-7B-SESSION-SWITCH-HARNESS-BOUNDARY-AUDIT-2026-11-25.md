@@ -313,3 +313,32 @@ Repository root, `sql/`, and `supabase/migrations/` directory listings reviewed 
 4. Do not add services or subscriptions; evidence should come from existing GitHub/Supabase/Firebase project configuration.
 
 **Status:** Directory listing/source search only; no Supabase database access, SQL execution, push sends, runtime tests, or production changes.
+
+
+## Follow-up — competing push registration/configuration audit
+
+Reviewed `FCM-WEB-PUSH-SETUP.md`, `fcm-web-push.js`, `firebase-messaging-sw.js`, and `fr-notification-fallback.js` read-only.
+
+### Confirmed source observations
+- `fcm-web-push.js` creates an opt-in card, loads Firebase compat SDK, obtains FCM token using its VAPID public key and `service-worker.js`, then posts token to `fr-notification-register-token` with authenticated session.
+- Setup documentation identifies `firebase-messaging-sw.js` root registration as a step and explicitly warns that placeholders/config and registration payload must be verified before functional deployment.
+- `firebase-messaging-sw.js` uses Firebase background messaging and click navigation from notification data, without explicit URL origin/route allowlist in this file.
+- The main `index.html` push-enable function separately registers `service-worker.js`, uses a different visible VAPID public key, and upserts `fr_push_subscriptions` directly.
+- `fr-notification-fallback.js` separately reads notification events for active user, Realtime-subscribes filtered by user ID, and polls every 60 seconds; the static review shows no post-await identity-generation guard around `loadRecent()` writes/display.
+
+### Risk candidates
+- **P1/P2 configuration divergence:** Two client registration paths appear to use different VAPID keys and different registration mechanisms/table/function. Operational configuration and sender compatibility must be established before claiming push works.
+- **P1 service-worker lifecycle/ownership candidate:** Multiple registration paths/workers may overlap or be selected inconsistently depending on scope and browser registration; runtime registration state was not inspected.
+- **P1 stale-user display candidate:** Fallback `loadRecent()` can finish after a user switch and call `showEvent` without an observed captured-user/session-generation check. 
+- **P2 fallback privacy:** Notification event query selects `payload` and `category`, but UI displays title/body; verify payload remains unused/redacted and event data contains no secrets.
+- **P2 click URL validation:** FCM worker click path takes data URL directly; explicit origin/route validation is not visible in reviewed file.
+
+### Recommended isolated tests (not implemented)
+1. Confirm one canonical registration path, worker, VAPID key, token/subscription table, and sender.
+2. Simulate worker registrations and check scope/controller consistency.
+3. Delay user A fallback query, switch to B, resolve A; ensure A results are not displayed.
+4. Verify fallback query and realtime event filters remain user-bound.
+5. Test click URL allowlist and privacy-safe payload contract.
+6. Confirm setup documentation matches actual deployed function, schema, and worker.
+
+**Status:** Static review only; no Firebase/Supabase configuration queries, deployed function inspection, push sends, runtime/browser tests, or production edits.
