@@ -485,3 +485,15 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] QA behavior tests and controlled application remain pending.
 
 **Phase 13B progress: 40%** (live policies re-verified and risk matrix completed; no mutation).
+
+
+### Phase 13B continuation — exact ACL grant re-capture and rollback preparation (2026-11-26)
+- [x] Re-read live QA table privileges for all four Shared Ride tables, anon/authenticated.
+- [x] Confirmed anon still has broad table privileges (SELECT/INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER where catalog lists them); authenticated has broad grants and TRUNCATE across tables, with table-specific INSERT variation.
+- [x] Added read-only grant capture SQL at `qa/phase13b-shared-ride-acl-stage1-grant-capture.sql` for pre-change exact ACL evidence; no changes executed.
+- [x] Re-verified Stage 1 draft is conservative: revoke anon all and authenticated TRUNCATE only; preserve authenticated SELECT and policies; authenticated writes remain pending.
+- [ ] Generate rollback statements from captured exact grant output; do not blanket GRANT ALL or restore anon automatically.
+- [ ] Review view/table consumer requirements and RPC security dependencies before approval.
+- [ ] QA apply, post-change ACL validation and role regression tests pending.
+
+**Phase 13B progress: 45%** (ACL baseline re-captured and rollback capture script prepared; remediation not applied).
