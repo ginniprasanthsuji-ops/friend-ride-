@@ -394,3 +394,25 @@ Status: inventory and acceptance matrix only; no SQL/Storage mutation, no object
 6. Apply only after explicit QA mutation authorization and a rollback plan; Main/Production prohibited.
 
 Status: STATIC DRAFT REVIEW ONLY. No SQL executed, no live policies changed, no merge/deploy, Main/Production untouched.
+
+
+## Phase 13 continuation — Live QA Shared Ride policy/ACL comparison (read-only, 2026-11-26)
+
+### Live QA RLS policy inventory verified
+- `fr_shared_rides`: authenticated driver INSERT/UPDATE policies require driver_id=auth.uid(); SELECT policy permits live/full listings or owner/passenger participation.
+- `fr_shared_ride_bookings`: authenticated participant SELECT; participant UPDATE; passenger INSERT policy exists.
+- `fr_shared_ride_events`: authenticated participant SELECT policy.
+- `fr_shared_ride_payments`: authenticated booking-participant SELECT policy.
+- Existing participant policies are permissive and depend on identity predicates; policy names and predicates differ from the proposed draft in some areas.
+
+### Live table ACL verified (high-risk)
+- QA grants broad client privileges to `anon` on all four Shared Ride tables, including SELECT/INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER.
+- `authenticated` has broad grants as well: SELECT and multiple write/destructive privileges including TRUNCATE; bookings has DELETE but no INSERT in inspected grant output; events and payments include INSERT; rides has DELETE/INSERT/UPDATE and TRUNCATE.
+- RLS does not constrain TRUNCATE. This is confirmed as a privilege exposure in the catalog; whether API-level TRUNCATE is reachable was not tested.
+
+### Draft comparison / caution
+- Draft hardening is directionally appropriate to remove client destructive privileges, but its blanket REVOKE/GRANT and DROP POLICY statements must not be applied as-is without reviewing exact policy dependencies and app read requirements.
+- Preserve participant SELECT RLS behavior while narrowing ACLs. Writes should be via verified RPCs only; ensure the required RPCs exist, have correct SECURITY DEFINER owner/search_path, and authenticated EXECUTE grants.
+- QA-only remediation priority: P1 revoke unused anon/authenticated destructive privileges, especially TRUNCATE; then review write privileges and policy compatibility. No changes applied.
+
+Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production untouched; no merge/deploy.
