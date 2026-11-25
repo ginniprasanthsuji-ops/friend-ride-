@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FR Phase 13 Combined Ride Station — QA Prototype</title>
+<style>
+:root{font-family:system-ui,Arial,sans-serif;color:#18202c;background:#f5f7fb}body{margin:0;padding:16px}.wrap{max-width:780px;margin:auto}.panel{background:white;border:1px solid #dce3ec;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #00000008}.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{border:1px solid #cbd5e1;background:#fff;padding:10px 15px;border-radius:999px;cursor:pointer}.tab.active{background:#263b73;color:#fff;border-color:#263b73}.status{font-size:12px;padding:4px 8px;border-radius:99px;background:#fff3cd;color:#795700;display:inline-block}.empty{padding:22px;text-align:center;color:#64748b}.card{border:1px solid #dbe2eb;border-radius:12px;padding:13px;margin:10px 0}.source{font-size:12px;font-weight:700;color:#475569}.disabled{opacity:.55;cursor:not-allowed}.hint{font-size:13px;color:#596579}.title{margin:4px 0 10px}
+</style></head><body><div class="wrap">
+<h1 class="title">🚦 Live / Ongoing Ride Station</h1>
+<div class="panel"><span class="status">QA Prototype • Backend not connected</span><p class="hint">This prototype does not display demo rides as live. Real listing data will appear only after secure backend adapters are connected.</p>
+<div class="tabs" role="tablist"><button class="tab active" data-filter="ALL">ALL</button><button class="tab" data-filter="ERS">ERS Registered</button><button class="tab" data-filter="RRS">RRS Guest Bike</button></div>
+</div>
+<div class="panel"><h2 id="heading">All rides</h2><div id="list" class="empty">Backend adapter not connected. No live rides shown.</div></div>
+<div class="panel"><h3>Backend Adapter Contract (integration gate)</h3><ul><li>ERS: approved registered drivers only; availability and active-ride checks required.</li><li>RRS: guest ride records only; guest identity must remain separate from registered-driver identity.</li><li>Combined list: source-tagged results; no phone numbers, private photo paths, or exact private locations.</li><li>Booking actions stay disabled until secure RPCs and lifecycle/status mapping are verified.</li></ul></div>
+</div>
+<script>
+const tabs=document.querySelectorAll('.tab');const heading=document.getElementById('heading');const list=document.getElementById('list');
+tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>x.classList.remove('active'));t.classList.add('active');const f=t.dataset.filter;heading.textContent=f==='ALL'?'All rides':f==='ERS'?'ERS Registered rides':'RRS Guest Bike rides';list.textContent=f==='ALL'?'ERS + RRS source adapters are not connected. No live data is fabricated.':f==='ERS'?'ERS approved-driver listing adapter is not connected.':'RRS guest-bike listing adapter is not connected.';}));
+</script></body></html>
