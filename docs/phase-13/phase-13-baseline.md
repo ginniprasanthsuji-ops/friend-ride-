@@ -133,3 +133,12 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Secure customer-only RPC `fr_customer_special_day_set` validates event type/month/day and stores consent; anon execution revoked, authenticated granted; birthday label prohibited.
 - Migration committed: `eb7f400e`.
 - **Pending:** customer UI, campaign targeting, scheduled reminder/offer activation, and QA. Special-day feature is foundation only.
+
+## Phase 13 Task 5 — Birthday/Special-Day customer UI completed (consent only)
+- Offers & Rewards page now contains Birthday and Special-Day date fields, optional special-day label, consent checkbox, save and refresh actions.
+- UI saves through the customer-only RPC, loads existing owner data, and supports revoking consent by saving with checkbox unchecked.
+- Data remains month/day only (no birth year). Page explicitly notes campaign targeting is not yet activated.
+- Added calendar date validation to RPC (including February/leap-year reference) to reject impossible dates.
+- Verified SQL function SECURITY DEFINER; anon execute=false; authenticated execute=true; static checks PASS for panel, script include, load/save and revoke paths. RLS policy verification query run separately.
+- Commits: UI `b5a723a3`, JS `1e6b484c`, consent revoke `216358b5`, calendar validation migration `a2921903`.
+- Pending: consent-targeted campaign activation, customer UI browser testing, store reviews, direct store coupon recognition, regression QA.
