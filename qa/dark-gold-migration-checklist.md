@@ -208,3 +208,13 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Implementation caution: do not automatically delete KYC files on approval until admin review/download confirmation, retention/backup behavior, and secure-delete workflow are designed and verified. Provide admin review/download UI and a deliberate cleanup action/SQL RPC; avoid deleting permanent profile photos or QR assets.
 - This is a requirement/audit note only. No Storage buckets, SQL tables, policies, objects, or data changed. Main/Production untouched; no merge/deploy. Real admin download and deletion tests remain UNVERIFIED.
 - Next: design the retention workflow with explicit admin review/download confirmation, a guarded cleanup operation, and tests proving KYC cleanup cannot touch the four permanent asset types.
+
+
+## Phase 13 continuation — KYC upload source-code mismatch review (2026-11-26)
+
+- Reviewed `assets/driver-kyc-upload.js` on the QA branch. It currently targets Storage bucket `driver-kyc-documents` and uploads three document types: Aadhaar, driving license, and vehicle RC. It also writes document path fields to the driver profile and keeps `fr_driver_documents.storage_path` references for admin review.
+- The read-only QA project Storage catalog inspected in this continuation showed only `road-ride-driver-photos`; the source upload script's `driver-kyc-documents` bucket was not present in that catalog. Therefore the upload path/bucket configuration is inconsistent and runtime KYC upload is UNVERIFIED.
+- Current upload code does not implement the newly clarified retention workflow: admin view/download confirmation, approval completion, storage object deletion, and removal of document path references. The vehicle RC document is also currently collected although the user's requested temporary-doc scope needs a product decision/approval.
+- `fr_driver_documents` has metadata fields including document type, storage path, verification status, review note, reviewer and review timestamp. No data was queried or deleted.
+- No source changes or database/storage mutations performed. Main/Production untouched; no merge/deploy. KYC feature is not confirmed functional.
+- Next: reconcile QA bucket name and source config; implement admin secure view/download then explicit review-confirmed cleanup; ensure permanent driver/customer photos and driver/partner QR assets are excluded from cleanup. Runtime tests required.
