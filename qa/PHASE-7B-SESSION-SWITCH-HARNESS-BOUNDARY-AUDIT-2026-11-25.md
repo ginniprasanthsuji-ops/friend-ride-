@@ -100,3 +100,17 @@ Existing harness is suitable for local-origin-only browser tests, but current he
 - Runtime role/session restore: not tested.
 - Backend authorization and RLS: not verified by source-only frontend review.
 - No app/SQL/backend/production changes; release remains blocked.
+
+
+## Follow-up audit — existing local-only browser harness capability
+
+**Reviewed files:** `qa/local-only-fixture.cjs`, `qa/phase-11-page-isolation.spec.js`, `qa/phase-11-registration-isolation.spec.js`, `qa/phase-11-security-isolation-contract.test.mjs`.
+
+- Fixture injects a minimal Supabase stub (`signOut`, limited `select/limit`, `rpc`) and aborts requests to origins other than the configured local test-server origin.
+- Current browser specs cover page exclusivity/inert hidden pages and role-specific registration controls. They do not simulate authenticated A/B sessions or Supabase session restore.
+- Contract tests assert source markers for admin membership, role allowlist/mismatch, driver approval, registration controls, and page isolation. Source-marker assertions are not execution tests of live auth or backend authorization.
+- The current fixture does not provide a session-aware auth event sequence, delayed profile/admin query responses, realtime channel lifecycle assertions, or A/B-owned notification payload fixtures.
+- A future A/B test requires a dedicated test-only fixture seam. Existing fixture should not be extended to connect real Supabase/auth or production endpoints; keep external-origin blocking.
+
+### Harness conclusion
+The reviewed existing test harness is safe for its local static/browser scope, but is not yet capable of proving authenticated session-switch isolation. No tests were added or executed in this audit checkpoint. No app, SQL, backend, production, account, or real-user changes were made.
