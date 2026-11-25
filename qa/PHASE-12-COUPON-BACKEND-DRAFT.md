@@ -12,11 +12,14 @@ Status: Draft design; NOT deployed or applied to any Supabase project.
 - Store coupons should be redeemable by the issuing store.
 - Reporting should support coupon sales and redemption status.
 
-## QA environment schema check (read-only, 2026-11-25)
-- QA project public schema currently contains 21 base tables (not the 71 tables described in the 2026-11-09 release-gate inventory for the main project).
-- The QA table list was inspected; no coupon-specific tables are present.
-- Existing notification infrastructure in QA includes `fr_app_notifications`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`, and `fr_push_subscriptions`. Coupon purchase/redemption notices should reuse these existing systems after reviewing their RPC/policy behavior.
-- This environment/schema mismatch is a release/implementation blocker: verify project refs, migration history, and QA schema before any SQL migration. Do not copy main-project assumptions into QA.
+## Environment correction and main backend inspection (read-only, 2026-11-25)
+- Separate FRIEND RIDE QA Supabase was intentionally not created per repository QA checklist. The previously inspected `pqsangtvietawkfgpgfu` is a different database, not FRIEND RIDE QA; its table comparison is invalid.
+- Main FRIEND RIDE Supabase ref: `fglyplxcczdjtfwobtzh`. Read-only main schema inventory returned 85 public tables.
+- Main project has existing order/payment/notification infrastructure; no coupon-specific tables/functions were found in the inspected inventory/function search.
+- Existing market order payment flow: customer accepts quote -> `payment_pending` with a 5-minute expiry and `payment_status='pending'`; approved owning store partner calls `fr_partner_confirm_market_payment`, which checks ownership, state, expiry, then marks paid/accepted and sends customer notification.
+- Ride payment flow is separate: customer creates QR payment request for completed ride; customer submits transaction ID; assigned approved driver confirms success. This cannot be reused as a store-coupon payment confirmation.
+- Existing notification event hooks for order/payment status changes can potentially be reused for coupon notifications after exact trigger and policy review.
+- No new SQL migration has been applied. Draft coupon work must remain review-only until an owner-approved deployment/test environment exists.
 
 ## Proposed data model (check for existing equivalents before migration)
 1. `fr_coupon_campaigns`: issuer type/ID, coupon type (ride/store), service scope, title/description, discount type/value, start/end, limits, status, created-by.
