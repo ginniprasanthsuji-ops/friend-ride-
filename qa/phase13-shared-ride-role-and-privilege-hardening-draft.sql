@@ -87,6 +87,81 @@ begin
 end;
 $function$;
 
+-- Booking confirmation is driver-owned and restricted to an approved driver.
+create or replace function public.fr_shared_ride_confirm_booking(p_booking_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare v_ride_id uuid; v_driver_id uuid; v_ride_status text;
+begin
+  if auth.uid() is null then raise exception 'Login required'; end if;
+  if not exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='driver' and p.driver_approval_status='approved') then
+    raise exception 'Approved driver account required';
+  end if;
+  select b.ride_id,r.driver_id,r.status into v_ride_id,v_driver_id,v_ride_status
+  from public.fr_shared_ride_bookings b
+  join public.fr_shared_rides r on r.id=b.ride_id
+  where b.id=p_booking_id and b.status='booking_pending'
+  for update of b,r;
+  if not found then raise exception 'Pending booking unavailable'; end if;
+  if v_driver_id<>auth.uid() then raise exception 'Only the assigned driver can confirm this booking'; end if;
+  if v_ride_status not in ('live','full') then raise exception 'Ride is not open for confirmation'; end if;
+  update public.fr_shared_ride_bookings set status='confirmed',updated_at=now()
+  where id=p_booking_id and status='booking_pending';
+  insert into public.fr_shared_ride_events(ride_id,booking_id,actor_id,event_type,details)
+  values(v_ride_id,p_booking_id,auth.uid(),'booking_confirmed',jsonb_build_object('booking_status','confirmed'));
+  return true;
+end;
+$function$;
+
+-- Contact disclosure is per booking and only to its confirmed passenger/driver.
+-- It returns the counterpart's phone, never all passengers on the ride.
+create or replace function public.fr_shared_ride_get_booking_contacts(p_booking_id uuid)
+returns table(contact_role text,contact_name text,contact_phone text)
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare v_booking public.fr_shared_ride_bookings%rowtype; v_driver_id uuid; v_uid uuid:=auth.uid();
+begin
+  if v_uid is null then raise exception 'Login required'; end if;
+  select * into v_booking from public.fr_shared_ride_bookings b where b.id=p_booking_id;
+  if not found then raise exception 'Booking not found'; end if;
+  select r.driver_id into v_driver_id from public.fr_shared_rides r where r.id=v_booking.ride_id;
+  if not found then raise exception 'Ride not found'; end if;
+  if v_booking.status not in ('confirmed','boarding','in_progress') then
+    raise exception 'Contact details are available only for a confirmed active booking';
+  end if;
+  if v_uid=v_driver_id then
+    return query select 'passenger'::text,p.full_name,
+      coalesce(nullif(trim(p.whatsapp_phone),''),nullif(trim(p.phone),''))::text
+      from public.profiles p where p.id=v_booking.passenger_id and p.role='customer';
+    return;
+  end if;
+  if v_uid=v_booking.passenger_id then
+    return query select 'driver'::text,p.full_name,
+      coalesce(nullif(trim(p.whatsapp_phone),''),nullif(trim(p.phone),''))::text
+      from public.profiles p where p.id=v_driver_id and p.role='driver' and p.driver_approval_status='approved';
+    return;
+  end if;
+  raise exception 'Contact details are restricted to the confirmed booking participants';
+end;
+$function$;
+
+-- Explicit RPC execution grants; no anonymous/public invocation.
+revoke all on function public.fr_shared_ride_create(text,text,text,integer,numeric,timestamptz,timestamptz,double precision,double precision,double precision,double precision) from public,anon;
+revoke all on function public.fr_shared_ride_book_seats(uuid,integer,text,text) from public,anon;
+revoke all on function public.fr_shared_ride_confirm_booking(uuid) from public,anon;
+revoke all on function public.fr_shared_ride_get_booking_contacts(uuid) from public,anon;
+revoke all on function public.fr_shared_ride_is_passenger(uuid) from public,anon;
+grant execute on function public.fr_shared_ride_create(text,text,text,integer,numeric,timestamptz,timestamptz,double precision,double precision,double precision,double precision) to authenticated;
+grant execute on function public.fr_shared_ride_book_seats(uuid,integer,text,text) to authenticated;
+grant execute on function public.fr_shared_ride_confirm_booking(uuid) to authenticated;
+grant execute on function public.fr_shared_ride_get_booking_contacts(uuid) to authenticated;
+grant execute on function public.fr_shared_ride_is_passenger(uuid) to authenticated;
+
 -- Direct client writes are not the supported contract; the SECURITY DEFINER RPCs above are.
 drop policy if exists fr_shared_rides_driver_insert on public.fr_shared_rides;
 drop policy if exists fr_shared_rides_driver_update on public.fr_shared_rides;
