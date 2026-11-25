@@ -337,3 +337,34 @@ Status: **SOURCE REVIEW ONLY; no runtime tests, no SQL/Storage mutations, Main/P
 - Read-only project metadata, bucket catalog, and Storage.objects policy queries only.
 - No object listing/deletion/upload, no SQL mutation, no migration, no production query, no merge/deploy.
 - Runtime Storage owner/admin/cross-user tests remain unexecuted.
+
+
+## Phase 13 continuation — Storage bucket source inventory & QA policy acceptance matrix (2026-11-26)
+
+### Source bucket inventory cross-check
+- Direct `storage.from(...)` references in current `index.html`: `driver-kyc-documents`, `partner-qr`, `provider-payment-qr`, `driver-profile-photos`, `customer-profile-photos`, `fr-partner-catalogue`, `fr-service-provider-kyc`.
+- Dynamic profile-photo loader also uses `partner-profile-photos`.
+- QA inventory remains only `road-ride-driver-photos`; all referenced storage features except that bucket are unprovisioned in QA.
+- Source has a registration/upload helper with bucket parameter; KYC/registration bucket use confirmed by source review. No bucket provisioning SQL found in the reviewed repository SQL/migration inventory.
+
+### Bucket-by-bucket QA acceptance matrix (spec only; not applied)
+| Bucket | Intended data | Required access design | Retention |
+|---|---|---|---|
+| driver-profile-photos | Driver profile image | Private; owner upload/read/update; Admin review access only if needed | Permanent |
+| customer-profile-photos | Customer profile image | Private; owner upload/read/update | Permanent |
+| partner-profile-photos | Partner profile image | Private; owner upload/read/update; customer-facing signed display only where approved | Policy pending user confirmation |
+| driver-kyc-documents | Aadhaar/license/RC KYC | Private; owner upload/read, Admin review/download; cleanup only after explicit reviewed/downloaded confirmation | Temporary; delete file/path after confirmation, preserve review metadata |
+| fr-service-provider-kyc | Service provider KYC | Private; owner/admin constrained; temporary review lifecycle | Temporary policy requires role-specific review |
+| provider-payment-qr | Driver/partner payment QR | Private; owner manage; only intended ride/shop counterparties via signed access | Permanent; protected from generic cleanup |
+| partner-qr | Partner/shop customer QR | Private; owner manage; customer/shop display via authorized signed access | Permanent; protected from generic cleanup |
+| fr-partner-catalogue | Partner catalogue assets | Private; partner owns; customer access limited to approved active catalogue items | Retention policy to follow catalogue lifecycle |
+| road-ride-driver-photos | Road/shared ride driver photo | Existing QA bucket private; owner-folder SELECT/INSERT/UPDATE policies observed; DELETE policy not observed | Permanent photo; no cleanup/delete policy yet |
+
+### Acceptance / risk notes
+- Bucket creation and policy deployment must be QA-only and approved; no automatic provisioning from this audit.
+- Each bucket must be private unless an explicitly reviewed public-display requirement exists. Public URLs are not accepted for sensitive KYC or permanent profile assets.
+- Admin KYC download/review must use short-lived signed URLs or authorized download mechanism; no public exposure.
+- Cleanup must be allowlisted to temporary KYC buckets/path types and require explicit confirmation. Never target profile photos or QR buckets.
+- Storage policy runtime tests: owner vs other user, Admin vs non-admin, unauthorized delete, cross-bucket path spoofing, signed URL expiry, failed upload/DB save rollback, replacement old/new path safety. **Not executed.**
+
+Status: inventory and acceptance matrix only; no SQL/Storage mutation, no object inventory/deletion, no merge/deploy, Main/Production untouched.
