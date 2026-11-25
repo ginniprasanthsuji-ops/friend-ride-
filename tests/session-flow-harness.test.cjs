@@ -173,3 +173,29 @@ test('logout invalidates pending notification loader and clears private state', 
   assert.deepEqual(h.privateNotifications, []);
   assert.equal(h.snapshot().listenerCount, 0);
 });
+
+
+test('signOut clears every registered realtime listener', async () => {
+  const h = new SessionFlowHarness();
+  await h.signIn('fixture-user-a');
+  const listenerA = () => {};
+  const listenerB = () => {};
+  h.listeners.add(listenerA);
+  h.listeners.add(listenerB);
+  assert.equal(h.snapshot().listenerCount, 2);
+  h.signOut();
+  assert.equal(h.snapshot().listenerCount, 0);
+  assert.equal(h.identity, null);
+});
+
+test('notification loader filters cross-identity rows before publishing', async () => {
+  const h = new SessionFlowHarness();
+  await h.signIn('fixture-user-b');
+  const result = await h.loadNotifications(async () => [
+    { userId: 'fixture-user-b', marker: 'B-private' },
+    { userId: 'fixture-user-a', marker: 'A-private' }
+  ]);
+  assert.equal(result.accepted, true);
+  assert.deepEqual(result.rows, [{ userId: 'fixture-user-b', marker: 'B-private' }]);
+  assert.deepEqual(h.privateNotifications, result.rows);
+});
