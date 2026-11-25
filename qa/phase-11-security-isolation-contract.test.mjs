@@ -11,6 +11,8 @@ const workflow = await readFile(new URL('../.github/workflows/friend-ride-regres
 const registrationSpec = await readFile(new URL('./phase-11-registration-isolation.spec.js', import.meta.url), 'utf8');
 const pageIsolationSpec = await readFile(new URL('./phase-11-page-isolation.spec.js', import.meta.url), 'utf8');
 const localFixture = await readFile(new URL('./local-only-fixture.cjs', import.meta.url), 'utf8');
+const sessionModel = await readFile(new URL('./session-switch-model.cjs', import.meta.url), 'utf8');
+const sessionUnitTests = await readFile(new URL('../tests/session-switch-model.test.cjs', import.meta.url), 'utf8');
 
 test('Phase 11 security: admin authorization is based on admin_users membership', () => {
   assert.ok(app.includes("from('admin_users').select('user_id')"));
@@ -175,4 +177,30 @@ test('Phase 11 preflight rejects hosted URLs and never follows redirects', () =>
   assert.ok(preflight.includes("redirect: 'manual'"));
   assert.ok(preflight.includes('only localhost/loopback URLs are allowed'));
   assert.ok(preflight.includes('process.exit(2)'));
+});
+
+
+test('Phase 7B QA: synthetic session model rejects real identities and never connects to services', () => {
+  assert.ok(sessionModel.includes("['fixture-user-a', 'fixture-user-b'].includes(userId)"));
+  assert.ok(sessionModel.includes('Only synthetic fixture identities are allowed'));
+  assert.ok(!sessionModel.includes('supabase'));
+  assert.ok(!sessionModel.includes('firebase'));
+});
+
+test('Phase 7B QA: synthetic session model includes the six required isolation scenarios', () => {
+  const required = [
+    'anonymous protected request is denied',
+    'late A request is discarded after switching to B',
+    'requests remain bound to isolated model instances',
+    'logout invalidates pending request and clears private state',
+    'invalid restore falls back to anonymous',
+    'cross-user rows are filtered from accepted response'
+  ];
+  for (const scenario of required) assert.ok(sessionUnitTests.includes(scenario), scenario);
+  assert.equal((sessionUnitTests.match(/\\btest\\(/g) || []).length, 6);
+});
+
+test('Phase 7B QA: synthetic model unit tests are wired into the regression workflow', () => {
+  assert.ok(JSON.parse(packageJson).scripts['test:unit'].includes('node --test tests/*.test.cjs'));
+  assert.ok(workflow.includes('npm run test:unit'));
 });
