@@ -238,3 +238,29 @@ Reviewed `service-worker.js` read-only.
 5. Test both FCM background handler and Web Push handler to ensure duplicate/overlapping payload behavior is intentional.
 
 **Status:** Static review only. No code changes, push sends, real devices, backend inspection, or runtime tests.
+
+
+## Follow-up — push subscription ownership and account-switch review
+
+Reviewed `frEnableDeviceAlerts` and `fr_push_subscriptions` handling in `index.html` read-only.
+
+### Confirmed source observations
+- Push registration requires an authenticated `currentUser.id` and granted notification permission.
+- Existing browser subscription is checked against the configured VAPID key and a database record filtered by both endpoint and current user ID.
+- If key/known-owner check fails, code attempts to deactivate the endpoint record filtered by the current user ID, then unsubscribes the browser subscription.
+- New/retained subscription is upserted with `user_id`, endpoint, public/auth subscription keys, user agent, active flag, and update timestamp; upsert conflict target is endpoint.
+- Reviewed logout wrapper stops realtime notification channel but does not show push subscription unsubscribe/deactivation on logout.
+
+### Risk candidates
+- **P1 account-switch/device privacy candidate:** Browser push subscription persists independently of auth logout; account switching behavior depends on sender-side subscription ownership checks and database policies. Source does not prove that old-user endpoint records are deactivated or that pushes are never sent to a stale endpoint after logout.
+- **P1 database authorization candidate:** Upsert conflict target is endpoint. Correct ownership transfer/deactivation behavior depends on server-side constraints/RLS, which was not inspected or executed in this static checkpoint.
+- **P2 cleanup candidate:** No explicit logout-time push subscription cleanup function was found in the reviewed excerpt.
+
+### Recommended synthetic tests (not implemented)
+1. User A subscribes; logout; assert endpoint handling is documented/defined (deactivate or explicitly retain with safe sender semantics).
+2. Same browser signs in as B; verify endpoint ownership transition and sender delivery authorization never cross users.
+3. Verify endpoint upsert conflict cannot change owner without approved authorization; test RLS/constraints in isolated staging.
+4. Test expired/revoked subscription cleanup and failure handling without sending real push.
+5. Confirm logout realtime cleanup is separate from push-subscription lifecycle.
+
+**Status:** Static review only; no SQL/RLS inspection, push send, device test, production change, or runtime test performed.
