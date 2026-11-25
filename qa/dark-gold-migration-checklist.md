@@ -458,3 +458,16 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] QA approval, apply, verify, and role regression remain pending.
 
 **Phase 13B progress: 30%** (draft comparison and write-path scope review completed; no QA SQL applied).
+
+
+### Phase 13B continuation — booking lifecycle RPC and contact privacy review (2026-11-26)
+- [x] Reviewed draft driver-confirmation RPC: booking must be pending and caller must own the ride; ride status must be live/full; confirmation changes status to confirmed and logs an event.
+- [x] Reviewed draft cancellation RPC: passenger-only, pending/confirmed states, pre-departure and live/full checks; releases seats and writes event.
+- [x] Reviewed draft participant-contact RPC: requires confirmed-or-later booking state; passenger gets driver contact for their booking; ride driver gets that booking passenger contact; unrelated users denied. This is source review only, not runtime verification.
+- [ ] Contact RPC: review phone verification/phone availability and avoid returning empty/unverified phone; verify driver role/approval at contact time.
+- [ ] Confirm RPC: review whether current driver approval status must be checked at confirmation time, and ensure no status/ride-owner race.
+- [ ] Cancellation RPC: concurrency/idempotency review; seat count/status invariant tests and race tests pending.
+- [ ] Audit all existing QA policies before DROP POLICY operations; avoid broad policy drops without exact live-policy matching.
+- [ ] QA apply and auth-role regression tests remain pending.
+
+**Phase 13B progress: 35%** (lifecycle/contact RPC source review completed; risks and test gaps documented; no SQL applied).
