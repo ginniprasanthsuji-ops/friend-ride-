@@ -427,3 +427,30 @@ Focused read-only inspection of `fcm-web-push.js` and repository search attempts
 5. SDK script blocked/offline → clear safe error and no partial enabled state.
 
 **Status:** Read-only source/search review. No Firebase/Supabase live config, Edge Function, database policies, profile-photo storage implementation, browser/device tests, or production edits were inspected/changed.
+
+
+## Follow-up — Push subscription ownership and read-only regression coverage audit
+
+Read-only review of `qa/read-only-regression.sql` plus search for `fr_push_subscriptions` and `fr-notification-register-token`.
+
+### Static observations
+- Regression SQL expects `fr_push_subscriptions` among tables and reports table existence/RLS enabled status.
+- The SQL checks expected functions including `fr_get_push_runtime_config` and `fr_push_notification_webhook`, but it does not inspect push subscription columns, uniqueness/ownership constraints, policies by operation, or Edge Function token registration authorization.
+- Existing private-storage checks include driver/partner profile-photo buckets and named policies, but no provider/home-service profile-photo bucket/policy expectations were visible in this regression file.
+- Search-index results for the token-registration Edge Function returned only setup/source references; actual deployed Edge Function source/config was not obtained in this checkpoint.
+- The regression SQL is explicitly read-only and does not execute DDL/DML.
+
+### Risk/evidence gaps
+- **P1 ownership authorization evidence gap:** RLS-enabled table check alone does not establish endpoint/token owner integrity or policy correctness.
+- **P2 schema coverage gap:** Push table fields, endpoint uniqueness, user-owner binding, inactive-token cleanup, and operation-specific RLS are not asserted.
+- **P2 profile-photo coverage gap:** Regression checks driver/partner private photo buckets/policies; home-service provider photo bucket/policy coverage was not observed here. This is not proof that storage implementation is absent.
+- **P2 query correctness note:** Table/function checks join catalog names and then filter schema; duplicate object names in other schemas may create confusing result rows. Prefer schema-qualified catalog joins/EXISTS checks in a future revision.
+
+### Suggested next validation (not run)
+1. Inspect deployed `fr_push_subscriptions` columns, constraints, and every RLS policy by operation.
+2. Verify registration Edge Function derives user identity only from validated auth and never trusts client-supplied owner ID.
+3. Test endpoint conflict/owner takeover attempts and account-switch behavior with isolated A/B contexts.
+4. Confirm driver, partner, and home-service provider profile-photo buckets are private with correct owner/admin access.
+5. Improve read-only regression SQL to assert policy details/expected storage buckets and schema-qualified object checks.
+
+**Status:** Source and repository-search review only. No Supabase SQL was executed, no deployed schema/policies/functions were inspected, and no production files/configuration changed.
