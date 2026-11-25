@@ -64,6 +64,12 @@ test('Phase 11 page isolation: active page is exclusive and hidden pages are ine
 });
 
 
+
+test('Phase 11 QA safety: browser specs fail if any external-origin request was attempted', () => {
+  assert.ok(localFixture.includes("test.afterEach(async ({ page }) => {"));
+  assert.ok(localFixture.includes("expect(page.__frBlockedOrigins || []).toEqual([])"));
+});
+
 test('Phase 11 QA safety: Playwright discovery is limited to browser spec files', () => {
   assert.ok(playwrightConfig.includes("testMatch: ['phase-11-registration-isolation.spec.js', 'phase-11-page-isolation.spec.js']"));
   assert.ok(!playwrightConfig.includes('**/*.test.mjs'));
