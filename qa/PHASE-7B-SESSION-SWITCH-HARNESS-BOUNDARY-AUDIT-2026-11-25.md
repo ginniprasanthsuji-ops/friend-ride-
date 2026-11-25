@@ -630,3 +630,33 @@ Read-only review of `.github/workflows/friend-ride-regression.yml`.
 - Runtime test claims are permitted only after tests actually execute and results/artifacts are captured.
 
 **Checkpoint status:** Scenario prioritization documented. No tests or application code changed; CI not rerun; backend/production untouched.
+
+
+## Follow-up — Session Race Matrix & Acceptance Criteria
+
+### Deterministic race matrix (proposed)
+| ID | Setup / event order | Expected invariant | Severity if failed |
+|---|---|---|---|
+| RACE-01 | Start A profile fetch → logout → resolve A | Anonymous state remains; A result ignored | P1 |
+| RACE-02 | Start A notification fetch → login B → resolve B → resolve A | Only B notifications visible | P1 |
+| RACE-03 | Restore A pending → login B → resolve restore A | B identity/role remains authoritative | P1 |
+| RACE-04 | A admin-membership query pending → switch B → resolve A admin | A cannot authorize or route current session | P1 |
+| RACE-05 | A token registration pending → switch B → resolve A registration | B identity/UI unchanged; no cross-binding | P1 |
+| RACE-06 | A realtime event after logout/switch | Event ignored; old channel cleanup verified | P1 |
+| RACE-07 | Two isolated contexts A and B operate concurrently | State and mocked data remain context-bound | P1 |
+| RACE-08 | Invalid restore payload | Safe anonymous fallback; no privileged route | P1 |
+| RACE-09 | Role mismatch between selection and synthetic account | Reject route/role mismatch | P1 |
+| RACE-10 | Fixture triggers blocked external request | Test fails with origin diagnostic | P1 harness assurance |
+
+### Acceptance criteria for any future implementation
+- Every test uses synthetic IDs only; no real tokens, accounts, PII or production endpoints.
+- Delayed requests use controllable deferred promises and event order is explicit; no arbitrary sleeps for race timing.
+- On session generation/identity change, stale completion must be ignored and must not alter user, profile, role, notification rows, route, or private UI.
+- A and B data never coexist in one user-scoped view.
+- Logout clears user-scoped state and removes/invalidates subscriptions; later A events are ignored.
+- Parallel contexts are independently scoped and deterministic.
+- Any external-origin attempt is a test failure, even if the fixture successfully blocks it.
+- Each test produces a named pass/fail result; runtime evidence records commit SHA and test runner/browser versions.
+
+### Execution boundary
+This is a planning/acceptance checkpoint only. Tests are not authored or run here; no app code, SQL, workflow, Firebase, Supabase, or production configuration changed.
