@@ -53,3 +53,30 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Live Supabase read-only name/column/RLS-enabled audit: PASS.
 - Full policy/function/frontend search: PENDING.
 - Implementation and tests: PENDING.
+
+## Additional read-only audit findings (2026-11-25)
+
+### Frontend / repository search
+- Search for `flash sale`, `birthday offer`, and `coupon redeem`: no indexed matching code results returned.
+- `referral code` search found the release-gate document noting referral approvals and cash rewards are BLOCKED pending server-side eligibility/SQL mapping; BLUEPRINT lists referral as a planned user feature.
+- `review feedback` search found existing support feedback/homepage ratings flows and QA checks; these are support feedback/rating publication, not a verified store/product review system.
+- Search is index-based and incomplete; this does not prove a feature is absent from all frontend files.
+
+### RLS policy read-only review
+- Driver referrals: authenticated users can read their own referrals; admins can read all. Driver reward rows are readable by the referrer/admin.
+- Ride feedback: insert is restricted to the authenticated ride participant and a completed ride; participant read policy exists.
+- Support feedback: own-read and own-insert restrictions exist; admin read/update policies exist. Insert defaults restrict status to new, homepage publication false, and admin note null.
+- RLS is enabled on the audited tables. This is not a complete security review of functions/triggers/grants or all policies.
+
+### Feature inventory disposition
+- Flash Sale: no matching table identified; frontend search returned no indexed result. Design/build needed.
+- Customer Refer-a-Friend: existing referral structures are driver-only; customer referral/reward workflow remains to be audited/designed.
+- Birthday/Special-Day Offers: no matching table identified; frontend search returned no indexed result. Design/build needed.
+- Feedback/Reviews: existing ride feedback and support feedback structures; verified store/product review workflow not confirmed.
+- Direct-to-Store Payment Coupon Recognition: no coupon table found in this baseline. Must be separate from ride QR/payment flow and have one-time redemption protection.
+
+## Audit checkpoint
+- Repository branch and baseline documentation: PASS (commit created on feature-audit branch).
+- Live Supabase schema and RLS-policy read-only audit: PASS for the limited matching-table scope.
+- Full function/trigger/grant audit and complete frontend file search: PENDING.
+- No production SQL or app-code feature implementation has been applied in this checkpoint.
