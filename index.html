@@ -1713,7 +1713,8 @@ async function verifyRegistrationOtpAndRegister(){
         if(saved.error)throw saved.error;
       }
     }
-    if(selectedRole==='customer'){const referralCode=$('regCustomerReferralCode')?.value.trim();if(referralCode){const bound=await sb.rpc('fr_customer_referral_bind_code',{p_referral_code:referralCode});if(bound.error)referralWarning=bound.error.message||'Referral code could not be applied';else if(!bound.data?.ok)referralWarning=({invalid_code:'Invalid referral code.',self_referral:'Self-referral is not allowed.',already_referred:'This account already has a referral.',customer_only:'Customer accounts only.'})[bound.data?.reason]||'Referral code was not applied.';}}\n    await window.acceptSession(data.user, selectedRole);showMessage(referralWarning?'Registration successful. Referral: '+referralWarning:'Registration విజయవంతమైంది.',referralWarning?'error':'good');
+    if(selectedRole==='customer'){const referralCode=$('regCustomerReferralCode')?.value.trim();if(referralCode){const bound=await sb.rpc('fr_customer_referral_bind_code',{p_referral_code:referralCode});if(bound.error)referralWarning=bound.error.message||'Referral code could not be applied';else if(!bound.data?.ok)referralWarning=({invalid_code:'Invalid referral code.',self_referral:'Self-referral is not allowed.',already_referred:'This account already has a referral.',customer_only:'Customer accounts only.'})[bound.data?.reason]||'Referral code was not applied.';}}
+    await window.acceptSession(data.user, selectedRole);showMessage(referralWarning?'Registration successful. Referral: '+referralWarning:'Registration విజయవంతమైంది.',referralWarning?'error':'good');
   } catch(e){for(const [bucket,path] of uploadedFiles){try{await sb.storage.from(bucket).remove([path]);}catch(_){}}showMessage('Registration పూర్తి కాలేదు: '+e.message);}
 }
 
