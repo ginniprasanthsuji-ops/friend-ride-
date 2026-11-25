@@ -75,3 +75,18 @@ This matrix is a tracking artifact, not a test report or release approval.
 - Added notification loader test asserting cross-identity rows are filtered before private state is published.
 - Updated Phase 11 contract to require both cases; session-flow authored test count is now 16.
 - Synthetic fixture-only coverage; execution is not verified and does not prove actual app/backend realtime behavior.
+
+
+## Phase 7B revised completion method (2026-11-25)
+**Previous synthetic approach removed:** synthetic session-flow harness, session-switch model, and synthetic Playwright bridge/tests are deleted. Their Phase 7B contract checks were removed; Playwright discovery no longer includes the bridge.
+
+**Direct app QA checklist (only these count toward completion):**
+- [ ] Inspect actual app auth/session restore/sign-out/account-switch code paths.
+- [ ] Verify customer/driver/partner/admin role routing against actual profile and admin membership checks.
+- [ ] Verify pending/unapproved driver access is blocked in the real app.
+- [ ] Verify logout clears private UI state and real app subscriptions/listeners.
+- [ ] Verify A-to-B account switch does not show A profile, dashboard, or notifications.
+- [ ] Verify session restore after refresh and invalid/expired session fallback.
+- [ ] Run local browser tests against the actual app code; record CI evidence only after a run is visible.
+
+**Completion rule:** Phase 7B is complete only when every checklist item is verified with direct app/CI evidence. No synthetic harness, test count, or documentation-only commit can count as completion. Backend/device cases are separately marked pending if they cannot be verified locally.
