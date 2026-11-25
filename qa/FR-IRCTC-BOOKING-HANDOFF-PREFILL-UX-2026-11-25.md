@@ -29,6 +29,9 @@ Transfer: <junction> | <duration>
 Leg 2: <train number/name> | <from> <departure> → <to> <arrival>
 (Repeat for additional legs.)
 
+## Confirmed scope
+FRIEND RIDE Ticket Helper is a lightweight journey discovery tool only. It displays direct train options, alternatives, and connecting legs (Leg 1 / Leg 2). After selection, the customer is redirected to the official IRCTC entry point and completes the search/booking independently. No IRCTC partnership, API, prefill integration, login handling, or booking automation is planned. The copied itinerary is a convenience summary for manual use.
+
 ## Guardrails
 - Never use undocumented/private IRCTC URLs or automate login, captcha, passenger details, payment, or booking.
 - Do not send passenger personal data or credentials to IRCTC through an unsupported integration.
