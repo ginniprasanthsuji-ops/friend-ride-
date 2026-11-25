@@ -6,7 +6,7 @@ with t as (
   where n.nspname='public' and c.relkind='r'
 ),
 f as (
-  select p.oid,p.proname,pg_get_functiondef(p.oid) as def,p.prosecdef
+  select p.oid,p.proname,pg_get_functiondef(p.oid) as def,p.prosecdef,p.proconfig
   from pg_proc p join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public'
 ),
@@ -20,6 +20,13 @@ checks as (
   union all select 'registration_rpc_guard',case when exists(select 1 from f where proname='fr_register_driver_partner' and def ilike '%auth.uid()%') and exists(select 1 from f where proname='fr_register_driver_partner' and def ilike '%role%driver%partner%') then 'present' else 'missing' end
   union all select 'shared_ride_create_approved_driver_guard',case when exists(select 1 from f where proname='fr_shared_ride_create' and def ilike '%driver_approval_status%approved%') then 'present' else 'missing' end
   union all select 'shared_ride_book_customer_guard',case when exists(select 1 from f where proname='fr_shared_ride_book_seats' and def ilike '%role%customer%') then 'present' else 'missing' end
+  union all select 'shared_ride_policy_total',count(*)::text from pg_policies where schemaname='public' and tablename in ('fr_shared_ride_bookings','fr_shared_ride_events','fr_shared_ride_payments','fr_shared_rides')
+  union all select 'shared_ride_direct_write_policy_count',count(*)::text from pg_policies where schemaname='public' and tablename in ('fr_shared_ride_bookings','fr_shared_ride_events','fr_shared_ride_payments','fr_shared_rides') and cmd in ('INSERT','UPDATE','DELETE')
+  union all select 'shared_ride_client_write_privilege_count',count(*)::text from information_schema.table_privileges where table_schema='public' and table_name in ('fr_shared_ride_bookings','fr_shared_ride_events','fr_shared_ride_payments','fr_shared_rides') and grantee in ('anon','authenticated') and privilege_type in ('INSERT','UPDATE','DELETE','TRUNCATE')
+  union all select 'shared_ride_confirm_assigned_driver_guard',case when exists(select 1 from f where proname='fr_shared_ride_confirm_booking' and def ilike '%driver_id%auth.uid%') then 'present' else 'missing' end
+  union all select 'shared_ride_contact_participant_guard',case when exists(select 1 from f where proname='fr_shared_ride_get_booking_contacts' and def ilike '%v_uid%v_driver_id%' and def ilike '%v_uid%v_booking.passenger_id%') then 'present' else 'missing' end
+  union all select 'shared_ride_confirmation_contact_rpc_missing',coalesce(string_agg(expected.name,', ' order by expected.name),'none') from (values ('fr_shared_ride_confirm_booking'),('fr_shared_ride_get_booking_contacts'),('fr_shared_ride_cancel_booking')) expected(name) left join f on f.proname=expected.name where f.proname is null
+  union all select 'security_definer_missing_fixed_search_path',count(*)::text from f where prosecdef and not exists(select 1 from unnest(coalesce(proconfig,array[]::text[])) cfg where cfg like 'search_path=%')
   union all select 'shared_ride_direct_write_policies',coalesce(string_agg(policyname,', ' order by policyname),'none') from pg_policies where schemaname='public' and tablename like 'fr_shared_ride%' and cmd in ('INSERT','UPDATE','DELETE')
   union all select 'shared_ride_client_write_grants',count(*)::text from information_schema.role_table_grants where table_schema='public' and table_name like 'fr_shared_ride%' and grantee in ('anon','authenticated') and privilege_type in ('INSERT','UPDATE','DELETE','TRUNCATE')
   union all select 'public_client_truncate_grants',count(*)::text from information_schema.role_table_grants where table_schema='public' and grantee in ('anon','authenticated') and privilege_type='TRUNCATE'
