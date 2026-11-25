@@ -160,3 +160,11 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - **Safety:** recognition is only a claim record; neither order status nor payment status is changed. It does not verify payment by itself or indicate FRIEND RIDE collected money.
 - Static checks PASS for form/page/tile/script/RPC calls. Browser/E2E tests pending.
 - Migration commits `5f997c85` and role-hardening checkpoint `0c88527b`; HTML `9a4720b1`; JS `81bbf919`.
+
+## Phase 13 Task 8 — Flash Sale reservation-to-order linking
+- Audited existing `fr_customer_place_multi_market_order`: creates `fr_market_orders` per approved partner; checkout currently has no Flash Sale parameters and does not apply campaign discount.
+- Added secure RPC `fr_store_flash_sale_attach_order(p_redemption_id,p_order_id)`: authenticated customer ownership checks for reservation/order, campaign-store/order-store matching, reserved status, and no cross-user link. Links reservation to order ID but leaves status reserved.
+- Customer reservation UI now includes order-ID linking input/action.
+- **Explicit limitation:** link does not redeem/apply discount and never changes order/payment amounts or status. Actual discounted checkout remains pending safe pricing/payment integration.
+- Supabase RPC grants verified: anon=false, authenticated=true. Static UI/RPC checks; browser tests not run.
+- Migration commit `d0b7fb91`, JS commit `a4cd3dbf`.
