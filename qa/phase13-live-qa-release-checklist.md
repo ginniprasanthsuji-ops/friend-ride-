@@ -59,5 +59,19 @@ QA only: production/Main is not changed.
 - [ ] Phase 14 readiness review completed
 - [ ] Explicit user approval before live deployment
 
+## Gate H — Combined ERS + RRS Live/Ongoing Ride Station
+- [ ] ERS registered/approved driver listings are backend sourced and available-only
+- [ ] RRS guest bike listings are backend sourced and remain separate from ERS identities
+- [ ] Combined ALL filter displays both sources without duplicate records
+- [ ] ERS filter displays registered-driver source only
+- [ ] RRS filter displays guest-bike source only
+- [ ] Source labels are visible on every card (ERS Registered / RRS Guest)
+- [ ] Status mapping preserves source lifecycle and correctly shows available/pending/accepted/pickup/ongoing/completed/cancelled/expired
+- [ ] Phone and precise location privacy is maintained
+- [ ] RRS guest booking permissions and ERS registered booking permissions are independently tested
+- [ ] Combined station mobile browser QA evidence captured
+
 ## Status
 Checklist is a test plan. Items are not marked passed without recorded test evidence.
+
+**Phase 13 progress estimate (2026-11-25): 74%.** This is an estimated planning percentage, not a computed test-pass percentage. ERS/RRS combined-station requirement and backend schema/design audit are documented; integration, RPC/security review, browser QA, device tests, and release evidence remain incomplete.
