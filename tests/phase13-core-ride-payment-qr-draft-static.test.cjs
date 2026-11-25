@@ -36,7 +36,7 @@ test('customer payment creation is limited to own completed ride and approved as
 
 test('UPI transaction submission validates customer, UTR format, and active session', () => {
   assert.match(sql, /p\.role='customer'/);
-  assert.match(sql, /v_tx !~ '\^\[A-Za-z0-9\._\/-\]\{8,40\}\$'/);
+  assert.match(sql, /v_tx !~ '\u005e[A-Za-z0-9._\\/\\-]{8,40}\u0024'/);
   assert.match(sql, /v_pay\.status<>'pending' or v_pay\.expires_at<=now\(\)/);
 });
 
