@@ -20,6 +20,8 @@ jobs:
         run: node scripts/check-inline-js.mjs
       - name: Run Phase 11 security and isolation contracts
         run: node --test qa/phase-11-security-isolation-contract.test.mjs
+      - name: Run synthetic session-switch model tests
+        run: npm run test:unit
       - run: npm install
       - run: npx playwright install --with-deps chromium
       - name: Start local static app server
