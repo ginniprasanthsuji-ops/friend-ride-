@@ -53,3 +53,9 @@ This matrix is a tracking artifact, not a test report or release approval.
 - Scope: local app boot and dashboard route mapping are checked, while stale-session and notification races run against the synthetic harness. It does **not** test the app's real auth SDK/session handlers. Execution is not verified in this conversation.
 
 - Bridge strengthened to assert the local app's four role-to-dashboard mappings (customer/driver/partner/admin). Commit `ed0373b9`.
+
+
+## Session listener lifecycle coverage update (2026-11-25)
+- Synthetic harness now clears listener registrations on identity switch.
+- Added cases for listener cleanup on A→B and pending notification invalidation on logout.
+- Session-flow harness test count is now 14 authored scenarios. Execution remains unverified.
