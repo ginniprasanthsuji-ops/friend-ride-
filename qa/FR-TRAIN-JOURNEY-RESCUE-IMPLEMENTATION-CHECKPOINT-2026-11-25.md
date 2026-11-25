@@ -36,7 +36,7 @@ FRIEND RIDE Ticket Helper is a small train journey discovery helper (direct sear
 
 ## Progress
 Workflow requirement: 100% documented.
-QA storage foundation: implemented and metadata-verified.
+QA storage foundation: implemented, metadata-verified, and query indexes added/verified.
 Clipboard helper source: added; defensive QA coverage authored, not runtime-tested.
 UI integration: pending.
 End-to-end feature: pending; not launch-ready.
