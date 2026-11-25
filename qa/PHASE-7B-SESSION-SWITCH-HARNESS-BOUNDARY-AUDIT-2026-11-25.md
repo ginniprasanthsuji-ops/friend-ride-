@@ -569,3 +569,30 @@ Read-only review of `.github/workflows/friend-ride-regression.yml`.
 5. Keep evidence classification separate: static checks, local browser tests, backend integration, device tests, and release validation.
 
 **Status:** Workflow source review only; CI was not rerun. No application code, workflow, SQL, or production settings changed in this checkpoint.
+
+
+## Follow-up — Session A/B Test Coverage & Isolation Assertions Audit
+
+**Reviewed:** `qa/phase-11-page-isolation.spec.js`, `qa/phase-11-registration-isolation.spec.js`, `qa/local-only-fixture.cjs`, and `qa/phase-11-security-isolation-contract.test.mjs` (read-only).
+
+### Confirmed coverage
+- Page-isolation spec checks exactly one active page, active page ARIA visibility, and inactive pages are hidden and inert.
+- Registration spec checks Customer/Driver/Partner/Admin field visibility and disabled-state boundaries.
+- Fixture injects a minimal Supabase stub and routes browser requests only to configured local origin; other origins are aborted and recorded in `page.__frBlockedOrigins`.
+- Contract tests are source-string assertions for role/admin/driver approval, page/registration isolation, and test discovery/localhost safety.
+
+### Coverage gaps / risk candidates
+- **P1 test assurance gap:** The blocked-origin log is collected but reviewed specs do not assert it remains empty. External requests are blocked, but unintended dependency attempts can pass unnoticed.
+- **P1 session isolation gap:** Reviewed specs do not simulate authenticated A/B users, logout, late responses, or concurrent authenticated contexts.
+- **P2 contract-test brittleness:** Source-string assertions prove expected text markers exist, not actual authorization, behavior, or control flow.
+- **P2 fixture diagnostic gap:** `new URL(process.env.FRIEND_RIDE_BASE_URL)` is evaluated at module load; missing/invalid environment may produce a raw URL parsing error rather than a fixture-specific diagnostic. Preflight exists, but this ordering should be confirmed by execution.
+- **P2 isolation test breadth:** Page and registration tests cover a narrow set of behaviors; no observed test covers role-dashboard route destination, actual form submission, or backend enforcement.
+
+### Recommended additions (not implemented)
+1. Assert `page.__frBlockedOrigins` is empty after each browser test; fail with the blocked-origin list.
+2. Add synthetic, in-memory A/B identity fixture with deterministic delayed responses; test logout, switch, stale response discard, concurrent request binding, invalid restore, and cleanup.
+3. Keep static contract checks as guardrails but label them source-contract tests, not auth/security runtime validation.
+4. Make fixture URL validation produce a clear actionable error and verify preflight-before-test ordering.
+5. Add UI behavior tests for role-dashboard destination and form submission validation without real credentials/network.
+
+**Status:** Static review only. No tests executed; no code, SQL, workflow, backend, or production settings changed.
