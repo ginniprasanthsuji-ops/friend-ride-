@@ -813,3 +813,47 @@ Extend the workflow with a staged QA pipeline after confirming test files and lo
 5. Preserve report artifact links in the release evidence checklist.
 
 **Status:** Static audit only; live workflow run and artifact state unavailable through the attempted connector request. No code/workflow/app/SQL/backend/production changes and no tests or CI run.
+
+
+## Follow-up — Release Evidence & Remaining Blockers Consolidation
+
+**Scope:** Consolidate the static QA/documentation findings previously recorded in this audit. This is a priority checklist, not a release certification or execution result.
+
+### P0/P1 — Release-blocking evidence still required
+- Authenticated User A → logout → User B isolation: pending runtime verification.
+- Stale async profile/admin/notification/token responses after identity change: static race candidates; deterministic tests not implemented or run.
+- Parallel authenticated contexts and auth restore/login race: not runtime tested.
+- Backend Supabase RLS/RPC/admin membership enforcement: not verified through actual policy/role tests.
+- Private KYC/profile-photo storage ownership, read restrictions, MIME/size and signed URL behavior: not runtime verified.
+- Real OTP/SMS delivery and real device push lifecycle: not tested in this static audit.
+- GPS/live tracking and rider safety flows: device/runtime evidence pending.
+- Ride completion, payment confirmation, QR display, subscription and invoice flows: end-to-end evidence pending.
+- Food/store order lifecycle (partner registration → catalogue → customer view → cart → order → fulfillment): end-to-end evidence pending.
+- Cashfree/payment webhook, settlement, subscription accounting and reconciliation: verification pending.
+- Release build/signing/AAB, Play Console listing, Data Safety, privacy policy and account deletion compliance: release evidence pending.
+
+### P2 — CI/audit-quality improvements recorded
+- Lockfile not found at the checked common paths; CI uses `npm install` instead of lockfile-backed `npm ci`.
+- CI visibly runs inline JS checks, security/isolation source contract, and local-only Playwright; separate unit/core/typecheck/build scripts are not visibly integrated.
+- CI does not visibly report commit SHA, tool/browser versions, test counts, retries/flaky status, or artifact presence in a Job Summary.
+- Report upload tolerates missing files; retention is 7 days.
+- Unexpected blocked-origin attempts are recorded by the fixture but not asserted empty by reviewed specs.
+- Actions are major-tag referenced; immutable SHA pinning is a recorded recommendation.
+
+### Priority execution order (recommended)
+1. Preserve local-only test boundary; add explicit no-external-attempt assertion.
+2. Implement and review a test-only synthetic A/B session fixture; then execute deterministic stale-response, restore, logout, role-gate and parallel-context tests.
+3. Integrate confirmed unit/core/typecheck/runtime-build scripts into CI after checking their tests/configs.
+4. Establish lockfile-backed dependency install and environment-version/test/artifact summary.
+5. Validate backend authorization/storage policies with isolated staging fixtures.
+6. Complete OTP, push, GPS/live tracking, ride/order/payment workflows on test devices/staging.
+7. Complete store release build, signing, privacy/Data Safety/account deletion and Play Console checks.
+
+### Evidence status
+- Static QA/documentation checkpoints: recorded.
+- Runtime test execution in this consolidation: **not performed**.
+- Live CI run/artifact status: unavailable through the attempted connector endpoint; not certified.
+- Production changes: **none**.
+- Play Store release readiness: **BLOCKED** pending above evidence.
+
+**Status:** Consolidation documentation only; no app, workflow, SQL, Firebase, Supabase, backend, production or dependency changes. No tests or CI run.
