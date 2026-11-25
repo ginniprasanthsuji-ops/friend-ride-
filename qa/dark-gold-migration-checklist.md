@@ -163,3 +163,13 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Queried combined status and workflow runs for commit `c12767bc6699d56bbc6fae97462bc69903d5aa5f`; both returned no records. CI execution remains UNVERIFIED; no PASS claim.
 - Main/production was not changed. No merge or deployment performed.
 - Next: run current QA-branch workflow on the latest branch head, fix any failures, then continue grouped role/route checks and release-gate integration/security review.
+
+
+## Phase 13 continuation — role-route test scope review (2026-11-26)
+
+- Reviewed the protected-route Playwright test source in detail. It uses synthetic QA identities and directly sets `currentUser`, `currentProfile`, and `selectedRole` in the browser; therefore it validates frontend route guards under mocked role state, not Supabase authentication, database RLS, or backend authorization.
+- Role coverage: customer/driver/partner/admin dashboard destinations; customer/driver/partner denial of admin routes; customer/driver denial of partner routes; partner/admin access to partner routes; partner/admin coupon-review access.
+- Admin route inventory in this test: 15 routes. Partner route inventory: 10 routes. These direct `showPage()` activation checks are useful UI-guard regression coverage, but do not establish server-side security.
+- Security verification gap: backend/RLS tests are still required for cross-user data isolation and role permission enforcement. Actual sign-in/session behavior and authenticated Supabase-user tests remain needed.
+- Status: STATIC REVIEW COMPLETE; browser execution and backend authorization evidence UNVERIFIED. No production/Main changes, merge, or deployment.
+- Next audit focus: map each role to backend/RLS-sensitive datasets and identify concrete tests for ride/booking contact privacy, driver/partner records, orders/catalogue, and admin-only approval data.
