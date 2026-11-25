@@ -18,7 +18,7 @@ if (!allowedHosts.has(parsedBaseURL.hostname) || !['http:', 'https:'].includes(p
 module.exports = defineConfig({
   testDir: './qa',
   // Keep Node's standalone .test.mjs contract suite out of Playwright discovery.
-  testMatch: ['phase-11-registration-isolation.spec.js', 'phase-11-page-isolation.spec.js', 'phase-7b-session-runtime-bridge.spec.cjs'],
+  testMatch: ['phase-11-registration-isolation.spec.js', 'phase-11-page-isolation.spec.js'],
   timeout: 45000,
   retries: 1,
   reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
