@@ -920,7 +920,31 @@ async function reviewDriverApplication(driverId,decision){
  }catch(e){const el=$('driverApprovalMessage');if(el)el.textContent='Approval update failed: '+e.message;alert('Driver approval update failed: '+e.message);}
 }
 function frCycleCalculatePrice(){const input=document.getElementById('cycleDistanceInput'),out=document.getElementById('cyclePriceResult');if(!input||!out)return;const km=Number(input.value);if(!Number.isFinite(km)||km<=0){out.textContent='Valid delivery distance enter చేయండి.';return;}const charge=km<=1?25:km<=2?30:km<=3?35:40;out.innerHTML='Estimated Cycle Delivery Charge: <b>₹'+charge+'</b> ('+km.toFixed(1)+' KM)';}
-function showPage(id){if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}if(id==='laundryServices'&&currentProfile?.role==='admin'){const p=document.getElementById('laundryAdminPanel');if(p)p.classList.remove('hide');}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='partnerApprovals')loadPartnerApprovals();if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();}
+function showPage(id){
+ const adminRoutes=['users','paymentApprovals','platformBusinessSettings','driverApprovals','driverDocumentReviews','partnerApprovals','adminOrders','reports','settings','referralApprovals','cashRewardApprovals','crmDashboard','frReferralAdmin','frStoreReviewAdmin','frCampaignAdmin'];
+ const partnerRoutes=['partnerOrders','catalogue','products','inventory','subscription','partnerReports','partnerPaymentSettings','gst'];
+ const role=String(currentProfile?.role||'').toLowerCase();
+ const isAdminRoute=adminRoutes.includes(id);
+ const isPartnerRoute=partnerRoutes.includes(id);
+ const isPartnerAdminShared=id==='frDirectCouponReview';
+ if(isAdminRoute&&(!currentUser||role!=='admin')){showMessage('Admin account అవసరం.');return;}
+ if(isPartnerRoute&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner account అవసరం.');return;}
+ if(isPartnerAdminShared&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner లేదా Admin account అవసరం.');return;}
+ if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}
+ if(id==='laundryServices'&&currentProfile?.role==='admin'){const p=document.getElementById('laundryAdminPanel');if(p)p.classList.remove('hide');}
+ document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));
+ document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ window.scrollTo({top:0,behavior:'smooth'});
+ if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);
+ if(id==='tracking')setTimeout(initTrackingMap,100);
+ if(id==='partnerApprovals')loadPartnerApprovals();
+ if(id==='driverApprovals')loadDriverApprovals();
+ if(id==='driverDocumentReviews')loadDriverDocumentReviews();
+ if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();
+ if(id==='partnerOrders')loadPartnerOrders();
+ if(id==='platformBusinessSettings'||id==='gst')loadPlatformDetails().catch(()=>{});
+ if(window.frRefreshDiagnosticsVisibility)window.frRefreshDiagnosticsVisibility();
+}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){
  const allowed=['customer','driver','partner','admin'];
