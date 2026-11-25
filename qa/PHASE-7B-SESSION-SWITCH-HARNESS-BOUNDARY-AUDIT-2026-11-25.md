@@ -785,3 +785,31 @@ Extend the workflow with a staged QA pipeline after confirming test files and lo
 5. Clearly separate source checks, browser tests, backend/device tests, and release evidence in the CI summary.
 
 **Status:** Static audit only. No workflow, package, app, SQL, backend, Firebase, Supabase, or production changes; no dependencies installed and no tests/CI run.
+
+
+## Follow-up — CI Test Reporting & Artifact Traceability Audit
+
+**Reviewed:** branch-current regression workflow and Playwright configuration. Attempt to retrieve live workflow-run listing was rejected by the GitHub connector's endpoint allowlist; this checkpoint therefore stays source-only.
+
+### Confirmed configuration
+- Playwright uses list reporter and HTML reporter at `playwright-report`; `open: 'never'` prevents automatic browser opening.
+- Traces are retained on failure (`retain-on-failure`).
+- Workflow upload runs with `if: always()`, uploads `playwright-report/` and `test-results/`, names artifact `friend-ride-regression-report`, and sets 7-day retention.
+- `if-no-files-found: ignore` means missing report files do not fail the upload step or visibly warn in the reviewed configuration.
+- Workflow has no explicit step writing a GitHub Job Summary with commit SHA, run identity, test counts, failed tests, environment versions, or artifact presence.
+- Playwright retries are set to 1; the reviewed workflow does not visibly summarize retries/flaky test outcomes.
+
+### Evidence gaps
+- **P2 artifact assurance:** Report files can be missing without a visible upload-step failure/warning.
+- **P2 traceability:** No structured summary ties test evidence to commit SHA, run number, runner/tool versions and result counts.
+- **P2 retention:** Seven-day artifact retention may be inadequate for release evidence or later investigation.
+- **P1 live evidence limitation:** Live workflow-run/artifact status could not be retrieved through the available GitHub connector endpoint; no claim is made about recent run success/failure or actual artifact existence.
+
+### Recommendations (not implemented)
+1. Write a GitHub Job Summary with commit SHA, workflow/run URL and ID, Node/npm/Playwright/browser versions, categories run, pass/fail/skip counts, retry/flaky notes, and artifact status.
+2. Change missing-artifact handling from silent ignore to visible warning or failure according to the intended evidence gate.
+3. Consider longer artifact retention for release candidates; ensure traces/screenshots are reviewed for sensitive data before upload.
+4. Distinguish source-contract results from browser-runtime results and external backend/device validation.
+5. Preserve report artifact links in the release evidence checklist.
+
+**Status:** Static audit only; live workflow run and artifact state unavailable through the attempted connector request. No code/workflow/app/SQL/backend/production changes and no tests or CI run.
