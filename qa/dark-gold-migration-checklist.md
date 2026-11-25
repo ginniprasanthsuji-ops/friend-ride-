@@ -471,3 +471,17 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] QA apply and auth-role regression tests remain pending.
 
 **Phase 13B progress: 35%** (lifecycle/contact RPC source review completed; risks and test gaps documented; no SQL applied).
+
+
+### Phase 13B continuation — exact live policy inventory and risk matrix (2026-11-26)
+- [x] Re-read live QA `pg_policies` for all four Shared Ride tables (read-only).
+- [x] Verified `fr_shared_rides`: authenticated SELECT live/full-or-driver-or-passenger; INSERT driver_id=self; UPDATE USING and WITH CHECK driver_id=self.
+- [x] Verified `fr_shared_ride_bookings`: authenticated participant SELECT; UPDATE USING/WITH CHECK participant identity (passenger or ride driver) with no column/status transition restrictions in policy; INSERT passenger_id=self.
+- [x] Verified `fr_shared_ride_events`: participant SELECT only.
+- [x] Verified `fr_shared_ride_payments`: booking participant SELECT only.
+- [x] Risk matrix recorded: direct booking UPDATE can potentially mutate sensitive booking fields/status; direct booking INSERT bypasses RPC role/validation; direct ride INSERT/UPDATE bypasses approved-driver checks/validated RPC. These are policy/source risks, not successful exploit tests.
+- [ ] Stage 1 draft remains pending exact-grant capture, SQL dependency review, rollback preparation and user approval.
+- [ ] Stage 2 RPC-only writes: confirm UI call paths and column-level read consumers, design atomic seat/status constraints, then draft exact revokes/grants.
+- [ ] QA behavior tests and controlled application remain pending.
+
+**Phase 13B progress: 40%** (live policies re-verified and risk matrix completed; no mutation).
