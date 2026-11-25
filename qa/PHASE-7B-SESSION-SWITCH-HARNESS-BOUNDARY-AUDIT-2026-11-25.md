@@ -483,3 +483,28 @@ Read-only review of `qa/read-only-regression.sql` and repository searches for st
 7. Confirm private bucket URLs are not publicly accessible and signed URLs expire.
 
 **Status:** Static SQL/search review only. No storage policies, deployed buckets, files, Supabase runtime, or browser/device access were tested; no production edits or SQL executed.
+
+
+## Follow-up — Tier-A local-only QA fixture boundary and blocked-origin assertions
+
+Read-only review of `qa/local-only-fixture.cjs`, Phase 11 page/registration browser specs, security contract test, and `scripts/qa-local-preflight.cjs`.
+
+### Static observations
+- Fixture derives `localOrigin` from `FRIEND_RIDE_BASE_URL` at module load using `new URL()`; malformed or absent env may throw before a friendly fixture-level message. Preflight handles missing/invalid values separately with exit code 2.
+- Browser fixture routes all requests and allows only configured origin; other origins are recorded in `page.__frBlockedOrigins` and aborted.
+- Reviewed page-isolation and role-registration specs assert UI/page states but do not visibly assert `page.__frBlockedOrigins` is empty.
+- Preflight allows only localhost/loopback and checks GET response, redirect status, and HTML content type; timeout is 4 seconds.
+- Supabase fixture stub covers minimal signOut/from-select-limit/rpc APIs, not auth/session A/B behavior or realtime.
+
+### Risk/evidence gaps
+- **P2 QA boundary evidence gap:** Requests to blocked origins are intercepted, but reviewed specs do not assert the blocked-origin list remained empty; external dependencies could be silently blocked while tests still pass.
+- **P2 fixture usability:** missing/invalid env may fail during fixture import rather than a clear actionable diagnostic, though preflight has explicit validation.
+- **P1 runtime coverage gap:** local-only fixture is not a substitute for session-switch/auth/RLS/realtime tests; it cannot validate server authorization.
+
+### Recommended improvements (not implemented)
+1. Add a per-test teardown/assertion that `page.__frBlockedOrigins` is empty (or explicitly whitelist/document intentional blocked origins and assert expected values).
+2. Validate `FRIEND_RIDE_BASE_URL` at fixture import with a friendly error that matches preflight and allowlist rules.
+3. Add tests proving malformed, absent, non-loopback, and hosted URL targets are blocked before browser/server requests.
+4. Keep A/B session tests in a separate controlled synthetic harness; do not allow live/hosted fallback.
+
+**Status:** Static source review only; browser tests and preflight were not run in this checkpoint. No production changes.
