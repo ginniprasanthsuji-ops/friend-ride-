@@ -216,7 +216,7 @@ test('Phase 7B QA: synthetic session flow harness uses fixture-only identities a
   assert.ok(!sessionFlowHarness.includes('firebase'));
 });
 
-test('Phase 7B QA: synthetic session flow tests cover six auth race and gate scenarios', () => {
+test('Phase 7B QA: synthetic session flow tests cover auth race, gates, and error scenarios', () => {
   const names = [
     'accepts only synthetic fixture identities',
     'late A profile result is rejected after B signs in',
@@ -227,8 +227,10 @@ test('Phase 7B QA: synthetic session flow tests cover six auth race and gate sce
     'late A admin-membership result is rejected after B session switch',
     'unknown role fails closed and clears session',
     'approved driver profile is accepted',
-    'invalid restore resets to anonymous and clears private state'
+    'invalid restore resets to anonymous and clears private state',
+    'profile loader failure fails closed and resets session',
+    'notification loader failure clears private notifications without leaking error data'
   ];
   for (const name of names) assert.ok(sessionFlowTests.includes(name), name);
-  assert.equal((sessionFlowTests.match(/\btest\(/g) || []).length, 6);
+  assert.equal((sessionFlowTests.match(/\\btest\\(/g) || []).length, 12);
 });
