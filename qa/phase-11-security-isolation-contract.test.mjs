@@ -223,7 +223,11 @@ test('Phase 7B QA: synthetic session flow tests cover six auth race and gate sce
     'stale A notifications cannot replace B private notifications',
     'admin role is denied unless membership loader confirms admin',
     'driver access fails closed for unapproved status',
-    'logout invalidates pending profile response and clears all session state'
+    'logout invalidates pending profile response and clears all session state',
+    'late A admin-membership result is rejected after B session switch',
+    'unknown role fails closed and clears session',
+    'approved driver profile is accepted',
+    'invalid restore resets to anonymous and clears private state'
   ];
   for (const name of names) assert.ok(sessionFlowTests.includes(name), name);
   assert.equal((sessionFlowTests.match(/\btest\(/g) || []).length, 6);
