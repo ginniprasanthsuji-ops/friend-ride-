@@ -54,12 +54,14 @@
     try{if(!currentUser)throw Error('Please login as a customer first.');if(!Number.isFinite(amount)||amount<=0)throw Error('Enter a valid cart subtotal.');
       const key='fr-flash-'+currentUser.id+'-'+(crypto.randomUUID?crypto.randomUUID():Date.now().toString());
       const {data,error}=await sb.rpc('fr_store_flash_sale_reserve',{p_campaign_id:id,p_cart_subtotal:amount,p_idempotency_key:key});if(error)throw error;
-      if(out)out.innerHTML='Reservation: <b>'+esc(data.status)+'</b> • Discount: <b>'+money(data.discount_amount)+'</b><br>Code: <b>'+esc(data.redemption_code||'')+'</b><br><button class="btn light" onclick="frCampaignCancel(\''+esc(data.redemption_id)+'\')">Cancel Reservation</button><small>Reservation recorded. Checkout integration is pending; this is not an order/payment confirmation.</small>';
+      if(out)out.innerHTML='Reservation: <b>'+esc(data.status)+'</b> • Discount: <b>'+money(data.discount_amount)+'</b><br>Code: <b>'+esc(data.redemption_code||'')+'</b><br><button class="btn light" onclick="frCampaignCancel(\''+esc(data.redemption_id)+'\')">Cancel Reservation</button><small>Reservation recorded. Not a checkout discount/payment confirmation.</small><div class="field"><label>Order ID to link (same store)</label><input id="frFlashOrder_${esc(data.redemption_id)}" placeholder="FRM order UUID"></div><button class="btn light" onclick="frCampaignAttachOrder('${esc(data.redemption_id)}')">Link reservation to order</button><small id="frFlashLinkStatus_${esc(data.redemption_id)}">Linking only; discount is not applied yet.</small>';
     }catch(e){if(out)out.textContent='Reservation failed: '+(e.message||e);}
   };
   window.frCampaignCancel=async function(redemptionId){
     try{const {data,error}=await sb.rpc('fr_store_flash_sale_cancel_reservation',{p_redemption_id:redemptionId});if(error)throw error;alert('Reservation cancelled.');await window.frCampaignCustomerLoad();}catch(e){alert('Cancel failed: '+(e.message||e));}
   };
+
+ window.frCampaignAttachOrder=async function(redemptionId){try{if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer login required.');const orderId=el('frFlashOrder_'+redemptionId)?.value.trim();if(!orderId)throw Error('Order ID required.');const {data,error}=await sb.rpc('fr_store_flash_sale_attach_order',{p_redemption_id:redemptionId,p_order_id:orderId});if(error)throw error;if(!data?.ok)throw Error(data?.reason||'Link failed');const box=el('frFlashLinkStatus_'+redemptionId);if(box)box.textContent='Linked to order. Discount has not been applied; campaign remains reserved.';}catch(e){const box=el('frFlashLinkStatus_'+redemptionId);if(box)box.textContent='Link failed: '+(e.message||e);}};
   if(typeof window.showPage==='function'){
     const old=window.showPage;
     window.showPage=function(id){const r=old.apply(this,arguments);if(id==='frCampaignAdmin')window.frCampaignAdminLoad();if(id==='offers')window.frCampaignCustomerLoad();return r;};
