@@ -213,3 +213,28 @@ Reviewed the complete `frRideLoadNotifications` function and realtime lifecycle 
 5. Ensure both ride/app notifications remain filtered by the active synthetic user ID.
 
 **Status:** Static audit only. No code changes, runtime tests, database queries, or production network calls performed.
+
+
+## Follow-up — PWA push payload privacy and notification-click URL audit
+
+Reviewed `service-worker.js` read-only.
+
+### Static observations
+- Background FCM handler uses notification/data payload title and body directly when showing a notification.
+- Web Push handler may use raw `data.body`/`data.message` as notification body, and uses payload-provided `icon`, `badge`, `tag`, and `url` values with defaults.
+- Notification click resolves the stored payload URL relative to service-worker scope, focuses/navigates an existing window, or opens a new window. The inspected code does not show an explicit same-origin allowlist check before navigation.
+- Notification bodies can be visible on lock screens; this static review cannot determine whether actual payloads contain sensitive order/customer/ride details.
+
+### Risk candidates
+- **P1 privacy candidate:** Push payloads may include private details in notification body on device lock screen. Payload content and user/device privacy settings are not verified.
+- **P2 navigation candidate:** Payload-supplied notification URL should be constrained to same-origin/approved app routes; static source does not show an explicit allowlist check.
+- **P2 resource metadata candidate:** Payload-controlled icon/badge URLs are used in notification options; runtime origin/asset behavior not verified.
+
+### Recommended tests / safeguards (not implemented)
+1. Synthetic push payload with private-marker text; verify policy-approved notification content avoids exposing sensitive identifiers.
+2. Notification-click tests for same-origin app route, external origin, malformed URL, and javascript-like scheme; reject non-approved destinations.
+3. Assert icon/badge are fixed trusted local assets or approved same-origin URLs.
+4. Check push payload schema and redaction at sender/backend boundary; never use real customer data in tests.
+5. Test both FCM background handler and Web Push handler to ensure duplicate/overlapping payload behavior is intentional.
+
+**Status:** Static review only. No code changes, push sends, real devices, backend inspection, or runtime tests.
