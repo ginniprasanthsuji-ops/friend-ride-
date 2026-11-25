@@ -26,5 +26,5 @@ function rrValidateProfile(){
  if(!/^\d{10}$/.test(phone)){alert('10 digit mobile number నమోదు చేయండి.');return false;}
  if(!bike){alert('Bike registration number నమోదు చేయండి.');return false;}
  if(!rrGuestPhotoFile){alert('Driver photo ఎంచుకోండి.');return false;}
- rrSetStatus('Profile fields validated. Backend save/upload connection is the next integration step.',true);return true;
+ rrSetStatus('Profile validated ✓ OTP అవసరం లేదు. Backend upload/save integration తదుపరి దశ.',true);return true;
 }
