@@ -3,12 +3,12 @@ const { test, expect } = require('@playwright/test');
 const adminRoutes = [
   'users','driverApprovals','driverDocumentReviews','partnerApprovals',
   'adminOrders','referralApprovals','cashRewardApprovals','paymentApprovals',
-  'reports','frReferralAdmin','frStoreReviewAdmin','frDirectCouponReview',
-  'frCampaignAdmin','settings'
+  'reports','frReferralAdmin','frStoreReviewAdmin','frCampaignAdmin','settings',
+  'crmDashboard','adminDashboard'
 ];
 const partnerRoutes = [
   'partnerOrders','partnerPaymentSettings','catalogue','products','inventory',
-  'subscription','referrals','gst','partnerReports'
+  'subscription','referrals','gst','partnerReports','frDirectCouponReview'
 ];
 
 test.describe('Phase 13 protected-route authorization regression', () => {
@@ -21,8 +21,22 @@ test.describe('Phase 13 protected-route authorization regression', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
+  test('dashboard destinations are role-locked on direct showPage calls', async ({ page }) => {
+    const pairs=[['customer','customerDashboard'],['driver','driverDashboard'],['partner','partnerDashboard'],['admin','adminDashboard']];
+    for(const [role,route] of pairs){
+      await page.evaluate(r=>{currentUser={id:'qa-'+r};currentProfile={role:r};selectedRole=r;},role);
+      await page.evaluate(id=>window.showPage(id),route);
+      await expect(page.locator('#'+route)).toHaveClass(/active/);
+      for(const [,other] of pairs.filter(([r])=>r!==role)){
+        await page.evaluate(id=>window.showPage(id),other);
+        await expect(page.locator('#'+other)).not.toHaveClass(/active/);
+      }
+    }
+    expect(await page.evaluate(()=>window.dashboardFor('invalid-role'))).toBeNull();
+  });
+
   test('customer cannot activate admin-only route by direct showPage call', async ({ page }) => {
-    await page.evaluate(() => { window.currentUser = { id: 'qa-customer' }; window.currentProfile = { role: 'customer' }; });
+    await page.evaluate(() => { currentUser = { id: 'qa-customer' }; currentProfile = { role: 'customer' }; selectedRole='customer'; });
     for (const route of adminRoutes) {
       await page.evaluate(id => window.showPage(id), route);
       await expect(page.locator('#' + route)).not.toHaveClass(/active/, { message: 'Customer direct access blocked: ' + route });
@@ -30,7 +44,7 @@ test.describe('Phase 13 protected-route authorization regression', () => {
   });
 
   test('driver cannot activate admin-only route by direct showPage call', async ({ page }) => {
-    await page.evaluate(() => { window.currentUser = { id: 'qa-driver' }; window.currentProfile = { role: 'driver' }; });
+    await page.evaluate(() => { currentUser = { id: 'qa-driver' }; currentProfile = { role: 'driver' }; selectedRole='driver'; });
     for (const route of adminRoutes) {
       await page.evaluate(id => window.showPage(id), route);
       await expect(page.locator('#' + route)).not.toHaveClass(/active/);
@@ -38,7 +52,7 @@ test.describe('Phase 13 protected-route authorization regression', () => {
   });
 
   test('partner cannot activate admin-only route by direct showPage call', async ({ page }) => {
-    await page.evaluate(() => { window.currentUser = { id: 'qa-partner' }; window.currentProfile = { role: 'partner' }; });
+    await page.evaluate(() => { currentUser = { id: 'qa-partner' }; currentProfile = { role: 'partner' }; selectedRole='partner'; });
     for (const route of adminRoutes) {
       await page.evaluate(id => window.showPage(id), route);
       await expect(page.locator('#' + route)).not.toHaveClass(/active/);
@@ -46,7 +60,7 @@ test.describe('Phase 13 protected-route authorization regression', () => {
   });
 
   test('customer cannot activate partner-only route by direct showPage call', async ({ page }) => {
-    await page.evaluate(() => { window.currentUser = { id: 'qa-customer' }; window.currentProfile = { role: 'customer' }; });
+    await page.evaluate(() => { currentUser = { id: 'qa-customer' }; currentProfile = { role: 'customer' }; selectedRole='customer'; });
     for (const route of partnerRoutes) {
       await page.evaluate(id => window.showPage(id), route);
       await expect(page.locator('#' + route)).not.toHaveClass(/active/);
@@ -54,15 +68,15 @@ test.describe('Phase 13 protected-route authorization regression', () => {
   });
 
   test('driver cannot activate partner-only route by direct showPage call', async ({ page }) => {
-    await page.evaluate(() => { window.currentUser = { id: 'qa-driver' }; window.currentProfile = { role: 'driver' }; });
+    await page.evaluate(() => { currentUser = { id: 'qa-driver' }; currentProfile = { role: 'driver' }; selectedRole='driver'; });
     for (const route of partnerRoutes) {
       await page.evaluate(id => window.showPage(id), route);
       await expect(page.locator('#' + route)).not.toHaveClass(/active/);
     }
   });
 
-  test('customer and driver cannot access partner/admin coupon review, partner and admin can', async ({ page }) => {\n    for (const role of ['customer','driver']) {\n      await page.evaluate(r => { window.currentUser={id:'qa-'+r}; window.currentProfile={role:r}; }, role);\n      await page.evaluate(() => window.showPage('frDirectCouponReview'));\n      await expect(page.locator('#frDirectCouponReview')).not.toHaveClass(/active/);\n    }\n    for (const role of ['partner','admin']) {\n      await page.evaluate(r => { window.currentUser={id:'qa-'+r}; window.currentProfile={role:r}; }, role);\n      await page.evaluate(() => window.showPage('frDirectCouponReview'));\n      await expect(page.locator('#frDirectCouponReview')).toHaveClass(/active/);\n    }\n  });\n\n  test('admin can access admin routes and partner routes where the existing exception is intended', async ({ page }) => {
-    await page.evaluate(() => { window.currentUser = { id: 'qa-admin' }; window.currentProfile = { role: 'admin' }; });
+  test('customer and driver cannot access partner/admin coupon review, partner and admin can', async ({ page }) => {\n    for (const role of ['customer','driver']) {\n      await page.evaluate(r => { currentUser={id:'qa-'+r}; currentProfile={role:r}; selectedRole=r; }, role);\n      await page.evaluate(() => window.showPage('frDirectCouponReview'));\n      await expect(page.locator('#frDirectCouponReview')).not.toHaveClass(/active/);\n    }\n    for (const role of ['partner','admin']) {\n      await page.evaluate(r => { currentUser={id:'qa-'+r}; currentProfile={role:r}; selectedRole=r; }, role);\n      await page.evaluate(() => window.showPage('frDirectCouponReview'));\n      await expect(page.locator('#frDirectCouponReview')).toHaveClass(/active/);\n    }\n  });\n\n  test('admin can access admin routes and partner routes where the existing exception is intended', async ({ page }) => {
+    await page.evaluate(() => { currentUser = { id: 'qa-admin' }; currentProfile = { role: 'admin' }; selectedRole='admin'; });
     for (const route of [...adminRoutes, ...partnerRoutes]) {
       await page.evaluate(id => window.showPage(id), route);
       await expect(page.locator('#' + route)).toHaveClass(/active/);

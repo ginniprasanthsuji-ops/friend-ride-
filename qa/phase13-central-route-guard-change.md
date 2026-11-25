@@ -20,3 +20,11 @@ QA branch only. Main/production untouched. No tests executed (no run evidence ob
 
 ## Review cautions
 The allowlists are based on source navigation definitions. Confirm the role and intended access of each destination, especially route names and any route-specific loader/backend permission before release. UI guard does not replace backend authorization.
+
+
+## Follow-up hardening addendum (same QA branch)
+- Added direct route checks for all four role dashboards; dashboard role is exact (Admin cannot silently open Partner Dashboard, and unknown roles fail closed).
+- Added Partner-only `referrals` route and moved `partnerPaymentSettings` out of the Admin-only list so Partner/Admin can open it.
+- Admin membership-derived role is reflected in the profile used by UI guards; invalid role values fail closed; `dashboardFor` returns null for unknown roles.
+- Added direct dashboard-route matrix coverage and corrected Playwright fixtures to assign lexical page role variables rather than `window` properties.
+- Local external JavaScript assets are now syntax-checked in CI alongside inline scripts.

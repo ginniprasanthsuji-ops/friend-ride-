@@ -26,5 +26,14 @@ const checks=[
  ['Customer active ride contact rendering','frRenderCustomerRideDriverAndPayment(active)']
 ];
 for(const [label,token] of checks){if(html.includes(token))console.log('PASS '+label);else{failed=true;console.error('FAIL '+label);}}
+
+// Parse-check local external scripts so boot-time syntax errors are caught before browser UI tests.
+const localScripts=new Set(['service-worker.js','learn-teach.js',...fs.readdirSync('assets').filter(file=>file.endsWith('.js')).map(file=>'assets/'+file)]);
+for(const file of localScripts){
+ if(!fs.existsSync(file)){failed=true;console.error('FAIL missing local script '+file);continue;}
+ try{new vm.Script(fs.readFileSync(file,'utf8'),{filename:file});console.log('PASS external script '+file);}
+ catch(e){failed=true;console.error('FAIL external script '+file+': '+(e.stack||e.message));}
+}
+
 if(failed)process.exit(1);
 console.log(`Checked ${blocks.length} inline scripts.`);

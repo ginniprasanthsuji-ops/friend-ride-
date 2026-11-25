@@ -858,22 +858,20 @@ async function savePartnerPaymentSettings(){
 function menuGo(id){
  closeDrawer();
  const dashboardRoles={customerDashboard:'customer',driverDashboard:'driver',partnerDashboard:'partner',adminDashboard:'admin'};
- const adminPages=['users','paymentApprovals','platformBusinessSettings','partnerPaymentSettings','driverApprovals','partnerApprovals','adminOrders','reports','settings','referralApprovals','cashRewardApprovals','crmDashboard'];
- const partnerPages=['partnerOrders','catalogue','products','inventory','subscription','referrals','partnerReports','partnerPaymentSettings','gst'];
- let requiredRole=dashboardRoles[id]||(adminPages.includes(id)?'admin':partnerPages.includes(id)?'partner':null);
+ const adminPages=['users','paymentApprovals','platformBusinessSettings','driverApprovals','driverDocumentReviews','partnerApprovals','adminOrders','reports','settings','referralApprovals','cashRewardApprovals','crmDashboard','adminDashboard','frReferralAdmin','frStoreReviewAdmin','frCampaignAdmin'];
+ const partnerPages=['partnerOrders','catalogue','products','inventory','subscription','referrals','partnerReports','partnerPaymentSettings','gst','frDirectCouponReview'];
+ const requiredRole=dashboardRoles[id]||(adminPages.includes(id)?'admin':partnerPages.includes(id)?'partner':null);
  if(!currentUser){
    const loginRole=requiredRole||'customer';
    afterLoginAction=()=>{const actual=String(currentProfile?.role||'').toLowerCase();if(requiredRole&&actual!==requiredRole&&!(requiredRole==='partner'&&actual==='admin')){showMessage('ఈ విభాగానికి '+requiredRole.toUpperCase()+' account అవసరం. మీ account: '+(actual||'unknown').toUpperCase());return;}showPage(id);};
    openAuth('login',loginRole);
    return;
  }
- const actualRole=String(currentProfile?.role||selectedRole||'').toLowerCase();
+ const actualRole=String(currentProfile?.role||'').toLowerCase();
  if(requiredRole&&actualRole!==requiredRole&&!(requiredRole==='partner'&&actualRole==='admin')){
    alert('ఈ Dashboardకు '+requiredRole.toUpperCase()+' account అవసరం. ప్రస్తుతం '+actualRole.toUpperCase()+' account login అయింది.');
    return;
  }
- if(id==='customerDashboard'&&actualRole!=='customer'){alert('Customer account మాత్రమే ఈ విభాగాన్ని ఉపయోగించగలదు.');return;}
- if(id==='driverDashboard'&&actualRole!=='driver'){alert('Driver account మాత్రమే ఈ విభాగాన్ని ఉపయోగించగలదు.');return;}
  showPage(id);
 }
 function useHomeLocation(){const el=document.getElementById('homeLocationText');if(!navigator.geolocation){el.textContent='GPS not supported';return;}el.textContent='Detecting your location…';navigator.geolocation.getCurrentPosition(async pos=>{const {latitude:lat,longitude:lon}=pos.coords;el.textContent=lat.toFixed(4)+', '+lon.toFixed(4);try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon);const d=await r.json();if(d.display_name)el.textContent=d.display_name;}catch(e){}},e=>{el.textContent='Location permission ఇవ్వండి';alert('Location permission allow చేయండి.');},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});}
@@ -921,12 +919,15 @@ async function reviewDriverApplication(driverId,decision){
 }
 function frCycleCalculatePrice(){const input=document.getElementById('cycleDistanceInput'),out=document.getElementById('cyclePriceResult');if(!input||!out)return;const km=Number(input.value);if(!Number.isFinite(km)||km<=0){out.textContent='Valid delivery distance enter చేయండి.';return;}const charge=km<=1?25:km<=2?30:km<=3?35:40;out.innerHTML='Estimated Cycle Delivery Charge: <b>₹'+charge+'</b> ('+km.toFixed(1)+' KM)';}
 function showPage(id){
- const adminRoutes=['users','paymentApprovals','platformBusinessSettings','driverApprovals','driverDocumentReviews','partnerApprovals','adminOrders','reports','settings','referralApprovals','cashRewardApprovals','crmDashboard','frReferralAdmin','frStoreReviewAdmin','frCampaignAdmin'];
- const partnerRoutes=['partnerOrders','catalogue','products','inventory','subscription','partnerReports','partnerPaymentSettings','gst'];
+ const adminRoutes=['users','paymentApprovals','platformBusinessSettings','driverApprovals','driverDocumentReviews','partnerApprovals','adminOrders','reports','settings','referralApprovals','cashRewardApprovals','crmDashboard','adminDashboard','frReferralAdmin','frStoreReviewAdmin','frCampaignAdmin'];
+ const partnerRoutes=['partnerOrders','catalogue','products','inventory','subscription','partnerReports','partnerPaymentSettings','gst','referrals'];
+ const dashboardRoles={customerDashboard:'customer',driverDashboard:'driver',partnerDashboard:'partner',adminDashboard:'admin'};
  const role=String(currentProfile?.role||'').toLowerCase();
+ const dashboardRole=dashboardRoles[id];
  const isAdminRoute=adminRoutes.includes(id);
  const isPartnerRoute=partnerRoutes.includes(id);
  const isPartnerAdminShared=id==='frDirectCouponReview';
+ if(dashboardRole&&(!currentUser||role!==dashboardRole)){showMessage(dashboardRole.toUpperCase()+' account అవసరం.');return;}
  if(isAdminRoute&&(!currentUser||role!=='admin')){showMessage('Admin account అవసరం.');return;}
  if(isPartnerRoute&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner account అవసరం.');return;}
  if(isPartnerAdminShared&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner లేదా Admin account అవసరం.');return;}
@@ -1009,7 +1010,7 @@ function switchAuth(mode){
  const verifyButton=$('loginForm')?.querySelector('button[onclick="verifyLoginOtp()"]');
  if(verifyButton)verifyButton.textContent='Verify '+roleTitle+' OTP & Continue';
 }
-function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||'customerDashboard';}
+function dashboardFor(r){return ({customer:'customerDashboard',driver:'driverDashboard',partner:'partnerDashboard',admin:'adminDashboard'})[r]||null;}
 async function register(){return sendRegistrationOtp();}
 /* Legacy OTP placeholder removed; use the APITXT integration handler. */
 /* Legacy OTP placeholder removed; use the APITXT integration handler. */
@@ -1031,8 +1032,9 @@ async function acceptSession(user){
  const adminCheck=await sb.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();
  if(adminCheck.data?.user_id===user.id)dbRole='admin';
  else if(dbRole==='admin')throw new Error('ఈ ఖాతాకు Admin permission లేదు.');
- if(!['customer','driver','partner','admin'].includes(dbRole))dbRole='customer';
+ if(!['customer','driver','partner','admin'].includes(dbRole))throw new Error('Unsupported account role. Admin review required.');
  if(selectedRole!==dbRole)throw new Error('మీరు ఎంచుకున్న account type ఈ ఖాతాతో సరిపోలడం లేదు.');
+ currentProfile={...(profile||{}),id:user.id,role:dbRole};
  try{localStorage.setItem('friendride_selected_role',dbRole);}catch(_){}
  if(dbRole==='driver'){const approval=String(profile?.driver_approval_status||user.user_metadata?.driver_approval_status||'pending').toLowerCase();if(!['approved','verified','active'].includes(approval))throw new Error('Driver account Admin approval కోసం Pendingలో ఉంది.');$('driverApproval').textContent='Approved';$('driverApproval').className='status ok';$('onlineBtn').disabled=false;}
  selectedRole=dbRole;$('profileInfo').innerHTML='<b>'+safe(profile?.full_name||profile?.name||user.user_metadata?.full_name||'User')+'</b><p>Mobile: '+safe(user.phone||'')+'</p><p>Account: '+safe(dbRole.toUpperCase())+'</p><p>'+safe(profile?.address||user.user_metadata?.address||'')+'</p>';
