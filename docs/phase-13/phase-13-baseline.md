@@ -189,3 +189,10 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Credit action confirms with Admin, calls `fr_customer_referral_reward_credit`, handles duplicate prevention, and clearly states this is ledger record only—not wallet payout.
 - Static check: credit UI/RPC call present. Live DB verification: reward ledger RLS enabled; unique referral index; RPC anon execute=false and authenticated execute=true. Browser interaction test not run.
 - UI commit `61d2c368`; documentation checkpoint follows.
+
+## Phase 13 Task 11 — Flash Sale checkout integration audit (blocked safely)
+- Audited live `fr_customer_place_multi_market_order`: it creates `fr_market_orders` and item rows, but sets item unit/partner quote fields NULL and order quote_subtotal/delivery_fee/total fields are not computed in the RPC. Therefore it currently has no trusted final pricing source to calculate an order discount against.
+- Schema confirms paise fields exist on `fr_market_orders` and `fr_market_order_items`; payment fields include status, expiry, confirmation timestamp/reference. However the checkout RPC does not accept campaign/redemption, does not calculate quote or totals, and does not set payment state.
+- **No unsafe checkout mutation made.** Applying a Flash Sale now would risk discounting a zero/untrusted subtotal or modifying payment totals without the quote/payment flow.
+- Next prerequisite: audit and identify the existing partner quote submission/acceptance and payment-confirmation RPC/UI. Build a server-authoritative quote+campaign discount path only after mapping that workflow. Current reservation-to-order link remains informational/reserved.
+- Verified schema/function inspection only; no browser or real payment tests.
