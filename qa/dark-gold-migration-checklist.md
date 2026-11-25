@@ -694,3 +694,13 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Reconcile deployed QA client source/build; execute negative role/status tests; then review ACL draft/rollback.
 
 **Phase 13B remains 70%; no SQL applied.**
+
+
+### Shared Ride constraint / trigger dependency audit
+- [x] Catalog review: no non-internal triggers found in Shared Ride tables.
+- [x] Reviewed live constraints and booking uniqueness; `(ride_id, passenger_id)` may block rebooking after cancellation/refund.
+- [x] No cancellation/refund RPC found in the current deployed catalog; seat restoration path remains unmapped.
+- [x] Recorded remediation implications in `qa/phase13b-shared-ride-constraint-trigger-dependency-audit.md`.
+- [ ] Map all status mutation paths and agree rebooking/cancel-refund behavior before ACL remediation.
+
+**Phase 13B remains 70%; no SQL applied.**
