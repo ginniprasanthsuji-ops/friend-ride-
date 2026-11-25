@@ -116,6 +116,40 @@ begin
 end;
 $function$;
 
+-- Passenger cancellation releases reserved seats before departure; only pending/confirmed bookings may cancel.
+create or replace function public.fr_shared_ride_cancel_booking(p_booking_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare v_booking public.fr_shared_ride_bookings%rowtype; v_ride public.fr_shared_rides%rowtype;
+begin
+  if auth.uid() is null then raise exception 'Login required'; end if;
+  select * into v_booking from public.fr_shared_ride_bookings b
+  where b.id=p_booking_id and b.passenger_id=auth.uid() for update;
+  if not found then raise exception 'Passenger booking not found'; end if;
+  select * into v_ride from public.fr_shared_rides r where r.id=v_booking.ride_id for update;
+  if not found then raise exception 'Ride not found'; end if;
+  if v_ride.status not in ('live','full') or v_ride.departure_at<=now() then
+    raise exception 'Booking cancellation is closed for this ride';
+  end if;
+  if v_booking.status not in ('booking_pending','confirmed') then
+    raise exception 'Booking is not cancellable';
+  end if;
+  update public.fr_shared_ride_bookings set status='cancelled',updated_at=now()
+  where id=p_booking_id and status in ('booking_pending','confirmed');
+  update public.fr_shared_rides
+  set booked_seats=greatest(0,booked_seats-v_booking.seats_booked),
+      status=case when status='full' then 'live' else status end,
+      updated_at=now()
+  where id=v_booking.ride_id;
+  insert into public.fr_shared_ride_events(ride_id,booking_id,actor_id,event_type,details)
+  values(v_booking.ride_id,p_booking_id,auth.uid(),'booking_cancelled',jsonb_build_object('released_seats',v_booking.seats_booked));
+  return true;
+end;
+$function$;
+
 -- Contact disclosure is per booking and only to its confirmed passenger/driver.
 -- It returns the counterpart's phone, never all passengers on the ride.
 create or replace function public.fr_shared_ride_get_booking_contacts(p_booking_id uuid)
@@ -127,10 +161,11 @@ as $function$
 declare v_booking public.fr_shared_ride_bookings%rowtype; v_driver_id uuid; v_uid uuid:=auth.uid();
 begin
   if v_uid is null then raise exception 'Login required'; end if;
-  select * into v_booking from public.fr_shared_ride_bookings b where b.id=p_booking_id;
+  select * into v_booking from public.fr_shared_ride_bookings b where b.id=p_booking_id for share;
   if not found then raise exception 'Booking not found'; end if;
   select r.driver_id into v_driver_id from public.fr_shared_rides r where r.id=v_booking.ride_id;
   if not found then raise exception 'Ride not found'; end if;
+  if not exists(select 1 from public.profiles p where p.id=v_driver_id and p.role='driver' and p.driver_approval_status='approved') then raise exception 'Assigned driver is not approved'; end if;
   if v_booking.status not in ('confirmed','boarding','in_progress') then
     raise exception 'Contact details are available only for a confirmed active booking';
   end if;
@@ -153,11 +188,13 @@ $function$;
 -- Explicit RPC execution grants; no anonymous/public invocation.
 revoke all on function public.fr_shared_ride_create(text,text,text,integer,numeric,timestamptz,timestamptz,double precision,double precision,double precision,double precision) from public,anon;
 revoke all on function public.fr_shared_ride_book_seats(uuid,integer,text,text) from public,anon;
+revoke all on function public.fr_shared_ride_cancel_booking(uuid) from public,anon;
 revoke all on function public.fr_shared_ride_confirm_booking(uuid) from public,anon;
 revoke all on function public.fr_shared_ride_get_booking_contacts(uuid) from public,anon;
 revoke all on function public.fr_shared_ride_is_passenger(uuid) from public,anon;
 grant execute on function public.fr_shared_ride_create(text,text,text,integer,numeric,timestamptz,timestamptz,double precision,double precision,double precision,double precision) to authenticated;
 grant execute on function public.fr_shared_ride_book_seats(uuid,integer,text,text) to authenticated;
+grant execute on function public.fr_shared_ride_cancel_booking(uuid) to authenticated;
 grant execute on function public.fr_shared_ride_confirm_booking(uuid) to authenticated;
 grant execute on function public.fr_shared_ride_get_booking_contacts(uuid) to authenticated;
 grant execute on function public.fr_shared_ride_is_passenger(uuid) to authenticated;
