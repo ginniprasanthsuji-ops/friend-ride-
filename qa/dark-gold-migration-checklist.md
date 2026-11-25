@@ -633,3 +633,13 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Inspect PUBLIC/inherited/column grants, views, RPC write paths and app dependencies; validate rollback and test before approval/application.
 
 **Phase 13B remains 70%**; audit/draft only, no SQL executed against tables.
+
+
+### Phase 13B continuation — PUBLIC/column grants/views audit
+- [x] Read-only summary captured all four Shared Ride table grants for anon/authenticated; no PUBLIC grantee rows appeared in queried catalog result (effective inheritance still needs role-membership review).
+- [x] Column-level grant rows captured: bookings anon 52/auth 26; events 28/28; payments 48/48; rides 68/34.
+- [x] No public schema views matching shared-ride naming pattern found.
+- [x] Findings saved in `qa/phase13b-shared-ride-public-column-grant-view-audit.md`.
+- [ ] Review inherited role grants, effective privileges, app column selection/contact exposure, event/payment RPC dependency, then propose least-privilege ACL and rollback/test plan.
+
+**Phase 13B remains 70%**; read-only catalog audit, no remediation executed.
