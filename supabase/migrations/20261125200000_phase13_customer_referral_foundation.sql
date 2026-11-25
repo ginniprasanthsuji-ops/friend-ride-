@@ -34,16 +34,18 @@ drop policy if exists fr_customer_referrals_participant_read on public.fr_custom
 create policy fr_customer_referrals_participant_read on public.fr_customer_referrals for select to authenticated using(referrer_customer_id=auth.uid() or referred_customer_id=auth.uid() or public.is_friend_ride_admin());
 drop policy if exists fr_customer_referrals_admin_all on public.fr_customer_referrals;
 create policy fr_customer_referrals_admin_all on public.fr_customer_referrals for all to authenticated using(public.is_friend_ride_admin()) with check(public.is_friend_ride_admin());
+grant select on public.fr_customer_referral_codes,public.fr_customer_referrals to authenticated;
+revoke insert,update,delete on public.fr_customer_referral_codes,public.fr_customer_referrals from anon,authenticated;
 create or replace function public.fr_customer_referral_get_or_create_code()
-returns text language plpgsql security definer set search_path=public as $$
+returns text language plpgsql security definer set search_path='' as $$
 declare v_uid uuid:=auth.uid(); v_role text; v_code text;
 begin
  if v_uid is null then raise exception 'Authentication required'; end if;
- select role into v_role from public.profiles where id=v_uid;
+ select p.role into v_role from public.profiles p where p.id=v_uid;
  if lower(coalesce(v_role,''))<>'customer' then raise exception 'Customer account required'; end if;
- select referral_code into v_code from public.fr_customer_referral_codes where customer_id=v_uid;
+ select c.referral_code into v_code from public.fr_customer_referral_codes c where c.customer_id=v_uid;
  if v_code is not null then return v_code; end if;
- v_code:='FR'||upper(substr(replace(gen_random_uuid()::text,'-',''),1,10));
+ v_code:='FR'||upper(substr(replace(pg_catalog.gen_random_uuid()::text,'-',''),1,10));
  insert into public.fr_customer_referral_codes(customer_id,referral_code) values(v_uid,v_code)
  on conflict(customer_id) do update set updated_at=now() returning referral_code into v_code;
  return v_code;
