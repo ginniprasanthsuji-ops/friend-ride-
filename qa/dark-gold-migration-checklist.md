@@ -537,3 +537,15 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] No SQL changes applied; QA remains audit-only.
 
 **Phase 13B progress: 60%** (profile schema dependencies confirmed and validation gaps connected to live RPCs; implementation remains pending).
+
+
+### Phase 13B continuation — role/approval status confirmation and remediation draft (2026-11-26)
+- [x] Live QA schema confirms `profiles.role` default `customer` and `driver_approval_status` default `pending`.
+- [x] Existing QA function `admin_review_driver` accepts decisions `approved`, `rejected`, `revoked`; approved is the exact positive status value.
+- [x] Registration RPC sets new Driver approval to `pending`.
+- [x] Created review-only SQL draft `qa/phase13b-shared-ride-role-approval-validation-draft.sql`: add approved-driver validation to create-ride and customer-role validation to book-seats while preserving current function bodies/transaction safeguards.
+- [ ] Verify frontend calls/signatures, function grants, and complete rollback capture; draft is not applied.
+- [ ] Decide participant access status allowlist and rebooking semantics before changing helper/unique constraint.
+- [ ] Apply only after explicit approval in QA; execute regression suite.
+
+**Phase 13B progress: 65%** (status values confirmed from deployed registration/admin RPCs and role/approval remediation drafted; not applied).
