@@ -50,4 +50,6 @@ This matrix is a tracking artifact, not a test report or release approval.
 ## Runtime bridge authored (2026-11-25)
 - Added `qa/phase-7b-session-runtime-bridge.spec.cjs` to run two synthetic session-race scenarios within the local Playwright suite while also booting the local app page.
 - Playwright discovery config includes this new bridge spec.
-- Scope is still a synthetic model plus local page boot; it does **not** test the app's real auth SDK/session handlers. Execution is not verified in this conversation.
+- Scope: local app boot and dashboard route mapping are checked, while stale-session and notification races run against the synthetic harness. It does **not** test the app's real auth SDK/session handlers. Execution is not verified in this conversation.
+
+- Bridge strengthened to assert the local app's four role-to-dashboard mappings (customer/driver/partner/admin). Commit `ed0373b9`.
