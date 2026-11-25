@@ -167,3 +167,22 @@ Reviewed `qa/local-only-fixture.cjs`, `qa/phase-11-page-isolation.spec.js`, and 
 4. Add test proving no external-origin requests are attempted by the current page and registration specs.
 
 **Status:** Read-only review only. No code changes, no tests run, no production/backend/network changes. Runtime session isolation remains unverified.
+
+
+## Follow-up — auth/OTP error and diagnostic disclosure static review
+
+Reviewed `index.html` read-only around OTP verification, local auth storage, and diagnostic logging.
+
+### Source observations
+- Supabase client configured with localStorage persistence and auth storage key `friend-ride-auth-v1`; automatic token refresh and URL session detection are enabled.
+- OTP verification code requires a verified response plus an access/refresh token pair, then calls `sb.auth.setSession` and `acceptSession`.
+- OTP verification catch path displays an error message assembled from `e.message`; the inspected path did not visibly log token values directly.
+- Reviewed source excerpt did not contain `console.log`; found `console.error` in push setup catch and `console.warn` in profile photo load catch, both message-oriented.
+- Static inspection alone cannot establish whether error messages from external functions/RPCs ever contain sensitive values; redaction and runtime log review remain pending.
+
+### Verification gap / recommendation (not implemented)
+- Add a diagnostic redaction contract test for access/refresh tokens, OTP values, phone numbers, and signed-storage URLs before any diagnostic/error string is surfaced or persisted.
+- Keep user-facing error text concise and avoid forwarding raw backend messages where they may include secrets or private identifiers.
+- Inspect the full auth/OTP/push error paths and any backend logs during an authorized staging runtime review; this checkpoint did not access logs or real credentials.
+
+**Status:** Read-only static review; no code changes and no tests executed. Production/runtime disclosure behavior not proven.
