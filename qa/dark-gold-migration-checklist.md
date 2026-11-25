@@ -604,3 +604,12 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Revise QA-only draft and run negative authorization matrix; no live runtime calls or SQL mutation performed.
 
 **Phase 13B remains 70%**; evidence is source/draft review only, not execution.
+
+
+### Phase 13B continuation — active-state contact RPC draft (2026-11-26)
+- [x] Read-only QA profile schema check: `profiles` has role, driver_approval_status, full_name, phone, whatsapp_phone; no phone-verification field among checked candidates.
+- [x] Created separate SQL draft `qa/phase13b-shared-ride-contact-active-status-only-draft.sql`.
+- [x] Draft limits disclosure to confirmed/boarding/in_progress; passenger receives assigned approved-driver contact; assigned driver receives that booking's customer contact; other caller rejected; anon/PUBLIC EXECUTE revoked.
+- [ ] Review listing/table contact exposure and exact statuses; run isolated negative and positive authorization tests; no SQL applied.
+
+**Phase 13B remains 70%**. Draft-only milestone; no execution verification.
