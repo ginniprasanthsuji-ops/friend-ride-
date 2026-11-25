@@ -509,3 +509,19 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Prepare QA test matrix and authorized remediation gate; no mutations.
 
 **Phase 13B progress: 50%** (live RPC catalog/grants/security metadata verified; lifecycle mismatch recorded).
+
+
+### Phase 13B continuation — live RPC body, constraint and lifecycle invariant review (2026-11-26)
+- [x] Inspected deployed QA function bodies for `fr_shared_ride_create`, `fr_shared_ride_book_seats`, `fr_shared_ride_is_passenger`.
+- [x] `create` validates auth, vehicle auto/car, seat range 1–12, nonnegative fare, future departure; does **not** check profile role/driver approval in function body.
+- [x] `book_seats` locks ride row (`FOR UPDATE`) and validates auth, seat count, own-ride restriction, ride status/time/cutoff/capacity, duplicate active booking; inserts booking/event and updates seat count/status atomically in function transaction.
+- [x] `book_seats` body does not check customer profile role.
+- [x] Passenger helper checks any booking row for passenger+ride without status filtering; canceled/refunded rows still satisfy helper. Participant RLS/event read therefore may retain canceled passengers as ride participants. Needs explicit policy/product decision.
+- [x] Unique constraint `(ride_id,passenger_id)` conflicts with RPC allowing canceled/refunded status in its duplicate check: rebooking after canceled/refunded can still fail on unique constraint. Confirm intended rule and make behavior consistent.
+- [x] Catalog constraint review confirms seat/fare/status range checks, but no constraint enforces booking-cutoff-before-departure, driver approval, or aggregate booked_seats consistency.
+- [x] No table triggers surfaced for rides/bookings in current QA inventory.
+- [ ] Verify profile role/approval checks via registration/profile constraints or front-end/RPC dependency; draft targeted fix only after requirements.
+- [ ] Define participant helper status allowlist, rebooking policy and seat-count invariant; build concurrency/idempotency regression tests.
+- [ ] QA-only remediation remains unapproved/unapplied.
+
+**Phase 13B progress: 55%** (deployed RPC bodies and key lifecycle invariant gaps reviewed; no changes applied).
