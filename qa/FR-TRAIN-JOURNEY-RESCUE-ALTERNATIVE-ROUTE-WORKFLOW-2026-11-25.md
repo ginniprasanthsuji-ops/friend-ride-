@@ -33,6 +33,12 @@ When a direct train route is unavailable, waitlisted, or inconvenient, show rank
 ## Ranking
 Rank confirmed/verified availability first, then fewer transfers, shorter transfer wait, total duration and fare. Do not invent availability, seats, confirmation probability, fares, or live status.
 
+## FRIEND RIDE Ticket Helper scope clarification
+- FRIEND RIDE is only a train-ticket discovery/helper: direct trains, alternatives, connecting routes, Leg 1/Leg 2 and transfer details.
+- No IRCTC partnership, API integration, booking integration, or ticket issuance is intended.
+- The customer chooses a suggested route and is redirected/opened to the official IRCTC website to independently search and book.
+- The helper must not imply verified live seat availability unless a separate authorized data source is actually connected.
+
 ## Safety / compliance
 - No fake “100% confirmed” badges.
 - No unsupported prediction percentages.
