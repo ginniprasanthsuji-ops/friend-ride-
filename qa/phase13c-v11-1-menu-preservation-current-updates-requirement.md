@@ -1,27 +1,26 @@
-# Phase 13C — Version 11.1 Menu Preservation + Current Updates Requirement
+# Phase 13C — Version 11.1 Menu Requirement (Exactly 8 Options)
 
-Status: Requirement captured for implementation planning only. No app code changes or runtime validation.
+Status: Requirement clarified and documented. Exact option labels still need verification from the V11.1 source/screenshot. No app code changes or runtime validation.
 
-## Requirement
-Use Version 11.1 as the menu/options baseline: all menu options present in Version 11.1 must remain available. Keep the other features/options that have been updated or added in the current work as well.
+## Clarified requirement
+The Version 11.1 menu must contain **exactly 8 menu options only**. Do not add extra menu entries beyond those eight. Preserve the existing V11.1 eight-option set; current updates/features should not cause the menu count to grow beyond eight unless the user explicitly approves a replacement/addition.
 
 ## Rules
-- Preserve every Version 11.1 menu item and option; do not remove or silently hide existing entries.
-- Retain the current updated/new options in addition to the Version 11.1 baseline.
-- Avoid replacing the V11.1 menu with a reduced menu.
-- Reconcile duplicate options carefully: only consolidate if labels/navigation/behavior are confirmed equivalent; otherwise preserve both and flag for review.
-- Menu options should continue to route to their correct role-specific screen and feature.
-- No role/dashboard cross-routing (e.g., Driver, Partner, Admin, Customer, TASKO, Home Services).
-- Any menu restructuring must preserve access to existing V11.1 functionality and newly updated features.
+- Menu count: exactly 8 options.
+- Use the eight menu options from Version 11.1 as the source of truth.
+- Do not invent option labels or claim to know the exact eight until the V11.1 menu source/screenshot is inspected.
+- Current updated features must be retained, but should not be added as extra menu items beyond the eight without explicit approval; they may remain available through the appropriate existing menu/role screens.
+- Keep role-specific routing correct (Customer, Driver, Partner, Admin, TASKO, Home Services); avoid dashboard cross-routing.
+- Do not silently remove or rename any of the eight V11.1 options.
 
 ## Acceptance checklist (not yet tested)
-- [ ] Compare current menu against Version 11.1 menu source/screenshot/code.
-- [ ] Verify all V11.1 options remain.
-- [ ] Verify all current updated/new options remain present.
-- [ ] Verify menu options route to correct screens.
-- [ ] Verify role-based menus do not expose unrelated role options.
-- [ ] Verify no duplicate or conflicting menu entries; flag unresolved duplicates instead of deleting.
-- [ ] Test menu navigation on QA only after explicit safe testing authorization.
+- [ ] Verify the exact V11.1 menu source and record its eight labels.
+- [ ] Confirm exactly 8 menu options are present.
+- [ ] Confirm no extra options are added.
+- [ ] Confirm all eight route to their correct screens/features.
+- [ ] Confirm current updates remain accessible without increasing the menu beyond 8.
+- [ ] Confirm role-based menu routing and access boundaries.
+- [ ] QA navigation tests only after explicit safe testing authorization.
 
 ## Audit boundaries
 Documentation only. No app code, SQL, migrations, deployment, runtime tests, or production/Main access. Frozen Phase 13 tracking remains unchanged: Planning/Checklist 88%, Overall Audit estimate 12%, progress graph frozen, Phase 13B Shared Ride Hardening 70% frozen.
