@@ -65,5 +65,8 @@ Existing requirements and audits remain applicable: ERS/RRS source separation, s
 - No PASS claims.
 - Release remains **BLOCKED**.
 
+## Draft artifact created (not applied)
+- `qa/phase13-shared-ride-role-and-privilege-hardening-draft.sql` adds approved-driver and customer-role checks to the two shared-ride SECURITY DEFINER RPCs, and revokes client table write/TRUNCATE privileges while retaining authenticated SELECT. It is a review draft only; it is outside `supabase/migrations` and has not been run.
+
 ## Next safe action
-Prepare a QA-only migration draft for shared-ride authorization and privilege hardening, then reconcile the missing QA schema/RPCs with the source and migration files. Do not apply SQL to QA or production without explicit authorization. Keep all progress estimates frozen.
+Review the draft against the current UI/API contract, then reconcile missing QA schema/RPCs with source/migration files. Do not apply SQL to QA or production without explicit authorization. Keep all progress estimates frozen.
