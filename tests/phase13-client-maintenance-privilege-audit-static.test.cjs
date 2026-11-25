@@ -26,5 +26,5 @@ test('Read-only inventory checks current and postgres-owned future client grants
 test('Shared Ride draft includes the same least-privilege cleanup and documents the owner-role limitation', () => {
   assert.match(sharedDraft, /revoke truncate, maintain on all tables in schema public from anon,authenticated/i);
   assert.match(sharedDraft, /alter default privileges for role postgres in schema public revoke truncate, maintain/i);
-  assert.match(sharedDraft, /Supabase-managed default ACL for supabase_admin includes both privileges[\\s\\S]*blocked by the current SQL connection/i);
+  assert.match(sharedDraft, /Supabase-managed default ACL for supabase_admin was observed to include both privileges[\\s\\S]*blocked by the current SQL connection/i);
 });
