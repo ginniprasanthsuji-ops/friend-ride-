@@ -714,3 +714,15 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Reconcile actual client/build and mutation paths; role-based negative tests and ACL rollback review before apply.
 
 **Phase 13B remains 70%; no SQL applied.**
+
+
+### Live Shared Ride booking RPC deep review
+- [x] Verified ride-row lock serializes booking capacity checks.
+- [x] Confirmed duplicate-booking logic/UNIQUE constraint conflict: RPC excludes cancelled/refunded but unique `(ride_id, passenger_id)` still prevents rebooking.
+- [x] Booking RPC immediately increments reserved seats for `booking_pending`; confirmation/payment/release path remains unmapped.
+- [x] Create RPC checks login and basic inputs, but no driver approval/role; cutoff ordering not validated.
+- [x] Participant helper ignores booking status.
+- [x] Findings saved in `qa/phase13b-shared-ride-live-booking-rpc-deep-review.md`.
+- [ ] Decide booking pending/reservation policy and rebooking; map safe cancellation/refund/status RPCs before ACL changes.
+
+**Phase 13B remains 70%; no SQL applied.**
