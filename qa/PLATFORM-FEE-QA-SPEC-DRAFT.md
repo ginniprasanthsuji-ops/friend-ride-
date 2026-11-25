@@ -48,3 +48,11 @@ The examples do not uniquely define how to calculate the fee for all amounts bet
 3. Only after decisions: create SQL function + configuration and QA-only migration.
 4. Run exact-value, boundary, invalid-input, retry/idempotency, and checkout-total tests.
 5. Validate regression on ride, marketplace, food, shopping, and services; keep production untouched until verified.
+
+
+## Phase 12 QA inventory checkpoint (2026-11-25)
+- QA Supabase read-only inventory searched public routines with names matching fee/platform/payment; no matching routine was returned.
+- QA table inventory found `fr_earnings_ledger`, but no platform-fee configuration/table surfaced in the scoped table-name inventory.
+- This is an inventory result only; it does not prove fee logic is absent from frontend code or other database objects.
+- No SQL implementation was created because the fee formula and below-₹100/zero/rounding behavior remain unapproved.
+- Production database remains untouched.
