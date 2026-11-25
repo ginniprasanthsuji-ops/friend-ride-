@@ -371,3 +371,32 @@ Reviewed `fr-notification-fallback.js` read-only and attempted repository code s
 6. Verify duplicate IDs, skipped/failed rows, and long polling sessions remain bounded.
 
 **Status:** Static source review and repository search attempt only; no DB policy inspection, runtime tests, production edits, or notifications sent.
+
+
+## Follow-up — Firebase config and service-worker integration consistency audit
+
+Read-only review of `fcm-web-push.js`, `firebase-messaging-sw.js`, `service-worker.js`, and `FCM-WEB-PUSH-SETUP.md`.
+
+### Static observations
+- `fcm-web-push.js` contains Firebase Web config values and a VAPID public key, registers `./service-worker.js`, obtains an FCM token, then posts `{token, platform:'web'}` to `fr-notification-register-token` using the active Supabase session.
+- `firebase-messaging-sw.js` is a separate worker that initializes Firebase and handles background messages and notification clicks.
+- `service-worker.js` also initializes Firebase and handles background FCM plus a separate generic Web Push path.
+- Setup documentation instructs root registration of `/firebase-messaging-sw.js`, while the reviewed opt-in code passes `service-worker.js` as the registration to `getToken()`.
+- Setup documentation describes apiKey/appId placeholders as needing replacement, but reviewed source currently contains non-placeholder values. This mismatch requires checking that those values are the correct deployed Firebase Web app config; this audit does not validate them against Firebase.
+- Two worker files contain notification-click navigation logic. Both paths lack an observed explicit same-origin and approved-route allowlist in the reviewed code.
+
+### Risk candidates
+- **P1 integration/config mismatch candidate:** Setup instructions and runtime registration path name different service workers; verify intended canonical worker and scope before deployment.
+- **P1/P2 duplicate/background delivery candidate:** Multiple worker paths and FCM + generic push handlers may produce duplicate or inconsistent notifications; runtime payload/provider behavior not verified.
+- **P1 notification navigation candidate:** Both workers navigate using payload data without observed explicit destination allowlist validation.
+- **P2 config documentation drift:** Setup instructions refer to placeholders while source values are filled; verify Firebase Console match and avoid publishing secrets (reviewed values appear Web-config/public-key types, but deployment ownership/configuration not verified).
+
+### Isolated tests recommended (not run)
+1. Register only the intended worker; confirm scope and controller.
+2. Compare FCM token generation registration worker with setup documentation.
+3. Test background FCM and generic Web Push separately and confirm no duplicate alerts.
+4. Test notification click with same-origin approved path, external origin, malformed URL, and disallowed route; reject unsafe destinations.
+5. Verify Firebase Web config in Console against repo, and confirm registration Edge Function payload/ownership/RLS.
+6. Validate token refresh, logout/account-switch cleanup, invalid token deactivation.
+
+**Status:** Source review only; Firebase Console, Edge Function, Supabase schema/RLS, browser/device push, and deployed service-worker behavior were not inspected or tested. No production code/config changed.
