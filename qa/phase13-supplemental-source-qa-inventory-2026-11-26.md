@@ -44,9 +44,15 @@ The earlier note that the current frontend invokes Shared Ride RPCs was not supp
 - Static checks run after the edit: **all 63 test page IDs exist**, the spec page count matches 63 source pages, subscription assertions are present, and the Shared Ride source wiring absence is confirmed.
 - Playwright/browser/runtime tests were **not executed**; the static check does not substitute for them.
 
+## Core Ride payment/QR — draft created
+- QA catalog confirms `fr_ride_payments` table is absent and the `provider-payment-qr` Storage bucket is absent. The existing `profiles.provider_qr_path` column is present.
+- Current frontend calls six missing payment/QR RPCs and expects a private driver QR, 15-minute session, customer UTR submission, and manual confirmation by the assigned driver.
+- A **draft only** backend SQL artifact was created: `qa/phase13-core-ride-payment-qr-backend-draft.sql`. It proposes a private bucket, participant-only payment row access, six RPCs, owner/approved-driver upload policies, customer access to the exact QR for a completed ride, UTR uniqueness, session expiry, and assigned-driver manual confirmation.
+- The draft is not applied and was not syntax/runtime tested. It is a manual-UPI flow, not automatic provider settlement.
+
 ## QA-only artifacts/changes
 - `qa/phase13-readonly-security-audit-assertions.sql`: read-only catalog assertion script. Executed against FRIEND RIDE QA; output recorded above. It contains SELECT/catalog queries only.
-- `qa/phase13-shared-ride-role-and-privilege-hardening-draft.sql`: revised review draft adds approved-driver/customer role checks, validation, removes direct-write policies, revokes client table writes, and revokes public-schema client TRUNCATE grants. **Not applied**.
+- `qa/phase13-shared-ride-role-and-privilege-hardening-draft.sql`: revised review draft adds approved-driver/customer role checks, validation, removes direct-write policies, revokes client table writes, and revokes public-schema client TRUNCATE grants. **Not applied**.\n- `qa/phase13-core-ride-payment-qr-backend-draft.sql`: core ride manual-UPI/QR backend candidate. **Not applied or runtime tested**.
 - `qa/dark-gold-route-regression.spec.js`: adds subscription route and role/payment-link regression coverage. **Not executed**.
 
 ## Test/evidence status
