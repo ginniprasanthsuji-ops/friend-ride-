@@ -37,6 +37,19 @@ jobs:
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
         run: npm test
+      - name: Write QA evidence summary
+        if: always()
+        run: |
+          {
+            echo "## FRIEND RIDE QA Evidence"
+            echo ""
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- Branch: \`$GITHUB_REF_NAME\`"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- Workflow conclusion: \`$GITHUB_JOB\` job status is recorded by Actions"
+            echo "- Test execution evidence: inspect preceding step results and uploaded artifacts"
+            echo "- Release status: **not approved by CI alone**"
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
