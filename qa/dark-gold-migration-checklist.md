@@ -562,3 +562,14 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Add tests for cancel->rebook, refund->rebook, concurrent booking capacity, and booked_seats reconciliation.
 
 **Phase 13B progress: 68%** (status constraint and uniqueness mismatch confirmed from live QA; policy decision pending; no mutation).
+
+
+### Phase 13B continuation — participant access status review (2026-11-26)
+- [x] Live QA helper `fr_shared_ride_is_passenger` confirmed no booking-status filter; membership is any row for user/ride.
+- [x] Catalog review found no deployed shared-ride contact/cancel/confirm RPCs matching the inspected patterns. Source/deployment mismatch needs investigation; do not assume contact sharing is implemented.
+- [x] Draft status/access matrix created in `qa/phase13b-shared-ride-participant-access-policy-review.md`, covering booking_pending, confirmed, boarding, in_progress, completed, cancel_requested, cancelled, refund_pending, refunded, no_show, disputed.
+- [ ] Product approval for post-cancellation/refund access and contact/location visibility.
+- [ ] Reconcile frontend/migration RPC source against live QA catalog.
+- [ ] Draft least-privilege changes and regression matrix; do not apply until reviewed/approved.
+
+**Phase 13B progress: 70%** (status-based access review documented and deployed RPC absence identified; policy decisions and tests remain open).
