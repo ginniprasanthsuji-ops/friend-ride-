@@ -17,6 +17,8 @@ Synthetic-only QA model. It uses fixture IDs `fixture-user-a` and `fixture-user-
 8. Unknown role fails closed and clears session.
 9. Approved driver profile accepted by synthetic model.
 10. Invalid restore returns anonymous and clears private state.
+11. Profile loader exception fails closed and resets session.
+12. Notification loader exception clears private notification state safely.
 
 ## Files
 - `qa/session-flow-harness.cjs`
