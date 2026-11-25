@@ -497,3 +497,15 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] QA apply, post-change ACL validation and role regression tests pending.
 
 **Phase 13B progress: 45%** (ACL baseline re-captured and rollback capture script prepared; remediation not applied).
+
+
+### Phase 13B continuation — live Shared Ride RPC catalog verification (2026-11-26)
+- [x] Requeried live QA `pg_proc` for Shared Ride RPC/function names and effective EXECUTE privileges.
+- [x] Live catalog returned only `fr_shared_ride_book_seats`, `fr_shared_ride_create`, and `fr_shared_ride_is_passenger` matching the shared-ride pattern.
+- [x] All three are SECURITY DEFINER, owner `postgres`, fixed empty `search_path`; anon EXECUTE false, authenticated EXECUTE true.
+- [x] Important mismatch: previously reviewed source/draft lifecycle RPCs (confirm/cancel/contact) were not present in this live QA catalog query. Do not assume they are deployed in QA; verify frontend-to-backend paths and migration history before remediation.
+- [x] Create and book-seat RPCs remain authenticated callable. Catalog metadata alone does not prove body safety; source body/dependencies/runtime tests remain required.
+- [ ] Retrieve function definitions and dependency tables, verify caller UI path and transaction invariants; identify missing lifecycle/contact RPC deployment/source mismatch.
+- [ ] Prepare QA test matrix and authorized remediation gate; no mutations.
+
+**Phase 13B progress: 50%** (live RPC catalog/grants/security metadata verified; lifecycle mismatch recorded).
