@@ -643,3 +643,14 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Review inherited role grants, effective privileges, app column selection/contact exposure, event/payment RPC dependency, then propose least-privilege ACL and rollback/test plan.
 
 **Phase 13B remains 70%**; read-only catalog audit, no remediation executed.
+
+
+### Phase 13B continuation — effective privileges/RPC dependency audit
+- [x] Effective privileges verified: anon SELECT/INSERT/UPDATE/DELETE/TRUNCATE true on all 4 Shared Ride tables.
+- [x] Authenticated SELECT true on all; DELETE/TRUNCATE true on rides/bookings; events/payments additionally INSERT/UPDATE true.
+- [x] Deployed matching RPC inventory: book_seats, create, is_passenger only; SECURITY DEFINER, fixed empty search_path; anon EXECUTE false, authenticated true.
+- [x] Contact/name/email/phone-like columns not found on the 4 Shared Ride tables by catalog column-name check.
+- [x] Findings saved in `qa/phase13b-shared-ride-effective-privileges-rpc-dependency-audit.md`.
+- [ ] Next: exact role membership/inherited ACL check, frontend write-dependency map, approved ACL rollback/test matrix.
+
+**Phase 13B remains 70%**; no remediation applied.
