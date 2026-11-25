@@ -660,3 +660,32 @@ Read-only review of `.github/workflows/friend-ride-regression.yml`.
 
 ### Execution boundary
 This is a planning/acceptance checkpoint only. Tests are not authored or run here; no app code, SQL, workflow, Firebase, Supabase, or production configuration changed.
+
+
+## Follow-up — QA Test Implementation Readiness & Coverage Gap Audit
+
+**Reviewed at branch ref:** `arjuna-x/phase-7-ai-intelligence-safety` (read-only)
+
+### Confirmed test entry points and safety controls
+- `package.json` exposes default `npm test` as local preflight followed by Playwright; separate scripts exist for Node unit tests, Vitest core tests, TypeScript type-check, runtime build, and core type-check.
+- Reviewed CI workflow executes inline JS checker, security/isolation Node contract file, then `npm install`, Chromium install, local static server, and default `npm test`.
+- Playwright configuration restricts test discovery to the two Phase 11 browser specs, uses local URL validation, retries once, emits list + HTML report, retains trace on failure, and blocks service workers.
+- Preflight checks explicit local URL, manual redirects, HTTP success, HTML content-type, and 4-second timeout.
+
+### Coverage / readiness gaps
+- **P1 suite inclusion gap:** Separate scripts `test:unit`, `test:core`, `typecheck`, and `typecheck:core` are not visibly invoked by the reviewed default CI workflow. Their current status/coverage cannot be inferred.
+- **P1 session/race coverage gap:** Session A/B, stale response, restore/login race, notification race, token registration race, and realtime cleanup remain proposed; no reviewed executable spec currently covers them.
+- **P2 test discovery:** Playwright intentionally discovers only two named specs; additional coverage requires updating `testMatch` or adding files that match the allowed pattern.
+- **P2 runtime build evidence:** `build:runtime` exists as a package script but was not observed in reviewed CI workflow.
+- **P2 branch-source caution:** GitHub search results showed a package.json from a different commit/ref than this reviewed branch fetch. Search snippets are not treated as branch-current evidence; conclusions here are based on fetched branch files only.
+
+### Suggested CI order (not implemented)
+1. Lockfile/reproducibility prerequisite; use `npm ci` only after lockfile presence is confirmed.
+2. Inline JS checker and source-contract checks.
+3. `npm run test:unit` and `npm run test:core` when test files and dependencies are confirmed.
+4. `npm run typecheck` and `npm run typecheck:core`.
+5. `npm run build:runtime` followed by generated-artifact consistency validation.
+6. Local-only Playwright browser suite and mandatory blocked-origin assertions.
+7. Upload evidence and write commit/test/environment summary.
+
+**Checkpoint:** Readiness/gap audit documented only. No code, workflow, SQL, tests, dependency installation, CI run, or backend/production changes.
