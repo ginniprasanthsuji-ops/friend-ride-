@@ -232,10 +232,12 @@ test('Phase 7B QA: synthetic session flow tests cover auth race, gates, and erro
     'profile loader failure fails closed and resets session',
     'notification loader failure clears private notifications without leaking error data',
     'identity switch clears old realtime listeners before B session is established',
-    'logout invalidates pending notification loader and clears private state'
+    'logout invalidates pending notification loader and clears private state',
+    'signOut clears every registered realtime listener',
+    'notification loader filters cross-identity rows before publishing'
   ];
   for (const name of names) assert.ok(sessionFlowTests.includes(name), name);
-  assert.equal((sessionFlowTests.match(/\\btest\\(/g) || []).length, 14);
+  assert.equal((sessionFlowTests.match(/\\btest\\(/g) || []).length, 16);
 });
 
 test('Phase 7B QA: runtime bridge is local-only and covers role routes plus stale session scenarios', () => {
