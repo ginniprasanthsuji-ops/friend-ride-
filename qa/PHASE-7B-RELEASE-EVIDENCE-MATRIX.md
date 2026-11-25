@@ -59,3 +59,8 @@ This matrix is a tracking artifact, not a test report or release approval.
 - Synthetic harness now clears listener registrations on identity switch.
 - Added cases for listener cleanup on A→B and pending notification invalidation on logout.
 - Session-flow harness test count is now 14 authored scenarios. Execution remains unverified.
+
+## Contract alignment update (2026-11-25)
+- Updated the Playwright discovery contract for the newly added Phase 7B bridge spec.
+- Added a contract test asserting bridge fixture isolation, dashboard role mapping checks, stale profile/notification scenario presence, and exactly two bridge tests.
+- No workflow execution result is available from the queried commit; test status remains AUTHORED / UNVERIFIED.
