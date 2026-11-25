@@ -113,3 +113,16 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Registration continues even if code invalid, with a warning displayed; referral does not block account creation.
 - E2E signup and referral reward eligibility still not device/browser tested.
 - Binding migration commit: `cfb36311`; registration UI commit: `ebac8b73`.
+
+## Phase 13 Task 4 continued — Customer Referral Admin Review
+- Applied secure RPC `fr_customer_referral_admin_review(uuid,text,text)`: Admin-only approval/rejection, row locking, final-state guard, reviewer and review timestamp stored.
+- Verified SECURITY DEFINER; anon execute=false; authenticated execute=true (RPC internally requires admin).
+- Added Admin Dashboard tile and referral-review page. Admin list shows code, referral/reward statuses, eligible-order count, participant UUIDs, notes; approve/reject controls with optional note.
+- Explicitly states approval does not credit wallet. Reward ledger/payment credit remains pending until ledger schema and eligibility are verified.
+- Static checks PASS: page, dashboard tile, JS asset include, list/review handlers and RPC invocation found.
+- No real referral records exist yet; E2E review test pending.
+- Migration commit `61bc2d38`; page commit `72a399d9`; JS commit `abce217b`.
+
+## Referral order eligibility investigation
+- `shop_orders` and `fr_market_orders` schemas exist but current data query returned no order-status rows. No completed-order status values/constraints were discoverable from the inspected schema, and repository UI code does not show a direct checkout/order-status integration.
+- Therefore automatic 2-order eligibility trigger was **not** added; this avoids counting unverified statuses or unrelated order types.
