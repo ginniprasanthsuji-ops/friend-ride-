@@ -584,3 +584,13 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Negative authorization tests for unrelated passenger, anonymous, wrong driver, cancelled/refunded booking.
 
 **Phase 13B remains 70%** — no increase because no executable verification milestone was completed.
+
+
+### Phase 13B continuation — ordinary ride contact RPC reconciliation (2026-11-26)
+- [x] Located source `sql/fix_ride_customer_driver_contact.sql`, `src/ride-contact.ts`, and compiled `assets/ride-contact.js`.
+- [x] Confirmed source SQL functions query ordinary `public.rides` using customer/driver assignments; they are not Shared Ride contact functions.
+- [x] Read-only live QA confirmed `get_ride_driver_details` and `get_ride_customer_details_v2` deployed, SECURITY DEFINER, empty search_path, authenticated EXECUTE=true, anon EXECUTE=false; no runtime contact RPC calls or profile-row queries made.
+- [x] Ordinary Ride function status includes completed as well as active states; server side participant filters are present. Shared Ride equivalent remains not located.
+- [ ] Find Shared Ride UI and source/migrations for participant contact; build specific confirmed-booking authorization tests.
+
+**Phase 13B remains 70%** — this resolves the ordinary Ride source/deployment mismatch only; Shared Ride contact access remains open.
