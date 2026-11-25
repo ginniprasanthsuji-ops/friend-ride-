@@ -29,3 +29,13 @@ This was a limited function-name and definition inspection, not a complete payme
 
 ## Evidence / next work
 Next: inspect the exact payment-confirmation RPCs, relevant table constraints/RLS policies, and ledger behavior in main project read-only; then prepare a migration draft with tests. Production untouched.
+
+
+## Payment RPC audit — read-only, 2026-11-25
+- `fr_customer_accept_market_quote(p_order_id)`: validates customer ownership and quoted state, approved partner UPI, calculates subtotal/delivery/total, sets payment pending and a 5-minute expiry, notifies store.
+- `fr_partner_confirm_market_payment(p_order_id,p_payment_reference)`: validates approved partner role, order ownership, payment_pending/pending status and expiry; marks paid/accepted, stores optional reference, and notifies customer. It is a store partner confirmation, not an external gateway webhook.
+- `fr_customer_create_ride_payment(p_ride_id)`: customer-owned completed ride; creates/reuses QR payment record with five-minute expiry and assigned driver QR path.
+- `fr_driver_confirm_ride_payment(p_ride_id)`: assigned approved driver confirms after customer submits transaction ID; checks completed ride and pending-confirmation state, marks success, and notifies customer.
+- These existing payment RPCs are distinct. Coupon direct-to-store payment needs its own trusted confirmation/verification path; do not mark coupon paid from a customer-side button alone.
+- Relevant schema columns inspected read-only for market orders, ride payments, shop payments and ledger. No coupon-specific implementation was found in the inspected public inventory/function name search.
+- No DDL or data write executed.
