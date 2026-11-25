@@ -105,3 +105,11 @@ No matching public table was found for store coupons, flash sales, birthday offe
 ## Phase 13 order-schema discovery checkpoint
 - Store-order candidates include `fr_market_orders`, `shop_orders`, `fr_food_orders`; schema/units/status differ. `fr_market_orders` stores subtotal and total in paise; `shop_orders` stores numeric rupees. Current HTML contains market-order partner/customer flows referencing `fr_market_orders`.
 - Checkout/payment integration is deferred until a specific authoritative store checkout/order flow and status transitions are mapped. No order/payment tables were changed.
+
+### Customer referral signup binding added
+- Added optional customer referral code field to customer registration only (role visibility controlled by existing registration field-sync function).
+- Added authenticated SECURITY DEFINER RPC `fr_customer_referral_bind_code(text)`: validates customer role, active referral code, self-referral, and one referral per referred customer; creates pending referral record, no immediate reward credit.
+- Verified both referral RPCs are SECURITY DEFINER; anon execute=false; authenticated execute=true.
+- Registration continues even if code invalid, with a warning displayed; referral does not block account creation.
+- E2E signup and referral reward eligibility still not device/browser tested.
+- Binding migration commit: `cfb36311`; registration UI commit: `ebac8b73`.
