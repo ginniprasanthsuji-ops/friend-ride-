@@ -114,3 +114,36 @@ Existing harness is suitable for local-origin-only browser tests, but current he
 
 ### Harness conclusion
 The reviewed existing test harness is safe for its local static/browser scope, but is not yet capable of proving authenticated session-switch isolation. No tests were added or executed in this audit checkpoint. No app, SQL, backend, production, account, or real-user changes were made.
+
+
+## Follow-up — isolated session fixture implementation gate
+
+### Local-only safety controls confirmed
+- `package.json` browser tests are invoked via `npm test` with a preflight; unit tests are separate via `npm run test:unit`.
+- `playwright.config.cjs` requires an explicit `FRIEND_RIDE_BASE_URL` and restricts it to localhost/loopback; hosted/live fallback is disabled.
+- Playwright uses headless mode, service workers blocked, and only the two currently approved browser specs are in testMatch.
+- `scripts/qa-local-preflight.cjs` validates localhost/loopback and requires a local HTML response before browser tests.
+- The existing Supabase stub is intentionally minimal; it cannot represent auth events, user-bound query responses, deferred responses, or realtime channel cleanup.
+
+### Test-only fixture design contract (proposal; no implementation yet)
+- Use plain synthetic IDs `fixture-user-a` and `fixture-user-b`; no JWTs, real credentials, real profile data, or Supabase client.
+- Model state in a dedicated fixture object with an explicit session-generation counter.
+- Every request carries the originating fixture user ID and generation; responses are controllably deferred/resolved.
+- Fixture rejects protected requests when anonymous and rejects results whose user ID/generation no longer matches active session.
+- Logout increments generation, clears private fixture state, and records listener/timer cleanup.
+- Keep test execution in local-only Playwright contexts; retain existing external-origin blocking.
+- Do not alter production app code, auth settings, SQL, backend policies, or hosted deployment as part of fixture work.
+
+### Acceptance matrix (future tests)
+| Case | Expected |
+|---|---|
+| Anonymous protected request | Denied; no private fixture payload |
+| A login and request | Only A synthetic data |
+| Logout A | Context cleared; generation advances |
+| B login | B context only; no A data |
+| Deferred A result after B switch | Discarded; B view unchanged |
+| Parallel A and B contexts | Responses stay bound to their originating isolated contexts |
+| Invalid restore | Anonymous safe state |
+| Logout cleanup | listeners/timers stopped; private state cleared |
+
+**Gate:** Fixture implementation must be reviewed for separation from production and external network before adding it to Playwright testMatch. No fixture or tests have been implemented or executed in this checkpoint.
