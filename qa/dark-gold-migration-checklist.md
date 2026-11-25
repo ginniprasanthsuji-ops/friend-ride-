@@ -672,3 +672,13 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Continue branch/repository source inventory to map write dependencies before ACL changes.
 
 **Phase 13B remains 70%.** No SQL applied.
+
+
+### Phase 13B — recursive branch tree inventory
+- [x] Recursive Git tree fetched for audit branch; 163 entries inspected.
+- [x] Shared Ride artifacts in this snapshot are QA SQL drafts and audit docs only; no runtime JS/TS or Shared Ride migration found.
+- [x] `index.html` contains zero Shared Ride keyword matches.
+- [x] Branch-source gap recorded in code dependency review; runtime may exist elsewhere, so feature absence is not asserted.
+- [ ] Reconcile actual QA deployed client/build/source with database schema/RPCs before ACL remediation.
+
+**Phase 13B remains 70%; ACL stage 2 NOT applied.**
