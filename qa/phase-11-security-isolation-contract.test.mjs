@@ -71,7 +71,7 @@ test('Phase 11 QA safety: browser specs fail if any external-origin request was 
 });
 
 test('Phase 11 QA safety: Playwright discovery is limited to browser spec files', () => {
-  assert.ok(playwrightConfig.includes("testMatch: ['phase-11-registration-isolation.spec.js', 'phase-11-page-isolation.spec.js', 'phase-7b-session-runtime-bridge.spec.cjs']"));
+  assert.ok(playwrightConfig.includes("testMatch: ['phase-11-registration-isolation.spec.js', 'phase-11-page-isolation.spec.js']"));
   assert.ok(!playwrightConfig.includes('**/*.test.mjs'));
 });
 
