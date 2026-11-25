@@ -549,3 +549,16 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Apply only after explicit approval in QA; execute regression suite.
 
 **Phase 13B progress: 65%** (status values confirmed from deployed registration/admin RPCs and role/approval remediation drafted; not applied).
+
+
+### Phase 13B continuation — booking status and rebooking integrity audit (2026-11-26)
+- [x] Read-only QA constraint inventory confirms booking statuses: `booking_pending`, `confirmed`, `cancel_requested`, `cancelled`, `boarding`, `in_progress`, `completed`, `no_show`, `disputed`, `refund_pending`, `refunded`.
+- [x] Unique constraint currently blocks duplicate passenger rows per ride: `UNIQUE (ride_id, passenger_id)`.
+- [x] Booking RPC duplicate check ignores `cancelled` and `refunded`, but unique constraint still blocks rebooking: confirmed mismatch.
+- [x] Ride capacity constraints exist (booked_seats >= 0 and <= total_seats) but do not ensure booked_seats equals the sum of active bookings. No invariant trigger was identified in the earlier catalog pass.
+- [x] Passenger helper has no status filter; cancelled/refunded passengers may continue to qualify as participant for participant-scoped reads. This needs an explicit access policy decision; separate from contact access RPC status allowlist.
+- [ ] Decide rebooking behavior: reuse/update the existing cancelled/refunded row OR replace unique constraint with partial unique index for active statuses. Do not implement until lifecycle statuses and seat-count decrement/reincrement behavior are confirmed.
+- [ ] Define participant read access after cancelled/refunded/no_show/completed/disputed, and separately confirm contact visibility and ride live-location access.
+- [ ] Add tests for cancel->rebook, refund->rebook, concurrent booking capacity, and booked_seats reconciliation.
+
+**Phase 13B progress: 68%** (status constraint and uniqueness mismatch confirmed from live QA; policy decision pending; no mutation).
