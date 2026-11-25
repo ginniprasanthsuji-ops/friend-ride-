@@ -173,3 +173,17 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Security verification gap: backend/RLS tests are still required for cross-user data isolation and role permission enforcement. Actual sign-in/session behavior and authenticated Supabase-user tests remain needed.
 - Status: STATIC REVIEW COMPLETE; browser execution and backend authorization evidence UNVERIFIED. No production/Main changes, merge, or deployment.
 - Next audit focus: map each role to backend/RLS-sensitive datasets and identify concrete tests for ride/booking contact privacy, driver/partner records, orders/catalogue, and admin-only approval data.
+
+
+## Phase 13 continuation — Supabase ride privacy audit (2026-11-26)
+
+- Read-only inspection was performed against the identified FRIEND RIDE QA Supabase project (not Main/production).
+- RLS catalog review: `rides` SELECT policy allows only ride customer or assigned driver; INSERT policy binds `customer_id` to `auth.uid()`. `ride_live_locations` SELECT is restricted to ride participants; INSERT requires participant relationship and `user_id=auth.uid()`.
+- Shared Ride: booking SELECT policy restricts rows to the booking passenger or the ride's assigned driver. Booking UPDATE policy uses the same participant predicate and check. Public listing policy for `fr_shared_rides` allows LIVE/FULL rides, driver, or passenger; listing policy does not expose booking contact columns because booking table has no contact fields.
+- Shared ride booking RPC inspected: `fr_shared_ride_book_seats` requires login, locks ride, prevents driver self-booking, validates status/time/cutoff/seat count, prevents duplicate active passenger booking, and records pending booking. Function is SECURITY DEFINER; deeper EXECUTE grants and status-change RPC audit remain open.
+- Road Ride contact RPC `fr_road_ride_get_participant_contact` reviewed: login required; contact returned only if passenger or ride driver has a booking in confirmed/boarding/in_progress/dropped/completed/disputed statuses; otherwise raises an exception. This matches the confirmed-participant privacy intent for this RPC.
+- Road Ride booking confirmation RPC checks the caller is the ride driver and booking is pending before confirmation. Booking participant SELECT policy allows passenger or driver. Contact RPC additionally gates by confirmed-like statuses.
+- Profiles contain sensitive fields including phone, identity/document numbers, banking/payment identifiers and photo/document paths. Existing profiles policies inspected: self read/update, self insert with customer/driver/partner roles, Admin driver-profile read. Full column-level exposure review and authenticated-user tests remain required.
+- QA security advisor output includes policy-performance warnings (auth-function re-evaluation), multiple permissive policies and other advisories. These are not fixed in this continuation; no DDL changes were made.
+- Evidence status: catalog/policy/function STATIC REVIEW complete for listed areas. No real-user cross-account tests, RPC EXECUTE privilege test, or browser execution; those remain UNVERIFIED. No production/Main changes, merge, or deployment.
+- Next: review RPC EXECUTE grants, direct table grants, storage policies for driver/customer photos and sensitive documents, and whether broad profile reads are blocked at column/API level.
