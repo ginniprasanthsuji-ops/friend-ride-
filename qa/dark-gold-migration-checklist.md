@@ -663,3 +663,12 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Obtain branch-specific source tree and map all direct writes/RPC calls before ACL changes.
 
 **Phase 13B remains 70%**; SQL remediation is blocked pending dependency evidence.
+
+
+### Phase 13B — role membership and effective privileges
+- [x] Focused role membership query: authenticator membership in anon/authenticated/service_role confirmed; no anon/authenticated membership inheritance rows.
+- [x] Effective `has_table_privilege` recheck confirms anon broad privileges across all four Shared Ride tables; authenticated direct DELETE/TRUNCATE on rides/bookings and full event/payment DML; service_role broad privileges.
+- [x] Audit added to phase13b-shared-ride-effective-privileges-rpc-dependency-audit.md.
+- [ ] Continue branch/repository source inventory to map write dependencies before ACL changes.
+
+**Phase 13B remains 70%.** No SQL applied.
