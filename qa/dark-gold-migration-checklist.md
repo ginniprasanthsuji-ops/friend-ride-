@@ -319,3 +319,21 @@ Status: **SOURCE AUDIT COMPLETE FOR THIS PASS; ACCEPTANCE CRITERIA DOCUMENTED, N
 - Check bucket/path ownership and SQL RPC permissions in an identified QA database before runtime tests.
 
 Status: **SOURCE REVIEW ONLY; no runtime tests, no SQL/Storage mutations, Main/Production untouched, no merge/deploy**.
+
+
+## Phase 13 continuation — QA identity and Storage bucket inventory (2026-11-26)
+
+### Supabase project identity — verified read-only
+- Supabase project list confirms `fglyplxcczdjtfwobtzh` is named `friend-ride` (Main/Production); status ACTIVE_HEALTHY. **No queries/mutations were performed against this project in this pass.**
+- Supabase project list confirms `pqsangtvietawkfgpgfu` is named `FRIEND RIDE QA`; region ap-south-1; status ACTIVE_HEALTHY. QA identity ambiguity is resolved from project metadata.
+
+### Storage bucket inventory — QA only, read-only
+- Current `storage.buckets` query returns only one bucket: `road-ride-driver-photos`, private, 3 MB limit, JPEG/PNG/WebP.
+- Storage.objects policies for this bucket: authenticated owner-folder SELECT, INSERT, UPDATE. No DELETE policy returned for this bucket in the inspected policies.
+- Source references expected but absent from the QA bucket inventory: `driver-kyc-documents`, `driver-profile-photos`, `customer-profile-photos`, `partner-profile-photos`, `provider-payment-qr`, `partner-qr`, `fr-service-provider-kyc`, `fr-partner-catalogue`.
+- This is a confirmed QA bucket/source alignment gap. KYC, registration-photo, customer photo, partner photo, payment QR and catalogue storage runtime flows cannot be certified against this QA project until the expected buckets/policies are reviewed and provisioned in an authorized QA-only change.
+
+### Safety
+- Read-only project metadata, bucket catalog, and Storage.objects policy queries only.
+- No object listing/deletion/upload, no SQL mutation, no migration, no production query, no merge/deploy.
+- Runtime Storage owner/admin/cross-user tests remain unexecuted.
