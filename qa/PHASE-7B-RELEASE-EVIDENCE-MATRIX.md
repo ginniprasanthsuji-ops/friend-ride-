@@ -69,3 +69,9 @@ This matrix is a tracking artifact, not a test report or release approval.
 - Corrected runtime-bridge contract assertion to match the actual test title and explicit stale-result assertions.
 - CI summary now reports the job status using the workflow job-status expression and lists authored synthetic/runtime test scope. These are reporting improvements; no execution result is implied.
 - Repository currently contains 14 session-flow tests and 2 runtime bridge browser tests (authored counts). CI execution remains unverified.
+
+## Listener isolation hardening (2026-11-25)
+- Added synthetic test asserting sign-out clears all registered realtime listeners.
+- Added notification loader test asserting cross-identity rows are filtered before private state is published.
+- Updated Phase 11 contract to require both cases; session-flow authored test count is now 16.
+- Synthetic fixture-only coverage; execution is not verified and does not prove actual app/backend realtime behavior.
