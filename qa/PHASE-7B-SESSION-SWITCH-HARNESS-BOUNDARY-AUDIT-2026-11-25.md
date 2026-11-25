@@ -537,3 +537,35 @@ Read-only review of `playwright.config.cjs`, `package.json`, `.github/workflows/
 5. Maintain report separation between source checks, local browser tests, live device/backend validation, and release evidence.
 
 **Status:** Static workflow/source review only; CI not rerun, dependencies not installed, lockfile fetch 404 at reviewed ref, and no production code/config changes.
+
+
+## Follow-up — CI Security, Artifact & Test Evidence Integrity Audit
+
+Read-only review of `.github/workflows/friend-ride-regression.yml`.
+
+### Static observations
+- Workflow permissions explicitly set `contents: read` (least privilege for the reviewed workflow scope).
+- Triggered on branch pushes, manual dispatch, and scheduled cron.
+- Runs inline-script check and source-contract tests before dependency install/browser run.
+- Starts a local static server and configures browser tests to localhost.
+- Playwright report upload runs with `if: always()`, retention 7 days, and `if-no-files-found: ignore`; upload paths include `playwright-report/` and `test-results/`.
+- Artifact upload can be silently skipped when no files are found, so absence of artifact is not made a hard failure by this configuration.
+- No explicit workflow step writes a concise test evidence summary (test counts, pass/fail, environment, commit SHA) to the GitHub job summary in the reviewed file.
+- Workflow references Actions by major tags and uses `npm install`; prior checkpoint documented lockfile fetch 404 at this branch.
+- Attempt to fetch a guessed ARJUNA workflow filename returned an error; no conclusions drawn about other workflow files.
+
+### Risks / evidence gaps
+- **P2 artifact completeness:** Report upload is best-effort and missing files are ignored; a green run may lack a report artifact.
+- **P2 evidence traceability:** No visible human-readable summary binding results to commit SHA, Node/browser versions, test counts, and artifact availability.
+- **P2 retention:** 7-day artifact retention may be short for release evidence or later incident review.
+- **P2 action/dependency reproducibility:** Major-tag action refs and non-lockfile-confirmed npm install remain previously noted risks.
+- **Positive control:** Workflow-level permissions are restricted to read-only repository contents for the reviewed job.
+
+### Recommendations (not implemented)
+1. Add an explicit test-result summary step that records commit SHA, workflow run, Node/Playwright versions, executed test categories and counts, and whether artifacts exist.
+2. Make report artifact missing condition explicit: fail or emit a visible warning rather than silently ignoring missing files.
+3. Consider longer artifact retention for release candidate evidence and redact any sensitive traces/screenshots before upload.
+4. Pin actions to immutable SHAs and use lockfile-backed `npm ci` after confirming the lockfile.
+5. Keep evidence classification separate: static checks, local browser tests, backend integration, device tests, and release validation.
+
+**Status:** Workflow source review only; CI was not rerun. No application code, workflow, SQL, or production settings changed in this checkpoint.
