@@ -151,3 +151,12 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Static checks PASS for page/card/tile/script/submission/moderation handlers. Browser/E2E tests pending.
 - **Important limitation:** partner UUID entry currently required and order verification is not integrated. Reviews must not be described as verified purchases. Future order integration should add verification before enabling verified-purchase badge.
 - Migration commit `baddabc3`; index commit `161fd77e`; JS commit `cfac2671`.
+
+## Phase 13 Task 7 — Direct Store Coupon Recognition foundation
+- Added `fr_direct_store_coupon_claims` linked to existing `shop_orders`; one claim/order, coupon code, optional transaction reference/note, pending/recognized/rejected status, reviewer/time.
+- Customer RPC checks authenticated customer role and order ownership, then creates/re-submits pending claim. Partner/shop owner or Admin can review; shop ownership is matched to order shop_id and role; Admin bypass via admin helper.
+- RLS enabled; customer/shop/admin read policy. RPCs SECURITY DEFINER; anon execute=false, authenticated execute=true; roles are validated inside functions.
+- UI: Offers page submission form (order UUID, coupon, transaction ref, note); partner and Admin dashboard tiles open review queue. Review actions recognize/reject.
+- **Safety:** recognition is only a claim record; neither order status nor payment status is changed. It does not verify payment by itself or indicate FRIEND RIDE collected money.
+- Static checks PASS for form/page/tile/script/RPC calls. Browser/E2E tests pending.
+- Migration commits `5f997c85` and role-hardening checkpoint `0c88527b`; HTML `9a4720b1`; JS `81bbf919`.
