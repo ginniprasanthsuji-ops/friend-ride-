@@ -34,7 +34,6 @@ begin
   if p_total_seats is null or p_total_seats<1 or p_total_seats>12 then raise exception 'Invalid passenger seat capacity'; end if;
   if p_price_per_seat is null or p_price_per_seat<0 then raise exception 'Fare cannot be negative'; end if;
   if p_departure_at is null or p_departure_at<=now() then raise exception 'Departure must be in the future'; end if;
-  if p_booking_cutoff_at is not null and p_booking_cutoff_at>=p_departure_at then raise exception 'Booking cutoff must precede departure'; end if;
   insert into public.fr_shared_rides(driver_id,vehicle_type,from_label,to_label,total_seats,price_per_seat,departure_at,booking_cutoff_at,from_lat,from_lng,to_lat,to_lng)
   values(auth.uid(),p_vehicle_type,p_from_label,p_to_label,p_total_seats,p_price_per_seat,p_departure_at,p_booking_cutoff_at,p_from_lat,p_from_lng,p_to_lat,p_to_lng)
   returning id into v_id;
