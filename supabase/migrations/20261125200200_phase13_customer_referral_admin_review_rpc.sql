@@ -1,12 +1,12 @@
 -- Phase 13: customer referral admin review RPC
 create or replace function public.fr_customer_referral_admin_review(p_referral_id uuid,p_decision text,p_note text default null)
-returns jsonb language plpgsql security definer set search_path=public as $$
+returns jsonb language plpgsql security definer set search_path='' as $$
 declare v_uid uuid:=auth.uid(); v_ref public.fr_customer_referrals%rowtype;
 begin
  if v_uid is null then raise exception 'Authentication required'; end if;
  if not public.is_friend_ride_admin() then raise exception 'Admin only'; end if;
  if lower(coalesce(p_decision,'')) not in ('approve','reject') then raise exception 'Decision must be approve or reject'; end if;
- select * into v_ref from public.fr_customer_referrals where id=p_referral_id for update;
+ select * into v_ref from public.fr_customer_referrals r where r.id=p_referral_id for update;
  if not found then return jsonb_build_object('ok',false,'reason','not_found'); end if;
  if v_ref.reward_status in ('credited','rejected') then return jsonb_build_object('ok',false,'reason','already_final'); end if;
  if p_decision='approve' then
