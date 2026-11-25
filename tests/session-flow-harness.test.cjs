@@ -79,3 +79,50 @@ test('logout invalidates pending profile response and clears all session state',
     notifications: [], generation: 2, listenerCount: 0
   });
 });
+
+test('late A admin-membership result is rejected after B session switch', async () => {
+  const h = new SessionFlowHarness();
+  const adminA = deferred();
+  const pendingA = h.signIn('fixture-user-a', {
+    profile: async () => ({ role: 'admin' }),
+    adminMembership: () => adminA.promise
+  });
+  const resultB = await h.signIn('fixture-user-b');
+  adminA.resolve(true);
+  const resultA = await pendingA;
+  assert.equal(resultB.accepted, true);
+  assert.equal(resultA.accepted, false);
+  assert.equal(resultA.reason, 'stale-admin');
+  assert.equal(h.identity, 'fixture-user-b');
+  assert.equal(h.admin, false);
+});
+
+test('unknown role fails closed and clears session', async () => {
+  const h = new SessionFlowHarness();
+  const result = await h.signIn('fixture-user-a', {
+    profile: async () => ({ role: 'superuser' })
+  });
+  assert.equal(result.accepted, false);
+  assert.equal(result.reason, 'invalid-role');
+  assert.equal(h.identity, null);
+});
+
+test('approved driver profile is accepted', async () => {
+  const h = new SessionFlowHarness();
+  const result = await h.signIn('fixture-user-a', {
+    profile: async () => ({ role: 'driver', approval: 'approved' })
+  });
+  assert.equal(result.accepted, true);
+  assert.equal(h.role, 'driver');
+  assert.equal(h.approval, 'approved');
+});
+
+test('invalid restore resets to anonymous and clears private state', async () => {
+  const h = new SessionFlowHarness();
+  await h.signIn('fixture-user-a');
+  h.privateNotifications = [{ userId: 'fixture-user-a', marker: 'private' }];
+  const result = h.restore('fixture-user-a', false);
+  assert.equal(result, false);
+  assert.equal(h.identity, null);
+  assert.deepEqual(h.privateNotifications, []);
+});
