@@ -168,3 +168,11 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - **Explicit limitation:** link does not redeem/apply discount and never changes order/payment amounts or status. Actual discounted checkout remains pending safe pricing/payment integration.
 - Supabase RPC grants verified: anon=false, authenticated=true. Static UI/RPC checks; browser tests not run.
 - Migration commit `d0b7fb91`, JS commit `a4cd3dbf`.
+
+## Phase 13 Task 9 — Customer referral order eligibility automation
+- Added server-side recalculation: eligible count is referred customer's `fr_market_orders` with status `completed` AND `payment_confirmed_at IS NOT NULL`.
+- Trigger recalculates when order status or payment-confirmation timestamp changes.
+- Referral status moves to `eligible` at 2 qualifying orders (preserves rejected/rewarded); count is stored.
+- Admin approval RPC hardened: approve is blocked until `eligible_order_count >= 2`; reject remains admin decision.
+- This is eligibility only: no automatic wallet credit/ledger mutation. Referral reward remains admin-approved; wallet credit still requires safe ledger integration.
+- Migration commit `e3746ea6`; live DB applied and trigger/RPC checks pending final verification.
