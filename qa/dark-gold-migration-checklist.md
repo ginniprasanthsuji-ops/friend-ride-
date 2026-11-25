@@ -187,3 +187,14 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - QA security advisor output includes policy-performance warnings (auth-function re-evaluation), multiple permissive policies and other advisories. These are not fixed in this continuation; no DDL changes were made.
 - Evidence status: catalog/policy/function STATIC REVIEW complete for listed areas. No real-user cross-account tests, RPC EXECUTE privilege test, or browser execution; those remain UNVERIFIED. No production/Main changes, merge, or deployment.
 - Next: review RPC EXECUTE grants, direct table grants, storage policies for driver/customer photos and sensitive documents, and whether broad profile reads are blocked at column/API level.
+
+
+## Phase 13 continuation — RPC grants, direct grants and storage audit (2026-11-26)
+
+- Read-only catalog review: selected ride-related tables have RLS enabled (`relrowsecurity=true`); `FORCE ROW LEVEL SECURITY` is not enabled on these tables.
+- Direct table privilege catalog shows broad grants to `authenticated` on several ride/profile tables and unexpectedly broad `anon` grants on road/shared ride tables. RLS appears enabled and no anon policies were found in the earlier inspected policy list for these tables, but direct grant minimization is still a hardening candidate. Do not revoke without app regression review.
+- RPC EXECUTE privilege catalog: selected sensitive RPCs (road ride booking confirmation/contact, shared ride booking, participant helper functions) are granted to `authenticated`, `service_role`, and postgres; no anon grant surfaced for these functions.
+- Storage bucket `road-ride-driver-photos` is private, size limit 3 MB, MIME allowlist JPEG/PNG/WebP. Storage policies reviewed: authenticated user can read/update/upload only within their own UID folder. Storage policy inventory for other customer/driver/partner documents or photo buckets returned only this bucket; confirm intended feature storage scope before any new bucket is added.
+- Security note: RLS enabled but not forced. Table owner/bypass-role behavior is not covered by ordinary client RLS tests. No changes made.
+- Evidence status: catalog review only; actual anon/authenticated request tests and storage cross-user tests UNVERIFIED. No production/Main changes, merge, deployment, or DDL.
+- Next: targeted authenticated and anon API test matrix for RLS deny/allow, then review profiles sensitive-field exposure and legacy direct grants. Keep release blocked until evidence.
