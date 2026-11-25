@@ -198,3 +198,13 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Security note: RLS enabled but not forced. Table owner/bypass-role behavior is not covered by ordinary client RLS tests. No changes made.
 - Evidence status: catalog review only; actual anon/authenticated request tests and storage cross-user tests UNVERIFIED. No production/Main changes, merge, deployment, or DDL.
 - Next: targeted authenticated and anon API test matrix for RLS deny/allow, then review profiles sensitive-field exposure and legacy direct grants. Keep release blocked until evidence.
+
+
+## Phase 13 continuation — permanent-photo/QR and temporary-KYC retention policy (2026-11-26)
+
+- User retention requirement clarified: permanently retain only the Driver profile photo, Customer profile photo, Driver QR, and Partner QR (four file types grouped into three categories: driver photo, customer photo, QR codes). Billing/invoice files are not required for permanent storage.
+- Temporary KYC: Aadhaar, driving license, and other verification documents remain private and admin-review-only. Admin must be able to view and download for offline filing; after approval/review and successful download confirmation, remove the object from Storage and remove its database file/path reference while retaining approval metadata/status only.
+- Catalog read-only check: the inspected QA project currently has one storage bucket, `road-ride-driver-photos`, private, 3 MB limit, JPEG/PNG/WebP. Existing own-UID-folder upload/read/update policies were reviewed in prior audit. No buckets for customer photos or QR assets were observed in the catalog.
+- Implementation caution: do not automatically delete KYC files on approval until admin review/download confirmation, retention/backup behavior, and secure-delete workflow are designed and verified. Provide admin review/download UI and a deliberate cleanup action/SQL RPC; avoid deleting permanent profile photos or QR assets.
+- This is a requirement/audit note only. No Storage buckets, SQL tables, policies, objects, or data changed. Main/Production untouched; no merge/deploy. Real admin download and deletion tests remain UNVERIFIED.
+- Next: design the retention workflow with explicit admin review/download confirmation, a guarded cleanup operation, and tests proving KYC cleanup cannot touch the four permanent asset types.
