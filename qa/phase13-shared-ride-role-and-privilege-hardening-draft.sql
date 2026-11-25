@@ -94,20 +94,23 @@ language plpgsql
 security definer
 set search_path to ''
 as $function$
-declare v_ride_id uuid; v_driver_id uuid; v_ride_status text;
+declare v_ride_id uuid; v_driver_id uuid; v_ride_status text; v_booking public.fr_shared_ride_bookings%rowtype;
 begin
   if auth.uid() is null then raise exception 'Login required'; end if;
   if not exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='driver' and p.driver_approval_status='approved') then
     raise exception 'Approved driver account required';
   end if;
-  select b.ride_id,r.driver_id,r.status into v_ride_id,v_driver_id,v_ride_status
-  from public.fr_shared_ride_bookings b
-  join public.fr_shared_rides r on r.id=b.ride_id
-  where b.id=p_booking_id and b.status='booking_pending'
-  for update of b,r;
+  select b.ride_id into v_ride_id from public.fr_shared_ride_bookings b
+  where b.id=p_booking_id and b.status='booking_pending';
   if not found then raise exception 'Pending booking unavailable'; end if;
+  select r.driver_id,r.status into v_driver_id,v_ride_status
+  from public.fr_shared_rides r where r.id=v_ride_id for update;
+  if not found then raise exception 'Ride not found'; end if;
   if v_driver_id<>auth.uid() then raise exception 'Only the assigned driver can confirm this booking'; end if;
   if v_ride_status not in ('live','full') then raise exception 'Ride is not open for confirmation'; end if;
+  select * into v_booking from public.fr_shared_ride_bookings b
+  where b.id=p_booking_id and b.status='booking_pending' for update;
+  if not found then raise exception 'Pending booking unavailable'; end if;
   update public.fr_shared_ride_bookings set status='confirmed',updated_at=now()
   where id=p_booking_id and status='booking_pending';
   insert into public.fr_shared_ride_events(ride_id,booking_id,actor_id,event_type,details)
@@ -123,14 +126,17 @@ language plpgsql
 security definer
 set search_path to ''
 as $function$
-declare v_booking public.fr_shared_ride_bookings%rowtype; v_ride public.fr_shared_rides%rowtype;
+declare v_booking public.fr_shared_ride_bookings%rowtype; v_ride public.fr_shared_rides%rowtype; v_ride_id uuid;
 begin
   if auth.uid() is null then raise exception 'Login required'; end if;
+  select b.ride_id into v_ride_id from public.fr_shared_ride_bookings b
+  where b.id=p_booking_id and b.passenger_id=auth.uid();
+  if not found then raise exception 'Passenger booking not found'; end if;
+  select * into v_ride from public.fr_shared_rides r where r.id=v_ride_id for update;
+  if not found then raise exception 'Ride not found'; end if;
   select * into v_booking from public.fr_shared_ride_bookings b
   where b.id=p_booking_id and b.passenger_id=auth.uid() for update;
   if not found then raise exception 'Passenger booking not found'; end if;
-  select * into v_ride from public.fr_shared_rides r where r.id=v_booking.ride_id for update;
-  if not found then raise exception 'Ride not found'; end if;
   if v_ride.status not in ('live','full') or v_ride.departure_at<=now() then
     raise exception 'Booking cancellation is closed for this ride';
   end if;
