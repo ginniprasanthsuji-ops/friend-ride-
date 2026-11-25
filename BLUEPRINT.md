@@ -45,7 +45,7 @@ Partner features: persistent partner-specific catalogue mapping; QR; products/ca
 Customer browse/menu → cart → checkout → shop acceptance → preparation → ready → delivery assignment/pickup → delivery tracking → completion → payment/receipt → rating. Maintain food marketplace compliance and show only genuinely available integrations/features.
 
 ## 7. Local Stores & Grocery Marketplace
-Support multiple shops and categories including grocery, medical, chicken/meat, electrical, hardware, home appliances and general stores. Multi-shop cart should permit unified checkout while backend creates and links shop-wise orders correctly to customer, shop and delivery provider. Display item availability, partner-confirmed prices, charges, taxes and delivery details.
+Support multiple shops and categories including grocery, chicken/meat, electrical, hardware, home appliances and general stores. Medical/pharmacy stores and products are excluded from FRIEND RIDE because the business does not hold a drug licence. Multi-shop cart should permit unified checkout while backend creates and links shop-wise orders correctly to customer, shop and delivery provider. Display item availability, partner-confirmed prices, charges, taxes and delivery details.
 Example configurable delivery bands (admin-adjustable): 2–3 km ₹50; 3–8 km ₹80; >8 km ₹120. Do not treat examples as fixed hard-coded policy unless the system configuration says so.
 
 ## 8. Home Services
