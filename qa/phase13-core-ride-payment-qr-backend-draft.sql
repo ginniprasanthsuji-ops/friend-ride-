@@ -46,7 +46,8 @@ drop policy if exists fr_provider_payment_qr_driver_delete on storage.objects;
 drop policy if exists fr_provider_payment_qr_completed_ride_customer_read on storage.objects;
 create policy fr_provider_payment_qr_driver_read on storage.objects
 for select to authenticated
-using (bucket_id='provider-payment-qr' and (storage.foldername(name))[1]=auth.uid()::text\n  and exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='driver' and p.driver_approval_status='approved'));
+using (bucket_id='provider-payment-qr' and (storage.foldername(name))[1]=auth.uid()::text
+  and exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='driver' and p.driver_approval_status='approved'));
 create policy fr_provider_payment_qr_driver_upload on storage.objects
 for insert to authenticated
 with check (
