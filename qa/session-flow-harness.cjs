@@ -24,6 +24,7 @@ class SessionFlowHarness {
   async signIn(id, loaders = {}) {
     if (!this._isFixture(id)) throw new Error('Synthetic fixture identity required');
     this.generation++;
+    this.listeners.clear();
     this.identity = id;
     this.role = null;
     this.approval = null;
