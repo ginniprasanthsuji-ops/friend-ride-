@@ -30,15 +30,34 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     expect(result.pageCount).toBe(allPageIds.length);
   });
 
-  test('driver subscription screen is present, ₹299 monthly, Razorpay-linked, and role guarded', async ({ page }) => {
+  test('driver subscription is ₹299 monthly, Razorpay-linked, and driver-only', async ({ page }) => {
     await expect(page.locator('#frDriverSubscriptionCard')).toContainText('₹299 / Month');
     await expect(page.locator('#frDriverSubscriptionCard button')).toBeAttached();
-    await page.evaluate(() => { currentUser={id:'qa-customer'}; currentProfile={role:'customer'}; selectedRole='customer'; window.showPage('frDriverSubscription'); });
-    await expect(page.locator('#home')).toHaveClass(/active/);
-    await page.evaluate(() => { currentUser={id:'qa-driver'}; currentProfile={role:'driver'}; selectedRole='driver'; window.showPage('frDriverSubscription'); });
+
+    // Anonymous, customer, partner and admin must not enter the driver-only page.
+    for (const role of [null, 'customer', 'partner', 'admin']) {
+      await page.evaluate(role => {
+        currentUser = role ? { id: 'qa-' + role } : null;
+        currentProfile = role ? { role } : null;
+        selectedRole = role || 'customer';
+        window.showPage('frDriverSubscription');
+      }, role);
+      await expect(page.locator('#home')).toHaveClass(/active/);
+      await expect(page.locator('#frDriverSubscription')).not.toHaveClass(/active/);
+    }
+
+    await page.evaluate(() => {
+      currentUser={id:'qa-driver'};
+      currentProfile={role:'driver'};
+      selectedRole='driver';
+      window.showPage('frDriverSubscription');
+    });
     await expect(page.locator('#frDriverSubscription')).toHaveClass(/active/);
     await expect(page.locator('#frDriverSubscription')).toContainText('₹299 / Month');
-    await expect(page.locator('#frDriverSubscription a[href="https://rzp.io/rzp/54cMN1g"]')).toBeAttached();
+    const paymentLink = page.locator('#frDriverSubscription a[href="https://rzp.io/rzp/54cMN1g"]');
+    await expect(paymentLink).toBeAttached();
+    await expect(paymentLink).toHaveAttribute('target', '_blank');
+    await expect(paymentLink).toHaveAttribute('rel', 'noopener');
   });
 
   test('new home replaces the old home presentation and mirrors live location', async ({ page }) => {
