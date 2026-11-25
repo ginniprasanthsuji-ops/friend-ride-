@@ -171,8 +171,12 @@ drop policy if exists fr_shared_bookings_participant_update on public.fr_shared_
 revoke all privileges on table public.fr_shared_rides,public.fr_shared_ride_bookings,public.fr_shared_ride_events,public.fr_shared_ride_payments from anon,authenticated;
 grant select on table public.fr_shared_rides,public.fr_shared_ride_bookings,public.fr_shared_ride_events,public.fr_shared_ride_payments to authenticated;
 
--- Remove unsafe TRUNCATE grants found on client roles across the current public schema.
-revoke truncate on all tables in schema public from anon,authenticated;
+-- Remove unsafe TRUNCATE/MAINTAIN grants found on client roles across the current public schema.
+revoke truncate, maintain on all tables in schema public from anon,authenticated;
+-- Future public tables created by postgres must not inherit these destructive/maintenance privileges.
+alter default privileges for role postgres in schema public revoke truncate, maintain on tables from anon,authenticated;
+-- Supabase-managed default ACL for supabase_admin was observed to include both privileges;
+-- changing that owner-role ACL is blocked by the current SQL connection's role membership.
 
 commit;
 
