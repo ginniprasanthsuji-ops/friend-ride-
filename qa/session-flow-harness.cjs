@@ -30,36 +30,46 @@ class SessionFlowHarness {
     this.admin = false;
     this.privateNotifications = [];
     const captured = this._capture();
-    const profile = await (loaders.profile || (async () => ({ role: 'customer' })))(id);
-    if (!this._current(captured)) return { accepted: false, reason: 'stale-profile' };
-    const admin = await (loaders.adminMembership || (async () => false))(id);
-    if (!this._current(captured)) return { accepted: false, reason: 'stale-admin' };
-    if (!profile || !['customer', 'driver', 'partner', 'admin'].includes(profile.role)) {
-      this.signOut();
-      return { accepted: false, reason: 'invalid-role' };
+    try {
+      const profile = await (loaders.profile || (async () => ({ role: 'customer' })))(id);
+      if (!this._current(captured)) return { accepted: false, reason: 'stale-profile' };
+      const admin = await (loaders.adminMembership || (async () => false))(id);
+      if (!this._current(captured)) return { accepted: false, reason: 'stale-admin' };
+      if (!profile || !['customer', 'driver', 'partner', 'admin'].includes(profile.role)) {
+        this.signOut();
+        return { accepted: false, reason: 'invalid-role' };
+      }
+      if (profile.role === 'admin' && !admin) {
+        this.signOut();
+        return { accepted: false, reason: 'admin-membership-required' };
+      }
+      if (profile.role === 'driver' && !['approved', 'verified', 'active'].includes(profile.approval)) {
+        this.signOut();
+        return { accepted: false, reason: 'driver-approval-required' };
+      }
+      this.role = profile.role;
+      this.approval = profile.approval || null;
+      this.admin = !!admin;
+      return { accepted: true, identity: id, role: this.role };
+    } catch (error) {
+      if (this._current(captured)) this.signOut();
+      return { accepted: false, reason: 'loader-error' };
     }
-    if (profile.role === 'admin' && !admin) {
-      this.signOut();
-      return { accepted: false, reason: 'admin-membership-required' };
-    }
-    if (profile.role === 'driver' && !['approved', 'verified', 'active'].includes(profile.approval)) {
-      this.signOut();
-      return { accepted: false, reason: 'driver-approval-required' };
-    }
-    this.role = profile.role;
-    this.approval = profile.approval || null;
-    this.admin = !!admin;
-    return { accepted: true, identity: id, role: this.role };
   }
 
   async loadNotifications(loader) {
     if (!this.identity) return { accepted: false, rows: [] };
     const captured = this._capture();
-    const rows = await loader(captured.id);
-    if (!this._current(captured)) return { accepted: false, rows: [] };
-    const filtered = (rows || []).filter(row => row.userId === captured.id);
-    this.privateNotifications = filtered;
-    return { accepted: true, rows: [...filtered] };
+    try {
+      const rows = await loader(captured.id);
+      if (!this._current(captured)) return { accepted: false, rows: [] };
+      const filtered = (rows || []).filter(row => row.userId === captured.id);
+      this.privateNotifications = filtered;
+      return { accepted: true, rows: [...filtered] };
+    } catch {
+      if (this._current(captured)) this.privateNotifications = [];
+      return { accepted: false, rows: [] };
+    }
   }
 
   restore(id, valid, loaders = {}) {
