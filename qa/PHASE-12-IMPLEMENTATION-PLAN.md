@@ -1,7 +1,7 @@
 # FRIEND RIDE — Phase 12 Implementation Plan
 
-Status: audit complete; implementation plan staged on branch `phase-12-implementation-plan`.
-Production database and production app code remain unchanged.
+Status: audit and review-only coupon schema draft staged on branch `phase-12-implementation-plan`.
+No database migration has been applied. Production database and production app code remain unchanged.
 
 ## Guardrails
 - Preserve existing app flows, backend functions, tables, permissions, and role dashboards.
