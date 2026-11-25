@@ -252,3 +252,14 @@ Targeted cases for the eventual guarded cleanup implementation (test design only
 15. **Admin audit trail:** record reviewer, review/download-confirmation and cleanup timestamp/action, but not sensitive document contents.
 
 Status: **TEST PLAN DRAFTED — NOT EXECUTED**. No implementation, SQL, Storage or data mutations performed. Main/Production untouched; no merge/deploy.
+
+
+## Phase 13 continuation — Admin KYC review and permanent-asset path audit (2026-11-26)
+
+- Admin KYC screen source review: frontend checks `currentProfile.role === 'admin'`, calls `admin_list_driver_documents`, creates 300-second signed URLs from `driver-kyc-documents`, and exposes Verify/Reject actions through `admin_review_driver_document`. This is source-level evidence only; RPC authorization and Storage policy enforcement are not runtime verified.
+- Review flow currently supports Verify/Reject plus optional note and confirmation. It does **not** have an explicit downloaded/offline-filed confirmation or cleanup action. No KYC deletion code was found in the inspected snippets.
+- Driver registration uploads profile photo to `driver-profile-photos`; Aadhaar, driving licence and vehicle RC to `driver-kyc-documents`; document paths are stored in profile and `fr_driver_documents`. Customer photo upload targets `customer-profile-photos`.
+- Provider QR upload path is `provider-payment-qr` (driver/partner registration). Partner payment settings/market display also references `partner-qr` and a public URL in one settings preview, while customer-facing display uses a signed URL. This bucket/path inconsistency is unresolved; permanent QR retention cannot be asserted from source alone.
+- Partner profile photo upload targets `partner-profile-photos`; it is **not** included in the user's current four permanent-asset categories (Driver photo, Customer photo, Driver QR, Partner QR). Do not infer permanence for it without user confirmation.
+- No source or DB/Storage mutations. Main/Production untouched; no merge/deploy. Real role/RPC/RLS/Storage testing remains UNVERIFIED.
+- Next audit: trace provider QR/profile field usage, verify bucket-name references across source and QA catalog (read-only), then document an implementation-safe storage naming and retention map before code changes.
