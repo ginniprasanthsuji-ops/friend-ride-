@@ -218,3 +218,14 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - `fr_driver_documents` has metadata fields including document type, storage path, verification status, review note, reviewer and review timestamp. No data was queried or deleted.
 - No source changes or database/storage mutations performed. Main/Production untouched; no merge/deploy. KYC feature is not confirmed functional.
 - Next: reconcile QA bucket name and source config; implement admin secure view/download then explicit review-confirmed cleanup; ensure permanent driver/customer photos and driver/partner QR assets are excluded from cleanup. Runtime tests required.
+
+
+## Phase 13 continuation — retention protection and test assertions review (2026-11-26)
+
+- Source/test review confirms existing profile-photo loading references role-specific private buckets `customer-profile-photos` and `driver-profile-photos`; the code uses signed URLs. QA test also expects partner photo bucket wiring.
+- Shop QR/payment UI contains customer/partner QR elements; registration includes driver QR and UPI-related fields. Permanent asset retention is not yet enforced by a storage cleanup guard.
+- `test.html` source audit check #03 expects `driver-kyc-documents`, KYC upload handler, partner profile photo bucket, and `fr_driver_documents`. This test checks source markers only; it does not prove bucket existence or secure runtime access. Earlier QA bucket catalog mismatch is still unresolved.
+- `qa/friend-ride.spec.cjs` tests KYC input presence and source handler markers, but does not test admin download, post-approval KYC deletion, path reference removal, or protection of permanent profile-photo/QR files.
+- Recommended guardrail for cleanup implementation: only allow deletion when object path maps to an approved KYC document type and a reviewed/download-confirmed status; deny all profile-photo and QR asset buckets/types; preserve approval/reviewer/time metadata; clear profile KYC path columns and `fr_driver_documents.storage_path` references; use idempotent cleanup; require Admin authorization. This is design guidance, not implemented.
+- No code/SQL/Storage mutation in this continuation. Main/Production untouched; no merge/deploy. Test results remain source-only/unverified runtime.
+- Next: add targeted regression tests for KYC-only cleanup and permanent asset deny-list; reconcile bucket mismatch before any implementation.
