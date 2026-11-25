@@ -20,13 +20,13 @@ export function formatTrainJourneyClipboard(journey) {
     if (leg.transferDuration) lines.push(`  Transfer duration: ${leg.transferDuration}`);
   });
   lines.push("Verify live schedule, fare, and availability on IRCTC before booking.");
-  return lines.join("\\n");
+  return lines.join("\n");
 }
 
 export async function copyTrainJourneyDetails(journey) {
   const text = formatTrainJourneyClipboard(journey);
   try {
-    if (navigator?.clipboard?.writeText) {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(text);
       return { copied: true, text };
     }
