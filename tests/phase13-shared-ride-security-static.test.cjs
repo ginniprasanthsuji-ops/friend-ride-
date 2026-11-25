@@ -38,6 +38,11 @@ test('passenger cancellation draft releases seats only before departure for pend
   assert.match(hardeningDraft, /booking_cancelled/);
 });
 
+test('confirmation and cancellation use ride-first locking to serialize seat/status changes', () => {
+  assert.match(hardeningDraft, /select r\.driver_id,r\.status into v_driver_id,v_ride_status[\s\S]+?for update;[\s\S]+?select \* into v_booking from public\.fr_shared_ride_bookings b[\s\S]+?for update;/);
+  assert.match(hardeningDraft, /select \* into v_ride from public\.fr_shared_rides r where r\.id=v_ride_id for update;[\s\S]+?select \* into v_booking from public\.fr_shared_ride_bookings b[\s\S]+?for update;/);
+});
+
 test('contact draft discloses counterpart contact only for one confirmed active booking', () => {
   assert.match(hardeningDraft, /fr_shared_ride_get_booking_contacts\(p_booking_id uuid\)/);
   assert.match(hardeningDraft, /v_booking\.status not in \('confirmed','boarding','in_progress'\)/);
