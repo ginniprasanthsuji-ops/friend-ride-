@@ -756,3 +756,32 @@ Extend the workflow with a staged QA pipeline after confirming test files and lo
 5. Record Node/npm versions and lockfile hash in CI evidence.
 
 **Status:** Static audit only. No package, workflow, lockfile, config, application, SQL, backend, or production changes; no tests/CI run.
+
+
+## Follow-up — CI Environment & Version Consistency Audit
+
+**Reviewed:** branch-current regression workflow, `package.json`, `playwright.config.cjs`, local QA preflight, and inline-JS checker.
+
+### Confirmed
+- CI explicitly selects Node 22 using `actions/setup-node@v4`; npm version is not explicitly selected or recorded in the workflow.
+- Package scripts define Playwright dependency range `^1.56.0`; the workflow installs Chromium through `npx playwright install --with-deps chromium`, so the browser is resolved from the installed Playwright package.
+- Playwright requires an explicit `FRIEND_RIDE_BASE_URL` and restricts it to localhost/loopback. Service workers are blocked; hosted/live fallback is denied.
+- Local preflight checks the same loopback boundary, rejects redirects, requires HTTP success and HTML content type, and uses a 4-second timeout.
+- Inline JavaScript checker parses script blocks and checks source markers; it is not a runtime integration test.
+- Workflow has a 15-minute job timeout. CI does not visibly log Node/npm/Playwright/browser versions as a structured evidence summary.
+
+### Consistency / evidence gaps
+- **P2 npm environment:** npm version is not pinned or reported; dependency install behavior may vary with runner image updates.
+- **P2 browser traceability:** Browser installation is tied to Playwright package resolution, but version details are not recorded in the workflow summary.
+- **P2 runner image:** `ubuntu-latest` is a moving runner image; exact image/tool versions are not captured.
+- **Positive control:** Explicit local-only target enforcement and preflight are strong safety boundaries in reviewed config.
+- **P1 runtime evidence:** This is static configuration review only; no CI run or actual version capture occurred.
+
+### Recommendations (not implemented)
+1. Add a CI evidence step recording commit SHA, Node version, npm version, Playwright version, browser version, runner OS/image context, and test summary.
+2. Pin/standardize npm version if project reproducibility requirements justify it.
+3. Pair lockfile-backed installation with `npm ci` after lockfile is committed.
+4. Keep local-only preflight and Playwright host guard; add test assertions for zero unexpected blocked-origin attempts.
+5. Clearly separate source checks, browser tests, backend/device tests, and release evidence in the CI summary.
+
+**Status:** Static audit only. No workflow, package, app, SQL, backend, Firebase, Supabase, or production changes; no dependencies installed and no tests/CI run.
