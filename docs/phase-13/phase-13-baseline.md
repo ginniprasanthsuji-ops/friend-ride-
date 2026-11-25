@@ -80,3 +80,14 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Live Supabase schema and RLS-policy read-only audit: PASS for the limited matching-table scope.
 - Full function/trigger/grant audit and complete frontend file search: PENDING.
 - No production SQL or app-code feature implementation has been applied in this checkpoint.
+
+## Phase 13 Task 3 — Flash Sale UI checkpoint (2026-11-25)
+- Added Admin Dashboard tile and campaign screen in `index.html`.
+- Added campaign creation fields: code, title/description, discount type/value, minimum spend, optional max discount, start/end, quantity cap, per-customer limit, optional store partner UUID.
+- Admin campaign create uses authenticated Supabase client + existing admin RLS; sets active/approved fields and records creator/approver IDs. DB policy remains the authorization gate.
+- Added customer Flash Sale listing within Offers & Rewards. Customers can reserve/cancel a reservation using the authenticated RPCs and view calculated discount/code.
+- Supabase verified: campaign table has RLS enabled and 2 policies; redemption table has RLS enabled and 1 policy.
+- Static integration checks: asset include, Admin page/tile, customer container and expected UI functions all present.
+- **Important limitation:** reservation is not yet tied to the store checkout/order table. UI explicitly labels reservation as not order/payment confirmation. Checkout integration and authenticated browser end-to-end tests remain pending.
+- Commits: UI/index `b9002842`; asset `daf96f01`; globals fix `a33b9c43`.
+- Task 3 status: foundation and UI integration PASS; order/checkout integration and E2E QA PENDING.
