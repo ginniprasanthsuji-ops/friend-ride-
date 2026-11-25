@@ -40,3 +40,8 @@ Branch: `arjuna-x/phase-7-ai-intelligence-safety`
 ## Release decision
 **BLOCKED — no runtime, backend, device, or Play Store evidence is recorded here.**
 This matrix is a tracking artifact, not a test report or release approval.
+
+
+## CI reporting update (2026-11-25)
+- GitHub Actions now writes a QA evidence summary with commit SHA, branch, run URL, and links the reader to preceding test-step outcomes and artifacts.
+- This reporting step is authored but has not been execution-verified here.
