@@ -596,3 +596,37 @@ Read-only review of `.github/workflows/friend-ride-regression.yml`.
 5. Add UI behavior tests for role-dashboard destination and form submission validation without real credentials/network.
 
 **Status:** Static review only. No tests executed; no code, SQL, workflow, backend, or production settings changed.
+
+
+## Follow-up — Session-Switch Race Scenario Prioritization
+
+**Basis:** Previously reviewed static auth restore, logout/realtime, notification-loader async flow, and local-only QA harness. Prioritize tests by impact and determinism; no code implemented.
+
+### Tier 0 — Fail-safe boundary checks (first)
+1. **External request boundary:** after each test, assert `page.__frBlockedOrigins` is empty; report attempted origins.
+2. **Single identity after logout:** logout clears synthetic identity, private notification/profile state, and listener/channel counters.
+3. **Role gate:** customer cannot route to driver/partner/admin dashboard; admin route requires synthetic admin membership; driver approval status gates driver route.
+
+### Tier 1 — Deterministic async race tests
+4. **Late A profile response:** start A profile/admin checks, switch/logout, then resolve A; stale completion must not set identity or role.
+5. **Notification late response:** start A notification query, switch to B, resolve B first then A; only B state remains.
+6. **Token/register response after switch:** pending registration result from A must not mutate B identity or UI (mock only; no real FCM/network).
+7. **Restore vs new login:** hold restore A pending, perform B login; restore A must not override B.
+
+### Tier 2 — Multi-context and cleanup
+8. **Parallel contexts:** independent synthetic A and B contexts remain isolated.
+9. **Realtime cleanup:** logout/switch removes prior synthetic listeners and channels; no events from A appear in B.
+10. **Invalid restore:** malformed/expired synthetic restore safely falls back to anonymous state.
+11. **Role mismatch:** selected role differs from backend fixture role; reject/fallback without cross-dashboard display.
+
+### Tier 3 — Behavior and evidence
+12. Role-specific dashboard destination smoke checks.
+13. Registration validation, submit-state and error handling checks using mocked responses.
+14. CI result summary and artifact existence/traceability.
+
+### Acceptance rule
+- Tests must use deterministic in-memory synthetic identities and locally controlled deferred promises; external requests remain blocked.
+- Do not use actual user sessions, OTP/SMS, Firebase/Supabase production endpoints, payments, GPS, customer records, or real KYC photos.
+- Runtime test claims are permitted only after tests actually execute and results/artifacts are captured.
+
+**Checkpoint status:** Scenario prioritization documented. No tests or application code changed; CI not rerun; backend/production untouched.
