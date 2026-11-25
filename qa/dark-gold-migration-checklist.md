@@ -624,3 +624,12 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] ACL correction remains draft-only; do not revoke/apply without dependency review and rollback validation.
 
 **Phase 13B remains 70%** — this is an audit finding, not a verified remediation milestone.
+
+
+### Phase 13B continuation — Events/Payments live ACL audit and Stage 2 draft
+- [x] Read-only grants capture on `fr_shared_ride_events` and `fr_shared_ride_payments`: anon has SELECT/INSERT/UPDATE/DELETE/REFERENCES/TRIGGER/TRUNCATE; authenticated also has broad listed privileges including TRUNCATE and DML.
+- [x] Existing RLS policies on events and payments are SELECT-only participant policies; no write policies were surfaced in this read.
+- [x] Created `qa/phase13b-shared-ride-acl-stage2-review-draft.sql`: anon ALL revoke across all four tables; authenticated TRUNCATE revoke all four; authenticated direct INSERT/UPDATE/DELETE revoke on events/payments. Preserves authenticated SELECT and keeps ride/booking DML pending dependency review.
+- [ ] Inspect PUBLIC/inherited/column grants, views, RPC write paths and app dependencies; validate rollback and test before approval/application.
+
+**Phase 13B remains 70%**; audit/draft only, no SQL executed against tables.
