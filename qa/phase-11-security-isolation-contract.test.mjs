@@ -15,6 +15,7 @@ const sessionModel = await readFile(new URL('./session-switch-model.cjs', import
 const sessionUnitTests = await readFile(new URL('../tests/session-switch-model.test.cjs', import.meta.url), 'utf8');
 const sessionFlowHarness = await readFile(new URL('./session-flow-harness.cjs', import.meta.url), 'utf8');
 const sessionFlowTests = await readFile(new URL('../tests/session-flow-harness.test.cjs', import.meta.url), 'utf8');
+const runtimeBridge = await readFile(new URL('./phase-7b-session-runtime-bridge.spec.cjs', import.meta.url), 'utf8');
 
 test('Phase 11 security: admin authorization is based on admin_users membership', () => {
   assert.ok(app.includes("from('admin_users').select('user_id')"));
@@ -235,4 +236,14 @@ test('Phase 7B QA: synthetic session flow tests cover auth race, gates, and erro
   ];
   for (const name of names) assert.ok(sessionFlowTests.includes(name), name);
   assert.equal((sessionFlowTests.match(/\\btest\\(/g) || []).length, 14);
+});
+
+test('Phase 7B QA: runtime bridge is local-only and covers role routes plus stale session scenarios', () => {
+  assert.ok(runtimeBridge.includes("require('./local-only-fixture.cjs')"));
+  assert.ok(runtimeBridge.includes("require('./session-flow-harness.cjs')"));
+  assert.ok(runtimeBridge.includes("window.dashboardFor(role)"));
+  assert.ok(runtimeBridge.includes("stale fixture notifications cannot cross identity switch"));
+  assert.ok(runtimeBridge.includes("late A profile"));
+  assert.equal((runtimeBridge.match(/\\btest\\(/g) || []).length, 2);
+  assert.ok(playwrightConfig.includes('phase-7b-session-runtime-bridge.spec.cjs'));
 });
