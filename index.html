@@ -928,6 +928,7 @@ function showPage(id){
  const isPartnerRoute=partnerRoutes.includes(id);
  const isPartnerAdminShared=id==='frDirectCouponReview';
  if(dashboardRole&&(!currentUser||role!==dashboardRole)){showMessage(dashboardRole.toUpperCase()+' account అవసరం.');return;}
+ if(id==='frDriverSubscription'&&(!currentUser||role!=='driver')){showMessage('Driver account అవసరం.');return;}
  if(isAdminRoute&&(!currentUser||role!=='admin')){showMessage('Admin account అవసరం.');return;}
  if(isPartnerRoute&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner account అవసరం.');return;}
  if(isPartnerAdminShared&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner లేదా Admin account అవసరం.');return;}
