@@ -30,6 +30,14 @@ test('booking confirmation draft is restricted to the approved assigned driver',
   assert.match(hardeningDraft, /b\.status='booking_pending'/);
 });
 
+test('passenger cancellation draft releases seats only before departure for pending/confirmed booking', () => {
+  assert.match(hardeningDraft, /fr_shared_ride_cancel_booking\(p_booking_id uuid\)/);
+  assert.match(hardeningDraft, /v_booking\.status not in \('booking_pending','confirmed'\)/);
+  assert.match(hardeningDraft, /greatest\(0,booked_seats-v_booking\.seats_booked\)/);
+  assert.match(hardeningDraft, /status=case when status='full' then 'live' else status end/);
+  assert.match(hardeningDraft, /booking_cancelled/);
+});
+
 test('contact draft discloses counterpart contact only for one confirmed active booking', () => {
   assert.match(hardeningDraft, /fr_shared_ride_get_booking_contacts\(p_booking_id uuid\)/);
   assert.match(hardeningDraft, /v_booking\.status not in \('confirmed','boarding','in_progress'\)/);
@@ -37,6 +45,8 @@ test('contact draft discloses counterpart contact only for one confirmed active 
   assert.match(hardeningDraft, /v_uid=v_booking\.passenger_id/);
   assert.match(hardeningDraft, /p\.id=v_booking\.passenger_id and p\.role='customer'/);
   assert.match(hardeningDraft, /p\.id=v_driver_id and p\.role='driver' and p\.driver_approval_status='approved'/);
+  assert.match(hardeningDraft, /Assigned driver is not approved/);
+  assert.match(hardeningDraft, /where b\.id=p_booking_id for share/);
 });
 
 test('client table writes are revoked and RPC execution is authenticated-only', () => {
@@ -45,6 +55,7 @@ test('client table writes are revoked and RPC execution is authenticated-only', 
   assert.match(hardeningDraft, /revoke truncate on all tables in schema public from anon,authenticated;/);
   assert.match(hardeningDraft, /revoke all on function public\.fr_shared_ride_get_booking_contacts\(uuid\) from public,anon;/);
   assert.match(hardeningDraft, /grant execute on function public\.fr_shared_ride_get_booking_contacts\(uuid\) to authenticated;/);
+  assert.match(hardeningDraft, /grant execute on function public\.fr_shared_ride_cancel_booking\(uuid\) to authenticated;/);
 });
 
 test('read-only audit artifact includes role, contact and privilege gap checks and no writes', () => {
