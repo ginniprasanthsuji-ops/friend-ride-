@@ -75,5 +75,11 @@ create policy fr_store_redemptions_read_own
   on public.fr_store_campaign_redemptions for select to authenticated
   using (customer_id = auth.uid() or public.is_friend_ride_admin());
 
+-- Explicit grants: RLS policies are the authorization boundary.
+grant select on public.fr_store_campaigns to anon, authenticated;
+grant insert, update on public.fr_store_campaigns to authenticated;
+grant select on public.fr_store_campaign_redemptions to authenticated;
+revoke insert, update, delete on public.fr_store_campaign_redemptions from anon, authenticated;
+
 -- Client INSERT/UPDATE/DELETE is intentionally not allowed on redemptions.
--- Future RPCs will validate eligibility, lock campaign rows, and enforce idempotency.
+-- RPCs validate eligibility, lock campaign rows, and enforce idempotency.
