@@ -13,6 +13,8 @@ const pageIsolationSpec = await readFile(new URL('./phase-11-page-isolation.spec
 const localFixture = await readFile(new URL('./local-only-fixture.cjs', import.meta.url), 'utf8');
 const sessionModel = await readFile(new URL('./session-switch-model.cjs', import.meta.url), 'utf8');
 const sessionUnitTests = await readFile(new URL('../tests/session-switch-model.test.cjs', import.meta.url), 'utf8');
+const sessionFlowHarness = await readFile(new URL('./session-flow-harness.cjs', import.meta.url), 'utf8');
+const sessionFlowTests = await readFile(new URL('../tests/session-flow-harness.test.cjs', import.meta.url), 'utf8');
 
 test('Phase 11 security: admin authorization is based on admin_users membership', () => {
   assert.ok(app.includes("from('admin_users').select('user_id')"));
@@ -203,4 +205,26 @@ test('Phase 7B QA: synthetic session model includes the six required isolation s
 test('Phase 7B QA: synthetic model unit tests are wired into the regression workflow', () => {
   assert.ok(JSON.parse(packageJson).scripts['test:unit'].includes('node --test tests/*.test.cjs'));
   assert.ok(workflow.includes('npm run test:unit'));
+});
+
+
+test('Phase 7B QA: synthetic session flow harness uses fixture-only identities and generation guards', () => {
+  assert.ok(sessionFlowHarness.includes("new Set(['fixture-user-a', 'fixture-user-b'])"));
+  assert.ok(sessionFlowHarness.includes('this.generation++'));
+  assert.ok(sessionFlowHarness.includes('_current(captured)'));
+  assert.ok(!sessionFlowHarness.includes('supabase'));
+  assert.ok(!sessionFlowHarness.includes('firebase'));
+});
+
+test('Phase 7B QA: synthetic session flow tests cover six auth race and gate scenarios', () => {
+  const names = [
+    'accepts only synthetic fixture identities',
+    'late A profile result is rejected after B signs in',
+    'stale A notifications cannot replace B private notifications',
+    'admin role is denied unless membership loader confirms admin',
+    'driver access fails closed for unapproved status',
+    'logout invalidates pending profile response and clears all session state'
+  ];
+  for (const name of names) assert.ok(sessionFlowTests.includes(name), name);
+  assert.equal((sessionFlowTests.match(/\btest\(/g) || []).length, 6);
 });
