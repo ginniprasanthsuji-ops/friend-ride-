@@ -197,7 +197,7 @@ test('Phase 7B QA: synthetic session model includes the six required isolation s
     'cross-user rows are filtered from accepted response'
   ];
   for (const scenario of required) assert.ok(sessionUnitTests.includes(scenario), scenario);
-  assert.equal((sessionUnitTests.match(/\\btest\\(/g) || []).length, 6);
+  assert.equal((sessionUnitTests.match(/\btest\(/g) || []).length, 6);
 });
 
 test('Phase 7B QA: synthetic model unit tests are wired into the regression workflow', () => {
