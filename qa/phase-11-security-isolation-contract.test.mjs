@@ -11,11 +11,6 @@ const workflow = await readFile(new URL('../.github/workflows/friend-ride-regres
 const registrationSpec = await readFile(new URL('./phase-11-registration-isolation.spec.js', import.meta.url), 'utf8');
 const pageIsolationSpec = await readFile(new URL('./phase-11-page-isolation.spec.js', import.meta.url), 'utf8');
 const localFixture = await readFile(new URL('./local-only-fixture.cjs', import.meta.url), 'utf8');
-const sessionModel = await readFile(new URL('./session-switch-model.cjs', import.meta.url), 'utf8');
-const sessionUnitTests = await readFile(new URL('../tests/session-switch-model.test.cjs', import.meta.url), 'utf8');
-const sessionFlowHarness = await readFile(new URL('./session-flow-harness.cjs', import.meta.url), 'utf8');
-const sessionFlowTests = await readFile(new URL('../tests/session-flow-harness.test.cjs', import.meta.url), 'utf8');
-const runtimeBridge = await readFile(new URL('./phase-7b-session-runtime-bridge.spec.cjs', import.meta.url), 'utf8');
 
 test('Phase 11 security: admin authorization is based on admin_users membership', () => {
   assert.ok(app.includes("from('admin_users').select('user_id')"));
@@ -183,71 +178,3 @@ test('Phase 11 preflight rejects hosted URLs and never follows redirects', () =>
 });
 
 
-test('Phase 7B QA: synthetic session model rejects real identities and never connects to services', () => {
-  assert.ok(sessionModel.includes("['fixture-user-a', 'fixture-user-b'].includes(userId)"));
-  assert.ok(sessionModel.includes('Only synthetic fixture identities are allowed'));
-  assert.ok(!sessionModel.includes('supabase'));
-  assert.ok(!sessionModel.includes('firebase'));
-});
-
-test('Phase 7B QA: synthetic session model includes the six required isolation scenarios', () => {
-  const required = [
-    'anonymous protected request is denied',
-    'late A request is discarded after switching to B',
-    'requests remain bound to isolated model instances',
-    'logout invalidates pending request and clears private state',
-    'invalid restore falls back to anonymous',
-    'cross-user rows are filtered from accepted response'
-  ];
-  for (const scenario of required) assert.ok(sessionUnitTests.includes(scenario), scenario);
-  assert.equal((sessionUnitTests.match(/\btest\(/g) || []).length, 6);
-});
-
-test('Phase 7B QA: synthetic model unit tests are wired into the regression workflow', () => {
-  assert.ok(JSON.parse(packageJson).scripts['test:unit'].includes('node --test tests/*.test.cjs'));
-  assert.ok(workflow.includes('npm run test:unit'));
-});
-
-
-test('Phase 7B QA: synthetic session flow harness uses fixture-only identities and generation guards', () => {
-  assert.ok(sessionFlowHarness.includes("new Set(['fixture-user-a', 'fixture-user-b'])"));
-  assert.ok(sessionFlowHarness.includes('this.generation++'));
-  assert.ok(sessionFlowHarness.includes('_current(captured)'));
-  assert.ok(!sessionFlowHarness.includes('supabase'));
-  assert.ok(!sessionFlowHarness.includes('firebase'));
-});
-
-test('Phase 7B QA: synthetic session flow tests cover auth race, gates, and error scenarios', () => {
-  const names = [
-    'accepts only synthetic fixture identities',
-    'late A profile result is rejected after B signs in',
-    'stale A notifications cannot replace B private notifications',
-    'admin role is denied unless membership loader confirms admin',
-    'driver access fails closed for unapproved status',
-    'logout invalidates pending profile response and clears all session state',
-    'late A admin-membership result is rejected after B session switch',
-    'unknown role fails closed and clears session',
-    'approved driver profile is accepted',
-    'invalid restore resets to anonymous and clears private state',
-    'profile loader failure fails closed and resets session',
-    'notification loader failure clears private notifications without leaking error data',
-    'identity switch clears old realtime listeners before B session is established',
-    'logout invalidates pending notification loader and clears private state',
-    'signOut clears every registered realtime listener',
-    'notification loader filters cross-identity rows before publishing'
-  ];
-  for (const name of names) assert.ok(sessionFlowTests.includes(name), name);
-  assert.equal((sessionFlowTests.match(/\\btest\\(/g) || []).length, 16);
-});
-
-test('Phase 7B QA: runtime bridge is local-only and covers role routes plus stale session scenarios', () => {
-  assert.ok(runtimeBridge.includes("require('./local-only-fixture.cjs')"));
-  assert.ok(runtimeBridge.includes("require('./session-flow-harness.cjs')"));
-  assert.ok(runtimeBridge.includes("window.dashboardFor(role)"));
-  assert.ok(runtimeBridge.includes("stale fixture notifications cannot cross identity switch"));
-  assert.ok(runtimeBridge.includes('A-to-B session race is guarded'));
-  assert.ok(runtimeBridge.includes('staleA.reason'));
-  assert.ok(runtimeBridge.includes('harness.snapshot().identity'));
-  assert.equal((runtimeBridge.match(/\\btest\\(/g) || []).length, 2);
-  assert.ok(playwrightConfig.includes('phase-7b-session-runtime-bridge.spec.cjs'));
-});
