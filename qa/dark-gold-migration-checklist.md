@@ -654,3 +654,12 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Next: exact role membership/inherited ACL check, frontend write-dependency map, approved ACL rollback/test matrix.
 
 **Phase 13B remains 70%**; no remediation applied.
+
+
+### Phase 13B continuation — code dependency review
+- [x] GitHub code search attempted for shared ride table/RPC identifiers.
+- [!] Search index/default-branch limitations: feature audit branch code not conclusively inspected; no dependency-free claim made.
+- [x] Review limitation recorded in qa/phase13b-shared-ride-code-dependency-review.md.
+- [ ] Obtain branch-specific source tree and map all direct writes/RPC calls before ACL changes.
+
+**Phase 13B remains 70%**; SQL remediation is blocked pending dependency evidence.
