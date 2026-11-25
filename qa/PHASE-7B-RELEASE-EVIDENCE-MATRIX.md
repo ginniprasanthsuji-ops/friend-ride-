@@ -64,3 +64,8 @@ This matrix is a tracking artifact, not a test report or release approval.
 - Updated the Playwright discovery contract for the newly added Phase 7B bridge spec.
 - Added a contract test asserting bridge fixture isolation, dashboard role mapping checks, stale profile/notification scenario presence, and exactly two bridge tests.
 - No workflow execution result is available from the queried commit; test status remains AUTHORED / UNVERIFIED.
+
+## Follow-up fixes (2026-11-25)
+- Corrected runtime-bridge contract assertion to match the actual test title and explicit stale-result assertions.
+- CI summary now reports the job status using the workflow job-status expression and lists authored synthetic/runtime test scope. These are reporting improvements; no execution result is implied.
+- Repository currently contains 14 session-flow tests and 2 runtime bridge browser tests (authored counts). CI execution remains unverified.
