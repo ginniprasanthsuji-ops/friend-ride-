@@ -594,3 +594,13 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Find Shared Ride UI and source/migrations for participant contact; build specific confirmed-booking authorization tests.
 
 **Phase 13B remains 70%** — this resolves the ordinary Ride source/deployment mismatch only; Shared Ride contact access remains open.
+
+
+### Phase 13B continuation — Shared Ride contact draft gap review (2026-11-26)
+- [x] Located existing QA-only contact privacy draft with `fr_shared_ride_get_participant_contact(p_booking_id)`.
+- [x] Draft is booking-scoped: passenger or assigned ride driver; other caller rejected. Draft grants authenticated and revokes PUBLIC/anon.
+- [x] Read-only live QA catalog confirms confirm/cancel/contact RPCs are absent (zero matching rows).
+- [x] Gap identified: draft allows contact disclosure for completed/disputed statuses; recommend active-only confirmed/boarding/in_progress. Driver phone-verification rule needs decision/enforcement.
+- [ ] Revise QA-only draft and run negative authorization matrix; no live runtime calls or SQL mutation performed.
+
+**Phase 13B remains 70%**; evidence is source/draft review only, not execution.
