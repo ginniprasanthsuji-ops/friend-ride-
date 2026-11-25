@@ -11,6 +11,19 @@ Status: Requirements captured; fee formula between sample points is not approved
 ## Formula decision still required
 The examples do not uniquely define how to calculate the fee for all amounts between ₹100, ₹500 and ₹1,000 (or below ₹100). Do not infer a percentage, interpolation, slab, rounding, or minimum fee without approval.
 
+## QA test matrix (formula approval required before expected results are asserted)
+| Input amount | Expected fee / outcome |
+|---:|---|
+| ₹0 | Reject or safe zero-fee behavior—business decision needed |
+| Negative amount | Reject |
+| Null / malformed | Reject |
+| ₹100 | ₹2.50 (confirmed) |
+| ₹500 | ₹11.50 (confirmed) |
+| ₹1,000 | ₹25 (confirmed) |
+| ₹1,000.01 | ₹25 cap (confirmed) |
+| Amount above ₹1,000 | ₹25 cap (confirmed) |
+| Paise precision / boundary values | Formula + rounding rule approval required |
+
 ## Required QA cases after formula approval
 - Exact examples: 100, 500, 1000
 - Cap: 1000.01 and any higher amount → 25 maximum
@@ -28,3 +41,10 @@ The examples do not uniquely define how to calculate the fee for all amounts bet
 - No direct production modification during implementation/testing
 - Keep subtotal, delivery fee, platform fee, taxes (if configured), and total distinct
 - Idempotent payment/reconciliation behavior
+
+## Phase 12 next actions
+1. Confirm exact fee formula for amounts between examples and for amounts below ₹100.
+2. Confirm rounding rule (paise), whether minimum fee exists, and zero-amount handling.
+3. Only after decisions: create SQL function + configuration and QA-only migration.
+4. Run exact-value, boundary, invalid-input, retry/idempotency, and checkout-total tests.
+5. Validate regression on ride, marketplace, food, shopping, and services; keep production untouched until verified.
