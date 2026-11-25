@@ -40,3 +40,29 @@ Existing harness is suitable for local-origin-only browser tests, but current he
 - Existing CI evidence from commit 05ca954: both workflow runs successful; recorded previously.
 - Authenticated session switch runtime: not tested.
 - Production/release: blocked pending runtime/security evidence.
+
+
+## Follow-up static audit — logout and notification async race candidate
+
+**Reviewed source:** `index.html` (read-only; 2026-11-25)
+
+- Supabase auth persistence uses localStorage key `friend-ride-auth-v1`; persistSession, autoRefreshToken, and detectSessionInUrl are enabled.
+- Logout invokes `sb.auth.signOut({scope:'local'})`, clears currentUser/currentProfile and selectedRole, removes `friendride_selected_role`, sets online false, resets header/drawer and navigates home.
+- Realtime hook wraps logout to stop realtime before original logout; SIGNED_OUT also stops realtime.
+- Realtime channels and filters include the current user ID; start logic removes an existing channel when changing IDs.
+- Notification loader queries both notification tables with `user_id=currentUser.id`, then writes shared `frRideNotifRows` after awaiting query results. A post-await current-session identity/request-generation guard was not observed in this reviewed function.
+- This is a **static race-risk candidate only**: a delayed A response may finish after a session switch and update shared state. No runtime leak has been demonstrated; live auth, RLS, timing and rendering behavior remain unverified.
+
+### Recommended test (not implemented)
+1. Hold mocked A notification response pending.
+2. Switch to B and resolve B request first; assert only B rows appear.
+3. Resolve delayed A response; assert B UI remains unchanged and A response is discarded.
+4. Logout; assert channel cleanup and empty private notification UI.
+5. Run parallel A/B requests and invalid restore fallback with synthetic IDs only.
+
+### Status refresh
+- Static logout and realtime cleanup review: completed for reviewed functions.
+- Late-response session guard: not verified; risk candidate documented.
+- Session-switch tests: not implemented / not run.
+- No application, SQL, backend, production or account changes.
+- Release certification remains blocked.
