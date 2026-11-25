@@ -29,4 +29,9 @@ const test = base.extend({
   }
 });
 
+test.afterEach(async ({ page }) => {
+  // A blocked external-origin attempt is still a safety-test failure.
+  expect(page.__frBlockedOrigins || []).toEqual([]);
+});
+
 module.exports = { test, expect };
