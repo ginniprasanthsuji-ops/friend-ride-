@@ -704,3 +704,13 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Map all status mutation paths and agree rebooking/cancel-refund behavior before ACL remediation.
 
 **Phase 13B remains 70%; no SQL applied.**
+
+
+### Shared Ride cancellation/status & column-grant audit
+- [x] Live QA RPC catalog: no Shared Ride confirmation/cancel/refund/status-transition RPC found.
+- [x] Catalog confirms anon column-level INSERT/SELECT/UPDATE/REFERENCES grants across all columns in Shared Ride tables.
+- [x] Status/timestamp fields exist; mutation path is not established from catalog/source.
+- [x] Findings documented in `qa/phase13b-shared-ride-cancellation-status-and-column-grants-audit.md`.
+- [ ] Reconcile actual client/build and mutation paths; role-based negative tests and ACL rollback review before apply.
+
+**Phase 13B remains 70%; no SQL applied.**
