@@ -9,8 +9,9 @@ Scope: Service-provider module, SOS/emergency contacts, driver documents, profil
 ### Profiles — self-update policy is broad
 - `qa_profiles_update_own` UPDATE predicate and WITH CHECK only bind `id = auth.uid()`.
 - Authenticated has table-level UPDATE and column grants across profile fields, including role, approval status, contact, vehicle, license/Aadhaar-related fields, photo/document paths, partner fields, QR paths, and business location fields.
-- This policy/grant combination is a **high-risk authorization design**: policy metadata does not constrain which columns the owner can update. Role, driver/partner approval, verification, and sensitive identity/document fields should be treated as protected fields and tested with role-context attempts.
-- No runtime write attempt performed; no escalation/exploitability claim.
+- A BEFORE UPDATE trigger `qa_guard_profile_privileged_fields()` was inspected. It blocks non-admin changes to `role`, `driver_approval_status`, and `partner_approval_status`, except when the custom registration context matches the current user. This mitigates those three fields, but is not a complete column-level guard.
+- The trigger does **not** protect other sensitive profile fields visible in the authenticated column-grant inventory (identity numbers, license/document paths, vehicle data, QR/profile photo paths, contact/business fields). These remain candidates for runtime tests and/or column-specific restrictions.
+- Revised assessment: role/approval escalation concern is mitigated by the trigger logic in catalog, but its registration-context bypass must be reviewed; other sensitive profile-column changes remain unvalidated. No runtime write attempt performed.
 
 ### Driver documents
 - Own INSERT requires owner_id and driver_id = auth.uid() and verification_status = pending.
