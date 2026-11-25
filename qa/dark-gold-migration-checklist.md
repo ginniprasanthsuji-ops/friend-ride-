@@ -296,3 +296,26 @@ Status: **TEST PLAN DRAFTED — NOT EXECUTED**. No implementation, SQL, Storage 
 6. Test cross-user/admin permissions, Storage failures, DB failures, replacement rollback, idempotent cleanup, and bucket-name consistency using a verified QA project.
 
 Status: **SOURCE AUDIT COMPLETE FOR THIS PASS; ACCEPTANCE CRITERIA DOCUMENTED, NOT IMPLEMENTED/EXECUTED**. No SQL/Storage mutations; Main/Production untouched; no merge/deploy.
+
+
+## Phase 13 continuation — QR replacement lifecycle audit (2026-11-26)
+
+### Driver QR update
+- Driver dashboard update uploads a timestamped new object to `provider-payment-qr`, then calls `fr_driver_save_payment_qr` to update the profile reference.
+- Inspected client flow does not remove the previous QR object after the save succeeds. New QR is uploaded before database update; if RPC fails, the upload is not visibly cleaned up in this handler.
+- Therefore: replacement can leave stale QR objects, and failed save may leave an orphan. Do not delete these objects until inventory and RPC ownership/authorization behavior are verified.
+
+### Partner QR update
+- Partner payment settings upload paired objects to `partner-qr` and `provider-payment-qr`, then call `fr_partner_save_payment_details` with both paths.
+- If save fails before `saved=true`, client attempts cleanup of newly uploaded objects. On successful save, prior QR copies are not removed in inspected source.
+- Pairing may be intentional for separate customer-market and ride-payment flows; decide canonicalization only after validating each consumer and backend RPC.
+
+### Registration upload rollback
+- Registration tracks newly uploaded files and attempts Storage removal when registration throws. This is rollback of newly created registration assets, not a lifecycle cleanup for already registered permanent assets.
+
+### QA actions added to audit scope (not executed)
+- Driver QR: successful save, RPC failure cleanup/orphan detection, old QR retention, signed-url consumer, owner isolation.
+- Partner QR: one/both upload failure, RPC failure cleanup, successful save, old paired QR retention, preview and customer payment consumer consistency.
+- Check bucket/path ownership and SQL RPC permissions in an identified QA database before runtime tests.
+
+Status: **SOURCE REVIEW ONLY; no runtime tests, no SQL/Storage mutations, Main/Production untouched, no merge/deploy**.
