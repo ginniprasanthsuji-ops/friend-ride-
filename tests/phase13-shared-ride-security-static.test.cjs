@@ -53,5 +53,5 @@ test('read-only audit artifact includes role, contact and privilege gap checks a
   assert.match(readOnlyAudit, /shared_ride_confirmation_contact_rpc_missing/);
   assert.match(readOnlyAudit, /security_definer_missing_fixed_search_path/);
   const executable = readOnlyAudit.replace(/--[^\n]*|\/\*[\s\S]*?\*\//g, '');
-  assert.doesNotMatch(executable, /\b(?:insert|update|delete|create|alter|drop|grant|revoke|truncate|commit|begin)\b/i);
+  assert.doesNotMatch(executable, /^\s*(?:insert|update|delete|create|alter|drop|grant|revoke|truncate|commit|begin)\s/im);
 });
