@@ -264,3 +264,28 @@ Reviewed `frEnableDeviceAlerts` and `fr_push_subscriptions` handling in `index.h
 5. Confirm logout realtime cleanup is separate from push-subscription lifecycle.
 
 **Status:** Static review only; no SQL/RLS inspection, push send, device test, production change, or runtime test performed.
+
+
+## Follow-up — notification click destination allowlist audit
+
+Reviewed `service-worker.js` notification click behavior read-only.
+
+### Confirmed observations
+- Both FCM background and generic Web Push payloads place a payload/default URL in notification data.
+- Click handler constructs target with `new URL(notification.data?.url || './', self.registration.scope)`.
+- Handler focuses an existing window and navigates it to the target, or opens a window when no client is found.
+- No explicit same-origin comparison or approved-path allowlist is present in the reviewed click handler.
+- Generic Web Push allows payload-supplied icon, badge, tag, URL, ride_id; FCM background uses fixed local icon/badge but payload URL.
+
+### Risk candidates
+- **P1/P2 destination validation candidate:** URL construction accepts absolute URLs and does not itself enforce same-origin or allowed route. Actual exploitability depends on browser/client behavior and payload authorization; not runtime-tested.
+- **P2 notification resource URL candidate:** generic push icon/badge can be payload-controlled, with no visible allowlist.
+- **P1 privacy candidate:** notification bodies include payload text; lock-screen exposure depends on sender payload and device notification settings.
+
+### Recommended tests (not implemented)
+1. Synthetic click payloads: relative same-origin route, absolute same-origin route, external origin, malformed URL, and disallowed route; verify only approved internal targets navigate.
+2. Verify no open/focus/navigate path escapes origin and route policy.
+3. Test payload icon/badge validation against approved local assets.
+4. Verify sender payload contains no phone numbers, addresses, OTPs, private order details, or payment secrets.
+
+**Status:** Static source review only; no push payloads sent, browser tests, devices, production changes, or runtime verification.
