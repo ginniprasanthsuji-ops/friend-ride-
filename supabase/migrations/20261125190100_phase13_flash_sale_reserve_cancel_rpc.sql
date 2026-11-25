@@ -1,3 +1,4 @@
+-- Flash Sale reserve/cancel RPCs. Search path is empty; all relations/functions are schema-qualified.
 create or replace function public.fr_store_flash_sale_reserve(
   p_campaign_id uuid,
   p_cart_subtotal numeric,
@@ -5,7 +6,7 @@ create or replace function public.fr_store_flash_sale_reserve(
 ) returns jsonb
 language plpgsql
 security definer
-set search_path = public, pg_temp
+set search_path = ''
 as $$
 declare
   v_uid uuid := auth.uid();
@@ -18,7 +19,9 @@ begin
   if p_cart_subtotal is null or p_cart_subtotal < 0 then raise exception 'Invalid cart subtotal'; end if;
   if p_idempotency_key is null or length(trim(p_idempotency_key)) < 8 then raise exception 'Invalid idempotency key'; end if;
 
-  select * into v_existing from public.fr_store_campaign_redemptions where idempotency_key = p_idempotency_key;
+  select * into v_existing
+  from public.fr_store_campaign_redemptions
+  where idempotency_key = p_idempotency_key;
   if found then
     if v_existing.customer_id <> v_uid then raise exception 'Idempotency key belongs to another user'; end if;
     return jsonb_build_object('status',v_existing.status,'redemption_id',v_existing.id,'discount_amount',v_existing.discount_amount,'idempotent_replay',true);
@@ -32,7 +35,9 @@ begin
   if now() < v_campaign.starts_at or now() >= v_campaign.ends_at then raise exception 'Campaign is outside its active time window'; end if;
   if p_cart_subtotal < v_campaign.minimum_order_amount then raise exception 'Minimum order amount not met'; end if;
 
-  select count(*) into v_count from public.fr_store_campaign_redemptions where campaign_id=p_campaign_id and customer_id=v_uid and status in ('reserved','redeemed');
+  select count(*) into v_count
+  from public.fr_store_campaign_redemptions
+  where campaign_id=p_campaign_id and customer_id=v_uid and status in ('reserved','redeemed');
   if v_count >= v_campaign.per_user_limit then raise exception 'Per-user redemption limit reached'; end if;
   if v_campaign.quantity_limit is not null and v_campaign.quantity_redeemed >= v_campaign.quantity_limit then raise exception 'Flash sale quantity exhausted'; end if;
 
@@ -46,25 +51,43 @@ begin
 
   update public.fr_store_campaigns set quantity_redeemed=quantity_redeemed+1,updated_at=now() where id=p_campaign_id;
   insert into public.fr_store_campaign_redemptions(campaign_id,customer_id,status,discount_amount,idempotency_key,redemption_code)
-  values (p_campaign_id,v_uid,'reserved',v_discount,p_idempotency_key,upper(substr(encode(gen_random_bytes(8),'hex'),1,12)))
+  values (p_campaign_id,v_uid,'reserved',v_discount,p_idempotency_key,upper(substr(encode(extensions.gen_random_bytes(8),'hex'),1,12)))
   returning * into v_existing;
   return jsonb_build_object('status',v_existing.status,'redemption_id',v_existing.id,'discount_amount',v_existing.discount_amount,'redemption_code',v_existing.redemption_code,'idempotent_replay',false);
 end;
 $$;
 
 create or replace function public.fr_store_flash_sale_cancel_reservation(p_redemption_id uuid)
-returns jsonb language plpgsql security definer set search_path = public, pg_temp
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
 as $$
 declare
   v_uid uuid := auth.uid();
   v_redemption public.fr_store_campaign_redemptions%rowtype;
   v_campaign public.fr_store_campaigns%rowtype;
+  v_order_status text;
 begin
   if v_uid is null then raise exception 'Authentication required'; end if;
   select * into v_redemption from public.fr_store_campaign_redemptions where id=p_redemption_id for update;
   if not found then raise exception 'Reservation not found'; end if;
   if v_redemption.customer_id <> v_uid then raise exception 'Not your reservation'; end if;
   if v_redemption.status <> 'reserved' then raise exception 'Reservation is not cancellable'; end if;
+
+  -- Do not release campaign quantity while a linked order is in payment/accepted/processing.
+  if v_redemption.order_id is not null then
+    if pg_catalog.to_regclass('public.fr_market_orders') is null then
+      raise exception 'Order backend unavailable; linked reservation cannot be safely cancelled';
+    end if;
+    execute 'select status from public.fr_market_orders where id=$1'
+      into v_order_status using v_redemption.order_id;
+    if v_order_status is null then raise exception 'Linked order not found'; end if;
+    if v_order_status not in ('quoted','cancelled','expired','rejected') then
+      raise exception 'Linked order state does not allow reservation cancellation';
+    end if;
+  end if;
+
   select * into v_campaign from public.fr_store_campaigns where id=v_redemption.campaign_id for update;
   update public.fr_store_campaign_redemptions set status='cancelled' where id=p_redemption_id;
   update public.fr_store_campaigns set quantity_redeemed=greatest(quantity_redeemed-1,0),updated_at=now() where id=v_campaign.id;
