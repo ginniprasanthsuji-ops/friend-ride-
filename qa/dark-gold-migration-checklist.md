@@ -416,3 +416,23 @@ Status: STATIC DRAFT REVIEW ONLY. No SQL executed, no live policies changed, no 
 - QA-only remediation priority: P1 revoke unused anon/authenticated destructive privileges, especially TRUNCATE; then review write privileges and policy compatibility. No changes applied.
 
 Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production untouched; no merge/deploy.
+
+
+## Phase 13B — QA Shared Ride Security Remediation Workstream (tracking begins 2026-11-26)
+
+**Separate progress tracking:** Phase 13's frozen Planning/Checklist 88%, Overall Audit Estimate 12%, and graph are unchanged. Phase 13B tracks only the newly scoped QA Shared Ride ACL/RLS hardening work.
+
+### Phase 13B scope and progress baseline
+- [x] Scope defined: QA-only Shared Ride ACL/RLS remediation and regression verification.
+- [x] Live QA policies and table ACL inventory read-only verified; high-risk broad client privileges incl. TRUNCATE documented.
+- [x] Draft hardening SQL reviewed as a draft; blanket policy changes flagged for exact live comparison.
+- [ ] Build a minimal, privilege-focused remediation draft that preserves necessary SELECT/RLS behavior and RPC dependencies.
+- [ ] Review RPC existence, owner, search_path, EXECUTE privileges, and write-path requirements.
+- [ ] QA-only approval gate / rollback plan.
+- [ ] Apply approved changes to QA only.
+- [ ] Run role-based permission regression tests (anon, customer, approved driver, pending driver, partner, admin) and cross-ride tests.
+- [ ] Document verified results; no production release until separate release review.
+
+**Phase 13B current progress: 15%** — scope and baseline inventory completed; remediation draft and testing remain.
+**Next task:** prepare minimal ACL-only draft using live grants and preserve current participant SELECT policy semantics; do not apply.
+**Progress rules:** update Phase 13B percentage each continuation based on completed checklist evidence. Do not change frozen Phase 13 counters/graph.
