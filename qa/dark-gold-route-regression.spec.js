@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const allPageIds = ["home","cycleDelivery","explore","eventServices","serviceProviderRegister","bankingServices","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","technicianRegister","parcelRelease","orders","tracking","wallet","offers","customerDashboard","driverDashboard","partnerDashboard","partnerOrders","products","inventory","gst","catalogue","subscription","referrals","partnerReports","adminDashboard","crmDashboard","users","referralApprovals","cashRewardApprovals","paymentApprovals","partnerPaymentSettings","platformBusinessSettings","driverApprovals","driverDocumentReviews","partnerApprovals","adminOrders","reports","settings","profile","notifications","support","about","cart","frSupportFeedback","learnTeach","frSuperHub","frCampaignAdmin","frReferralAdmin","frStoreReviewAdmin","frDirectCouponReview"];
+const allPageIds = ["home","cycleDelivery","explore","eventServices","serviceProviderRegister","bankingServices","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","technicianRegister","parcelRelease","orders","tracking","wallet","offers","customerDashboard","driverDashboard","partnerDashboard","partnerOrders","products","inventory","gst","catalogue","subscription","referrals","partnerReports","adminDashboard","crmDashboard","users","referralApprovals","cashRewardApprovals","paymentApprovals","partnerPaymentSettings","platformBusinessSettings","driverApprovals","driverDocumentReviews","partnerApprovals","adminOrders","reports","settings","profile","notifications","support","about","cart","frSupportFeedback","learnTeach","frSuperHub","frCampaignAdmin","frReferralAdmin","frStoreReviewAdmin","frDirectCouponReview","frDriverSubscription"];
 const sharedCustomerRoutes = ["home","explore","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","orders","tracking","wallet","offers","profile","notifications","support","about","cart","frSupportFeedback","learnTeach","cycleDelivery","eventServices","serviceProviderRegister","bankingServices","technicianRegister","parcelRelease","frSuperHub"];
 
 test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
@@ -28,6 +28,17 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     expect(result.themeMeta).toBe('#050b17');
     expect(result.bodyBackground).not.toBe('none');
     expect(result.pageCount).toBe(allPageIds.length);
+  });
+
+  test('driver subscription screen is present, ₹299 monthly, Razorpay-linked, and role guarded', async ({ page }) => {
+    await expect(page.locator('#frDriverSubscriptionCard')).toContainText('₹299 / Month');
+    await expect(page.locator('#frDriverSubscriptionCard button')).toBeAttached();
+    await page.evaluate(() => { currentUser={id:'qa-customer'}; currentProfile={role:'customer'}; selectedRole='customer'; window.showPage('frDriverSubscription'); });
+    await expect(page.locator('#home')).toHaveClass(/active/);
+    await page.evaluate(() => { currentUser={id:'qa-driver'}; currentProfile={role:'driver'}; selectedRole='driver'; window.showPage('frDriverSubscription'); });
+    await expect(page.locator('#frDriverSubscription')).toHaveClass(/active/);
+    await expect(page.locator('#frDriverSubscription')).toContainText('₹299 / Month');
+    await expect(page.locator('#frDriverSubscription a[href="https://rzp.io/rzp/54cMN1g"]')).toBeAttached();
   });
 
   test('new home replaces the old home presentation and mirrors live location', async ({ page }) => {
