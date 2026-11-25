@@ -342,3 +342,32 @@ Reviewed `FCM-WEB-PUSH-SETUP.md`, `fcm-web-push.js`, `firebase-messaging-sw.js`,
 6. Confirm setup documentation matches actual deployed function, schema, and worker.
 
 **Status:** Static review only; no Firebase/Supabase configuration queries, deployed function inspection, push sends, runtime/browser tests, or production edits.
+
+
+## Follow-up — notification fallback delayed-response and payload boundary audit
+
+Reviewed `fr-notification-fallback.js` read-only and attempted repository code search for `fr_notification_events` and `fr-notification-register-token`; no search excerpts were returned in this attempt (search-index limitation; not proof of absence).
+
+### Confirmed source observations
+- Fallback queries `fr_notification_events` for `id,title,body,status,created_at,category,payload`, filtered by `user_id=activeUser`, newest-first, limited to 20.
+- Results are reversed before display; displayed title/body are assigned via textContent (not HTML injection).
+- Realtime channel filters INSERT events by `user_id=eq.<activeUser>`; polling interval is 60 seconds.
+- On connect, active user is assigned, prior channel/timer removed, then recent events loaded and new channel/polling started.
+- The asynchronous `loadRecent()` uses current `activeUser` when constructing the query, but no captured user/session-generation check is observed after awaiting the query before showing rows.
+- Event `payload` and `category` are selected but not used in the visible rendering path shown.
+
+### Risk candidates
+- **P1 stale-user UI candidate:** A delayed query may resolve after account switch and display events from the earlier request; a post-await user/generation check is not visible.
+- **P2 notification payload data minimization candidate:** Selected `payload` field may contain sensitive content even though this UI does not render it; server-side event schema and retention remain unverified.
+- **P2 event deduplication/retention candidate:** `seen` set is in-memory and not bounded in reviewed file; lifecycle/retention and duplicate behavior require runtime verification.
+- **Positive static observation:** Display text uses DOM textContent, reducing HTML injection risk in the shown rendering path.
+
+### Synthetic test plan (not implemented)
+1. User A delayed query → switch to B → resolve A; verify no A event appears.
+2. Logout while recent-event query pending; verify results discarded and fallback UI cleared.
+3. Realtime A insert after switch to B; verify channel teardown prevents display.
+4. Malicious title/body HTML strings; verify literal text rendering.
+5. Inspect payload schema/retention and verify unnecessary sensitive fields are not stored or selected.
+6. Verify duplicate IDs, skipped/failed rows, and long polling sessions remain bounded.
+
+**Status:** Static source review and repository search attempt only; no DB policy inspection, runtime tests, production edits, or notifications sent.
