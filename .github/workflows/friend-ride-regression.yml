@@ -47,7 +47,9 @@ jobs:
             echo "- Branch: \`$GITHUB_REF_NAME\`"
             echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo "- Workflow conclusion: \`$GITHUB_JOB\` job status is recorded by Actions"
-            echo "- Test execution evidence: inspect preceding step results and uploaded artifacts"
+            echo "- Test execution evidence: preceding step results and uploaded artifacts"
+            echo "- Synthetic session-flow cases authored: 14 (actual executed count is determined by CI logs)"
+            echo "- Runtime bridge cases authored: 2 (actual executed count is determined by CI logs)"
             echo "- Release status: **not approved by CI alone**"
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Upload Playwright report
