@@ -186,3 +186,30 @@ Reviewed `index.html` read-only around OTP verification, local auth storage, and
 - Inspect the full auth/OTP/push error paths and any backend logs during an authorized staging runtime review; this checkpoint did not access logs or real credentials.
 
 **Status:** Read-only static review; no code changes and no tests executed. Production/runtime disclosure behavior not proven.
+
+
+## Follow-up — notification loader session-binding and stale response audit
+
+Reviewed the complete `frRideLoadNotifications` function and realtime lifecycle source in `index.html` read-only.
+
+### Confirmed static observations
+- Loader captures the current user ID implicitly through `currentUser.id` when constructing both notification queries.
+- Both queries run concurrently and filter on `user_id` before ordering/limiting.
+- After awaiting both queries, the function writes results to shared `frRideNotifRows`, renders, and reports the row count.
+- The reviewed loader has no observed captured-user comparison, session-generation check, or cancellation check after the awaited queries and before shared-state writes.
+- The catch path displays `e.message` in the notification status element. This is a potential raw backend/error disclosure path; actual contents and exposure depend on runtime error objects.
+- Realtime channel start is user-ID scoped; stop removes channel, resets channel/started-user markers, clears rows, and resets unread count. However, stopping a channel does not itself prove that an already-pending loader response is discarded.
+
+### Risk classification
+**P1 static stale-session/race candidate:** if User A's request is pending when identity changes to B or logout, A's response may still populate the shared notification state. This has not been demonstrated at runtime.
+
+**P2 diagnostic disclosure candidate:** backend error messages may be forwarded to the notification status UI without observed sanitization. No secrets or private data were confirmed in an error payload.
+
+### Recommended tests (not implemented)
+1. Mock delayed A query pair; switch to B; resolve B; then resolve A; verify only B notification rows remain rendered.
+2. Logout during pending loader; resolve it; assert private feed remains empty.
+3. Force synthetic errors containing token/OTP/phone/signed URL markers; assert sanitized UI output.
+4. Verify channel stop/removal and unread badge reset on logout and identity switch.
+5. Ensure both ride/app notifications remain filtered by the active synthetic user ID.
+
+**Status:** Static audit only. No code changes, runtime tests, database queries, or production network calls performed.
