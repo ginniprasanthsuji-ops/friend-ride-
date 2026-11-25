@@ -1,0 +1,16 @@
+<!-- FRIEND RIDE Phase 13 Referral UI fragment. Integrate into Customer Dashboard. -->
+<section id="frReferralPanel" class="card" style="padding:16px;margin:12px 0">
+ <h3>🎁 Refer & Earn ₹50</h3>
+ <p>మీ referral ద్వారా కొత్త customer చేరితే, eligibility/verification తర్వాత ఇద్దరికీ ₹50 reward.</p>
+ <button type="button" onclick="frReferralLoadCode()">నా Referral Code</button>
+ <div id="frReferralCodeBox" style="font-size:20px;font-weight:700;margin:8px 0"></div>
+ <button type="button" onclick="frReferralCopyCode()">Copy Code</button>
+ <hr>
+ <label for="frReferralApplyInput">Referral code enter చేయండి</label>
+ <input id="frReferralApplyInput" maxlength="16" autocomplete="off" placeholder="Referral code">
+ <button type="button" onclick="frReferralApplyCode()">Apply Code</button>
+ <div id="frReferralStatus" role="status" aria-live="polite"></div>
+ <h4>My Referral Rewards</h4>
+ <div id="frReferralRewards"></div>
+ <button type="button" onclick="frReferralLoadRewards()">Refresh Rewards</button>
+</section>
