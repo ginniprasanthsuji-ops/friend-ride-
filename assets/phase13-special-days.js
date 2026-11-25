@@ -17,13 +17,12 @@
  window.frSpecialDaySave=async function(){
   const s=$('frSpecialDayStatus');if(!s)return;
   try{if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer login required.');
-   if(!$('frSpecialDayConsent').checked)throw Error('Consent checkbox is required to save dates.');
-   const consent=true;
+   const consent=$('frSpecialDayConsent').checked;
    const b=dateParts($('frBirthdayDate').value),sp=dateParts($('frSpecialDate').value),label=$('frSpecialLabel').value.trim()||null;
-   if(!b&&!sp)throw Error('Enter birthday or special-day date.');
+   if(!b&&!sp)throw Error('Load saved dates or enter a date first.');
    if(b){const {data,error}=await sb.rpc('fr_customer_special_day_set',{p_event_type:'birthday',p_month:b.month,p_day:b.day,p_label:null,p_consent:consent});if(error)throw error;if(!data?.ok)throw Error('Birthday save failed.');}
    if(sp){const {data,error}=await sb.rpc('fr_customer_special_day_set',{p_event_type:'special_day',p_month:sp.month,p_day:sp.day,p_label:label,p_consent:consent});if(error)throw error;if(!data?.ok)throw Error('Special day save failed.');}
-   s.textContent='Saved successfully. Consent is active. Offer targeting is not yet activated.';
+   s.textContent=consent?'Saved successfully. Consent is active. Offer targeting is not yet activated.':'Consent revoked for saved date(s).';
   }catch(e){s.textContent='Save failed: '+(e.message||e);}
  };
  if(typeof window.showPage==='function'){const old=window.showPage;window.showPage=function(id){const r=old.apply(this,arguments);if(id==='offers'&&currentProfile?.role==='customer')window.frSpecialDayLoad();return r;};}
