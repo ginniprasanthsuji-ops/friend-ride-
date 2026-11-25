@@ -1,6 +1,8 @@
 -- DRAFT ONLY — do not apply until reviewed and approved.
--- Phase 13 shared-ride authorization and table-privilege hardening.
--- This is a QA review artifact; it is NOT in supabase/migrations and has not been run.
+-- Phase 13 Shared Ride authorization and client-privilege hardening.
+-- QA review artifact only; not a migration and not applied to any database.
+-- Current source branch index.html has no Shared Ride UI/RPC references; this
+-- draft hardens the QA database's exposed Shared Ride functions/table ACLs only.
 
 begin;
 
@@ -34,6 +36,10 @@ begin
   if p_total_seats is null or p_total_seats<1 or p_total_seats>12 then raise exception 'Invalid passenger seat capacity'; end if;
   if p_price_per_seat is null or p_price_per_seat<0 then raise exception 'Fare cannot be negative'; end if;
   if p_departure_at is null or p_departure_at<=now() then raise exception 'Departure must be in the future'; end if;
+  if p_booking_cutoff_at is not null and (p_booking_cutoff_at<=now() or p_booking_cutoff_at>=p_departure_at) then raise exception 'Booking cutoff must be future and before departure'; end if;
+  if (p_from_lat is null)<>(p_from_lng is null) or (p_to_lat is null)<>(p_to_lng is null) then raise exception 'Latitude and longitude must be provided as pairs'; end if;
+  if p_from_lat is not null and (p_from_lat < -90 or p_from_lat > 90 or p_from_lng < -180 or p_from_lng > 180) then raise exception 'Invalid origin coordinates'; end if;
+  if p_to_lat is not null and (p_to_lat < -90 or p_to_lat > 90 or p_to_lng < -180 or p_to_lng > 180) then raise exception 'Invalid destination coordinates'; end if;
   insert into public.fr_shared_rides(driver_id,vehicle_type,from_label,to_label,total_seats,price_per_seat,departure_at,booking_cutoff_at,from_lat,from_lng,to_lat,to_lng)
   values(auth.uid(),p_vehicle_type,p_from_label,p_to_label,p_total_seats,p_price_per_seat,p_departure_at,p_booking_cutoff_at,p_from_lat,p_from_lng,p_to_lat,p_to_lng)
   returning id into v_id;
@@ -58,6 +64,7 @@ declare v_ride public.fr_shared_rides%rowtype; v_booking uuid; v_amount numeric;
 begin
   if auth.uid() is null then raise exception 'Login required'; end if;
   if not exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='customer') then raise exception 'Customer account required'; end if;
+  if p_ride_id is null then raise exception 'Ride ID required'; end if;
   if p_seats is null or p_seats<1 or p_seats>12 then raise exception 'Invalid seat count'; end if;
   if p_pickup_label is null or length(trim(p_pickup_label))=0 or p_drop_label is null or length(trim(p_drop_label))=0 then raise exception 'Pickup and drop labels required'; end if;
   select * into v_ride from public.fr_shared_rides where id=p_ride_id for update;
@@ -72,21 +79,31 @@ begin
   insert into public.fr_shared_ride_bookings(ride_id,passenger_id,seats_booked,pickup_label,drop_label,fare_per_seat_snapshot,total_fare,status)
   values(p_ride_id,auth.uid(),p_seats,p_pickup_label,p_drop_label,v_ride.price_per_seat,v_amount,'booking_pending')
   returning id into v_booking;
-  update public.fr_shared_rides set booked_seats=booked_seats+p_seats,status=case when booked_seats+p_seats>=total_seats then 'full' else 'live' end,updated_at=now() where id=p_ride_id;
+  update public.fr_shared_rides set booked_seats=booked_seats+p_seats,status=case when booked_seats+p_seats>=total_seats then 'full' else 'live' end,updated_at=now()
+  where id=p_ride_id;
   insert into public.fr_shared_ride_events(ride_id,booking_id,actor_id,event_type,details)
   values(p_ride_id,v_booking,auth.uid(),'seat_booking_created',jsonb_build_object('seats',p_seats,'amount',v_amount,'pickup',p_pickup_label,'drop',p_drop_label));
   return query select v_booking,v_amount,v_ride.total_seats-v_ride.booked_seats-p_seats;
 end;
 $function$;
 
--- Make direct table writes impossible for client roles; SECURITY DEFINER RPCs remain the write path.
+-- Direct client writes are not the supported contract; the SECURITY DEFINER RPCs above are.
+drop policy if exists fr_shared_rides_driver_insert on public.fr_shared_rides;
+drop policy if exists fr_shared_rides_driver_update on public.fr_shared_rides;
+drop policy if exists fr_shared_bookings_passenger_insert on public.fr_shared_ride_bookings;
+drop policy if exists fr_shared_bookings_participant_update on public.fr_shared_ride_bookings;
+
 revoke all privileges on table public.fr_shared_rides,public.fr_shared_ride_bookings,public.fr_shared_ride_events,public.fr_shared_ride_payments from anon,authenticated;
 grant select on table public.fr_shared_rides,public.fr_shared_ride_bookings,public.fr_shared_ride_events,public.fr_shared_ride_payments to authenticated;
+
+-- Remove unsafe TRUNCATE grants found on client roles across the current public schema.
+revoke truncate on all tables in schema public from anon,authenticated;
 
 commit;
 
 -- Review before application:
--- * Confirm the app needs only authenticated SELECT and the two RPC write paths.
--- * Implement/verify separate driver-confirmation, passenger-contact, cancellation, and payment RPCs.
--- * Test with customer, approved driver, pending driver, partner, and anonymous identities.
--- * Verify grants, RLS, and status transition invariants in QA after application.
+-- * Source branch currently has no Shared Ride UI/API wiring; do not assume this feature is live.
+-- * The Shared Ride confirmation/contact/payment/cancel RPC workflow is incomplete.
+-- * Apply only to the dedicated QA project after a review; then test approved-driver,
+--   pending-driver, customer, partner, anonymous, and admin role behavior.
+-- * This draft has not been applied or runtime-tested.
