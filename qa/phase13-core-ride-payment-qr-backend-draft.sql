@@ -46,7 +46,7 @@ drop policy if exists fr_provider_payment_qr_driver_delete on storage.objects;
 drop policy if exists fr_provider_payment_qr_completed_ride_customer_read on storage.objects;
 create policy fr_provider_payment_qr_driver_read on storage.objects
 for select to authenticated
-using (bucket_id='provider-payment-qr' and (storage.foldername(name))[1]=auth.uid()::text);
+using (bucket_id='provider-payment-qr' and (storage.foldername(name))[1]=auth.uid()::text\n  and exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='driver' and p.driver_approval_status='approved'));
 create policy fr_provider_payment_qr_driver_upload on storage.objects
 for insert to authenticated
 with check (
@@ -209,7 +209,7 @@ begin
   if auth.uid() is null then raise exception 'Login required'; end if;
   select * into v_ride from public.rides r where r.id=p_ride_id;
   if not found or (v_ride.customer_id<>auth.uid() and v_ride.driver_id<>auth.uid()) then raise exception 'Ride participant access required'; end if;
-  if v_ride.driver_id is null then return; end if;
+  if v_ride.driver_id is null or v_ride.status not in ('accepted','confirmed','ongoing','completed') then return; end if;
   return query select p.full_name,p.phone from public.profiles p where p.id=v_ride.driver_id;
 end;
 $function$;
