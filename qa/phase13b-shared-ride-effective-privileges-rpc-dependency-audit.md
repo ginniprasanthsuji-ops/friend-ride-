@@ -25,3 +25,19 @@ The role membership query did not return rows in the combined output. No shared-
 The strongest confirmed direct table permission exposure is anon DML/TRUNCATE and authenticated DELETE/TRUNCATE across rides/bookings, plus authenticated DML/TRUNCATE events/payments. Existing RLS/policies are not a substitute for table ACL least-privilege. Stage 2 draft remains unapplied. Next: map client code/RPC dependencies for event/payment mutations and inspect exact ACL role inheritance; prepare approved rollback/test matrix.
 
 No SQL applied. Main/Production untouched. No merge/deploy. No PASS claims.
+
+
+## Role membership and effective privilege follow-up (2026-11-26)
+
+### Role membership
+- `authenticator` is a member of `anon`, `authenticated`, and `service_role` (no admin option shown).
+- `anon` and `authenticated` have no role memberships in the focused catalog result.
+- `postgres` has broad administrative memberships; these are not app client roles.
+- `anon`, `authenticated`, and `service_role` are non-login roles.
+
+### Effective privilege recheck (`has_table_privilege`)
+- `anon`: SELECT/INSERT/UPDATE/DELETE/TRUNCATE true on all 4 Shared Ride tables; public schema USAGE true.
+- `authenticated`: SELECT true on all 4; DELETE and TRUNCATE true on rides/bookings; events/payments SELECT/INSERT/UPDATE/DELETE/TRUNCATE true; public schema USAGE true. Direct INSERT/UPDATE false for rides/bookings.
+- `service_role`: all five table privileges true on all 4 tables; public schema USAGE true.
+
+This confirms the prior effective-grant findings. No application SQL or ACL changes were applied. ACL stage 2 remains blocked by source dependency mapping.
