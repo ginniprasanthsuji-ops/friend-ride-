@@ -573,3 +573,14 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Draft least-privilege changes and regression matrix; do not apply until reviewed/approved.
 
 **Phase 13B progress: 70%** (status-based access review documented and deployed RPC absence identified; policy decisions and tests remain open).
+
+
+### Phase 13B continuation — contact privacy source/deployment mismatch (2026-11-26)
+- [x] GitHub search for shared ride contact/cancel/confirm/passenger contact source returned no matching excerpts.
+- [x] Prior live QA catalog audit did not find contact/cancel/confirm RPCs matching inspected patterns; reconciliation remains open.
+- [x] Documented privacy boundary: only the confirmed booking's Passenger and assigned Driver; never public LIVE listings or other passengers; cancelled/refunded contact access should be revoked.
+- [ ] Search source using UI feature labels/booking details/call actions and inspect frontend + migrations.
+- [ ] Reconcile exact source RPC signatures with live QA deployment.
+- [ ] Negative authorization tests for unrelated passenger, anonymous, wrong driver, cancelled/refunded booking.
+
+**Phase 13B remains 70%** — no increase because no executable verification milestone was completed.
