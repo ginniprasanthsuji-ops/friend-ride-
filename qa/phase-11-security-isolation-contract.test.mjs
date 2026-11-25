@@ -243,7 +243,9 @@ test('Phase 7B QA: runtime bridge is local-only and covers role routes plus stal
   assert.ok(runtimeBridge.includes("require('./session-flow-harness.cjs')"));
   assert.ok(runtimeBridge.includes("window.dashboardFor(role)"));
   assert.ok(runtimeBridge.includes("stale fixture notifications cannot cross identity switch"));
-  assert.ok(runtimeBridge.includes("late A profile"));
+  assert.ok(runtimeBridge.includes('A-to-B session race is guarded'));
+  assert.ok(runtimeBridge.includes('staleA.reason'));
+  assert.ok(runtimeBridge.includes('harness.snapshot().identity'));
   assert.equal((runtimeBridge.match(/\\btest\\(/g) || []).length, 2);
   assert.ok(playwrightConfig.includes('phase-7b-session-runtime-bridge.spec.cjs'));
 });
