@@ -66,3 +66,37 @@ Existing harness is suitable for local-origin-only browser tests, but current he
 - Session-switch tests: not implemented / not run.
 - No application, SQL, backend, production or account changes.
 - Release certification remains blocked.
+
+
+## Follow-up static audit — auth restore, role validation, and stale async risk
+
+**Reviewed:** `index.html` (read-only)
+
+### Confirmed source observations
+- Role routing maps customer/driver/partner/admin to distinct dashboard page IDs.
+- `enterRole` persists the selected role in localStorage and opens the role-locked auth modal.
+- `acceptSession(user)` loads profile data by user ID, falls back to a `user_id` lookup, then performs an admin-membership query. It rejects admin role when membership is absent and rejects a selected-role mismatch; unknown roles fall back to customer.
+- Driver login checks approval state and rejects pending/unapproved status.
+- Session restore obtains the Supabase session, fetches profile role and admin membership, sets selected role, then calls `acceptSession(user)`.
+- Another auth-state listener clears current user/profile and stops driver polling on SIGNED_OUT; TOKEN_REFRESHED updates currentUser.
+
+### Race / verification gaps
+- The reviewed asynchronous profile and admin checks in `acceptSession` do not show an identity/session generation check after each await. This is a static stale-session race candidate if auth changes while those requests are pending.
+- Session restore and `acceptSession` perform overlapping profile/admin lookups. Runtime behavior and failure ordering are not tested in the inspected harness.
+- A role mismatch is rejected, but the safe fallback / UI state after rejection requires runtime verification.
+- Role-routing source markers do not prove server-side RPC/table/storage authorization.
+
+### Recommended synthetic tests (not implemented or executed)
+1. Hold A profile lookup pending, switch to B, resolve A lookup; A must not overwrite B state.
+2. Hold A admin-membership query pending across logout/session change; late result must not authorize or route A.
+3. Restore sessions for customer/driver/partner/admin and mismatch role selection; assert correct page and rejected fallback.
+4. Test pending driver approval rejection and approved driver route using synthetic fixtures.
+5. SIGNED_OUT clears identity/profile and polling; TOKEN_REFRESHED for current session only updates current identity.
+6. Use isolated browser contexts and blocked external calls; do not use real users or production sessions.
+
+### Updated status
+- Static auth restore/role source review: completed for inspected functions.
+- Stale async profile/admin result handling: not verified; candidate risk.
+- Runtime role/session restore: not tested.
+- Backend authorization and RLS: not verified by source-only frontend review.
+- No app/SQL/backend/production changes; release remains blocked.
