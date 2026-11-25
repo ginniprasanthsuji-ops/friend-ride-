@@ -7,6 +7,13 @@ test('Phase 7B bridge: local app boot is isolated while synthetic A-to-B session
   await page.goto('./', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle(/FRIEND RIDE/i);
   await expect(page.locator('#roleLauncher')).toBeAttached();
+  const roleRoutes = await page.evaluate(() => ['customer', 'driver', 'partner', 'admin'].map(role => [role, window.dashboardFor(role)]));
+  expect(roleRoutes).toEqual([
+    ['customer', 'customerDashboard'],
+    ['driver', 'driverDashboard'],
+    ['partner', 'partnerDashboard'],
+    ['admin', 'adminDashboard']
+  ]);
 
   const harness = new SessionFlowHarness();
   let releaseA;
