@@ -126,3 +126,10 @@ No matching public table was found for store coupons, flash sales, birthday offe
 ## Referral order eligibility investigation
 - `shop_orders` and `fr_market_orders` schemas exist but current data query returned no order-status rows. No completed-order status values/constraints were discoverable from the inspected schema, and repository UI code does not show a direct checkout/order-status integration.
 - Therefore automatic 2-order eligibility trigger was **not** added; this avoids counting unverified statuses or unrelated order types.
+
+## Phase 13 Task 5 — Birthday/Special-day privacy foundation (partial)
+- Applied additive table `fr_customer_special_days`: customer, event type, month/day, optional label for non-birthday special-day, opt-in consent flag/timestamp; no full birthdate/year collected.
+- RLS enabled; owner/admin reads, owner inserts only with consent=true, owner updates, admin policies.
+- Secure customer-only RPC `fr_customer_special_day_set` validates event type/month/day and stores consent; anon execution revoked, authenticated granted; birthday label prohibited.
+- Migration committed: `eb7f400e`.
+- **Pending:** customer UI, campaign targeting, scheduled reminder/offer activation, and QA. Special-day feature is foundation only.
