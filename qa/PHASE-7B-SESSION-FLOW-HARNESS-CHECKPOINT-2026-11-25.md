@@ -26,7 +26,9 @@ Synthetic-only QA model. It uses fixture IDs `fixture-user-a` and `fixture-user-
 - `qa/phase-11-security-isolation-contract.test.mjs`
 
 ## Status
-- 12 test cases authored.
+- 14 test cases authored.
+- Added listener cleanup on synthetic identity switch.
+- Added logout invalidation for pending notification loads.
 - Added fail-closed handling for synthetic profile/admin loader errors.
 - Notification loader errors clear private notification state and return a safe empty result.
 - Source contract count updated to expect 12.
