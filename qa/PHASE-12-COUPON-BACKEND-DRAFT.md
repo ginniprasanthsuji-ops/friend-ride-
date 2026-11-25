@@ -12,12 +12,18 @@ Status: Draft design; NOT deployed or applied to any Supabase project.
 - Store coupons should be redeemable by the issuing store.
 - Reporting should support coupon sales and redemption status.
 
+## QA environment schema check (read-only, 2026-11-25)
+- QA project public schema currently contains 21 base tables (not the 71 tables described in the 2026-11-09 release-gate inventory for the main project).
+- The QA table list was inspected; no coupon-specific tables are present.
+- Existing notification infrastructure in QA includes `fr_app_notifications`, `fr_notification_events`, `fr_notification_preferences`, `fr_notification_tokens`, and `fr_push_subscriptions`. Coupon purchase/redemption notices should reuse these existing systems after reviewing their RPC/policy behavior.
+- This environment/schema mismatch is a release/implementation blocker: verify project refs, migration history, and QA schema before any SQL migration. Do not copy main-project assumptions into QA.
+
 ## Proposed data model (check for existing equivalents before migration)
 1. `fr_coupon_campaigns`: issuer type/ID, coupon type (ride/store), service scope, title/description, discount type/value, start/end, limits, status, created-by.
 2. `fr_coupon_codes`: campaign, unique code, customer, purchase/payment status, purchased-at, redeemed-at, redeemed-by, redemption reference, expiry, status.
 3. `fr_coupon_payments`: coupon/code, store ID, amount/currency, payment confirmation reference, status, paid-at, confirmation source. Store direct-pay proof only; do not represent Friend Ride as receiving funds.
-4. `fr_coupon_redemptions`: coupon/code, customer, store or ride reference, service type, redeemed-at, actor, idempotency key; unique constraints to prevent reuse and duplicate event.
-5. Optional notifications should reuse existing app notification infrastructure, not add external services.
+4. `fr_coupon_redemptions`: coupon/code, customer, store or ride reference, service type, redeemed-at, actor, idempotency key; unique constraints to prevent reuse.
+5. Notifications should reuse existing app notification infrastructure; avoid introducing another notification service.
 
 ## Lifecycle
 Draft campaign -> Admin/issuer activation -> customer purchase -> store payment confirmation -> coupon marked paid/active + store notification -> eligible redemption validation -> atomic redemption -> reporting.
@@ -46,6 +52,6 @@ Draft campaign -> Admin/issuer activation -> customer purchase -> store payment 
 - Regression tests for ride, market, food, parcel and home-service workflows.
 
 ## Blocking prerequisites
-- Inspect QA schema and current notification/payment infrastructure before finalizing table/function names.
-- QA project schema discrepancy (previous audit saw 21 public tables versus release-gate documentation claiming 71) must be reconciled.
+- Inspect QA RPCs, policies and payment confirmation flow before finalizing function/table names.
+- Reconcile QA schema (21 tables) against main release-gate inventory (71 tables); verify refs and migrations.
 - No coupon SQL has been executed. This file is a design draft only.
