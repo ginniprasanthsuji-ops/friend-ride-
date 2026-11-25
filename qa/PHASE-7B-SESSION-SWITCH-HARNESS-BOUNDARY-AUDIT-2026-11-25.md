@@ -147,3 +147,23 @@ The reviewed existing test harness is safe for its local static/browser scope, b
 | Logout cleanup | listeners/timers stopped; private state cleared |
 
 **Gate:** Fixture implementation must be reviewed for separation from production and external network before adding it to Playwright testMatch. No fixture or tests have been implemented or executed in this checkpoint.
+
+
+## Follow-up — fixture isolation and external-origin observability review
+
+Reviewed `qa/local-only-fixture.cjs`, `qa/phase-11-page-isolation.spec.js`, and `qa/phase-11-registration-isolation.spec.js` read-only.
+
+### Confirmed
+- Fixture derives allowed origin from `FRIEND_RIDE_BASE_URL` and blocks all requests whose origin differs; blocked origins are recorded in `page.__frBlockedOrigins`.
+- Inline initialization receives a minimal Supabase stub (signOut, select/limit, rpc); this does not emulate authenticated session events.
+- Current two Playwright specs import the fixture and cover dashboard page isolation and registration-field isolation only.
+- Reviewed specs do not currently assert that `page.__frBlockedOrigins` stays empty; it is available as an observability hook, not an asserted security test in these files.
+- Fixture constructs `new URL(process.env.FRIEND_RIDE_BASE_URL)`; normal test invocation relies on preflight/config guards. Direct fixture use without env can fail at import time rather than report a friendly guard.
+
+### Risk / next improvement proposal (not implemented)
+1. Add a fixture-level assertion/helper for unexpected external-origin attempts, where appropriate, while preserving external blocking.
+2. Make direct fixture import failure message explicit if the local target env is missing/invalid; avoid weakening loopback-only enforcement.
+3. Add the synthetic auth/session fixture as a separate helper and spec, not by expanding the production Supabase stub into a fake live auth system.
+4. Add test proving no external-origin requests are attempted by the current page and registration specs.
+
+**Status:** Read-only review only. No code changes, no tests run, no production/backend/network changes. Runtime session isolation remains unverified.
