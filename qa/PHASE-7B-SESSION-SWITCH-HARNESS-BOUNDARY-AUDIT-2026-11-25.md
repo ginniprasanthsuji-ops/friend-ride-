@@ -508,3 +508,32 @@ Read-only review of `qa/local-only-fixture.cjs`, Phase 11 page/registration brow
 4. Keep A/B session tests in a separate controlled synthetic harness; do not allow live/hosted fallback.
 
 **Status:** Static source review only; browser tests and preflight were not run in this checkpoint. No production changes.
+
+
+## Follow-up — Regression CI workflow and dependency reproducibility audit
+
+Read-only review of `playwright.config.cjs`, `package.json`, `.github/workflows/friend-ride-regression.yml`, `scripts/check-inline-js.mjs`, and `qa/phase-11-security-isolation-contract.test.mjs`. Attempt to fetch `package-lock.json` at this branch returned 404.
+
+### Static observations
+- Workflow runs inline-JS/source-marker checks, Node contract tests, installs dependencies via `npm install`, installs Playwright Chromium, starts a local static server on loopback, then runs `npm test` with local base URL.
+- `npm test` invokes local preflight before Playwright.
+- Workflow uses GitHub Actions major-version references (`actions/checkout@v4`, `actions/setup-node@v4`, `actions/upload-artifact@v4`) rather than immutable commit SHAs.
+- `package.json` has ranged dependencies; reviewed branch fetch of `package-lock.json` returned 404, so deterministic npm lockfile presence was not confirmed at this ref.
+- Playwright configuration restricts host to localhost/loopback, limits discovery to two browser specs, and blocks service workers.
+- Contract tests primarily use source-string assertions; they are static guardrails, not runtime authorization tests.
+- Inline script check parses embedded JavaScript and asserts a set of source markers; it does not execute app flows or validate backend authorization.
+
+### Risk/evidence gaps
+- **P2 dependency reproducibility:** Without a confirmed lockfile and `npm ci`, dependency resolution may vary across runs.
+- **P2 CI supply-chain pinning:** Actions tags can move; immutable SHA pinning is stronger reproducibility/security.
+- **P1 test-coverage distinction:** Passing source-marker/contract tests does not prove live backend, RLS, OTP, push, payment, or session isolation.
+- **P2 blocked-origin visibility:** Fixture blocks external origins but specs do not visibly assert blocked-origin array is empty (previous checkpoint finding).
+
+### Recommended improvements (not implemented)
+1. Confirm and commit lockfile; use `npm ci` for CI reproducibility.
+2. Pin third-party GitHub Actions to reviewed immutable SHAs, retaining version comments.
+3. Add fixture teardown assertion for unexpected blocked origins.
+4. Keep static contract tests clearly labeled and add controlled runtime integration tests separately.
+5. Maintain report separation between source checks, local browser tests, live device/backend validation, and release evidence.
+
+**Status:** Static workflow/source review only; CI not rerun, dependencies not installed, lockfile fetch 404 at reviewed ref, and no production code/config changes.
