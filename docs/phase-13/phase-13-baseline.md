@@ -183,3 +183,9 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Added Admin-only `fr_customer_referral_reward_credit` RPC: requires prior approved referral, 2 eligible orders, configured ₹50 amount; unique referral prevents duplicate ledger credit; updates referral to rewarded/credited.
 - **Important limitation:** this creates an auditable reward credit ledger record, not a live wallet balance or cash payout. Actual wallet balance UI/payment integration remains pending wallet architecture.
 - Migration commit `5e3cc709`; live DB applied. Browser/admin UI not yet wired.
+
+## Phase 13 Task 10 UI checkpoint
+- Customer Referral Admin list now shows an explicit `Credit ₹50 Ledger` button only after referral reward status is `approved`.
+- Credit action confirms with Admin, calls `fr_customer_referral_reward_credit`, handles duplicate prevention, and clearly states this is ledger record only—not wallet payout.
+- Static check: credit UI/RPC call present. Live DB verification: reward ledger RLS enabled; unique referral index; RPC anon execute=false and authenticated execute=true. Browser interaction test not run.
+- UI commit `61d2c368`; documentation checkpoint follows.
