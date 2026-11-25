@@ -682,3 +682,15 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Reconcile actual QA deployed client/build/source with database schema/RPCs before ACL remediation.
 
 **Phase 13B remains 70%; ACL stage 2 NOT applied.**
+
+
+### Phase 13B — live RPC and RLS gap audit
+- [x] Read-only QA review of live Shared Ride RPC bodies and RLS policy catalog.
+- [x] Confirmed create RPC lacks approved-driver role/status guard; booking RPC lacks customer-role guard.
+- [x] Passenger helper lacks booking-status filter; participant access may persist for cancelled/refunded records.
+- [x] Booking UPDATE policy is participant-based; field/status restriction remains unverified and risk noted.
+- [x] Existing role/approval SQL draft matches the two RPC role-validation gaps; not applied.
+- [x] Findings recorded in `qa/phase13b-shared-ride-live-rpc-policy-gap-audit.md`.
+- [ ] Reconcile deployed QA client source/build; execute negative role/status tests; then review ACL draft/rollback.
+
+**Phase 13B remains 70%; no SQL applied.**
