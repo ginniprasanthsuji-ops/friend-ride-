@@ -954,7 +954,8 @@ function frSyncRegistrationFields(mode=frAuthMode){
  const registering=mode==='register',role=String(selectedRole||'customer').toLowerCase();
  frSetRegistrationGroup('regAvatarFields',registering&&['customer','driver','partner'].includes(role));
  frSetRegistrationGroup('customerRegPhotoFields',registering&&role==='customer');
- frSetRegistrationGroup('addressField',registering&&role==='customer');\n frSetRegistrationGroup('customerReferralSignupField',registering&&role==='customer');
+ frSetRegistrationGroup('addressField',registering&&role==='customer');
+ frSetRegistrationGroup('customerReferralSignupField',registering&&role==='customer');
  frSetRegistrationGroup('driverRegDocs',registering&&role==='driver');
  frSetRegistrationGroup('driverExtraFields',registering&&role==='driver');
  frSetRegistrationGroup('partnerRegFields',registering&&role==='partner');
