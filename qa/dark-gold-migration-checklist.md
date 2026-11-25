@@ -613,3 +613,14 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] Review listing/table contact exposure and exact statuses; run isolated negative and positive authorization tests; no SQL applied.
 
 **Phase 13B remains 70%**. Draft-only milestone; no execution verification.
+
+
+### Phase 13B continuation — live Shared Ride ACL exposure capture
+- [x] Read-only live QA grant capture on `fr_shared_rides` and `fr_shared_ride_bookings`.
+- [x] Found `anon` table privileges listed for SELECT/INSERT/UPDATE/DELETE/REFERENCES/TRIGGER/TRUNCATE on both tables.
+- [x] Found `authenticated` TRUNCATE listed on both tables; row-level policies do not govern TRUNCATE.
+- [x] Saved findings in `qa/phase13b-shared-ride-live-acl-findings.md`.
+- [ ] Extend grant capture to events/payments, inherited/PUBLIC and column grants; inspect views/listing contact leakage; negative auth tests.
+- [ ] ACL correction remains draft-only; do not revoke/apply without dependency review and rollback validation.
+
+**Phase 13B remains 70%** — this is an audit finding, not a verified remediation milestone.
