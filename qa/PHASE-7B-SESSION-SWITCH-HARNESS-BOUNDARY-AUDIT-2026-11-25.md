@@ -400,3 +400,30 @@ Read-only review of `fcm-web-push.js`, `firebase-messaging-sw.js`, `service-work
 6. Validate token refresh, logout/account-switch cleanup, invalid token deactivation.
 
 **Status:** Source review only; Firebase Console, Edge Function, Supabase schema/RLS, browser/device push, and deployed service-worker behavior were not inspected or tested. No production code/config changed.
+
+
+## Follow-up — FCM token registration lifecycle audit
+
+Focused read-only inspection of `fcm-web-push.js` and repository search attempts for profile-photo/storage upload terms.
+
+### Static observations
+- FCM token is generated after opt-in, then registration posts token and `platform:'web'` to `fr-notification-register-token` using the access token from the active Supabase session.
+- The code checks session existence immediately before POST, but no post-await identity/session-generation comparison is visible before interpreting the registration response and marking the device enabled.
+- Token refresh handling (`onTokenRefresh`/re-fetch token lifecycle) is not visible in the reviewed file.
+- Logout/account-switch token deactivation is not implemented in this file; previous audits also noted logout cleanup not observed in the reviewed path.
+- Firebase SDK scripts are loaded from the Google CDN. This is an existing external dependency; no subscription/API-key secret validation or endpoint runtime verification performed here.
+- Search-index queries for profile-photo/avatar/passport-photo storage code returned no excerpts. This is an index limitation and does not prove those implementations are absent.
+
+### Risk candidates
+- **P1 account-context race candidate:** Registration response may finish after account changes; verify the token is still associated with the initiating user and UI state does not carry across sessions.
+- **P2 token lifecycle candidate:** Refresh, expiration, invalid-token cleanup, logout, and account-switch behavior need evidence.
+- **P2 dependency/config candidate:** SDK loading failures and config mismatch need browser-network and Firebase Console verification.
+
+### Tests recommended (not run)
+1. A starts registration → switch/logout → response resolves; UI must not show A registration as active under B.
+2. Verify token owner and endpoint uniqueness/ownership in deployed registration Edge Function and RLS.
+3. Refresh token changes → update server registration; invalid token → deactivate/delete safely.
+4. Logout and account switch → device association cleared or safely re-bound, with no cross-user notification delivery.
+5. SDK script blocked/offline → clear safe error and no partial enabled state.
+
+**Status:** Read-only source/search review. No Firebase/Supabase live config, Edge Function, database policies, profile-photo storage implementation, browser/device tests, or production edits were inspected/changed.
