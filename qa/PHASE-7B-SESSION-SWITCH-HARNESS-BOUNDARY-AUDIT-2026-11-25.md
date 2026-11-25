@@ -730,3 +730,29 @@ Extend the workflow with a staged QA pipeline after confirming test files and lo
 6. Summary + artifacts with explicit missing-file behavior and commit/run metadata.
 
 **Status:** Audit documentation only. No workflow/package/test changes, dependency install, SQL, or CI execution performed.
+
+
+## Follow-up — Dependency & Lockfile Reproducibility Audit
+
+**Reviewed:** branch-current `package.json`, `.github/workflows/friend-ride-regression.yml`, and direct repository-path checks for npm lockfiles/configuration.
+
+### Confirmed
+- `package.json` defines ranged dependencies: `@playwright/test ^1.56.0`, `vitest ^3.2.4`; TypeScript and Node types are exact versions.
+- CI runs `npm install`, not `npm ci`.
+- Direct branch-path fetches returned 404 for `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock`, `pnpm-lock.yaml`, `.npmrc`, and `.github/dependabot.yml` at the reviewed branch. This establishes that these exact paths were not found; it does not rule out alternate lockfile locations or dependency automation elsewhere.
+- Workflow uses Node 22 via setup-node and installs Chromium using Playwright.
+
+### Risks / gaps
+- **P2 reproducibility:** No lockfile at the checked paths was confirmed; npm resolution may change between CI runs.
+- **P2 dependency review:** No `.npmrc` or Dependabot config was found at the checked paths; repository-wide dependency update/security policy remains unverified.
+- **P2 supply-chain stability:** Ranged npm dependencies and major-tag GitHub Actions references are not fully immutable.
+- **P1 evidence boundary:** This was static repository review; no dependency installation, vulnerability scan, build, test, or CI run was performed.
+
+### Recommendations (not implemented)
+1. Generate and commit the npm lockfile using the project’s intended npm version.
+2. Change CI installation to `npm ci` once lockfile is committed and validated.
+3. Consider pinning Actions to immutable SHAs and retaining readable version comments.
+4. Add dependency update/security scanning policy and review cadence.
+5. Record Node/npm versions and lockfile hash in CI evidence.
+
+**Status:** Static audit only. No package, workflow, lockfile, config, application, SQL, backend, or production changes; no tests/CI run.
