@@ -263,3 +263,13 @@ Status: **TEST PLAN DRAFTED — NOT EXECUTED**. No implementation, SQL, Storage 
 - Partner profile photo upload targets `partner-profile-photos`; it is **not** included in the user's current four permanent-asset categories (Driver photo, Customer photo, Driver QR, Partner QR). Do not infer permanence for it without user confirmation.
 - No source or DB/Storage mutations. Main/Production untouched; no merge/deploy. Real role/RPC/RLS/Storage testing remains UNVERIFIED.
 - Next audit: trace provider QR/profile field usage, verify bucket-name references across source and QA catalog (read-only), then document an implementation-safe storage naming and retention map before code changes.
+
+
+## Phase 13 continuation — Storage path consistency and replacement behavior (2026-11-26)
+
+- Registration QR upload: driver/partner QR goes to `provider-payment-qr`, profile row path `provider_qr_path`; path is UID/tag/timestamp-based and upload uses `upsert:false`.
+- Partner payment settings upload currently duplicates the same QR image into `partner-qr` (`shop-qr_...`) and `provider-payment-qr` (`shop-payment-qr_...`). It then calls `fr_partner_save_payment_details` with both paths. Partner settings preview uses `partner-qr` public URL, while market/customer display uses signed URL for `partner-qr`. Driver ride payment QR uses `provider-payment-qr` and a DB RPC.
+- Profile-photo update uses a timestamped unique path and updates the profile path; if DB update fails, it removes the newly uploaded object. On successful update, source does not remove the previous photo object. Thus the profile points to one latest photo, but storage may accumulate older photo files. This is a source observation, not a storage-object inventory.
+- KYC upload and profile fields remain path-based. KYC review view creates a short-lived signed URL and Verify/Reject RPC, but no download-confirmation cleanup flow found.
+- QR bucket duplication/path conventions and profile-photo old-object retention are candidates for QA-only implementation planning. Do not delete or migrate assets until a verified bucket inventory, database path mapping, and rollback plan exist.
+- No source/database/storage mutations. Main/Production untouched; no merge/deploy. Runtime/storage tests UNVERIFIED.
