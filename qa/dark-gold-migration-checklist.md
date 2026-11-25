@@ -368,3 +368,29 @@ Status: **SOURCE REVIEW ONLY; no runtime tests, no SQL/Storage mutations, Main/P
 - Storage policy runtime tests: owner vs other user, Admin vs non-admin, unauthorized delete, cross-bucket path spoofing, signed URL expiry, failed upload/DB save rollback, replacement old/new path safety. **Not executed.**
 
 Status: inventory and acceptance matrix only; no SQL/Storage mutation, no object inventory/deletion, no merge/deploy, Main/Production untouched.
+
+
+## Phase 13 continuation — Shared Ride hardening draft safety review (2026-11-26)
+
+### Reviewed drafts (static only)
+- `qa/phase13-shared-ride-role-and-privilege-hardening-draft.sql`
+- `qa/phase13-shared-ride-contact-privacy-confirmation.sql`
+
+### Review observations
+- Draft role checks add approved-driver requirement for Shared Ride creation and customer-only booking.
+- Draft revokes broad table privileges (including TRUNCATE) from client roles and limits direct access to SELECT; SECURITY DEFINER RPCs are intended write path.
+- Contact privacy helper predicates use active booking statuses; contact RPC itself is still absent from QA catalog per prior audit.
+- The second draft includes a public listing view with SECURITY INVOKER and excludes lat/lng from its exposed columns; policy/view compatibility and existing frontend query compatibility must be verified before application.
+- Draft changes to policy names/drop statements are not validated against exact QA live policy catalog in this pass; applying may unintentionally remove required policy behavior if names/coverage differ.
+- Potentially sensitive: authenticated direct SELECT grants on booking/event/payment tables are broad at table level; RLS is expected to narrow rows, but row-policy and runtime tests are required. Do not treat grants alone as safe.
+- No explicit confirmation/contact RPC in the reviewed draft content was established as installed; the QA catalog gap remains.
+
+### QA-only review gate (not applied)
+1. Compare every DROP POLICY/REVOKE against live QA policy/ACL catalog and frontend SELECT needs.
+2. Ensure SECURITY DEFINER functions are owned by trusted role, use fixed search_path, and have EXECUTE restricted to authenticated as intended.
+3. Test anon, customer, approved driver, pending driver, partner, admin, and cross-ride participant access.
+4. Verify safe ride listing and participant access to bookings/events/payments without leaking phone/contact or precise location to nonparticipants.
+5. Confirm confirmation/contact/cancel/payment lifecycle RPCs exist before relying on RPC-only write privileges.
+6. Apply only after explicit QA mutation authorization and a rollback plan; Main/Production prohibited.
+
+Status: STATIC DRAFT REVIEW ONLY. No SQL executed, no live policies changed, no merge/deploy, Main/Production untouched.
