@@ -52,7 +52,7 @@ test('contact draft discloses counterpart contact only for one confirmed active 
 test('client table writes are revoked and RPC execution is authenticated-only', () => {
   assert.match(hardeningDraft, /revoke all privileges on table public\.fr_shared_rides[^;]+from anon,authenticated;/);
   assert.match(hardeningDraft, /grant select on table public\.fr_shared_rides[^;]+to authenticated;/);
-  assert.match(hardeningDraft, /revoke truncate on all tables in schema public from anon,authenticated;/);
+  assert.match(hardeningDraft, /revoke truncate, maintain on all tables in schema public from anon,authenticated;/);
   assert.match(hardeningDraft, /revoke all on function public\.fr_shared_ride_get_booking_contacts\(uuid\) from public,anon;/);
   assert.match(hardeningDraft, /grant execute on function public\.fr_shared_ride_get_booking_contacts\(uuid\) to authenticated;/);
   assert.match(hardeningDraft, /grant execute on function public\.fr_shared_ride_cancel_booking\(uuid\) to authenticated;/);
