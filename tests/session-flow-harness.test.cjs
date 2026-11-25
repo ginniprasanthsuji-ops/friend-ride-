@@ -126,3 +126,24 @@ test('invalid restore resets to anonymous and clears private state', async () =>
   assert.equal(h.identity, null);
   assert.deepEqual(h.privateNotifications, []);
 });
+
+test('profile loader failure fails closed and resets session', async () => {
+  const h = new SessionFlowHarness();
+  const result = await h.signIn('fixture-user-a', {
+    profile: async () => { throw new Error('synthetic profile loader failure'); }
+  });
+  assert.equal(result.accepted, false);
+  assert.equal(result.reason, 'loader-error');
+  assert.equal(h.identity, null);
+  assert.equal(h.role, null);
+});
+
+test('notification loader failure clears private notifications without leaking error data', async () => {
+  const h = new SessionFlowHarness();
+  await h.signIn('fixture-user-a');
+  h.privateNotifications = [{ userId: 'fixture-user-a', marker: 'old-private' }];
+  const result = await h.loadNotifications(async () => { throw new Error('mock notification failure'); });
+  assert.equal(result.accepted, false);
+  assert.deepEqual(result.rows, []);
+  assert.deepEqual(h.privateNotifications, []);
+});
