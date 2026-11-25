@@ -229,3 +229,26 @@ The checked items above are changes actually committed to the QA branch. All 58 
 - Recommended guardrail for cleanup implementation: only allow deletion when object path maps to an approved KYC document type and a reviewed/download-confirmed status; deny all profile-photo and QR asset buckets/types; preserve approval/reviewer/time metadata; clear profile KYC path columns and `fr_driver_documents.storage_path` references; use idempotent cleanup; require Admin authorization. This is design guidance, not implemented.
 - No code/SQL/Storage mutation in this continuation. Main/Production untouched; no merge/deploy. Test results remain source-only/unverified runtime.
 - Next: add targeted regression tests for KYC-only cleanup and permanent asset deny-list; reconcile bucket mismatch before any implementation.
+
+
+## Phase 13 continuation — KYC retention test matrix drafted (2026-11-26)
+
+Targeted cases for the eventual guarded cleanup implementation (test design only; not executed):
+
+1. **Admin-only preview/download:** authenticated admin can request a short-lived private signed URL for a pending/reviewed KYC object; non-admin, anonymous and unrelated user denied.
+2. **Review gate:** cleanup denied until Admin has reviewed and explicitly confirmed download/offline filing; approval status alone must not auto-delete.
+3. **Document-type allowlist:** only KYC types (Aadhaar, licence, approved verification doc types) can be cleaned; unknown type denied.
+4. **Permanent-asset denylist:** driver/customer profile-photo buckets and Driver/Partner QR asset types/buckets must be denied regardless of caller input.
+5. **Path ownership:** cleanup must use database-validated object path, never accept arbitrary caller-supplied bucket/path.
+6. **Metadata preservation:** delete file and clear path references but preserve approval status, reviewer, reviewed_at, review note, and minimal audit event (avoid storing Aadhaar number/document contents).
+7. **Idempotency:** second cleanup call returns a safe already-cleaned result; does not affect unrelated objects.
+8. **Partial failure:** if Storage deletion fails, retain references and mark cleanup pending/error; if DB reference cleanup fails after file removal, record recovery state without re-uploading or broad deletion.
+9. **Cross-user denial:** another driver/partner cannot preview/download/clean KYC objects.
+10. **Customer profile-photo protection:** cleanup tests verify customer profile photo remains.
+11. **Driver profile-photo protection:** cleanup tests verify driver profile photo remains.
+12. **Driver QR protection:** cleanup tests verify driver QR remains.
+13. **Partner QR protection:** cleanup tests verify partner QR remains.
+14. **Bucket configuration consistency:** app bucket names match the configured private Storage buckets and policies in QA; no missing bucket references.
+15. **Admin audit trail:** record reviewer, review/download-confirmation and cleanup timestamp/action, but not sensitive document contents.
+
+Status: **TEST PLAN DRAFTED — NOT EXECUTED**. No implementation, SQL, Storage or data mutations performed. Main/Production untouched; no merge/deploy.
