@@ -454,3 +454,32 @@ Read-only review of `qa/read-only-regression.sql` plus search for `fr_push_subsc
 5. Improve read-only regression SQL to assert policy details/expected storage buckets and schema-qualified object checks.
 
 **Status:** Source and repository-search review only. No Supabase SQL was executed, no deployed schema/policies/functions were inspected, and no production files/configuration changed.
+
+
+## Follow-up — Profile photo storage privacy and role-access coverage audit
+
+Read-only review of `qa/read-only-regression.sql` and repository searches for storage/photo bucket/policy terms.
+
+### Source observations
+- Regression SQL expects private buckets `driver-kyc-documents`, `driver-profile-photos`, and `partner-profile-photos`; it checks that each exists and is not public.
+- It expects six named storage policies covering driver KYC upload/read, driver profile-photo upload, admin read driver photos, and partner profile-photo upload/read.
+- The regression file does not include a home-service-provider profile-photo bucket/policy check in the reviewed list.
+- These policy checks confirm names exist only; they do not verify policy predicates, owner identity, admin authorization, object path handling, MIME/size restrictions, signed URL expiry, or actual cross-role access.
+- GitHub code-search attempts for photo bucket/policy terms returned no additional excerpts in this checkpoint; this is search-index limitation, not proof of absence.
+
+### Risk candidates / evidence gaps
+- **P1 privacy verification gap:** Private bucket status and policy names do not prove users cannot read another user's KYC/photo objects or that admin access is restricted to authorized admins.
+- **P2 role coverage gap:** Home-service-provider profile-photo bucket/policy coverage not observed in the regression SQL.
+- **P2 upload validation gap:** MIME/type/size/path restrictions, overwrite behavior, and object ownership validation are not covered by the read-only SQL.
+- **P2 access lifecycle gap:** Approval/rejection, profile photo retrieval after approval, and removal/retention of rejected/unapproved records require runtime policy tests.
+
+### Suggested tests (not run)
+1. Driver A uploads own photo; Driver B cannot read/write A's path.
+2. Partner A uploads own photo; Partner B cannot access A's path.
+3. Admin can read only permitted profile-photo/KYC objects; unauthorized role denied.
+4. Customer and unrelated roles cannot read private KYC/photo objects.
+5. Home-service provider photo upload/read ownership and admin review flow.
+6. Test invalid MIME, oversized upload, traversal/path manipulation, overwrite and deletion/retention.
+7. Confirm private bucket URLs are not publicly accessible and signed URLs expire.
+
+**Status:** Static SQL/search review only. No storage policies, deployed buckets, files, Supabase runtime, or browser/device access were tested; no production edits or SQL executed.
