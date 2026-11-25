@@ -29,3 +29,22 @@ test.describe('FR Train Journey IRCTC handoff', () => {
     expect(getOfficialIRCTCBookingUrl()).toBe('https://www.irctc.co.in/nget/train-search');
   });
 });
+
+
+  test('handles empty or incomplete journey data without crashing', async () => {
+    const { formatTrainJourneyClipboard } = await import('../assets/train-journey-irctc-handoff.js');
+    expect(formatTrainJourneyClipboard(null)).toContain('Journey:  → ');
+    expect(formatTrainJourneyClipboard({ legs: [] })).toContain('Selected route: ');
+    expect(formatTrainJourneyClipboard({ legs: [{}] })).toContain('Leg 1:');
+  });
+
+  test('includes transfer station but does not fabricate transfer details', async () => {
+    const { formatTrainJourneyClipboard } = await import('../assets/train-journey-irctc-handoff.js');
+    const text = formatTrainJourneyClipboard({
+      fromStation: 'A',
+      toStation: 'B',
+      legs: [{ trainNumber: '12345', transferAt: 'Junction X' }]
+    });
+    expect(text).toContain('Transfer at: Junction X');
+    expect(text).not.toContain('Transfer duration:');
+  });
