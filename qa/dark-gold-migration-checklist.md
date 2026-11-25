@@ -525,3 +525,15 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] QA-only remediation remains unapproved/unapplied.
 
 **Phase 13B progress: 55%** (deployed RPC bodies and key lifecycle invariant gaps reviewed; no changes applied).
+
+
+### Phase 13B continuation — profile approval/role schema dependency check (2026-11-26)
+- [x] Live QA `profiles` schema confirms `role` and `driver_approval_status` fields exist; these can support server-side role/approval validation in a future RPC draft.
+- [x] `fr_shared_ride_create` live body currently does not consult either field; frontend-only gate is insufficient as a security boundary.
+- [x] Booking RPC also does not check `profiles.role='customer'`; live profiles schema supports role-based enforcement.
+- [x] Current schema exposes driver approval status, but no query of actual user records was performed (privacy-safe catalog-only audit).
+- [ ] Draft exact validation predicates/status allowlist after reviewing the approved registration/admin lifecycle (avoid assuming approval enum values).
+- [ ] Review rebooking/unique constraint and passenger-helper status filtering together; prepare migration only after decisions and rollback.
+- [ ] No SQL changes applied; QA remains audit-only.
+
+**Phase 13B progress: 60%** (profile schema dependencies confirmed and validation gaps connected to live RPCs; implementation remains pending).
