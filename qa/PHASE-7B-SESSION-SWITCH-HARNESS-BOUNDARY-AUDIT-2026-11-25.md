@@ -689,3 +689,44 @@ This is a planning/acceptance checkpoint only. Tests are not authored or run her
 7. Upload evidence and write commit/test/environment summary.
 
 **Checkpoint:** Readiness/gap audit documented only. No code, workflow, SQL, tests, dependency installation, CI run, or backend/production changes.
+
+
+## Follow-up — CI Coverage & Test Suite Integration Audit
+
+**Reviewed:** branch-fetched `.github/workflows/friend-ride-regression.yml` and `package.json`.
+
+### Confirmed CI path
+- Inline JS check.
+- Node source-contract test: `qa/phase-11-security-isolation-contract.test.mjs`.
+- `npm install` (lockfile still not confirmed at reviewed ref).
+- Chromium installation.
+- Local static server start and readiness polling.
+- `npm test` runs local preflight then Playwright.
+- Playwright HTML/report artifacts upload always attempted, but missing artifacts are ignored; 7-day retention.
+
+### Package scripts not visibly integrated in this workflow
+- `test:unit` — Node test glob `tests/*.test.cjs`.
+- `test:core` — Vitest.
+- `typecheck` — standalone TypeScript check.
+- `typecheck:core` — tsconfig project check.
+- `build:runtime` — runtime JS build.
+
+Their existence is confirmed in branch-fetched package.json; whether matching test files exist and whether these scripts pass is **not confirmed**. GitHub search returned snippets referencing a different commit SHA than the branch fetch, so those snippets were excluded as current branch evidence.
+
+### Integration gap classification
+- **P1:** Auth/session race tests not included in current Playwright testMatch and not implemented/verified.
+- **P2:** Separate unit/core/typecheck/build scripts are not visible in the reviewed CI workflow.
+- **P2:** CI report upload silently tolerates missing report files.
+- **P2:** CI uses `npm install`; lockfile-backed reproducibility is unresolved.
+- **P2:** Evidence summary with commit/run/environment and test counts is not visible in reviewed workflow.
+
+### Recommended next change (proposal only)
+Extend the workflow with a staged QA pipeline after confirming test files and lockfile:
+1. Inline JS + security contracts.
+2. Node unit + Vitest core tests.
+3. Typecheck + runtime build validation.
+4. Local-only Playwright regression including session/race coverage.
+5. Mandatory blocked-origin empty assertion.
+6. Summary + artifacts with explicit missing-file behavior and commit/run metadata.
+
+**Status:** Audit documentation only. No workflow/package/test changes, dependency install, SQL, or CI execution performed.
