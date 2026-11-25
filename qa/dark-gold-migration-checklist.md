@@ -447,3 +447,14 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 - [ ] QA approval, application, post-change ACL/policy verification, regression tests.
 
 **Phase 13B progress: 25%** (baseline inventory and conservative draft prepared; no remediation applied).
+
+
+### Phase 13B continuation — write-path dependency and draft comparison (2026-11-26)
+- [x] Located repository QA Shared Ride privacy SQL draft and compared its proposed client-table revokes against the conservative Stage 1 ACL proposal.
+- [x] Reviewed existing draft RPC write paths: `fr_shared_ride_create` and `fr_shared_ride_book_seats` are SECURITY DEFINER write paths in source draft; routine EXECUTE inventory surfaced authenticated grants for those and passenger helper.
+- [x] Confirmed candidate policy draft is broader than the Stage 1 ACL-only approach: it revokes authenticated table writes and introduces selective column SELECT/public listing view. This is a separate policy/RPC/schema change, not ACL-only; defer until consumer/field dependency and view behavior review.
+- [ ] Full frontend consumer search for Shared Ride direct table writes remains incomplete; GitHub code search index returned no matches, so no direct-write dependency conclusion is claimed.
+- [ ] Review RPC caller dependencies and security-definer owner/search_path; verify passenger-contact/driver-confirmation/cancel/payment workflows exist and have least-privilege EXECUTE.
+- [ ] QA approval, apply, verify, and role regression remain pending.
+
+**Phase 13B progress: 30%** (draft comparison and write-path scope review completed; no QA SQL applied).
