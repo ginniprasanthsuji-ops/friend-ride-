@@ -289,3 +289,27 @@ Reviewed `service-worker.js` notification click behavior read-only.
 4. Verify sender payload contains no phone numbers, addresses, OTPs, private order details, or payment secrets.
 
 **Status:** Static source review only; no push payloads sent, browser tests, devices, production changes, or runtime verification.
+
+
+## Follow-up — push payload sender/schema and migration visibility audit
+
+Repository root, `sql/`, and `supabase/migrations/` directory listings reviewed read-only.
+
+### Confirmed scope observations
+- Root includes push-related client files (`service-worker.js`, `firebase-messaging-sw.js`, `fcm-web-push.js`, `fr-notification-fallback.js`).
+- The inspected `supabase/migrations/` listing contains the migrations shown in its current directory, but no migration filename visibly identifies `fr_push_subscriptions` or push endpoint ownership/RLS policy setup.
+- The `sql/` listing contained only `fix_ride_customer_driver_contact.sql` at this check.
+- GitHub repository search for the exact push-subscription/sender keywords returned no matching excerpts in this attempt; this does **not** prove no sender exists (search indexing/visibility limitation).
+
+### Risk candidates / evidence gaps
+- **P1 evidence gap:** Push subscription table creation, uniqueness/ownership constraints, RLS policies, and sender authorization are not established by the inspected migration directory listings.
+- **P1 evidence gap:** Cannot verify whether a push sender checks active subscription owner against event recipient before delivery.
+- **P2 evidence gap:** No sender-side payload schema/redaction contract located in this read-only check.
+
+### Required follow-up evidence
+1. Locate actual `fr_push_subscriptions` table definition, constraints, and RLS policies (including any deployed SQL not committed to these directories).
+2. Locate sender implementation (Edge Function, GitHub workflow, Firebase backend, or other existing project component) and inspect recipient-owner checks.
+3. Verify sender schema excludes sensitive fields from notification payloads and restricts navigation URLs.
+4. Do not add services or subscriptions; evidence should come from existing GitHub/Supabase/Firebase project configuration.
+
+**Status:** Directory listing/source search only; no Supabase database access, SQL execution, push sends, runtime tests, or production changes.
