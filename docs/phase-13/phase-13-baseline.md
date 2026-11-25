@@ -176,3 +176,10 @@ No matching public table was found for store coupons, flash sales, birthday offe
 - Admin approval RPC hardened: approve is blocked until `eligible_order_count >= 2`; reject remains admin decision.
 - This is eligibility only: no automatic wallet credit/ledger mutation. Referral reward remains admin-approved; wallet credit still requires safe ledger integration.
 - Migration commit `e3746ea6`; live DB applied and trigger/RPC checks pending final verification.
+
+## Phase 13 Task 10 — Referral ₹50 reward ledger credit foundation
+- Audited `fr_v8_order_ledger`: it is order/checkout/seller/driver oriented, with no confirmed wallet balance/account model; do not misuse it for customer referral credits.
+- Added dedicated `fr_customer_referral_reward_ledger` with one unique record per referral, INR, paise integer (5000 = ₹50), referrer/referred IDs, Admin credited_by and metadata. RLS read access restricted to involved users/Admin; no client inserts/updates.
+- Added Admin-only `fr_customer_referral_reward_credit` RPC: requires prior approved referral, 2 eligible orders, configured ₹50 amount; unique referral prevents duplicate ledger credit; updates referral to rewarded/credited.
+- **Important limitation:** this creates an auditable reward credit ledger record, not a live wallet balance or cash payout. Actual wallet balance UI/payment integration remains pending wallet architecture.
+- Migration commit `5e3cc709`; live DB applied. Browser/admin UI not yet wired.
