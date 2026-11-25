@@ -273,3 +273,26 @@ Status: **TEST PLAN DRAFTED — NOT EXECUTED**. No implementation, SQL, Storage 
 - KYC upload and profile fields remain path-based. KYC review view creates a short-lived signed URL and Verify/Reject RPC, but no download-confirmation cleanup flow found.
 - QR bucket duplication/path conventions and profile-photo old-object retention are candidates for QA-only implementation planning. Do not delete or migrate assets until a verified bucket inventory, database path mapping, and rollback plan exist.
 - No source/database/storage mutations. Main/Production untouched; no merge/deploy. Runtime/storage tests UNVERIFIED.
+
+
+## Phase 13 continuation — Storage acceptance criteria and QA coverage gap (2026-11-26)
+
+### Confirmed source-level mapping
+- Registration driver/partner QR: `provider-payment-qr`, profile `provider_qr_path`.
+- Partner payment settings currently create two copies: `partner-qr` (`shop-qr_...`) and `provider-payment-qr` (`shop-payment-qr_...`); save RPC receives both paths. Customer/shop display uses `partner-qr`; ride payment display uses `provider-payment-qr`.
+- Driver/customer profile-photo update writes a unique new object then updates profile path. When DB update succeeds, prior object is not removed in inspected source. When DB update fails, new object is removed.
+- KYC admin review creates short-lived signed URLs and Verify/Reject actions. No cleanup action or explicit downloaded/filing confirmation identified.
+
+### QA coverage gap
+- Existing Playwright tests check UI/source wiring, but do not verify QR duplicate behavior, storage object retention, old photo cleanup, KYC download confirmation, deletion, or permanent-asset protection.
+- Existing static `test.html` check #03 is a marker check only; it cannot prove Storage bucket existence, signed URL access, or ownership restrictions.
+
+### Implementation acceptance criteria (not implemented)
+1. Establish a canonical QR bucket/path scheme and migrate only after a reviewed inventory/backup/rollback plan; no blind deletion.
+2. QR update should have a single canonical permanent asset path or documented paired assets if both are genuinely required; retain old permanent QR until replacement is verified, then archive/replace safely.
+3. Profile-photo replacement: verify new upload and DB path before deleting old object; old path must be read from profile first, and deletion must be constrained to that user's correct photo bucket. Failure should retain a recovery path.
+4. KYC: Admin preview/download, explicit offline-file confirmation, cleanup only of allowlisted KYC objects, preserve approval/reviewer/time/note metadata, and clear document-path references.
+5. Permanent assets denylist/guard must include customer/driver photos and Driver/Partner QR assets; cleanup must not accept arbitrary bucket/path input.
+6. Test cross-user/admin permissions, Storage failures, DB failures, replacement rollback, idempotent cleanup, and bucket-name consistency using a verified QA project.
+
+Status: **SOURCE AUDIT COMPLETE FOR THIS PASS; ACCEPTANCE CRITERIA DOCUMENTED, NOT IMPLEMENTED/EXECUTED**. No SQL/Storage mutations; Main/Production untouched; no merge/deploy.
