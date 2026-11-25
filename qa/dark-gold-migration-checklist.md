@@ -436,3 +436,14 @@ Status: LIVE QA CATALOG READ-ONLY VERIFIED. No SQL mutation; Main/Production unt
 **Phase 13B current progress: 15%** — scope and baseline inventory completed; remediation draft and testing remain.
 **Next task:** prepare minimal ACL-only draft using live grants and preserve current participant SELECT policy semantics; do not apply.
 **Progress rules:** update Phase 13B percentage each continuation based on completed checklist evidence. Do not change frozen Phase 13 counters/graph.
+
+
+### Phase 13B turn update — conservative Stage 1 ACL draft (2026-11-26)
+- [x] Read-only routine EXECUTE inventory: QA shows authenticated EXECUTE for `fr_shared_ride_create`, `fr_shared_ride_book_seats`, and `fr_shared_ride_is_passenger`; no anon EXECUTE rows surfaced for the searched Shared Ride routine names.
+- [x] Added a conservative Stage 1 ACL-only review draft: revoke all privileges from anon on the four Shared Ride tables; revoke authenticated TRUNCATE; preserve authenticated SELECT and current RLS; intentionally leave authenticated INSERT/UPDATE/DELETE untouched until frontend direct-write dependency review is complete.
+- [x] Draft added at `qa/phase13b-shared-ride-acl-stage1-review-draft.sql`; not executed and not a migration.
+- [ ] Audit frontend write-path dependency for direct INSERT/UPDATE/DELETE before Stage 2 proposal.
+- [ ] Review exact pre-change grants and rollback restoration plan.
+- [ ] QA approval, application, post-change ACL/policy verification, regression tests.
+
+**Phase 13B progress: 25%** (baseline inventory and conservative draft prepared; no remediation applied).
