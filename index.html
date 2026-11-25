@@ -578,12 +578,7 @@ body{padding-bottom:105px}
   <div class="market-heading"><h2 id="customerCatalogueTitle">Store Catalogue</h2><span class="pill" id="customerCatalogueType">Friend Mart</span></div>
   <p class="muted" id="customerCatalogueSub">Choose products from this store's catalogue.</p>
   <div class="field"><label>Delivery Address</label><textarea id="customerMarketAddress" placeholder="Use saved address or enter delivery address"></textarea></div>
-  <div id="medicalPrescriptionPanel" class="prescription-panel" style="display:none">
-   <b>🩺 Doctor Prescription</b>
-   <p class="muted">Prescription-required medicines కోసం డాక్టర్ ప్రిస్క్రిప్షన్ తప్పనిసరిగా అప్‌లోడ్ చేయాలి. ఫార్మసిస్ట్ ధృవీకరణ తర్వాతే ఆర్డర్ నిర్ధారణ.</p>
-   <label>Upload Prescription (JPG / PNG / PDF)</label><input id="customerPrescriptionFile" type="file" accept="image/*,.pdf" onchange="frCheckPrescriptionFile(this)">
-   <small id="prescriptionFileStatus" class="muted">Prescription medicine cart కోసం ఫైల్ అవసరం.</small>
-  </div>
+  
   <div id="frCatalogueCategoryTiles" class="fr-catalogue-category-tiles" aria-label="Store catalogue categories"></div>
   <div class="field"><label>Catalogue Category / క్యాటలాగ్ కేటగిరీ</label><select id="customerCatalogueCategorySelect" onchange="frMarketCategory=this.value;renderCustomerCatalogue()"><option value="All">All Items</option></select></div>
   <div class="market-search"><input id="customerCatalogueSearch" placeholder="Search products in catalogue" oninput="renderCustomerCatalogue()"></div>
@@ -1387,7 +1382,7 @@ function openFriendStore(id){
  $('customerCatalogueSearch').value='';renderStoreCategories();renderCustomerCatalogue();if(frActiveStore.type==='vegetables')$('customerCatalogueSub').textContent='🥬 Fresh arrivals • Daily partner stock and prices can change';showPage('customerCatalogue');
 }
 function frStoreMasterType(type){
- const map={local_store:'local_store',medical:'medical',vegetables:'vegetables',bakery:'bakery',stationery:'local_store',restaurant:'restaurant',chicken:'chicken',chicken_shop:'chicken',mutton:'mutton',fish:'fish',electrical:'electrical',electrical_store:'electrical',hardware:'hardware',hardware_store:'hardware',dairy:'dairy',mobile:'mobile',electrician:'electrician'};
+ const map={local_store:'local_store',vegetables:'vegetables',bakery:'bakery',stationery:'local_store',restaurant:'restaurant',chicken:'chicken',chicken_shop:'chicken',mutton:'mutton',fish:'fish',electrical:'electrical',electrical_store:'electrical',hardware:'hardware',hardware_store:'hardware',dairy:'dairy',mobile:'mobile',electrician:'electrician'};
  return map[String(type||'').toLowerCase()]||type||'local_store';
 }
 function frProductArt(item){
@@ -3046,7 +3041,7 @@ async function frAdminUpdateBankEnquiry(id,status){
   ['local_store','Grocery & General Store'],['electrical','Electrical Store'],
   ['electrician','Electrician Services'],['hardware','Hardware Shop'],
   ['chicken','Chicken Shop'],['mutton','Mutton & Meat'],['fish','Fish & Seafood'],
-  ['vegetables','Vegetables & Fruits'],['medical','Medical Store'],['dairy','Milk & Dairy'],
+  ['vegetables','Vegetables & Fruits'],['dairy','Milk & Dairy'],
   ['mobile','Mobile & Accessories'],['bakery','Bakery & Sweets'],
   ['stationery','Stationery & Xerox'],['restaurant','Restaurant / Tiffin'],
   ['other','Other Business']
