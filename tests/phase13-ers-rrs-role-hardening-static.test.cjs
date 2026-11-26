@@ -25,7 +25,7 @@ test('booking RPC requires Customer role and safely reuses cancelled/refunded ro
   assert.match(draft, /p\.role='customer'/);
   assert.match(draft, /v_existing_status not in \('cancelled','refunded'\)/);
   assert.match(draft, /update public\.fr_road_ride_bookings[\s\S]+?status='booking_pending'/);
-  assert.match(draft, /fr_road_ride_bookings_ride_id_passenger_id_key/i);
+  assert.match(draft, /UNIQUE\(ride_id,passenger_id\)/i);
 });
 
 test('confirmation uses ride-first locking and rechecks eligible owner', () => {
@@ -39,7 +39,7 @@ test('contact disclosure is participant-only and driver eligibility is checked',
   assert.match(draft, /Ride driver is not eligible for participant contact/);
   assert.match(draft, /v_ride\.driver_id=v_uid/);
   assert.match(draft, /p\.role='driver' and p\.driver_approval_status='approved'/);
-  assert.match(draft, /p\.role='customer' and exists[\s\S]+?fr_road_ride_guest_driver_profile/);
+  assert.match(draft, /p\.role='customer' and exists[\s\S]+?fr_road_ride_guest_profiles/);
 });
 
 test('profile RPCs require the approved Driver or customer guest flow and validate private photo path', () => {
