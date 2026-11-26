@@ -10,4 +10,5 @@ assert.ok(sql.includes("('driving_license'),('aadhaar'),('vehicle_rc')")&&sql.in
 assert.equal((sql.match(/as \$\$\s*(?:begin|declare)/g)||[]).length,5,"All PL/pgSQL functions must use valid dollar quoting");
 assert.equal((sql.match(/end \$\$;/g)||[]).length,5,"Function bodies must close with dollar quotes");
 assert.ok(!/as \$\s*(?:begin|declare)/.test(sql),"Malformed function dollar delimiter");
-assert.ok(sql.includes("status='pending' and driver_id is null")&&sql.includes("customer_id=auth.uid() or public.is_friend_ride_admin()"),"Cancellation is limited to customer/admin and pending unassigned bookings");\nconsole.log("Phase 13D ERS/RRS cash-only static checks PASS");
+assert.ok(sql.includes("status='pending' and driver_id is null")&&sql.includes("customer_id=auth.uid() or public.is_friend_ride_admin()"),"Cancellation is limited to customer/admin and pending unassigned bookings");
+console.log("Phase 13D ERS/RRS cash-only static checks PASS");
