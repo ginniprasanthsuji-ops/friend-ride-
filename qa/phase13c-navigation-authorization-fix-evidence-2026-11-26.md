@@ -38,6 +38,13 @@ Failure logs showed route-authorization tests where `showPage` returned from a r
 - Payment/QR storage bucket `provider-payment-qr` (and queried aliases): **not found**; matching storage policies: none. Catalogue/order tables: none found by the QA inventory query.
 - No SQL migrations applied.
 
+## Read-only RLS write-policy predicate scan (executed)
+- Client write policies: **40**.
+- Roles: **40 authenticated-only**, **0 anon/public**.
+- Unrestricted `USING true`: **0**; unrestricted `WITH CHECK true`: **0**.
+- INSERT policies missing `WITH CHECK`: **0**; UPDATE policies missing either `USING` or `WITH CHECK`: **0**.
+- These are policy-shape checks only; role authorization gaps in ride RPCs remain, and the predicate scan does not replace per-table ownership/participant review.
+
 ## Live QA inventory
 - 39 public tables, RLS 39/39, FORCE RLS 0, 77 policies, 40 client-write policies.
 - Client TRUNCATE/MAINTAIN grants 0; SECURITY DEFINER missing fixed search_path 0.
