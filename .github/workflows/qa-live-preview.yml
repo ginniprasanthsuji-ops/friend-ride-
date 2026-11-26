@@ -1,0 +1,33 @@
+name: FRIEND RIDE QA Live Preview
+on:
+  push:
+    branches: [qa/phase8-13-data-integrity-2026-11-24]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: qa-pages-preview
+  cancel-in-progress: true
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: QA backend guard
+        run: |
+          grep -q 'pqsangtvietawkfgpgfu.supabase.co' index.html
+          grep -q 'pqsangtvietawkfgpgfu.supabase.co' fcm-web-push.js
+          if grep -q 'fglyplxcczdjtfwobtzh.supabase.co' index.html fcm-web-push.js; then
+            echo 'Production Supabase URL found in QA deployment files'; exit 1
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
