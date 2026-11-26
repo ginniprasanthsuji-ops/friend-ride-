@@ -38,6 +38,9 @@ test('contact disclosure is participant-only and driver eligibility is checked',
   assert.match(draft, /b\.passenger_id=v_uid and c\.role='customer'/);
   assert.match(draft, /Ride driver is not eligible for participant contact/);
   assert.match(draft, /v_ride\.driver_id=v_uid/);
+  const driverContactBranch = draft.split(/if v_ride\.driver_id=v_uid and exists\(/)[1]?.split(/raise exception 'Contact details are available only to confirmed ride participants'/)[0] || '';
+  assert.match(driverContactBranch, /order by b\.created_at desc;/);
+  assert.doesNotMatch(driverContactBranch, /limit\s+1/i);
   assert.match(draft, /p\.role='driver' and p\.driver_approval_status='approved'/);
   assert.match(draft, /p\.role='customer' and exists[\s\S]+?fr_road_ride_guest_profiles/);
 });
