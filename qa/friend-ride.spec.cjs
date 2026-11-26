@@ -595,3 +595,25 @@ test('Refund queue stays behind the Admin role gate when unauthenticated', async
   await expect(page.locator('#adminDashboard')).not.toHaveClass(/active/);
   await expect(page.locator('#roleLauncher')).toBeAttached();
 });
+
+test('Refund mark-paid UI requires transfer reference and explicit confirmation', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const guard = await page.evaluate(() => {
+    const src = document.documentElement.innerHTML;
+    const start = src.indexOf('async function frAdminRefundMarkPaid');
+    const end = src.indexOf('</script>', start);
+    const fn = src.slice(start, end);
+    return {
+      requiresReference: fn.includes("if(!ref){alert('Refund transfer reference/UTR required.')"),
+      requiresConfirmation: fn.includes("if(!confirm('Confirm that refund money was actually sent"),
+      usesProtectedRpc: fn.includes("fr_admin_ride_refund_mark_paid"),
+      refreshesQueueAfterSuccess: fn.includes('await frAdminRefundLoad()')
+    };
+  });
+  expect(guard).toEqual({
+    requiresReference: true,
+    requiresConfirmation: true,
+    usesProtectedRpc: true,
+    refreshesQueueAfterSuccess: true
+  });
+});
