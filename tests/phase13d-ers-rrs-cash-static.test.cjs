@@ -25,3 +25,10 @@ console.log("Phase 13E ERS registered / RRS guest / departure-time / cash-only s
 const app=fs.readFileSync('index.html','utf8');
 for(const s of ['ERS / RRS Shared Ride',"frSetSharedRideMode('RRS')",'frRRSGuestPhoto','RRS Guest Driver Photo (Required)','frPreviewRRSGuestPhoto(event)','Guest Driver Name','Guest Driver Phone','Bike Details','max 5 MB','image/jpeg,image/png,image/webp'])assert.ok(app.includes(s),s);
 assert.ok(app.includes('frRRSGuestPhotoPanel')&&app.includes('class="hide"'), 'RRS photo fields are toggled and shown on RRS selection');
+
+// Main-app RRS photo backend integration static assertions.
+assert.ok(sql.includes('fr_phase13e_customer_save_rrs_guest_details'), 'customer-scoped RPC persists RRS guest fields/photo path');
+assert.ok(sql.includes('fr_rrs_guest_photo_customer_insert')&&sql.includes('fr_rrs_guest_photo_customer_select')&&sql.includes('fr_rrs_guest_photo_customer_delete'), 'customer storage policies are booking-scoped');
+assert.ok(app.includes('async function saveRideRequest()')&&app.includes('fr_phase13d_create_ers_rrs_booking'), 'main app creates an RRS booking');
+assert.ok(app.includes('fr_phase13e_customer_save_rrs_guest_details')&&app.includes('.upload(filePath,photo'), 'main app uploads photo and persists its path');
+assert.ok(app.includes('Pending admin assignment')&&app.includes('Photo path:'), 'main app displays booking status and saved path');
