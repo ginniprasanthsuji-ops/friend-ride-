@@ -8,7 +8,7 @@ test.describe('FRIEND RIDE launcher smoke / regression', () => {
     await expect(page).toHaveTitle(/FRIEND RIDE/i);
     await expect(page.locator('#roleLauncher')).toBeVisible();
     for (const role of ['customer','driver','partner','admin']) {
-      await expect(page.locator('#roleLauncher button[onclick*="enterRole(\\''+role+'\\')"]')).toBeVisible();
+      await expect(page.locator(`#roleLauncher button.fr-role-card.${role}`)"]')).toBeVisible();
     }
     expect(errors, 'runtime page errors').toEqual([]);
   });
@@ -16,7 +16,7 @@ test.describe('FRIEND RIDE launcher smoke / regression', () => {
   for (const role of ['customer','driver','partner','admin']) {
     test(role+' role selection opens role-specific auth gate', async ({ page }) => {
       await page.goto('/');
-      await page.locator('#roleLauncher button[onclick*="enterRole(\\''+role+'\\')"]').click();
+      await page.locator(`#roleLauncher button.fr-role-card.${role}`)"]').click();
       await expect(page.locator('#roleLauncher')).toHaveClass(/hide/);
       await expect(page.locator('#authModal')).toHaveClass(/show/);
       await expect(page.locator('#authModal')).toHaveClass(/fr-role-locked/);
