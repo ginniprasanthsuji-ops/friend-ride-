@@ -38,7 +38,7 @@ console.log('Phase 13D main-app integration assertions PASS');
 const subscriptionMigration=fs.readFileSync('supabase/migrations/202611260005_fr_subscription_migration_reconcile.sql','utf8');
 for(const s of ["status='reference_submitted'","admin_verified_by uuid references auth.users(id)","admin_verified_at timestamptz","status in ('pending_payment','reference_submitted','verified','rejected','activated')","public.fr_subscription_submit_payment_reference","public.fr_admin_subscription_review","where id=p_request_id and user_id=auth.uid() and status='pending_payment'","where id=p_request_id and status='reference_submitted'","notify pgrst, 'reload schema'"])assert.ok(subscriptionMigration.includes(s),'Subscription reconciliation migration missing: '+s);
 assert.ok(subscriptionMigration.includes("p_action='approve' then 'activated'"),'Admin approval must activate only after review');
-assert.ok(subscriptionMigration.includes("p_action='reject' then 'rejected'"),'Admin rejection state must be preserved');
+assert.ok(subscriptionMigration.includes("p_action='approve' then 'activated' else 'rejected'"),'Admin rejection state must be preserved');
 console.log('Subscription migration drift/review invariants PASS');
 
 // Driver details display and scoped RPC assertions.
