@@ -27,27 +27,35 @@ jobs:
         with:
           path: production
 
-      - name: Checkout isolated QA preview branch
+      - name: Checkout Phase 14 QA preview branch
         uses: actions/checkout@v4
         with:
           ref: phase14-qa-live-preview
-          path: qa-source
+          path: qa-phase14
+
+      - name: Checkout Phase 12 QA preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: qa/phase12-native-motion-audit-2026-11-24
+          path: qa-phase12
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Stage Main root plus QA preview subpath
+      - name: Stage production and isolated QA previews
         run: |
-          mkdir -p site/qa-preview
+          mkdir -p site/qa-preview site/qa-phase12
           rsync -a --exclude='.git' production/ site/
-          cp qa-source/index.html qa-source/manifest.webmanifest qa-source/manifest.json qa-source/sw.js qa-source/service-worker.js qa-source/learn-teach.js qa-source/learn-teach.css qa-source/test.html site/qa-preview/
-          cp -R qa-source/assets qa-source/icons qa-source/styles site/qa-preview/
+          cp qa-phase14/index.html qa-phase14/manifest.webmanifest qa-phase14/manifest.json qa-phase14/sw.js qa-phase14/service-worker.js qa-phase14/learn-teach.js qa-phase14/learn-teach.css qa-phase14/test.html site/qa-preview/
+          cp -R qa-phase14/assets qa-phase14/icons qa-phase14/styles site/qa-preview/
+          cp qa-phase12/index.html qa-phase12/manifest.webmanifest qa-phase12/manifest.json qa-phase12/sw.js qa-phase12/service-worker.js qa-phase12/learn-teach.js qa-phase12/learn-teach.css qa-phase12/test.html site/qa-phase12/
+          cp -R qa-phase12/assets qa-phase12/icons qa-phase12/styles site/qa-phase12/
 
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
-      - name: Deploy production and isolated QA preview
+      - name: Deploy production and isolated QA previews
         id: deployment
         uses: actions/deploy-pages@v4
