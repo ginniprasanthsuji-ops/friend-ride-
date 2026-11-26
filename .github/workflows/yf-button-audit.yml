@@ -33,7 +33,7 @@ jobs:
           checkScripts('qa-page', qa);
           const handlers = [...app.matchAll(/\\bonclick\\s*=\\s*(['"])(.*?)\\1/gi)].map(m=>m[2]);
           const targets = [...new Set(handlers.map(h=>h.match(/^\\s*([A-Za-z_$][\\w$]*)\\s*\\(/)?.[1]).filter(n=>n&&n!=='if'))];
-          const missing = targets.filter(n=>!new RegExp('function\\\\s+'+n+'\\\\s*\\\\(').test(app)&&!new RegExp('window\\\\.'+n+'\\\\s*=').test(app)&&!new RegExp('(?:const|let|var)\\\\s+'+n+'\\\\s*=').test(app));
+          const missing = targets.filter(n=>!new RegExp('function\\s+'+n+'\\s*\\(').test(app)&&!new RegExp('window\\.'+n+'\\s*=').test(app)&&!new RegExp('(?:const|let|var)\\s+'+n+'\\s*=').test(app));
           console.log('Buttons with inline handlers: '+handlers.length+'; unique handler targets: '+targets.length+'; missing: '+missing.length);
           if(missing.length){console.error(missing.join(', '));process.exitCode=1;}
           NODE
