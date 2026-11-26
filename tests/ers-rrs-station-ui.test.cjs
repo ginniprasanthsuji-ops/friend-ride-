@@ -1,0 +1,11 @@
+const fs=require('node:fs');const assert=require('node:assert/strict');
+const app=fs.readFileSync('index.html','utf8');
+const post=fs.readFileSync('supabase/migrations/202611260007_fr_ers_rrs_station_guest_post.sql','utf8');
+const booking=fs.readFileSync('supabase/migrations/202611260008_fr_ers_rrs_station_booking_cash.sql','utf8');
+for(const s of ['frStationType(\'ers\')','frStationType(\'rrs\')','frStationView(\'live\')','frStationView(\'post\')','frStationView(\'bookings\')','frStationPostERS()','frStationPostRRS()','frStationBook(this.dataset.ride)','frStationMyBookings()','CASH ONLY','Guest Driver','Registered Driver'])assert.ok(app.includes(s),'UI feature missing: '+s);
+for(const s of ['fr_station_rides','ride_kind text not null check (ride_kind in (\'ERS\',\'RRS\'))','payment_method text not null default \'cash\' check(payment_method=\'cash\')','fr_station_post_ers','approved','fr_station_post_rrs_guest','10-digit mobile'])assert.ok(post.includes(s)||app.includes(s),'Posting migration/UI assertion missing: '+s);
+assert.ok(post.includes('to anon,authenticated'),'Guest RRS posting should allow anon API');
+assert.ok(post.includes('revoke insert,update,delete on public.fr_station_rides from anon,authenticated'),'Direct table mutation blocked');
+for(const s of ['fr_station_ride_bookings','fr_station_book_ride','fr_station_my_bookings','payment_method text not null default \'cash\' check(payment_method=\'cash\')','Customer login required','Cannot book your own ride','seat has already been requested'])assert.ok(booking.includes(s),'Cash booking migration assertion missing: '+s);
+assert.ok(app.includes('fr_station_book_ride')&&app.includes('fr_station_my_bookings'),'Booking RPC UI wiring missing');
+console.log('ERS/RRS station UI, guest posting, cash-only booking static checks PASS');
