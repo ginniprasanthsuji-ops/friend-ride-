@@ -59,3 +59,10 @@ for(const s of ["fr_station_live_rides_public","revoke all on public.fr_station_
 for(const s of ["frStationType('ers')","frStationType('rrs')","frStationPostERS()","frStationPostRRS()","frStationBook(this.dataset.ride)","frStationMyBookings()","fr_station_live_rides_public","fr_station_post_ers","fr_station_post_rrs_guest","fr_station_book_ride","fr_station_my_bookings","CASH ONLY","Guest Driver","Registered Driver"])assert.ok(app.includes(s),"ERS/RRS station UI assertion missing: "+s);
 assert.ok(!app.includes("frSubEsc(x.driver_phone)</p><div class=\"fr-station-route\""),"Public live ride card must not show guest driver phone");
 console.log("ERS/RRS Station registered-driver / guest-RRS / cash-only / privacy static checks PASS");
+
+ 
+// Passenger capacity and live remaining-seat decrement regression assertions.
+const stationCapacityMigration=fs.readFileSync('supabase/migrations/202611260010_fr_station_passenger_capacity.sql','utf8');
+for(const s of ['passenger_capacity integer not null default 1','passengers_booked integer not null default 0','passengers_remaining','p_passengers integer default 1','passengers_booked=passengers_booked+1','passengers_booked+1>=passenger_capacity','for update','No passenger seats left'])assert.ok(stationCapacityMigration.includes(s),'Station passenger capacity migration missing: '+s);
+for(const s of ['frErsPassengers','frRrsGuestPassengers','passengers_remaining','passenger_capacity','Passengers:','p_passengers:passengers'])assert.ok(app.includes(s),'Passenger count/remaining seats UI integration missing: '+s);
+console.log('ERS/RRS passenger capacity + LIVE count decrement assertions PASS');
