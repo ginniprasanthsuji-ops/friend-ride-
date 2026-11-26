@@ -5,6 +5,8 @@ alter table public.fr_station_rides add column if not exists passengers_booked i
 create or replace view public.fr_station_live_rides_public as
  select id,ride_kind,driver_name,vehicle_number,from_label,to_label,fare,status,payment_method,passenger_capacity,passengers_booked,(passenger_capacity-passengers_booked) as passengers_remaining,created_at
  from public.fr_station_rides where status='live' and passengers_booked < passenger_capacity;
+drop function if exists public.fr_station_post_ers(text,text,numeric);
+drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric);
 create or replace function public.fr_station_post_ers(p_from text,p_to text,p_fare numeric,p_passengers integer default 1)
 returns uuid language plpgsql security definer set search_path=public,auth
 as $$
