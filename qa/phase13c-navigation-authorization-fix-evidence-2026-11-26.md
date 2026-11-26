@@ -60,6 +60,10 @@ Failure logs showed route-authorization tests where `showPage` returned from a r
 **BLOCKED.** Browser regression previously failed and needs rerun after this fix; the newly added test is not yet confirmed by Node runner. Module backend gaps, admin runtime testing, and role checks remain. QA branch only; production untouched; estimates/graph frozen.
 
 
-## Current CI run
-- Run `45743043471` (`run #1229`, QA branch commit `ebc787e63e9e17ad0f5843d13b2372354de9c721`): inline JS check, npm install, Node unit/static suite, Chromium installation, and local server steps completed successfully. Browser regression remains in progress at evidence update.
-- [Open GitHub Actions run](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45743043471)
+## Current CI results
+- Run `45743043471` (`run #1229`, commit `ebc787e63e9e17ad0f5843d13b2372354de9c721`) completed: **57 passed / 10 failed**.
+- Inline JS check, npm install, Node unit/static suite (including the new navigation test), Chromium install, and local server: **success**.
+- All protected-route denial tests passed after the wrapper fix. The single partner-allowed-route test failed because the test profile was pending; the test was corrected to model an approved partner (`partner_approval_status: approved`) and pushed in commit `b659192952a929a05bafb0e3af5a427679ccf249`.
+- Remaining 9 failures are in the pre-existing Dark-Gold UI spec, which expects a non-existent design-system ID, native-home markup, five navigation buttons (actual count is seven), and OTP button IDs/text not present in the inspected source. These are product/UI-spec mismatches, not reported as fixed by the navigation patch.
+- New browser CI run triggered by the approved-partner test correction is pending.
+- [Run #1229](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45743043471)
