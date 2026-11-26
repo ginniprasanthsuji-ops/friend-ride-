@@ -18,6 +18,8 @@ jobs:
       - run: npm run build:runtime
       - run: npm run test:unit
       - run: npm run test:core
+      - name: Phase 13D ERS/RRS cash-only static QA
+        run: node tests/phase13d-ers-rrs-cash-static.test.cjs
 
   browser-e2e:
     runs-on: ubuntu-latest
