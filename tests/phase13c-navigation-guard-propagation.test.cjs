@@ -15,7 +15,7 @@ test('core showPage returns denial before activating any protected route', () =>
     "id==='frDriverSubscription'&&(!currentUser||role!=='driver')",
     "isAdminRoute&&(!currentUser||role!=='admin')",
     "isPartnerRoute&&(!currentUser||(role!=='partner'&&role!=='admin'))",
-    "isPartnerAdminShared&&(!currentUser||(role!=='partner'&&role!=='admin'))
+    "isPartnerAdminShared&&(!currentUser||(role!=='partner'&&role!=='admin'))",
   ]) assert.ok(body.includes(guard), 'guard present: '+guard);
   assert.ok(body.indexOf('return false;') < body.indexOf("document.querySelectorAll('.page')"),
     'denials happen before page activation');
