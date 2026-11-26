@@ -9,8 +9,14 @@
     appId:'1:986949278576:web:7da92fc7889d7eb168db5'
   };
   const VAPID_PUBLIC_KEY='BOYoqlhqA2JZzKxqRUcfPC1Dw7QV7ldMZFzU7aS_gwhyJrerEQNaIP3DuH46BV9z_bLmi5jHliVY3AD6riknmkM';
-  const SUPABASE_URL='https://fglyplxcczdjtfwobtzh.supabase.co';
-  const SUPABASE_ANON_KEY='sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz';
+  const FR_PRODUCTION_SUPABASE_URL='https://fglyplxcczdjtfwobtzh.supabase.co';
+  const FR_PRODUCTION_SUPABASE_ANON_KEY='sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz';
+  const FR_TEST_MODE=window.__FR_TEST_MODE__===true;
+  const FR_TEST_SUPABASE_CONFIG=window.__FR_TEST_SUPABASE_CONFIG__||{};
+  const SUPABASE_URL=FR_TEST_MODE?(FR_TEST_SUPABASE_CONFIG.url||'https://qa-offline.invalid'):FR_PRODUCTION_SUPABASE_URL;
+  const SUPABASE_ANON_KEY=FR_TEST_MODE?(FR_TEST_SUPABASE_CONFIG.anonKey||'offline-test-publishable-key'):FR_PRODUCTION_SUPABASE_ANON_KEY;
+  if(FR_TEST_MODE&&SUPABASE_URL===FR_PRODUCTION_SUPABASE_URL)throw new Error('Playwright test mode cannot use the production Supabase project.');
+  if(FR_TEST_MODE)window.__FR_TEST_SUPABASE_URL__=SUPABASE_URL;
   const CONFIG_READY=!FIREBASE_CONFIG.apiKey.startsWith('REPLACE_')&&!FIREBASE_CONFIG.appId.startsWith('REPLACE_');
   function makeUI(){
     const home=document.getElementById('home');

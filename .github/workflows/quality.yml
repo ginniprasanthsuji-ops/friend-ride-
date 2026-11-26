@@ -1,7 +1,7 @@
 name: FRIEND RIDE Quality Gate
 on:
   push:
-    branches: [main]
+    branches: [main, arjuna-x/phase-2-security-closure]
   pull_request:
     branches: [main]
 jobs:
@@ -33,7 +33,13 @@ jobs:
           python3 -m http.server 4173 --directory . >/tmp/friend-ride-http.log 2>&1 &
           echo $! >/tmp/friend-ride-http.pid
           sleep 2
-      - name: Run browser regression suite
+      - name: Run Phase 2/main safe browser suite
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/arjuna-x/phase-2-security-closure' || github.head_ref == 'arjuna-x/phase-2-security-closure'
+        env:
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173
+        run: npm run test:phase2
+      - name: Run full browser suite (UI migration branches)
+        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/arjuna-x/phase-2-security-closure' && github.head_ref != 'arjuna-x/phase-2-security-closure'
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173
         run: npx playwright test

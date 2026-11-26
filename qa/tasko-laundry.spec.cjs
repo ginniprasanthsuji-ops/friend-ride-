@@ -1,4 +1,4 @@
-const {test,expect}=require('@playwright/test');
+const {test,expect}=require('./fixtures.cjs');
 test('TASKO and Laundry services appear as separate home entries and banners',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('./',{waitUntil:'domcontentloaded'});

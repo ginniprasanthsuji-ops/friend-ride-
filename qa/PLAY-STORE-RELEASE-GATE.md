@@ -254,3 +254,226 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - GitHub Actions after the KYC handler fix: browser regression **29/29 PASS**, browser E2E **29/29 PASS**, TypeScript/core typecheck PASS, unit tests **5/5 PASS**, core tests **2/2 PASS**, Pages build/deploy PASS.
 - The earlier 28/29 failure was a test assertion expecting the bucket name inside the handler function text. The handler was corrected to satisfy that assertion; the next CI run passed 29/29.
 - These are browser/source wiring checks. They do **not** prove an authenticated driver has uploaded real documents or that an Admin has reviewed them. Those remain live staging tests.
+
+
+## 9. Fresh Phase 2 security audit addendum (2026-11-23)
+
+**Decision remains BLOCKED — NOT CERTIFIED.** The current read-only evidence is recorded in [`docs/ARJUNA_X_PHASE2_SECURITY_EVIDENCE.md`](../docs/ARJUNA_X_PHASE2_SECURITY_EVIDENCE.md); reusable catalog queries are in [`qa/phase2-security-audit.sql`](phase2-security-audit.sql).
+
+- Production project: 85 public tables, 85 RLS enabled, 0 disabled, 23 with no policies (INFO); Security Advisor reports 6 anon-executable SECURITY DEFINER, 88 authenticated-executable SECURITY DEFINER, and leaked-password protection disabled (WARN).
+- QA project: 21 public tables, all RLS enabled, none without policies; Security Advisor reports 25 authenticated-executable SECURITY DEFINER and 1 anon-executable SECURITY DEFINER. Function-body/catalog review is preliminary and negative role tests are still required.
+- QA notification dispatch v7 has JWT verification disabled but checks the dispatch-secret header; it currently selects queued rows without an atomic claim. QA has 0 notification events and 0 active tokens. The register-token function v5 verifies JWT and calls `auth.getUser()`.
+- Latest main SHA `64845496f22487788aedbcf66b74147add3ab9c1`: Pages build/deployment run 45039256929 passed. Combined commit status returned no checks. This deployment run is not regression test evidence. Phase 2/3 branch CI is not verified.
+- Main `index.html` hardcodes production Supabase configuration; QA E2E isolation is not yet implemented. The FCM opt-in file is present but not loaded from the main entry point.
+- No production/QA database mutation, grant change, Auth configuration change, merge, or deployment was performed during this audit.
+
+**Open release blockers:** Auth leaked-password protection; full production RPC authorization review and role-negative tests; owner confirmation for the 23 policy-free RLS tables and intentional public functions; QA-only frontend configuration and safe E2E; atomic notification claim/retry fix; FCM integration plus real device/token tests; real OTP/GPS/payment/ride tests; CI/regression evidence; Android AAB and Play Console gates.
+
+
+## 10. Phase 2 QA isolation patch (2026-11-23)
+
+A branch-only test isolation patch is now present on `arjuna-x/phase-2-security-closure`: the browser tests inject a test Supabase target, use an offline placeholder by default, block production Supabase requests, and only allow the QA host when the explicit test flag is enabled. Four existing specs use the shared fixture; a new isolation spec has two checks. Regression/Quality push triggers were added for the Phase 2 branch; Regression also has a PR trigger.
+
+Node syntax checks passed for the fixture, isolation test, and changed client-config snippet. **Full Playwright/CI results are still pending**, so this patch is not accepted and the release gate remains blocked. See the Phase 2 security evidence document for details.
+
+
+## 11. Notification queue claim patch prepared (2026-11-23)
+
+An additive, **unapplied** migration and QA Edge Function patch now use a service-role-only atomic `FOR UPDATE SKIP LOCKED` claim RPC, a 10-minute processing lease, and claim-token-guarded finalization. Static contract test passed 2/2 locally; TypeScript parse diagnostics were 0. Deno/runtime, QA migration/function deployment, concurrency, real push, and rollback tests are still **NOT TESTED**. No database or Edge Function was changed live. Release remains BLOCKED.
+
+
+## 12. Production RPC/RLS triage (2026-11-23)
+
+Read-only follow-up found **0/23** client-role direct SELECT/INSERT/UPDATE/DELETE grants on the RLS-enabled/no-policy production tables. Eight exposed admin RPCs all call `is_friend_ride_admin()`, which checks the caller against `admin_users`. Service-only functions were identified and reviewed for role grants. Public approved-list/feedback functions remain owner-acceptance items; the 88 authenticated SECURITY DEFINER warnings and full role-negative testing remain open. This reduces the no-policy-table access risk but does not close Phase 2 or the release gate.
+
+
+## 13. FCM helper isolation and static tests (2026-11-23)
+
+The dormant `fcm-web-push.js` helper now honors test-only QA/offline Supabase injection (not yet loaded by the main app). Local mirrored-source checks **5/5 PASS** for the notification claim and QA isolation contracts. Latest branch CI still pending; no QA API request, token, event, secret, database write, or Edge deployment. Production no-policy table grants were rechecked as 0/23 for anon/authenticated SELECT/INSERT/UPDATE/DELETE; eight admin RPCs use the admin membership helper. Release remains blocked by Auth setting, full RPC review/negative tests, notification runtime deployment/tests, and device/live checks.
+
+
+## 14. QA migration syntax and rollback check (2026-11-23)
+
+The proposed notification claim migration passed a PostgreSQL syntax test inside an explicit QA `BEGIN … ROLLBACK` transaction. Post-rollback catalog checks confirmed no claim column/function persisted. A guarded QA rollback script was added (refuses if events are processing). **No QA migration or Edge Function deployment has been applied.** Release remains BLOCKED.
+
+
+## 15. Production search_path and function authorization triage (2026-11-23)
+
+All 102 SECURITY DEFINER functions have explicit search_path (79 empty, 16 public, 4 public/auth, and 3 other pg_catalog/public variants). A static relation-reference scan of the 16 public-path functions found no likely unqualified table references. Six additional authenticated-only delivery/payment/Laundry/TASKO functions were reviewed and their ownership/admin/state guards were confirmed. These are source/catalog reviews, not role-negative tests; the 88 authenticated warnings remain open.
+
+
+## 16. Guarded rollback syntax test (2026-11-23)
+
+QA rollback script passed a syntax/execution test inside explicit BEGIN/ROLLBACK; catalog check confirmed no claim columns/function persisted. The test ran against the current empty queue only, not after a deployed migration. No QA schema change was left behind.
+
+
+## 17. CI scope correction (2026-11-23)
+
+First browser run on Phase 2 head `ff45be49`: source-regression PASS; quality typecheck/unit PASS (9 Node unit, 5 core tests); TASKO/Laundry/Admin Playwright PASS 4/4; main browser regression and quality browser E2E FAIL 49/59, with all 10 failures in the Phase 3 Dark+Gold UI spec (expected selectors absent on main-based Phase 2 branch). Added `npm run test:phase2` and branch-scoped workflow steps for main/Phase 2; the full UI suite remains on UI migration branches. Rerun pending. Release remains BLOCKED.
+
+
+## 18. Expanded RPC classification and QA dispatch rollback source (2026-11-23)
+
+Eight authenticated-executable SECURITY DEFINER functions without simple auth markers were reviewed as read-only approved/public lists/payment-option details; six anon functions are read-only. Fifteen functions call the admin-membership helper, eight use the approved-driver helper, and service-only/trigger functions were classified. The full 72 auth.uid()-guarded functions still need role-negative tests. QA dispatch v7 rollback source is preserved in the branch. Latest head has no visible CI status/run evidence; scoped rerun remains unverified.
+
+
+## 19. Scoped Phase 2 CI PASS (2026-11-23)
+
+On code/workflow commit `28fc0d7bcdde973b980613a7982a38d1cb72ee77`: source-regression PASS; quality typecheck/unit PASS (9 Node unit + 5 core tests); quality browser suite PASS 47/47; FRIEND RIDE regression PASS 47/47; TASKO/Laundry/Admin Playwright PASS 4/4. The full Dark+Gold UI suite is deferred to Phase 3. Latest docs/rollback-source-only head has no visible combined statuses; the code/workflow scope-fix commit is verified. Release remains BLOCKED.
+
+
+## 20. Latest Phase 2 head CI verification and count correction (2026-11-23)
+
+The latest code head before the evidence-only documentation commits, `97ea3fd40758eb6a0ce0337ccfa08ce826da320d`, has four successful GitHub Actions runs: source regression `45114870952`; Quality Gate `45114871004`; TASKO/Laundry/Admin regression `45114870960`; and FRIEND RIDE Regression `45114871023`. Quality checks passed (typecheck, core typecheck, runtime build, 9/9 Node unit, 5/5 core); both Phase 2 browser runs passed **47/47**; TASKO/Laundry/Admin passed **4/4**. The full UI-migration/Dark+Gold route suites were explicitly skipped by Phase 2 branch scope and remain Phase 3 verification.
+
+A log recheck corrected the earlier scoped commit `28fc0d7...` browser totals from 49/49 to **47/47** (runs `45114175328` and `45114175357`). PR #39 is still open/draft; the documentation-only follow-up commits are not yet CI-verified. No merge or deployment was performed. Release remains BLOCKED by the Phase 2 security/owner/device blockers listed above.
+
+
+## 21. QA notification claim deployment and transactional verification (2026-11-23)
+
+QA-only additive migration `202611230001_fr_notification_claim_batch.sql` was applied; the QA `fr-notification-dispatch` Edge Function is now **version 8** (JWT verification setting remains false; the dispatch-secret header check remains). Read-only checks verified claim columns/status/index, service-role EXECUTE, and no anon/authenticated EXECUTE. The claim RPC returned 0 with an empty queue.
+
+A temporary QA transaction tested first claim=1, second claim=0, stale lease reclaim=1, old token finalization=0, current token finalization=1, then rolled back. Post-rollback checks show no test user/event/preferences, no processing rows, no queue events, no active tokens, and no Auth users. This is sequential transactional validation, not concurrent locking or real FCM delivery. Edge Function invocation/auth responses could not be tested with the available connector. No production DB/function change.
+
+QA non-admin role-negative checks passed for `admin_list_driver_applications`, `admin_list_driver_documents`, and `fr_admin_list_partner_applications`: anon EXECUTE=false, authenticated EXECUTE=true, and non-admin authenticated caller received the expected Admin-denied exception from all three. Transaction rollback verified; no synthetic user or admin membership persisted. This is QA-only coverage of three read/admin-list RPCs, not full production function review.
+
+Fresh Security Advisor remains: production 23 no-policy RLS tables (0 client CRUD grants), 6 anon + 88 authenticated SECURITY DEFINER warnings, leaked-password protection disabled; QA 1 anon + 25 authenticated SECURITY DEFINER warnings. Phase 2 remains blocked by Auth owner action, full role-negative review/risk acceptance, owner confirmation of intended public/internal data, and OTP/GPS/payment/push device/credential tests. Release remains **BLOCKED**.
+
+## 22. Latest evidence-branch CI verification (2026-11-23)
+
+Commit `2598dec60f15552dc6add4d2bd5d187d27c1b44a` completed successful workflows: FRIEND RIDE Regression `45118777060` **47/47** Phase 2 browser tests; FRIEND RIDE Quality Gate `45118777119` **47/47** browser tests, 9/9 Node unit, 5/5 core tests, typechecks/runtime build pass; TASKO/Laundry/Admin `45118777058` **4/4**; source regression `45118777029` pass. Full UI-migration/Dark+Gold suite was skipped by Phase 2 scope. Release remains blocked.
+
+
+## 23. Production admin-RPC non-admin negative tests (2026-11-23)
+
+Read-only source/grant review verified anon EXECUTE=false and authenticated EXECUTE=true for eight admin RPCs, each checking `is_friend_ride_admin()` before data access/write. In a transaction with `SET ROLE authenticated` and a synthetic JWT subject lacking admin membership, all eight (`admin_list_driver_applications`, `admin_list_driver_documents`, `admin_review_driver`, `admin_set_driver_status`, `fr_admin_assign_service_provider`, `fr_admin_list_partner_applications`, `fr_admin_list_service_requests`, `fr_admin_review_partner`) raised the expected admin-denial exception. Post-test checks found no dummy profiles, driver locations, service requests, providers, or admin membership; transaction rolled back. No production data was changed. This closes only 8/88 production authenticated SECURITY DEFINER warnings; the remaining full role-negative review and owner acceptance are still pending.
+
+## 24. Latest evidence-branch CI (2026-11-23)
+
+On code/evidence commit `2598dec60f15552dc6add4d2bd5d187d27c1b44a`, four workflows passed: Regression 47/47, Quality browser 47/47 plus 9/9 Node and 5/5 core tests with typechecks/runtime build, TASKO/Laundry/Admin 4/4, and source regression. On later docs-restoration commit `5c339c448005373bf1182cc2f1d64f5bee8d00e5`, Regression run `45118947001` and Quality run `45118947010` passed (47/47 browser, 9/9 Node, 5/5 core, typechecks/runtime build); the duplicate Regression `45118952932` was still in progress at this record. Source and TASKO workflows were not triggered on this documentation-only head, but passed on the preceding code/evidence head. Full UI-migration/Dark+Gold tests are skipped on the Phase 2 branch. Release remains BLOCKED.
+
+
+## 10. ARJUNA X continuation snapshot — 2026-11-23 11:59 IST
+
+- Latest Phase 2 head at snapshot: `e11e4e81bf0a8368d6126f648cbf6dc0a3be4f82`; PR #39 remains draft/open. Branch-head CI run `45119120888` completed success with 47/47 Phase 2 safe-browser tests. Full UI-migration tests were skipped by Phase 2 scope.
+- Fresh read-only production Security Advisor: 23 RLS/no-policy tables (0 direct anon/authenticated CRUD grants previously verified), 6 anon-executable and 88 authenticated-executable SECURITY DEFINER warnings, and leaked-password protection disabled. Eight admin RPC non-admin negative tests remain verified; 80 authenticated-executable SECURITY DEFINER functions still require full authorization review/role-negative coverage. Public surface/data visibility and internal-table intent need owner confirmation. QA advisor: 1 anon + 25 authenticated SECURITY DEFINER warnings.
+- **Release remains BLOCKED / NOT CERTIFIED.** Owner Auth setting, remaining function review/tests, owner acceptance, QA notification concurrency/HTTP/FCM, device OTP/GPS/payment/push tests, and release/Android gates are outstanding. No production changes, merge, or deployment.
+
+## 11. Deferred Phase 3 UI requirements (latest user-confirmed direction)
+
+- Preserve the originally supplied FRIEND RIDE logo; use **Navy Blue + Orange + White** (not Dark+Gold) for the clean-room UI direction.
+- App cold-start: branded logo plus a services splash/poster as the first screen; the poster concept is awaiting user approval before implementation.
+- Native-app interaction: tapping a service opens its dedicated full-screen next page with smooth transition and touch feedback. **Do not expand results underneath Home or turn the Home screen into a long results-scroll page.** Back navigation returns to the previous screen and should preserve selections where feasible.
+- Telugu/English support and mobile-first layout remain requirements. These are scope notes only; Phase 3 implementation/acceptance has not started on this Phase 2 branch.
+
+
+## 12. QA admin-RPC role-negative test increment (2026-11-23)
+
+Four additional QA admin RPC negative tests passed in a rollback transaction: `admin_review_driver_document`, `admin_review_driver`, `fr_admin_assign_service_provider`, `fr_admin_review_partner`. Each returned the expected admin-denial error for a synthetic authenticated non-admin. Post-rollback verification found no test profile, admin membership, dummy service request, or dummy provider. Combined with the earlier three QA admin-list RPC tests, 7 QA admin RPCs have negative-role evidence. This is limited QA coverage; it does not close production SECURITY DEFINER review or any live-device/credential gate.
+
+
+## 13. Latest QA role-negative increment / CI trigger note (2026-11-23)
+
+- Additional QA-only admin-role negative tests: **4/4 PASS** for `admin_review_driver_document`, `admin_review_driver`, `fr_admin_assign_service_provider`, and `fr_admin_review_partner`. All were tested with a synthetic authenticated non-admin and valid action arguments; each raised the expected Admin-denied exception. The transaction rolled back and post-checks found zero synthetic profile/admin membership or dummy request/provider rows. QA now has negative-role evidence for 7 admin RPCs total (3 earlier + 4 new).
+- Git-data ref update commit `76f02554185780bde9244a60b50a67584329e1bb` updated the evidence docs, but no workflow run was visible for that commit at the time of check. A new contents-API documentation commit is being used to trigger push/PR workflows. This is evidence-only; no source-code changes.
+
+
+## 14. QA SECURITY DEFINER role/ownership coverage increment (2026-11-23)
+
+QA-only rollback testing now covers **22/25** authenticated-executable SECURITY DEFINER functions: 7 admin RPC expected-denial checks, 11 driver/customer/provider role-denial checks, and 4 counter-offer/contact-data ownership boundary checks. All passed; post-test counts for synthetic profile, admin membership, dummy service request/provider/ride were 0. The remaining 3 untested QA data surfaces are provider-list phone fields, approved-store geo coordinates, and public homepage feedback; owner visibility acceptance is required. Production remains blocked—QA coverage is not a production acceptance substitute.
+
+
+## 15. Current security test coverage increment (2026-11-23)
+
+- Production admin-RPC negative tests: **15/88** authenticated-executable SECURITY DEFINER warnings have role-negative evidence (8 prior + 7 newly verified). New 7/7 PASS were `admin_approve_driver`, `admin_list_referral_progress`, `admin_list_subscription_requests`, `admin_review_driver_document`, `admin_review_driver_subscription`, `fr_admin_save_platform_business_details`, `fr_tasko_admin_verify_payment`. Synthetic non-admin test was transaction-rolled back; post-checks confirmed no profile, admin membership, dummy document, subscription or booking rows.
+- QA role/ownership coverage: **22/25** authenticated-executable SECURITY DEFINER functions tested in rollback transactions; 3 public/approved-data surfaces remain untested and need owner visibility acceptance. Production remains blocked; no live changes.
+
+
+**CI evidence note:** The latest security-coverage update is documentation-only (commit `68deefda4a9b1ed3b0c9304f0c8d2e656c33828e`); a Contents-API follow-up is being used to trigger branch CI. Source code has not changed in this increment.
+
+
+## 16. Verified CI on refreshed Phase 2 evidence head (2026-11-23)
+
+On evidence head `d01296f5de42adb990d229ccc007b56a92091272`, all four workflows passed: Regression 47/47 safe browser tests (`45125283262`); Quality Gate 47/47 browser + 9/9 Node + 5/5 core with typechecks/runtime build (`45125283319`); TASKO/Laundry/Admin 4/4 (`45125283240`); source/workflow integration checks (`45125283265`). Full UI-migration route suite skipped by Phase 2 branch scope. Combined commit-status API empty; workflow/job records and logs are evidence. This doc-only follow-up does not change code. Release remains blocked.
+
+
+## 17. Latest CI re-verification (2026-11-23)
+
+On current evidence head `e753d895cb79f79bbee81b3f1de44d1fe93486fe`, Regression `45125485739` passed 47/47 Phase 2 safe browser tests; Quality `45125485784` passed 47/47 browser, 9/9 Node, 5/5 core, typechecks/runtime build; TASKO/Laundry/Admin `45125485753` passed 4/4; workflow/source regression `45125485805` passed. UI migration suite was skipped by Phase 2 scope. No code changed in this doc follow-up; release remains blocked.
+
+
+## 18. Sequential Phase 2 gate correction (2026-11-23)
+
+A concurrent QA-branch evidence file initially labeled Phase 2 “accepted at 95% for development continuation” while deferring security blockers. This was corrected in `qa/phase2-final-acceptance.md`: Phase 2 is **NOT accepted for Phase 3 advancement**. Current verified blockers remain production admin-RPC tests 15/88 (73 remaining), QA role/ownership tests 22/25 (3 visibility surfaces untested), leaked-password protection disabled, 23 internal no-policy tables owner confirmation, and live device/credential integration tests. The sequential sprint rule remains Phase 2 first. No merge/deployment.
+
+
+## 19. ARJUNA X Phase 2 continuation snapshot — 2026-11-23 12:59 IST
+
+- Phase 2 sequential gate is still **BLOCKED / NOT ACCEPTED**.
+- Fresh production role/ownership checks: **10/10 PASS** (5 expected role denials + 5 synthetic caller-scope zero-row checks), rollback-only transaction; synthetic data post-check 0 across 8 tables.
+- Production SECURITY DEFINER authenticated negative/ownership evidence: **25/88 verified, 63 remain**. QA: **22/25**, three public/approved-data visibility functions pending owner acceptance.
+- Latest CI on the pre-doc head `a1aa499e96bb5b37677a03b2601df47cc983d120`: workflow/source `45125814431`, TASKO/Laundry/Admin `45125814474`, FRIEND RIDE regression `45125814548`, Quality Gate `45125814422` all success. Full UI-migration suite skipped; Phase 3 branch CI not present.
+- Fresh production Advisor: 23 RLS-enabled/no-policy INFO, 6 anon + 88 authenticated SECURITY DEFINER WARN, leaked-password protection disabled WARN. QA: 1 anon + 25 authenticated warnings.
+- Remaining external/owner blockers: enable leaked-password protection; confirm public data visibility and 23 internal tables; finish 63 production role/ownership tests; test QA push/concurrency/HTTP and real OTP/GPS/payment/device flows. No schema/Auth/Edge changes, merge or live deploy.
+
+
+## 20. Additional production role/ownership checks — 2026-11-23
+
+- Additional read-only, rollback-only production tests: **11/11 PASS** across five SECURITY DEFINER functions; 4 order-type access checks + 4 customer-only checks returned false for synthetic subject, partner QR-read check false, Learn/Teach admin check false, market-payment details returned expected inactive-window denial.
+- Combined production role/ownership coverage: **30/88 verified; 58 remaining**. Post-test synthetic data counts 0 across profiles, admin_users, rides, market orders, parcel orders, service requests, service providers, driver locations.
+- Current branch head `c7ddfa65665b0357928d0c9d4d7d505b7841ee7c`: workflow/source `45131877959` success; Regression `45131878071`, TASKO/Laundry/Admin `45131878062`, Quality Gate `45131878153` were in progress at last check. CI not yet all-green on this documentation head.
+- Phase 2 still not accepted. Owner actions/settings, 58 remaining RPC checks, public visibility/table confirmations, QA push/live integration/device evidence remain release blockers. No production schema/Auth/function change, merge or deploy.
+
+
+## 22. Production SECURITY DEFINER function triage — 2026-11-23
+
+- Additional helper test: `is_friend_ride_admin()` returned false for synthetic authenticated non-admin. Production role/ownership function coverage now **38/88; 50 remain**.
+- Remaining 50 function source-marker triage: 41 caller/ownership markers; 1 admin-guard marker (`fr_cancel_ride`); 8 no-simple-auth-marker public/approved-data surfaces requiring manual review/owner acceptance. Marker triage is not authorization proof.
+- CI at `97211bdbf744b5c51f21ad5009c1846501f2b451`: workflow/source `45131985938` success; Regression `45131985922`, TASKO/Laundry/Admin `45131985913`, Quality Gate `45131986043` in progress. Do not treat as all green until completed.
+- Phase 2 remains blocked. No production DB/Auth/Edge changes, merge or deployment.
+
+
+## 23. Production role/ownership coverage and current CI — 2026-11-23
+
+- Additional production tests: **3/3 PASS** (parcel OTP lookup denied for nonexistent dummy parcel, referral-free subscription check false, ride payment state `not_started`), rollback-only; pre/post synthetic data checks zero.
+- Production SECURITY DEFINER role/ownership coverage: **41/88 verified; 47 remain**. Remaining 47 marker triage: 38 caller/ownership, 1 admin guard (`fr_cancel_ride`), 8 public/approved-data surfaces needing owner privacy acceptance. Marker counts do not certify security.
+- Latest full CI on `428934eec3d41482fb43a4162ebe3c78d3cdc4c9`: source/workflow `45132193156`, TASKO/Laundry/Admin `45132193130`, Regression `45132193047`, Quality Gate `45132193105` all success; Phase 2 full UI-migration browser suite skipped. Prior exact counts on same scoped suite: 47/47 browser, 9/9 Node, 5/5 core.
+- Phase 2 still blocked by leaked-password protection, public/internal visibility owner confirmation, 47 remaining RPC checks, QA push/HTTP/concurrency, and real OTP/GPS/payment/device gates. No production DB/Auth/Edge changes, merge or deploy.
+
+
+## 24. Fresh Phase 2 security checks and CI (2026-11-23 13:55 IST)
+- Fresh production/QA project status ACTIVE_HEALTHY. Advisor: production 23 RLS/no-policy INFO, 6 anon + 88 authenticated SECURITY DEFINER WARN, leaked-password protection disabled; QA 1 anon + 25 authenticated SECURITY DEFINER WARN.
+- Four additional authenticated synthetic-subject read-only tests PASS in rollback-only transaction: approved-driver helper false; subscription none/inactive; dummy ride payment details empty; dummy ride customer details empty. Post-check synthetic profile/admin/subscription/dummy ride counts 0. Verified production role/ownership coverage 45/88, 43 remaining; public-surface owner acceptance still open.
+- Current head CI PASS: Quality 45132414998 (9/9 Node, 5/5 core, 47/47 safe browser, typechecks/build); Regression 45132414855 47/47; TASKO/Laundry/Admin 45132414866 4/4; source regression 45132414856 25 inline scripts plus learn-teach syntax. Full UI migration suite skipped by Phase 2 scope.
+- Release readiness BLOCKED. Phase 2 is NOT accepted. Owner/Auth, privacy/table acceptance, remaining 43 function tests, QA push HTTP/auth/concurrency, and real device/credential integration are pending. No production changes, merge, or deploy.
+
+
+## 25. Eight additional production role-denial checks (2026-11-23)
+- Eight rollback-only synthetic authenticated tests PASS across driver ride/parcel/payment gates, Laundry/TASKO provider assignment gates, and service-provider request authorization. Dummy IDs were prechecked absent; post-test synthetic profile/admin/subscription/ride/parcel/booking/request/payment counts all 0.
+- Production role/ownership test coverage: 53/88; 35 remaining. Remaining triage: 26 caller/ownership-marker functions, 1 admin-guard, and 8 public/approved-data surfaces still awaiting owner acceptance; markers are not security proof.
+- CI verified on code head 7243a8007c16739c298324378c2d3338885647a8: Quality 9/9 Node, 5/5 core, 47/47 safe browser, typechecks/build; Regression 47/47; TASKO/Laundry/Admin 4/4; source regression 25 inline scripts and learn-teach syntax. Newer docs-only commit CI is not verifiable via the available run-list wrapper; latest documentation head checks remain pending.
+- Release readiness BLOCKED and Phase 2 NOT accepted. Leaked-password Auth owner setting, public/internal visibility acceptance, 35 remaining function reviews/tests, QA push HTTP/auth/concurrency, and real device/credential integration are open. No production changes, merge, or deployment.
+
+
+## 26. Additional read-only admin/referral role checks (2026-11-23)
+- Two rollback-only production checks PASS: is_admin false for synthetic non-admin; my_referral_dashboard expected Driver profile required denial. Post-test synthetic profile/admin/subscription/referral/reward counts all 0.
+- Production role/ownership evidence now 55/88; 33 remaining. Remaining triage: 24 caller/ownership-marker functions, 1 admin-guard, 8 public/approved-data surfaces pending owner acceptance.
+- CI on the then-current documentation head was in progress: Quality type/unit and source/workflow jobs PASS; browser regression and TASKO/Laundry/Admin were still running. Newest head final CI remains pending.
+- Release readiness BLOCKED and Phase 2 NOT accepted. Owner Auth/privacy/table confirmations, remaining 33 function reviews/tests, QA push HTTP/auth/concurrency, and physical device/credential integrations remain blockers. No production changes, merge, or deployment.
+
+
+## 27. CI completion correction — docs head 76e38 (2026-11-23)
+- All four workflows on 76e38b5167fb4db020d9bfcb0512a5fb1459a4e2 verified completed PASS: Regression 47/47 safe browser; Quality 9/9 Node, 5/5 core, 47/47 safe browser, typechecks/build; TASKO/Laundry/Admin 4/4; source regression 25 inline scripts plus learn-teach syntax. Full UI migration suite skipped.
+- Latest documentation-only head after that CI cannot be verified through the current Actions-list connector (it filters to PR-triggered runs); no code changes since verified code head. Latest docs-head CI remains unverified.
+- Release readiness BLOCKED. Production role/ownership test coverage 55/88, 33 remain; this is not acceptance. Owner/Auth/privacy/table approvals, QA push/concurrency/live delivery, and real-device/credential checks remain open. No production changes, merge, or deployment.
+
+
+## 28. Fresh release-gate recheck — 2026-11-23
+
+- Latest resolved docs commit `154ed19f259d9ff4b1ba9bcf0a0b87cbc95639d5` has all four Actions workflows verified completed success: source regression `45139530466`; Quality Gate `45139530573`; TASKO/Laundry/Admin `45139530763`; FRIEND RIDE Regression `45139530426`.
+- Verified test evidence: 25 inline scripts + learn-teach syntax; Quality typechecks/runtime build + 9 Node + 5 core + 47 safe browser; Regression 47 safe browser; TASKO/Laundry/Admin 4 Playwright. Full UI-migration suite skipped. Do not treat safe-browser CI as real device/backend acceptance.
+- **Dependency security blocker:** both Quality and Regression `npm install` logs report 3 vulnerabilities (1 moderate, 2 critical) in 57 audited packages. No committed `package-lock.json` or shrinkwrap found; full audit package/advisory detail is missing. Do not force-upgrade. Require a reproducible lockfile, detailed audit, targeted remediation, and clean re-run before release.
+- Fresh Supabase advisors: Production 23 RLS/no-policy INFO, 6 anon SECURITY DEFINER, 88 authenticated SECURITY DEFINER, leaked-password protection disabled. QA 1 anon and 25 authenticated SECURITY DEFINER. Health advisor no lints on both; both projects ACTIVE_HEALTHY. No DB/Auth/Edge changes.
+- Production role/ownership evidence stays 55/88 (33 remaining: 24 caller/ownership-marker, 1 admin-guard, 8 public/approved-data surfaces needing owner acceptance). No new RPC tests in this run.
+- Original logo located in Library as `Friend Ride Service Icon Logo.png`; Phase 2 branch markup currently uses the `FR` text mark and the image has not been committed/integrated. UI Phase 3 must use the original supplied logo and Navy Blue + Orange + White, but remains gated by Phase 2 acceptance.
+- **Release decision: BLOCKED / NOT CERTIFIED.** Owner Auth setting, internal/public data acceptance, remaining security tests/reviews, notification HTTP/auth/concurrency/real FCM, real OTP/GPS/payment/push device checks, dependency audit/remediation, backup/rollback proof, and final release-readiness review remain open. No merge, production change, or deployment.

@@ -7,7 +7,8 @@
     "typecheck": "tsc --noEmit --skipLibCheck --target ES2020 --module none src/ride-contact.ts",
     "build:runtime": "tsc --skipLibCheck --target ES2020 --module none --outFile assets/ride-contact.js src/ride-contact.ts",
     "test:core": "vitest run",
-    "typecheck:core": "tsc -p tsconfig.json"
+    "typecheck:core": "tsc -p tsconfig.json",
+    "test:phase2": "playwright test qa/friend-ride.spec.cjs qa/tasko-laundry-main-regression.spec.js qa/tasko-laundry.spec.cjs qa/phase2-isolation.spec.cjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
