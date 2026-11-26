@@ -9,8 +9,8 @@
     appId:'1:986949278576:web:7da92fc7889d7eb168db5'
   };
   const VAPID_PUBLIC_KEY='BOYoqlhqA2JZzKxqRUcfPC1Dw7QV7ldMZFzU7aS_gwhyJrerEQNaIP3DuH46BV9z_bLmi5jHliVY3AD6riknmkM';
-  const SUPABASE_URL='https://fglyplxcczdjtfwobtzh.supabase.co';
-  const SUPABASE_ANON_KEY='sb_publishable_P55B8imGKyE4_8HwLRiaQA_EE81kwVz';
+  const SUPABASE_URL='https://pqsangtvietawkfgpgfu.supabase.co';
+  const SUPABASE_ANON_KEY='sb_publishable_tFvhxu087vPefh3gdJ-fuQ_Q-iMHlAo';
   const CONFIG_READY=!FIREBASE_CONFIG.apiKey.startsWith('REPLACE_')&&!FIREBASE_CONFIG.appId.startsWith('REPLACE_');
   function makeUI(){
     const home=document.getElementById('home');
