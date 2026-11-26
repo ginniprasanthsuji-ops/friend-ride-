@@ -23,5 +23,5 @@ assert.ok(sql.includes("fr_phase13d_get_my_ers_rrs_bookings()")&&sql.includes("n
 console.log("Phase 13E ERS registered / RRS guest / departure-time / cash-only static checks PASS");
 // Main app Ride page must visibly expose RRS guest-driver photo upload UI.
 const app=fs.readFileSync('index.html','utf8');
-for(const s of ['ERS / RRS Shared Ride','frSetSharedRideMode(\\'RRS\\')','frRRSGuestPhoto','RRS Guest Driver Photo (Required)','frPreviewRRSGuestPhoto(event)','Guest Driver Name','Guest Driver Phone','Bike Details','max 5 MB','image/jpeg,image/png,image/webp'])assert.ok(app.includes(s),s);
+for(const s of ['ERS / RRS Shared Ride',"frSetSharedRideMode('RRS')",'frRRSGuestPhoto','RRS Guest Driver Photo (Required)','frPreviewRRSGuestPhoto(event)','Guest Driver Name','Guest Driver Phone','Bike Details','max 5 MB','image/jpeg,image/png,image/webp'])assert.ok(app.includes(s),s);
 assert.ok(app.includes('frRRSGuestPhotoPanel')&&app.includes('class="hide"'), 'RRS photo fields are toggled and shown on RRS selection');
