@@ -8,10 +8,11 @@
 <div class="panel"><span class="status">QA Prototype • Backend not connected</span><p class="hint">This prototype does not display demo rides as live. Real listing data will appear only after secure backend adapters are connected.</p>
 <div class="tabs" role="tablist"><button class="tab active" data-filter="ALL">ALL</button><button class="tab" data-filter="ERS">ERS Registered</button><button class="tab" data-filter="RRS">RRS Guest Bike</button></div>
 </div>
+<div class="panel"><h3>💵 Payment policy</h3><p>ERS Registered and RRS Guest Bike rides are <strong>Cash Only</strong>. Online, UPI, and QR payments are disabled for these channels.</p></div>
 <div class="panel"><h2 id="heading">All rides</h2><div id="list" class="empty">Backend adapter not connected. No live rides shown.</div></div>
 <div class="panel"><h3>Backend Adapter Contract (integration gate)</h3><ul><li>ERS: approved registered drivers only; availability and active-ride checks required.</li><li>RRS: guest ride records only; guest identity must remain separate from registered-driver identity.</li><li>Combined list: source-tagged results; no phone numbers, private photo paths, or exact private locations.</li><li>Booking actions stay disabled until secure RPCs and lifecycle/status mapping are verified.</li></ul></div>
 </div>
 <script>
 const tabs=document.querySelectorAll('.tab');const heading=document.getElementById('heading');const list=document.getElementById('list');
-tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>x.classList.remove('active'));t.classList.add('active');const f=t.dataset.filter;heading.textContent=f==='ALL'?'All rides':f==='ERS'?'ERS Registered rides':'RRS Guest Bike rides';list.textContent=f==='ALL'?'ERS + RRS source adapters are not connected. No live data is fabricated.':f==='ERS'?'ERS approved-driver listing adapter is not connected.':'RRS guest-bike listing adapter is not connected.';}));
+tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>x.classList.remove('active'));t.classList.add('active');const f=t.dataset.filter;heading.textContent=f==='ALL'?'All rides':f==='ERS'?'ERS Registered rides':'RRS Guest Bike rides';list.textContent=f==='ALL'?'ERS + RRS source adapters are not connected. No live rides shown.':f==='ERS'?'ERS approved-driver listing adapter is not connected.':'RRS guest-bike listing adapter is not connected.';}));
 </script></body></html>
