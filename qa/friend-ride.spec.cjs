@@ -54,7 +54,10 @@ test('local runtime diagnostics capture errors on-device while remaining hidden 
   await expect(badge).toBeHidden();
   const externalRequests = [];
   page.on('request', request => {
-    if (new URL(request.url()).origin !== new URL(page.url()).origin) externalRequests.push(request.url());
+    const url = new URL(request.url());
+    // The booking map loads OSM tiles during page startup; allow map tile traffic,
+    // but still fail if runtime diagnostics cause unrelated external requests.
+    if (url.origin !== new URL(page.url()).origin && !/tile\.openstreetmap\.org$/.test(url.hostname)) externalRequests.push(request.url());
   });
   await page.evaluate(() => window.dispatchEvent(new ErrorEvent('error', { message: 'QA injected diagnostic check' })));
   const entries = await page.evaluate(() => JSON.parse(localStorage.getItem('fr_runtime_diagnostics_v1') || '[]'));
@@ -571,3 +574,13 @@ test('Laundry Partner registration uses the exact approved database category and
   expect(source).toContain('laundry_unit_price:unitPrice');
 });
 
+
+
+test('food page does not show fictitious demo restaurant listings', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => showPage('food'));
+  await page.evaluate(() => renderRestaurantList());
+  await expect(page.locator('#restaurantVisualList .market-store')).toHaveCount(0);
+  await expect(page.locator('#restaurantVisualList')).toContainText('ప్రస్తుతం రెస్టారెంట్లు అందుబాటులో లేవు');
+  await expect(page.locator('#restaurantVisualList')).not.toContainText(/Spice Garden|South Indian Tiffins|Urban Pizza|Family Meals/i);
+});

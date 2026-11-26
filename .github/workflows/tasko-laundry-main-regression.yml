@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - integration/tasko-laundry-main-safe
+      - project-arjuna/dark-gold-ui-rollout
   pull_request:
     branches:
       - main
@@ -14,7 +15,7 @@ on:
 
 jobs:
   playwright-regression:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -42,4 +43,4 @@ jobs:
           cat /tmp/friendride-http.log
           exit 1
       - name: Run TASKO / Laundry / Admin Playwright tests
-        run: npx playwright test qa/tasko-laundry-main-regression.spec.js --reporter=line --timeout=15000 --retries=0
+        run: npx playwright test --config=playwright.qa.config.js --reporter=line --timeout=15000 --retries=0

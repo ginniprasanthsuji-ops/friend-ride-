@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Learn & Teach marketplace UI smoke', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
   test('Learn tab is present and opens marketplace landing screen', async ({ page }) => {

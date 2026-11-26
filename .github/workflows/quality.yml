@@ -1,12 +1,15 @@
 name: FRIEND RIDE Quality Gate
 on:
   push:
-    branches: [main]
+    branches: [main, project-arjuna/dark-gold-ui-rollout]
   pull_request:
     branches: [main]
+permissions:
+  contents: read
 jobs:
   typecheck-and-unit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,7 +23,8 @@ jobs:
       - run: npm run test:core
 
   browser-e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,9 +35,24 @@ jobs:
       - name: Start local app server
         run: |
           python3 -m http.server 4173 --directory . >/tmp/friend-ride-http.log 2>&1 &
-          echo $! >/tmp/friend-ride-http.pid
-          sleep 2
-      - name: Run browser regression suite
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/friend-ride-http.log
+          exit 1
+      - name: Run permanent browser regression suite
         env:
-          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173
-        run: npx playwright test
+          FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
+        run: npm test
+      - name: Upload Playwright failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-gate-playwright-evidence
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore

@@ -1,7 +1,7 @@
 name: FRIEND RIDE Regression
 on:
   push:
-    branches: [main, ui/full-native-dark-gold-2026-11-21]
+    branches: [main, ui/full-native-dark-gold-2026-11-21, project-arjuna/dark-gold-ui-rollout]
   workflow_dispatch:
   schedule:
     - cron: '17 2 * * *'
@@ -9,8 +9,8 @@ permissions:
   contents: read
 jobs:
   browser-regression:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,7 +29,7 @@ jobs:
           done
           cat /tmp/friend-ride-server.log
           exit 1
-      - name: Run browser regression tests
+      - name: Run permanent browser regression suite
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173/
         run: npm test
