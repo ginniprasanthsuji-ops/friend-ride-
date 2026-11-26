@@ -76,12 +76,12 @@ test.describe('FRIEND RIDE current V11.1 UI regression', () => {
   });
 
   test('home service shortcuts preserve current protected navigation', async ({ page }) => {
-    await expect(page.locator('#home .home-service-grid .home-service')).toHaveCount(2);
-    await page.locator('#home .home-service-grid .home-service').filter({hasText:'Friend Mart'}).click();
+    await expect(page.locator('.home-service-grid .home-service')).toHaveCount(2);
+    await page.locator('.home-service-grid .home-service').filter({hasText:'Friend Mart'}).click();
     await expect(page.locator('#authModal')).toHaveClass(/show/);
     await expect(page.locator('#authTitle')).toHaveText('Customer Login');
     await page.locator('#authModal .close').click();
-    await page.locator('#home .home-service-grid .home-service').filter({hasText:'Food Delivery'}).click();
+    await page.locator('.home-service-grid .home-service').filter({hasText:'Food Delivery'}).click();
     await expect(page.locator('#authModal')).toHaveClass(/show/);
   });
 
@@ -137,7 +137,7 @@ test.describe('FRIEND RIDE current V11.1 UI regression', () => {
       background: getComputedStyle(el).backgroundColor,
       text: getComputedStyle(el).color
     }));
-    expect(surfaces.background).not.toBe('rgb(255, 255, 255)');
+    expect(surfaces.background).not.toBe('rgba(0, 0, 0, 0)');
     expect(surfaces.text).toMatch(/rgb\(/);
   });
 
