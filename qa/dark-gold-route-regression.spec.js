@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 const allPageIds = ["home","cycleDelivery","explore","eventServices","serviceProviderRegister","bankingServices","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","technicianRegister","parcelRelease","orders","tracking","wallet","offers","customerDashboard","driverDashboard","partnerDashboard","partnerOrders","products","inventory","gst","catalogue","subscription","referrals","partnerReports","adminDashboard","crmDashboard","users","referralApprovals","cashRewardApprovals","paymentApprovals","partnerPaymentSettings","platformBusinessSettings","driverApprovals","driverDocumentReviews","partnerApprovals","adminOrders","reports","settings","profile","notifications","support","about","cart","frSupportFeedback","learnTeach","frSuperHub","frCampaignAdmin","frReferralAdmin","frStoreReviewAdmin","frDirectCouponReview","frDriverSubscription"];
 const sharedCustomerRoutes = ["home","explore","ride","scheduled","goods","parcel","food","restaurantCatalogue","shops","shopping","homeServices","laundryServices","storeBrowse","customerCatalogue","marketCart","orders","tracking","wallet","offers","profile","notifications","support","about","cart","frSupportFeedback","learnTeach","cycleDelivery","eventServices","serviceProviderRegister","bankingServices","technicianRegister","parcelRelease","frSuperHub"];
 
-test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
+test.describe('FRIEND RIDE current V11.1 UI regression', () => {
   test.beforeEach(async ({ page }) => {
     await page.route('https://**/*', route => {
       const url = route.request().url();
@@ -18,14 +18,14 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
   test('every registered screen remains present and uses the shared design system', async ({ page }) => {
     const result = await page.evaluate(ids => ({
       missing: ids.filter(id => !document.getElementById(id)),
-      designSystem: !!document.getElementById('fr-dark-gold-design-system'),
+      designSystem: !!document.querySelector('style') && document.documentElement.innerHTML.includes('--purple:') && document.documentElement.innerHTML.includes('--gold:'),
       themeMeta: document.querySelector('meta[name="theme-color"]')?.content,
       bodyBackground: getComputedStyle(document.body).backgroundImage,
       pageCount: document.querySelectorAll('.page').length
     }), allPageIds);
     expect(result.missing).toEqual([]);
     expect(result.designSystem).toBe(true);
-    expect(result.themeMeta).toBe('#050b17');
+    expect(result.themeMeta).toBe('#24105f');
     expect(result.bodyBackground).not.toBe('none');
     expect(result.pageCount).toBe(allPageIds.length);
   });
@@ -136,7 +136,7 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     await expect(page.locator('#adminDashboard')).toHaveClass(/active/);
   });
 
-  test('customer OTP login modal is rendered with dark surfaces', async ({ page }) => {
+  test('customer OTP login modal uses the current role-specific flow', async ({ page }) => {
     await page.evaluate(() => window.openAuth('login', 'customer'));
     await expect(page.locator('#authModal')).toHaveClass(/show/);
     const modal = page.locator('#authModal .modalbox');
@@ -146,7 +146,7 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     expect(style.color).toMatch(/rgb\(246, 248, 255\)|rgb\(255, 255, 255\)/);
   });
 
-  test('Admin login modal is role-locked and uses the Dark + Gold authentication UI', async ({ page }) => {
+  test('Admin login modal is role-locked with admin-specific OTP controls', async ({ page }) => {
     await page.evaluate(() => window.openAuth('login', 'admin'));
     const modal = page.locator('#authModal');
     await expect(modal).toHaveClass(/show/);
@@ -163,7 +163,7 @@ test.describe('FRIEND RIDE in-place Dark + Gold UI', () => {
     expect(surfaces.text).toMatch(/rgb\(/);
   });
 
-  test('Customer login modal shows Customer OTP flow and registration option', async ({ page }) => {
+  test('Customer login modal shows customer OTP flow and registration option', async ({ page }) => {
     await page.evaluate(() => window.openAuth('login', 'customer'));
     await expect(page.locator('#authModal')).toHaveClass(/show/);
     await expect(page.locator('#authTitle')).toHaveText('Customer Login');
