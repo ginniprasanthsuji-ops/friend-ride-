@@ -18,3 +18,13 @@ assert.ok(html.includes("e.textContent=t"),"RPC status/error message uses textCo
 assert.ok(html.includes("document.getElementById('mine').textContent=e.message"),"Customer booking errors use textContent");
 assert.ok(html.includes("document.getElementById('admin').textContent=e.message"),"Admin booking errors use textContent");
 console.log("Phase 13D RPC error-output safety checks PASS");
+
+// Authenticated workflow authorization invariants.
+assert.ok(sql.includes("if auth.uid() is null then raise exception 'Authentication required'; end if;"),"Create/cancel/completion/cash RPCs reject unauthenticated calls");
+assert.ok(sql.includes("if auth.uid() is null or not public.is_friend_ride_admin() then raise exception 'Admin access required'; end if;"),"Driver assignment requires authenticated admin");
+assert.ok(sql.includes("where id=p_booking_id and driver_id=auth.uid() and status='assigned'"),"Ride completion is restricted to assigned driver and assigned status");
+assert.ok(sql.includes("where id=p_booking_id and driver_id=auth.uid() and status='completed'"),"Cash confirmation is restricted to assigned driver after completion");
+assert.ok(sql.includes("where auth.uid() is not null and (customer_id=auth.uid() or driver_id=auth.uid())"),"My bookings RPC restricts results to customer or assigned driver");
+assert.ok(sql.includes("where auth.uid() is not null and public.is_friend_ride_admin()"),"Admin list RPC requires admin authorization");
+for(const fn of ["create_ers_rrs_booking","assign_ers_rrs_booking","driver_complete_ers_rrs_ride","driver_confirm_cash","list_ers_rrs_bookings","get_my_ers_rrs_bookings","cancel_ers_rrs_booking"])assert.ok(sql.includes("revoke all on function public.fr_phase13d_"+fn),"Anon/public execute revoked: "+fn);
+console.log("Phase 13D ERS/RRS authorization invariant checks PASS");
