@@ -22,17 +22,32 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Main
+      - name: Checkout Main production
         uses: actions/checkout@v4
+        with:
+          path: production
+
+      - name: Checkout isolated QA preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: phase14-qa-live-preview
+          path: qa-source
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Stage Main root plus QA preview subpath
+        run: |
+          mkdir -p site/qa-preview
+          rsync -a --exclude='.git' production/ site/
+          cp qa-source/index.html qa-source/manifest.webmanifest qa-source/manifest.json qa-source/sw.js qa-source/service-worker.js qa-source/learn-teach.js qa-source/learn-teach.css qa-source/test.html site/qa-preview/
+          cp -R qa-source/assets qa-source/icons qa-source/styles site/qa-preview/
+
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: site
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy production and isolated QA preview
         id: deployment
         uses: actions/deploy-pages@v4
