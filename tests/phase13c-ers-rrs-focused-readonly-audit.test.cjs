@@ -15,5 +15,5 @@ test('Phase 13C ERS/RRS audit is read-only and checks function execute grants', 
 
 test('audit flags the live single-passenger LIMIT 1 contact behavior', () => {
   assert.match(audit, /participant_contact_single_row_limit/);
-  assert.match(audit, /order by b\.created_at desc limit 1/i);
+  assert.match(audit, /order by b[.]created_at desc limit 1/i);
 });
