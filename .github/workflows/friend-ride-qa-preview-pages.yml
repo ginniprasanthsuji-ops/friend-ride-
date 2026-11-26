@@ -7,10 +7,15 @@ on:
     paths:
       - index.html
       - manifest.webmanifest
+      - manifest.json
       - sw.js
+      - service-worker.js
       - assets/**
+      - icons/**
+      - styles/**
       - learn-teach.js
       - learn-teach.css
+      - test.html
       - .github/workflows/friend-ride-qa-preview-pages.yml
   workflow_dispatch:
 
@@ -20,7 +25,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: friend-ride-qa-preview-pages
+  group: pages
   cancel-in-progress: true
 
 jobs:
@@ -30,19 +35,33 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout production Main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: production
+
       - name: Checkout QA preview branch
         uses: actions/checkout@v4
+        with:
+          ref: phase14-qa-live-preview
+          path: qa-source
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Stage only app files (exclude QA reports and repository files)
+
+      - name: Stage production root and isolated QA preview
         run: |
-          mkdir -p site/assets
-          cp index.html manifest.webmanifest sw.js learn-teach.js learn-teach.css site/
-          cp assets/ride-contact.js assets/driver-kyc-upload.js site/assets/
+          mkdir -p site/qa-preview
+          rsync -a --exclude='.git' production/ site/
+          cp qa-source/index.html qa-source/manifest.webmanifest qa-source/manifest.json qa-source/sw.js qa-source/service-worker.js qa-source/learn-teach.js qa-source/learn-teach.css qa-source/test.html site/qa-preview/
+          cp -R qa-source/assets qa-source/icons qa-source/styles site/qa-preview/
+
       - name: Upload static site artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
-      - name: Deploy QA preview to GitHub Pages
+
+      - name: Deploy QA preview alongside production
         id: deployment
         uses: actions/deploy-pages@v4
