@@ -809,7 +809,7 @@ async function loadPartnerApprovals(){
  }).join(''); if(msg)msg.textContent='Loaded '+rows.length+' partner application(s). Status actions are saved in Supabase.';
  }catch(e){box.textContent='Partner applications load కాలేదు: '+e.message;if(msg)msg.textContent='Load failed: '+e.message;}
 }
-async async function reviewPartner(id,decision){
+async function reviewPartner(id,decision){
  if(!confirm(decision==='approved'?'ఈ Partnerను Approve చేయాలా?':decision==='revoked'?'ఈ Partner Approvalను రద్దు చేయాలా?':'ఈ Partner applicationను Reject చేయాలా?'))return;
  try{const {error}=await sb.rpc('fr_admin_review_partner',{p_partner_id:id,p_decision:decision});if(error)throw error;alert('Partner status updated: '+decision);await loadPartnerApprovals();}
  catch(e){alert('Approval Error: '+e.message);}
