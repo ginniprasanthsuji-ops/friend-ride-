@@ -33,6 +33,9 @@ alter table public.fr_phase13d_ers_rrs_bookings add column if not exists guest_b
 alter table public.fr_phase13d_ers_rrs_bookings enable row level security;
 revoke all on public.fr_phase13d_ers_rrs_bookings from anon, authenticated;
 
+-- Remove the earlier four-argument RPC so bookings cannot bypass required departing time.
+drop function if exists public.fr_phase13d_create_ers_rrs_booking(text,text,text,numeric);
+
 create or replace function public.fr_phase13d_create_ers_rrs_booking(
   p_ride_kind text, p_pickup_text text, p_drop_text text, p_fare_offer numeric,
   p_departing_time timestamp without time zone
