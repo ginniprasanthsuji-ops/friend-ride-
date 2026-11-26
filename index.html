@@ -1043,11 +1043,38 @@ function frPreviewRRSGuestPhoto(event){
  if(!file){preview.textContent='Photo upload option is available here. Select a photo to preview.';return;}
  if(file.size>5242880){event.target.value='';preview.textContent='Photo exceeds 5 MB. Please select a smaller photo.';return;}
  if(!['image/jpeg','image/png','image/webp'].includes(file.type)){event.target.value='';preview.textContent='Only JPG, PNG, or WebP photos are accepted.';return;}
- const reader=new FileReader();reader.onload=()=>{preview.innerHTML='<img alt="RRS guest driver photo preview" style="max-width:220px;max-height:220px;border-radius:12px;border:1px solid #8c6125" src="'+reader.result+'"><p>Photo selected · ready for backend upload integration.</p>';};reader.readAsDataURL(file);
+ const reader=new FileReader();reader.onload=()=>{preview.innerHTML='<img alt="RRS guest driver photo preview" style="max-width:220px;max-height:220px;border-radius:12px;border:1px solid #8c6125" src="'+reader.result+'"><p>Photo selected · will upload privately when Find Drivers is pressed.</p>';};reader.readAsDataURL(file);
 }
 function setRideType(v){rideVehicle=v;document.querySelectorAll('#ride .row button').forEach((b,i)=>b.className='btn '+(['Bike','Auto','Car'][i]===v?'purple':'light'));}
 function adjustFare(n){$('fare').value=Math.max(1,Number($('fare').value||0)+n);}
-function saveRideRequest(){if(!$('pickup').value.trim()||!$('drop').value.trim()||Number($('fare').value)<=0){alert('Pickup, Drop మరియు సరైన Fare నమోదు చేయండి.');return;}alert('Ride details validate అయ్యాయి. Live booking insert కోసం మీ existing rides table columnsతో mapping అవసరం.');}
+async function saveRideRequest(){
+ if(!$('pickup').value.trim()||!$('drop').value.trim()||Number($('fare').value)<=0){alert('Pickup, Drop మరియు సరైన Fare నమోదు చేయండి.');return;}
+ if(frSharedRideMode!=='RRS'){alert('ERS selected. Existing registered-driver booking flow remains unchanged.');return;}
+ if(!currentUser){alert('RRS booking కోసం Login చేయండి.');switchAuth('login');return;}
+ const depart=$('frSharedDepartingTime').value,photo=$('frRRSGuestPhoto').files?.[0],name=$('frRRSGuestName').value.trim(),phone=$('frRRSGuestPhone').value.trim(),bike=$('frRRSGuestBike').value.trim();
+ if(!depart){alert('Departing Time required.');return;}
+ if(new Date(depart).getTime()<=Date.now()){alert('Departing Time futureలో ఉండాలి.');return;}
+ if(!name||phone.replace(/\D/g,'').length<7||!bike){alert('Guest driver name, valid phone, bike details నమోదు చేయండి.');return;}
+ if(!photo){alert('RRS Guest Driver Photo required.');return;}
+ if(photo.size>5242880||!['image/jpeg','image/png','image/webp'].includes(photo.type)){alert('JPG / PNG / WebP photo 5 MB లోపు select చేయండి.');return;}
+ const btn=document.querySelector('#ride button[onclick="saveRideRequest()"]');if(btn){btn.disabled=true;btn.textContent='Saving RRS booking…';}
+ let bookingId=null,storagePath=null;
+ try{
+  const {data:booking,error:be}=await sb.rpc('fr_phase13d_create_ers_rrs_booking',{p_ride_kind:'RRS',p_pickup_text:$('pickup').value.trim(),p_drop_text:$('drop').value.trim(),p_fare_offer:Number($('fare').value),p_departing_time:depart.replace('T',' ')+':00'});
+  if(be)throw be;bookingId=booking;
+  const safeName=photo.name.replace(/[^a-zA-Z0-9._-]/g,'_'),filePath=bookingId+'/'+Date.now()+'_'+safeName;
+  const {error:up}=await sb.storage.from('fr-rrs-guest-driver-photos').upload(filePath,photo,{contentType:photo.type,upsert:false});if(up)throw up;storagePath=filePath;
+  const {error:save}=await sb.rpc('fr_phase13e_customer_save_rrs_guest_details',{p_booking_id:bookingId,p_guest_driver_name:name,p_guest_driver_phone:phone,p_guest_bike_details:bike,p_guest_driver_photo_path:filePath});if(save)throw save;
+  const {data:signed,error:se}=await sb.storage.from('fr-rrs-guest-driver-photos').createSignedUrl(filePath,120);if(se)throw se;
+  $('rideOfferPanel').innerHTML='<div class="card"><h3>RRS Booking Saved ✓</h3><p>Booking ID: <code>'+safe(bookingId)+'</code></p><p>Guest driver details and photo path saved. Photo is in private storage.</p><img alt="RRS guest driver photo" style="max-width:160px;border-radius:12px" src="'+safe(signed.signedUrl)+'"><p class="tiny">Photo path: <code>'+safe(filePath)+'</code></p><span class="status">Pending admin assignment</span></div>';
+  alert('RRS booking, private photo upload, photo path persistence completed. Booking: '+bookingId);
+ }catch(e){
+  let msg=e?.message||String(e);
+  if(bookingId&&!storagePath){try{await sb.rpc('fr_phase13d_cancel_ers_rrs_booking',{p_booking_id:bookingId});}catch(_){msg+=' · Pending booking cleanup needs admin review';}}
+  else if(bookingId&&storagePath){msg+=' · Booking '+bookingId+' exists; photo uploaded but details save failed. Admin/QA retry required.';}
+  alert('RRS save failed: '+msg);
+ }finally{if(btn){btn.disabled=false;btn.textContent='Find Drivers';}}
+}
 function validateSchedule(){if(!$('scheduleDate').value||!$('scheduleTime').value||!$('scheduleAddress').value.trim()){alert('Date, Time మరియు Address నమోదు చేయండి.');return;}alert('Schedule వివరాలు validate అయ్యాయి. Database mapping తర్వాత booking save అవుతుంది.');}
 function validateGoods(){if(!$('goodsPickup').value.trim()||!$('goodsDrop').value.trim()||!$('goodsDescription').value.trim()){alert('Pickup, Drop మరియు Goods వివరాలు నమోదు చేయండి.');return;}alert('Goods request వివరాలు validate అయ్యాయి. Live save కోసం database mapping అవసరం.');}
 function submitParcelRequest(){const ids=['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription'];if(ids.some(id=>!$(id).value.trim())||Number($('parcelWeight').value)<=0){alert('పార్సెల్ వివరాలన్నీ నమోదు చేయండి.');return;}const d=v=>v.replace(/\D/g,'');if(d($('parcelSenderPhone').value).length!==10||d($('parcelReceiverPhone').value).length!==10){alert('సరైన 10 digit mobile numbers ఇవ్వండి.');return;}alert('Parcel details validate అయ్యాయి. Live booking కోసం parcel table mapping అవసరం.');}
