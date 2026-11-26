@@ -286,3 +286,10 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 ## Refund mark-paid UI guard regression test — 2026-11-26
 - Added a Playwright regression check asserting the Admin UI requires a nonblank transfer reference/UTR, explicit confirmation that money was sent, calls the protected mark-paid RPC, and refreshes the queue after success.
 - QA branch push should trigger the configured regression workflow. The current GitHub integration does not expose workflow-run listing/dispatch, so actual CI/browser execution is still UNVERIFIED until run evidence becomes available.
+
+
+## Cancellation client helper regression follow-up — 2026-11-26
+- Source review found cancellation client helper was checking `refund_review_required`, while cancellation RPCs return `refund_request_created`; fixed alert condition to recognize either field.
+- Added Playwright tests for the four cancellation RPC mappings, confirmation prompts, refund-review warning, and rejected confirmation (no RPC call).
+- Important UI gap: the cancellation helper exists as an asset, but `index.html` currently does not invoke it and no cancel buttons are wired. Cancellation backend/client helper coverage is therefore source/test coverage only; end-user cancellation UI integration remains pending.
+- CI/runtime execution remains UNVERIFIED.
