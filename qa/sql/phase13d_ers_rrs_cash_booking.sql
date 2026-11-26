@@ -48,6 +48,20 @@ as $$
 begin
   if auth.uid() is null or not public.is_friend_ride_admin() then raise exception 'Admin access required'; end if;
   if p_driver_id is null then raise exception 'Driver required'; end if;
+  if not exists (
+    select 1 from public.profiles p
+    where p.id=p_driver_id and p.role='driver'
+      and lower(coalesce(p.driver_approval_status,''))='approved'
+  ) then raise exception 'Driver must be an approved FRIEND RIDE driver'; end if;
+  if exists (
+    select 1 from (values ('driving_license'),('aadhaar'),('vehicle_rc')) required(document_type)
+    where not exists (
+      select 1 from public.fr_driver_documents d
+      where d.driver_id=p_driver_id
+        and d.document_type=required.document_type
+        and lower(coalesce(d.verification_status,''))='verified'
+    )
+  ) then raise exception 'Driver KYC documents must all be verified'; end if;
   update public.fr_phase13d_ers_rrs_bookings
     set driver_id=p_driver_id,status='assigned',updated_at=now()
     where id=p_booking_id and status='pending' and driver_id is null;
