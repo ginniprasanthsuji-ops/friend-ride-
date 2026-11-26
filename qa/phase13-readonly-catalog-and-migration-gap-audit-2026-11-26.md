@@ -64,3 +64,12 @@ Compared the branch migration directory (21 SQL files) against the QA migration 
 
 ## Next audit task
 Read-only review of the missing order backend dependencies and Phase 13 source-to-UI integration. Preserve all blockers and do not apply SQL until explicit user approval.
+
+
+## Additional static UI integration cross-check (same audit window)
+- Main `index.html` statically includes all seven Phase 13 scripts: flash-sale checkout, campaigns, customer referral, referral admin, special days, store reviews, and direct coupons.
+- Expected UI element IDs for campaigns, customer referral, referral admin, special days, store reviews, and direct coupons were present in `index.html`. Static wiring: PASS.
+- RPC/source mapping confirms UI expects these absent QA backend objects: `fr_customer_accept_market_quote`, `fr_store_flash_sale_attach_order`, `fr_customer_special_day_set`, `fr_store_review_admin_moderate`, `fr_direct_store_coupon_submit`, `fr_direct_store_coupon_review`. Backend execution: BLOCKED/FAIL for QA catalog presence.
+- Campaign reserve/cancel RPCs and customer referral get-code/bind/admin review/reward-credit foundation are present in QA migration history; paid-order eligibility recalculation/trigger is absent. This leaves referral eligibility automation GAP.
+- Historical baseline file `docs/phase-13/phase-13-baseline.md` still labels Production Supabase ref `fglyplxcczdjtfwobtzh`. It is a historical baseline, not the target of this audit; QA was the only project queried. Treat the stale project label as a documentation GAP to correct in a later approved doc-only edit.
+- Report commit `a7d59841d025af037606a163224be85489bf5c3b` has no CI status records and no newer workflow run visible immediately after commit; its CI is PENDING/NOT YET TRIGGERED. The source head run #1267 remains PASS on `d662dffcc4`.
