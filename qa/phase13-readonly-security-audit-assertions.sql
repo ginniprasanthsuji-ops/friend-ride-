@@ -47,6 +47,15 @@ checks as (
   union all select 'flash_sale_rpc_present',coalesce(string_agg(proname,', ' order by proname),'none') from f where proname ilike '%flash_sale%'
   union all select 'ers_rrs_tables',coalesce(string_agg(tablename,', ' order by tablename),'none') from pg_tables where schemaname='public' and tablename ilike '%road_ride%'
   union all select 'ers_rrs_rpc_present',coalesce(string_agg(proname,', ' order by proname),'none') from f where proname ilike '%road_ride%'
+  union all select 'ers_rrs_create_role_guard',case when exists(select 1 from f where proname='fr_road_ride_create' and def ilike '%public.profiles%' and def ilike '%driver_approval_status%' and def ilike '%fr_road_ride_guest_profiles%') then 'present' else 'missing' end
+  union all select 'ers_rrs_book_customer_guard',case when exists(select 1 from f where proname='fr_road_ride_book' and def ilike '%p.role=''customer''%') then 'present' else 'missing' end
+  union all select 'ers_rrs_confirm_eligible_owner_guard',case when exists(select 1 from f where proname='fr_road_ride_confirm_booking' and def ilike '%public.profiles%' and def ilike '%driver_approval_status%' and def ilike '%fr_road_ride_guest_profiles%') then 'present' else 'missing' end
+  union all select 'ers_rrs_guest_profile_customer_guard',case when exists(select 1 from f where proname='fr_road_ride_save_guest_driver_profile' and def ilike '%p.role=''customer''%') then 'present' else 'missing' end
+  union all select 'ers_rrs_contact_role_and_driver_guard',case when exists(select 1 from f where proname='fr_road_ride_get_participant_contact' and def ilike '%p.role=''customer''%' and def ilike '%driver_approval_status%') then 'present' else 'missing' end
+  union all select 'ers_rrs_rebooking_cancelled_refunded_reuse',case when exists(select 1 from f where proname='fr_road_ride_book' and def ilike '%update public.fr_road_ride_bookings%' and def ilike '%booking_pending%') then 'present' else 'missing' end
+  union all select 'ers_rrs_direct_write_policy_count',count(*)::text from pg_policies where schemaname='public' and tablename in ('fr_road_rides','fr_road_ride_bookings','fr_road_ride_events','fr_road_ride_guest_profiles') and cmd in ('INSERT','UPDATE','DELETE')
+  union all select 'ers_rrs_client_write_privilege_count',count(*)::text from information_schema.role_table_grants where table_schema='public' and table_name in ('fr_road_rides','fr_road_ride_bookings','fr_road_ride_events','fr_road_ride_guest_profiles') and grantee in ('anon','authenticated') and privilege_type in ('INSERT','UPDATE','DELETE','TRUNCATE')
+  union all select 'ers_rrs_ride_passenger_unique_constraint',case when exists(select 1 from pg_constraint where conrelid='public.fr_road_ride_bookings'::regclass and conname='fr_road_ride_bookings_ride_id_passenger_id_key') then 'present' else 'missing' end
   union all select 'max_applied_migration',coalesce(max(version),'none') from supabase_migrations.schema_migrations
 )
 select key,value from checks order by key;
