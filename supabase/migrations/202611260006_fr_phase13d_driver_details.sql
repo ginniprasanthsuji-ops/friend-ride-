@@ -13,7 +13,7 @@ language sql security definer set search_path=public,auth
 as $$
  select b.id,b.customer_id,b.ride_kind,b.pickup_text,b.drop_text,b.fare_offer,b.driver_id,b.status,
         b.payment_method,b.payment_status,b.cash_received_at,b.created_at,b.updated_at,
-        p.full_name,p.phone,coalesce(p.vehicle_number,p.vehicle_registration)
+        p.full_name,p.phone,p.vehicle_number
  from public.fr_phase13d_ers_rrs_bookings b
  left join public.profiles p on p.id=b.driver_id
  where auth.uid() is not null and (b.customer_id=auth.uid() or b.driver_id=auth.uid())
