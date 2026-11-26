@@ -30,12 +30,13 @@ BEGIN
   ) THEN
     ALTER TABLE public.rides
       ADD CONSTRAINT rides_payment_method_allowed
-      CHECK (payment_method IS NULL OR payment_method IN ('cash','upi'));
+      CHECK (payment_method IS NULL OR payment_method = 'cash');
   END IF;
 END $$;
 
 COMMIT;
 
+-- ERS cash-only policy: UPI/online values are rejected by the payment-method constraint.
 -- Important: This draft alone does not create ERS listings or bookings.
 -- Dedicated authenticated RPCs, RLS review, atomic availability reservation,
 -- and UI integration are still required. Do not apply until reviewed.
