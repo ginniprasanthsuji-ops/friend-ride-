@@ -36,3 +36,4 @@ assert.ok(app.includes('Pending admin assignment')&&app.includes('Photo path:'),
 const qaAdmin=fs.readFileSync('qa/phase13d-ers-rrs-cash-booking.html','utf8');
 assert.ok(qaAdmin.includes('fillGuestAssignment')&&qaAdmin.includes('Load saved RRS details + photo'), 'admin QA assignment can load persisted RRS guest fields/photo');
 assert.ok(qaAdmin.includes('createSignedUrl(path,120)'), 'admin QA assignment can preview private stored photo');
+assert.ok(qaAdmin.includes('data-booking-id')&&qaAdmin.includes('data-photo-path')&&qaAdmin.includes('onclick="fillGuestAssignment(this)"'), 'admin RRS details loader uses escaped data attributes');
