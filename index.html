@@ -1811,17 +1811,22 @@ function frDistanceKm(a,b){const rad=x=>x*Math.PI/180,R=6371,dLat=rad(b[0]-a[0])
 function frParsePickupCoords(){if(pickupCoords?.lat!=null&&pickupCoords?.lon!=null)return [Number(pickupCoords.lat),Number(pickupCoords.lon)];const m=String($('pickup')?.value||'').match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);return m?[Number(m[1]),Number(m[2])]:null;}
 function frEnsureTrackingMap(center){initTrackingMap();if(trackingMap&&center)trackingMap.setView(center,14);return trackingMap;}
 async function saveRideRequest(){
+  const submitButton=document.querySelector('#ride button[onclick="saveRideRequest()"]');
+  if(submitButton?.disabled)return;
+  if(submitButton){submitButton.disabled=true;submitButton.dataset.originalText=submitButton.textContent;submitButton.textContent='Booking…';}
   try{
     if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer OTP Login అవసరం.');
     const pickup=$('pickup').value.trim(),drop=$('drop').value.trim(),fare=Number($('fare').value);
     if(!pickup||!drop||!Number.isFinite(fare)||fare<=0)throw Error('Pickup, Drop, సరైన Fare నమోదు చేయండి.');
+    if(!['Bike','Auto','Car'].includes(rideVehicle))throw Error('Ride type ఎంచుకోండి.');
     const coords=frParsePickupCoords();
-    const row={customer_id:currentUser.id,vehicle_type:rideVehicle,pickup,drop,fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested'};
+    const row={customer_id:currentUser.id,vehicle_type:rideVehicle,pickup,drop,pickup_text:pickup,drop_text:drop,fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested'};
     if(coords){row.pickup_lat=coords[0];row.pickup_lng=coords[1];}
     const {data,error}=await sb.from('rides').insert(row).select('id,status').single();if(error)throw error;
     frActiveRideId=data.id;frShow('trackingStatus','Ride Request పంపబడింది. దగ్గరలోని Drivers కోసం చూస్తున్నాం…');frShow('liveRideStatus','Active Ride ID: '+data.id+' • Driver response కోసం వేచి ఉంది.');
     showPage('tracking');frEnsureTrackingMap(coords);await refreshNearbyDrivers();if(frNearbyTimer)clearInterval(frNearbyTimer);frNearbyTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id)refreshNearbyDrivers();},10000);
   }catch(e){alert('Ride Booking Error: '+e.message);}
+  finally{if(submitButton){submitButton.disabled=false;submitButton.textContent=submitButton.dataset.originalText||'Find Drivers';}}
 }
 async function refreshNearbyDrivers(){
   try{
