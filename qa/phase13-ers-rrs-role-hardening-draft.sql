@@ -162,6 +162,10 @@ begin
     where b.ride_id=p_ride_id and b.passenger_id=v_uid and c.role='customer'
       and b.status in ('confirmed','boarding','in_progress','dropped','completed','disputed')
   ) then
+    if not exists(select 1 from public.profiles p where p.id=v_ride.driver_id
+      and ((p.role='driver' and p.driver_approval_status='approved')
+        or (p.role='customer' and exists(select 1 from public.fr_road_ride_guest_profiles g where g.driver_id=v_ride.driver_id)))
+    ) then raise exception 'Ride driver is not eligible for participant contact'; end if;
     return query select 'driver'::text,coalesce(nullif(v_ride.driver_display_name,''),g.driver_display_name),
       coalesce(nullif(trim(v_ride.driver_phone),''),g.driver_phone)
     from public.fr_road_ride_guest_profiles g where g.driver_id=v_ride.driver_id;
