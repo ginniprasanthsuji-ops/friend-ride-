@@ -51,7 +51,7 @@ begin
   if not exists (
     select 1 from public.profiles p
     where p.id=p_driver_id and p.role='driver'
-      and lower(coalesce(p.driver_approval_status,''))='approved'
+      and lower(coalesce(p.driver_approval_status,'')) in ('approved','verified','active')
   ) then raise exception 'Driver must be an approved FRIEND RIDE driver'; end if;
   if exists (
     select 1 from (values ('driving_license'),('aadhaar'),('vehicle_rc')) required(document_type)
@@ -100,6 +100,21 @@ as $$
   order by created_at desc limit 200
 $$;
 
+
+-- Customer/admin may cancel only a pending, unassigned cash booking.
+-- No refund is recorded because cash has not been collected at this stage.
+create or replace function public.fr_phase13d_cancel_ers_rrs_booking(p_booking_id uuid)
+returns void language plpgsql security definer set search_path=public,auth
+as $
+begin
+  if auth.uid() is null then raise exception 'Authentication required'; end if;
+  update public.fr_phase13d_ers_rrs_bookings
+    set status='cancelled',updated_at=now()
+    where id=p_booking_id and status='pending' and driver_id is null
+      and (customer_id=auth.uid() or public.is_friend_ride_admin());
+  if not found then raise exception 'Only the booking customer or admin can cancel a pending unassigned booking'; end if;
+end $;
+
 create or replace function public.fr_phase13d_get_my_ers_rrs_bookings()
 returns setof public.fr_phase13d_ers_rrs_bookings
 language sql security definer set search_path=public,auth
@@ -115,11 +130,13 @@ revoke all on function public.fr_phase13d_driver_complete_ers_rrs_ride(uuid) fro
 revoke all on function public.fr_phase13d_driver_confirm_cash(uuid) from public,anon;
 revoke all on function public.fr_phase13d_list_ers_rrs_bookings() from public,anon;
 revoke all on function public.fr_phase13d_get_my_ers_rrs_bookings() from public,anon;
+revoke all on function public.fr_phase13d_cancel_ers_rrs_booking(uuid) from public,anon;
 grant execute on function public.fr_phase13d_create_ers_rrs_booking(text,text,text,numeric) to authenticated;
 grant execute on function public.fr_phase13d_assign_ers_rrs_booking(uuid,uuid) to authenticated;
 grant execute on function public.fr_phase13d_driver_complete_ers_rrs_ride(uuid) to authenticated;
 grant execute on function public.fr_phase13d_driver_confirm_cash(uuid) to authenticated;
 grant execute on function public.fr_phase13d_list_ers_rrs_bookings() to authenticated;
 grant execute on function public.fr_phase13d_get_my_ers_rrs_bookings() to authenticated;
+grant execute on function public.fr_phase13d_cancel_ers_rrs_booking(uuid) to authenticated;
 
 commit;
