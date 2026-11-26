@@ -32,3 +32,7 @@ assert.ok(sql.includes('fr_rrs_guest_photo_customer_insert')&&sql.includes('fr_r
 assert.ok(app.includes('async function saveRideRequest()')&&app.includes('fr_phase13d_create_ers_rrs_booking'), 'main app creates an RRS booking');
 assert.ok(app.includes('fr_phase13e_customer_save_rrs_guest_details')&&app.includes('.upload(filePath,photo'), 'main app uploads photo and persists its path');
 assert.ok(app.includes('Pending admin assignment')&&app.includes('Photo path:'), 'main app displays booking status and saved path');
+
+const qaAdmin=fs.readFileSync('qa/phase13d-ers-rrs-cash-booking.html','utf8');
+assert.ok(qaAdmin.includes('fillGuestAssignment')&&qaAdmin.includes('Load saved RRS details + photo'), 'admin QA assignment can load persisted RRS guest fields/photo');
+assert.ok(qaAdmin.includes('createSignedUrl(path,120)'), 'admin QA assignment can preview private stored photo');
