@@ -21,7 +21,7 @@
 ## Checks performed
 
 - Live QA SQL: **executed** for RPC function definitions and execution privileges.
-- Static assertion against fetched SQL: **2 checks passed** (audit contains privilege checks; detects contact-limit pattern; write statements absent).
+- In-memory static checks: **4/4 passed** (anonymous/authenticated execute checks; audit read-only statement guard; contact-limit detection).
 - Node test runner: **not executed** (no local repository/dependencies).
 - SQL draft migrations: **not applied**.
 - Frontend runtime: not tested; source has no direct ERS/RRS RPC references in inspected `index.html`.
