@@ -105,7 +105,7 @@ $$;
 -- No refund is recorded because cash has not been collected at this stage.
 create or replace function public.fr_phase13d_cancel_ers_rrs_booking(p_booking_id uuid)
 returns void language plpgsql security definer set search_path=public,auth
-as $
+as $$
 begin
   if auth.uid() is null then raise exception 'Authentication required'; end if;
   update public.fr_phase13d_ers_rrs_bookings
@@ -113,7 +113,7 @@ begin
     where id=p_booking_id and status='pending' and driver_id is null
       and (customer_id=auth.uid() or public.is_friend_ride_admin());
   if not found then raise exception 'Only the booking customer or admin can cancel a pending unassigned booking'; end if;
-end $;
+end $$;
 
 create or replace function public.fr_phase13d_get_my_ers_rrs_bookings()
 returns setof public.fr_phase13d_ers_rrs_bookings
