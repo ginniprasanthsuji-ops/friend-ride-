@@ -37,7 +37,7 @@ tests.push(
 [27,5,'Cash-only Station Booking & Contact Privacy','Customer books seat; confirmed booking reveals driver phone only to that passenger; public LIVE hides phone',['fr_station_book_ride','fr_station_my_bookings','CASH ONLY','case when b.status=\'confirmed\' then r.driver_phone else null end','fr_station_live_rides_public'],'PARTIAL','RPC and privacy source checks present; test with QA Customer and Guest RRS ride.']
 );
 tests.push(
-[28,5,'Multi-passenger Booking Quantity','Customer selects 1–10 seats; booking saves quantity and live remaining seats decrement by the selected quantity',['fr_station_book_ride(p_ride_id uuid,p_passengers integer default 1)','passenger_count integer not null default 1','p_passengers:seats','passenger_count','Only % passenger seats remaining'],'PARTIAL','UI quantity selector and migration source added; live backend test pending.']
+[28,5,'Multi-passenger Booking Quantity','Customer selects 1–10 seats; booking saves quantity and live remaining seats decrement by the selected quantity',['fr_station_book_ride(p_ride_id uuid,p_passengers integer default 1)','passenger_count integer not null default 1','prompt(\'How many passenger seats do you want to book? (1–10)\',\'1\')','p_passengers:seats','Passengers booked: ','Only % passenger seats remaining'],'PARTIAL','UI quantity selector and migration source added; live backend test pending.']
 );
 tests.push(
 [16,4,'Provider UPI & QR Registration','Driver / Shop / Home Service Provider saves own UPI ID and QR securely',['regDriverUPI','regDriverQR','regProviderQR','provider-payment-qr','provider_qr_path'],'PARTIAL','Registration fields and private QR storage are added. Live driver/partner upload and profile persistence must be verified.'],
