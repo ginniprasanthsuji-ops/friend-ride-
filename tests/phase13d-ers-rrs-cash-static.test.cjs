@@ -46,3 +46,15 @@ const driverDetailsMigration=fs.readFileSync('supabase/migrations/202611260006_f
 for(const s of ['fr_phase13d_get_my_ers_rrs_bookings_with_driver','fr_phase13d_list_ers_rrs_bookings_with_driver','p.full_name,p.phone,p.vehicle_number','b.customer_id=auth.uid() or b.driver_id=auth.uid()','public.is_friend_ride_admin()'])assert.ok(driverDetailsMigration.includes(s),'Driver details migration missing scoped field/access check: '+s);
 for(const s of ['Driver Name:','Driver Phone:','Vehicle Number:','x.driver_personal_name','x.driver_personal_number','x.driver_vehicle_number'])assert.ok(app.includes(s),'Assigned driver details UI missing: '+s);
 console.log('ERS/RRS assigned driver personal name/phone/vehicle display and scoped access checks PASS');
+
+ 
+// ERS/RRS Station UI + guest RRS posting regression assertions.
+const stationMigration=fs.readFileSync('supabase/migrations/202611260007_fr_ers_rrs_station_guest_post.sql','utf8');
+const stationBookingMigration=fs.readFileSync('supabase/migrations/202611260008_fr_ers_rrs_station_booking_cash.sql','utf8');
+const stationPrivacyMigration=fs.readFileSync('supabase/migrations/202611260009_fr_station_live_public_privacy.sql','utf8');
+for(const s of ["ride_kind text not null check (ride_kind in ('ERS','RRS'))","payment_method text not null default 'cash' check(payment_method='cash')","fr_station_post_ers","fr_station_post_rrs_guest","Guest RRS","Registered driver login required"])assert.ok(stationMigration.includes(s),"ERS/RRS station backend assertion missing: "+s);
+for(const s of ["fr_station_book_ride","fr_station_my_bookings","status in ('requested','confirmed','cancelled','completed')","payment_method text not null default 'cash' check(payment_method='cash')"])assert.ok(stationBookingMigration.includes(s),"Station booking backend assertion missing: "+s);
+for(const s of ["fr_station_live_rides_public","revoke all on public.fr_station_rides from anon,authenticated","case when b.status='confirmed' then r.driver_phone else null end"])assert.ok(stationPrivacyMigration.includes(s),"Station privacy migration assertion missing: "+s);
+for(const s of ["frStationType('ers')","frStationType('rrs')","frStationPostERS()","frStationPostRRS()","frStationBook(this.dataset.ride)","frStationMyBookings()","fr_station_live_rides_public","fr_station_post_ers","fr_station_post_rrs_guest","fr_station_book_ride","fr_station_my_bookings","CASH ONLY","Guest Driver","Registered Driver"])assert.ok(app.includes(s),"ERS/RRS station UI assertion missing: "+s);
+assert.ok(!app.includes("frSubEsc(x.driver_phone)</p><div class=\"fr-station-route\""),"Public live ride card must not show guest driver phone");
+console.log("ERS/RRS Station registered-driver / guest-RRS / cash-only / privacy static checks PASS");
