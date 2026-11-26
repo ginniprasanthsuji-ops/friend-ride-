@@ -96,8 +96,8 @@ test.describe('Phase 13 protected-route authorization regression', () => {
     }
   });
 
-  test('partner can access partner routes by direct showPage call', async ({ page }) => {
-    await page.evaluate(() => { currentUser = { id: 'qa-partner' }; currentProfile = { role: 'partner' }; selectedRole='partner'; });
+  test('approved partner can access partner routes by direct showPage call', async ({ page }) => {
+    await page.evaluate(() => { currentUser = { id: 'qa-partner' }; currentProfile = { role: 'partner', partner_approval_status: 'approved' }; selectedRole='partner'; });
     for (const route of partnerRoutes) {
       await page.evaluate(id => window.showPage(id), route);
       await expect(page.locator('#' + route)).toHaveClass(/active/);
