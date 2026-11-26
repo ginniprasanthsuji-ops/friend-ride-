@@ -1,0 +1,2 @@
+create policy fr_driver_profile_photo_admin_read on storage.objects for select to authenticated using(bucket_id='driver-profile-photos' and exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
+create policy fr_partner_profile_photo_admin_read on storage.objects for select to authenticated using(bucket_id='partner-profile-photos' and exists(select 1 from public.admin_users a where a.user_id=auth.uid()));
