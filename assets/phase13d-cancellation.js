@@ -6,7 +6,7 @@
   if(!window.sb||!window.currentUser)throw new Error('Login required');
   if(!confirm(msg+'\n\nRefund is not automatic; manual review may be required.'))return null;
   const {data,error}=await window.sb.rpc(name,args);if(error)throw error;
-  if(data?.refund_review_required)alert('Cancellation completed. Refund review pending; no automatic refund was processed.');
+  if(data?.refund_request_created||data?.refund_review_required)alert('Cancellation completed. Refund review pending; no automatic refund was processed.');
   return data;
  }
  window.FRPhase13DCancel={
