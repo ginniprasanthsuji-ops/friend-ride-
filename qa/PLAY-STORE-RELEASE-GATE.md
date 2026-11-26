@@ -274,3 +274,10 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - Added unauthenticated Admin dashboard route-gate test: `showPage('adminDashboard')` must return false and admin dashboard must not become active.
 - Verified both tests are present in `qa/friend-ride.spec.cjs` and the refund UI/functions are present in QA `index.html`.
 - GitHub combined status for latest report commit returned no statuses. CI/browser execution remains UNVERIFIED.
+
+
+## Source-level security review — 2026-11-26 (QA branch)
+- Re-opened both Phase 13D migration sources. Refund request table has allowed ride/status constraints, unique ride-type/booking key, RLS enabled, and client grants revoked; service_role SELECT only.
+- Cancellation RPC source includes authenticated-user checks, booking lookup/row locking and passenger ownership check. Full four-RPC runtime behavior is still not proven by source review alone.
+- Admin refund queue and mark-paid RPCs check authenticated Admin role via `is_friend_ride_admin()`; mark-paid requires a nonblank refund reference and locks the request before updating. These record manual refund confirmation only, not actual payment transfer.
+- CI and Playwright remain unverified because no workflow run/status evidence is available through current GitHub integration.
