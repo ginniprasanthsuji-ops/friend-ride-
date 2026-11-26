@@ -2032,6 +2032,11 @@ async function loadMyRideTracking(){
     if(!data?.length){box.textContent='ఇంకా Rides లేవు.';return;}
     const active=data.find(r=>r.driver_id&&frCustomerTrackingStatusAllowed(r.status))||data.find(r=>!['completed','cancelled','rejected','canceled'].includes(String(r.status||'').toLowerCase()))||data[0];frActiveRideId=active.id;
     box.innerHTML='<b>'+safe(active.vehicle_type)+' • '+safe(active.status)+'</b><p>'+safe(active.pickup)+' → '+safe(active.drop)+'</p><p>మీ Offer ₹'+safe(active.fare_offer)+' | Agreed ₹'+safe(active.agreed_fare??'—')+'</p><small>Ride ID: '+safe(active.id)+'</small>';
+    const pendingCancelStates=['pending','requested','searching','created'];
+    if(!active.driver_id&&pendingCancelStates.includes(String(active.status||'').toLowerCase())){
+      const cancelBtn=document.createElement('button');cancelBtn.className='btn red';cancelBtn.textContent='Cancel Ride';cancelBtn.style.marginTop='10px';
+      cancelBtn.onclick=async()=>{if(!confirm('ఈ రైడ్‌ను cancel చేయాలా?'))return;cancelBtn.disabled=true;try{const {error}=await sb.from('rides').update({status:'cancelled',updated_at:new Date().toISOString()}).eq('id',active.id).eq('customer_id',currentUser.id).in('status',pendingCancelStates);if(error)throw error;alert('Ride cancelled.');await loadMyRideTracking();}catch(e){alert('Cancel failed: '+(e.message||e));cancelBtn.disabled=false;}};box.appendChild(cancelBtn);
+    }
     if(active.driver_id)await frRenderCustomerRideDriverAndPayment(active);
     const completedHistory=data.filter(r=>String(r.status||'').toLowerCase()==='completed'&&r.id!==active.id).slice(0,5);
     if(completedHistory.length){
