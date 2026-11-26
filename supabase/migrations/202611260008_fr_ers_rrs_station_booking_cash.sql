@@ -24,7 +24,7 @@ begin
  if not found then raise exception 'Ride is not available'; end if;
  if v_ride.driver_id=auth.uid() then raise exception 'Cannot book your own ride'; end if;
  if exists(select 1 from public.fr_station_ride_bookings where ride_id=p_ride_id and status in ('requested','confirmed')) then raise exception 'This bike ride seat has already been requested/booked'; end if;
- insert into public.fr_station_ride_bookings(ride_id,passenger_id) values(p_ride_id,auth.uid()) returning id into v_booking;
+ insert into public.fr_station_ride_bookings(ride_id,passenger_id,status) values(p_ride_id,auth.uid(),'confirmed') returning id into v_booking;
  update public.fr_station_rides set status='booked' where id=p_ride_id;
  return v_booking;
 end $$;
