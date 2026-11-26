@@ -927,15 +927,16 @@ function showPage(id){
  const isAdminRoute=adminRoutes.includes(id);
  const isPartnerRoute=partnerRoutes.includes(id);
  const isPartnerAdminShared=id==='frDirectCouponReview';
- if(dashboardRole&&(!currentUser||role!==dashboardRole)){showMessage(dashboardRole.toUpperCase()+' account అవసరం.');return;}
- if(id==='frDriverSubscription'&&(!currentUser||role!=='driver')){showMessage('Driver account అవసరం.');return;}
- if(isAdminRoute&&(!currentUser||role!=='admin')){showMessage('Admin account అవసరం.');return;}
- if(isPartnerRoute&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner account అవసరం.');return;}
- if(isPartnerAdminShared&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner లేదా Admin account అవసరం.');return;}
+ if(dashboardRole&&(!currentUser||role!==dashboardRole)){showMessage(dashboardRole.toUpperCase()+' account అవసరం.');return false;}
+ if(id==='frDriverSubscription'&&(!currentUser||role!=='driver')){showMessage('Driver account అవసరం.');return false;}
+ if(isAdminRoute&&(!currentUser||role!=='admin')){showMessage('Admin account అవసరం.');return false;}
+ if(isPartnerRoute&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner account అవసరం.');return false;}
+ if(isPartnerAdminShared&&(!currentUser||(role!=='partner'&&role!=='admin'))){showMessage('Partner లేదా Admin account అవసరం.');return false;}
  if(id==='homeServices'&&currentProfile?.role==='admin'){const p=document.getElementById('taskoAdminPanel');if(p)p.classList.remove('hide');}
  if(id==='laundryServices'&&currentProfile?.role==='admin'){const p=document.getElementById('laundryAdminPanel');if(p)p.classList.remove('hide');}
  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));
  document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ return true;
  window.scrollTo({top:0,behavior:'smooth'});
  if(id==='ride')setTimeout(()=>{initRideMap();frInitBookingMap();if(frBookingMap)frBookingMap.invalidateSize();},180);
  if(id==='tracking')setTimeout(initTrackingMap,100);
@@ -2796,7 +2797,7 @@ async function frLoadCustomerMarketOrders(){
 async function frCustomerAcceptQuote(id){try{const {error}=await sb.rpc('fr_customer_accept_market_quote',{p_order_id:id});if(error)throw error;alert('Partner ధర అంగీకరించారు.');await frLoadCustomerMarketOrders();}catch(e){alert(e.message||e);}}
 async function frCustomerSendCounter(id){const card=[...document.querySelectorAll('#frCustomerMarketOrders .card')].find(c=>c.innerHTML.includes(id));if(!card)return;const offers=[];for(const input of card.querySelectorAll('input[id^="frCounter_"]')){const v=Number(input.value);if(!Number.isFinite(v)||v<=0){alert('Counter Price నమోదు చేయండి.');return;}offers.push({item_id:input.id.replace('frCounter_',''),price_paise:frRupeesToPaise(v)});}try{const {error}=await sb.rpc('fr_customer_counter_market_order',{p_order_id:id,p_offers:offers});if(error)throw error;alert('మీ Counter Price Partnerకు పంపబడింది.');await frLoadCustomerMarketOrders();}catch(e){alert(e.message||e);}}
 const frOriginalShowPage=showPage;
-showPage=function(id){frOriginalShowPage(id);if(id==='orders'&&currentUser?.id)setTimeout(frLoadCustomerMarketOrders,150);if(id==='catalogue'&&currentProfile?.role==='partner')setTimeout(()=>frLoadPartnerCatalogue().catch(e=>console.warn(e)),150);if(id==='partnerOrders')setTimeout(()=>loadPartnerOrders(),150);};
+showPage=function(id){const result=frOriginalShowPage(id);if(result===false)return false;if(id==='orders'&&currentUser?.id)setTimeout(frLoadCustomerMarketOrders,150);if(id==='catalogue'&&currentProfile?.role==='partner')setTimeout(()=>frLoadPartnerCatalogue().catch(e=>console.warn(e)),150);if(id==='partnerOrders')setTimeout(()=>loadPartnerOrders(),150);return result;};
 // Persist catalogue entries when partner selects a master category and opens the editor.
 const frOldLoadMasterItems=loadMasterItems;
 loadMasterItems=function(){frOldLoadMasterItems();if(currentProfile?.role==='partner')frLoadPartnerCatalogue().catch(e=>console.warn(e));};
@@ -3424,7 +3425,7 @@ async function frAdminUpdateBankEnquiry(id,status){
     if(selectedRole==='partner'&&protectedPartnerPages.includes(id)&&!FR_APPROVED(FR_STATUS('partner',currentProfile))){
       frApplyApprovalUI('partner',currentProfile||{partner_approval_status:'pending'});
       showMessage('Partner Approval వచ్చిన తర్వాత మాత్రమే ఈ Business feature ఉపయోగించవచ్చు.');
-      return;
+      return false;
     }
     return originalShowPage.apply(this,arguments);
   };
@@ -4451,7 +4452,7 @@ async function frAdminAssignLaundry(id){
  const original=window.showPage;
  if(typeof original==='function'&&!window.__frV11ShowPageWrap){
   window.__frV11ShowPageWrap=true;
-  window.showPage=function(id){const out=original.apply(this,arguments);document.querySelectorAll('main .page').forEach(p=>{const active=p.id===String(id);p.classList.toggle('active',active);p.setAttribute('aria-hidden',active?'false':'true');if('inert' in p)p.inert=!active;});document.querySelectorAll('.premium-bottom button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===String(id)));return out;};
+  window.showPage=function(id){const out=original.apply(this,arguments);if(out!==false){document.querySelectorAll('main .page').forEach(p=>{const active=p.id===String(id);p.classList.toggle('active',active);p.setAttribute('aria-hidden',active?'false':'true');if('inert' in p)p.inert=!active;});document.querySelectorAll('.premium-bottom button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===String(id)));}return out;};
  }
 })();
 </script>
@@ -4600,7 +4601,7 @@ window.frRefreshHomeProfileAvatar=async function(){
   if(typeof originalShowPage==='function'){
     window.showPage=function(id){
       const result=originalShowPage.apply(this,arguments);
-      isolatePage(id);
+      if(result!==false)isolatePage(id);
       return result;
     };
   }
