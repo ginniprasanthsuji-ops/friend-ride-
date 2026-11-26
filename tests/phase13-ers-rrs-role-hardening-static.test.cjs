@@ -48,8 +48,18 @@ test('profile RPCs require the approved Driver or customer guest flow and valida
   assert.match(draft, /storage\.foldername\(p_driver_photo_path\)\)\[1\]<>v_uid::text/);
 });
 
+test('RRS direct client writes are revoked and guest profile writes use the validated definer RPC', () => {
+  assert.match(draft, /revoke all privileges on table public\.fr_road_rides,public\.fr_road_ride_bookings,public\.fr_road_ride_events from anon,authenticated/);
+  assert.match(draft, /revoke all privileges on table public\.fr_road_ride_guest_profiles from anon,authenticated/);
+  assert.match(draft, /drop policy if exists rr_guest_profile_insert_own/);
+  assert.match(draft, /drop policy if exists rr_guest_profile_update_own/);
+  assert.match(draft, /fr_road_ride_save_guest_driver_profile[\s\S]+?security definer/);
+  assert.match(draft, /Uploaded driver photo not found/);
+  assert.match(draft, /fr_road_ride_is_driver\(uuid\)[\s\S]+?grant execute on function public\.fr_road_ride_is_driver\(uuid\) to authenticated/);
+});
+
 test('RPC execution is revoked from public/anon and granted to authenticated only', () => {
-  for (const name of ['fr_road_ride_create','fr_road_ride_book','fr_road_ride_confirm_booking','fr_road_ride_get_participant_contact','fr_road_ride_save_driver_profile','fr_road_ride_save_guest_driver_profile']) {
+  for (const name of ['fr_road_ride_create','fr_road_ride_book','fr_road_ride_confirm_booking','fr_road_ride_get_participant_contact','fr_road_ride_save_driver_profile','fr_road_ride_save_guest_driver_profile','fr_road_ride_is_driver','fr_road_ride_is_passenger']) {
     assert.match(draft, new RegExp('revoke all on function public\\.' + name + '\\('));
     assert.match(draft, new RegExp('grant execute on function public\\.' + name + '\\('));
   }
