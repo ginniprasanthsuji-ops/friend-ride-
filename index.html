@@ -904,7 +904,7 @@ async function loadDriverApprovals(){
   if(msg)msg.textContent='Loaded '+rows.length+' driver application(s). Approve / Reject / Revoke status is saved in Supabase.';
  }catch(e){box.innerHTML='<div class="notice" style="color:#b91c1c">Driver Applications load failed: '+safe(e.message)+'</div>';if(msg)msg.textContent='Load failed: '+e.message;}
 }
-async async function reviewDriverApplication(driverId,decision){
+async function reviewDriverApplication(driverId,decision){
  try{
   if(!currentUser||selectedRole!=='admin')throw Error('Admin login అవసరం.');
   if(!['approved','rejected','revoked'].includes(decision))throw Error('Invalid decision.');
