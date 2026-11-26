@@ -267,3 +267,10 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - Current QA refund request table has zero rows, so no seeded workflow records were altered during this audit.
 - Latest test commit: `8c666bea63852613640c98646c9382d2a4fe97a2`. Commit status API currently returns no CI statuses; browser test execution remains UNVERIFIED.
 - Release gate remains BLOCKED until browser execution, controlled cancellation/refund workflow, live device tests, and release packaging evidence are completed.
+
+
+## Admin Refund Queue regression coverage follow-up — 2026-11-26
+- Added a Playwright source/UI wiring test for refund queue card, status filter, placeholder, and queue/mark-refunded RPC handlers.
+- Added unauthenticated Admin dashboard route-gate test: `showPage('adminDashboard')` must return false and admin dashboard must not become active.
+- Verified both tests are present in `qa/friend-ride.spec.cjs` and the refund UI/functions are present in QA `index.html`.
+- GitHub combined status for latest report commit returned no statuses. CI/browser execution remains UNVERIFIED.
