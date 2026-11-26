@@ -3089,7 +3089,7 @@ async function frAdminUpdateBankEnquiry(id,status){
  const isIssue=x=>['JavaScript','Promise'].includes(String(x?.kind||''));
  const issueCount=()=>read().filter(isIssue).length;
  const record=(kind,message,source='')=>{const items=read();items.push({at:new Date().toISOString(),kind,message:String(message||'Unknown error').slice(0,500),source:String(source||'').slice(0,240),online:navigator.onLine});write(items);render();refresh()};
- const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const esc=v=>String(v??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
  window.addEventListener('error',e=>record('JavaScript',e.message||'Script error',((e.filename||'')+':'+(e.lineno||''))));
  window.addEventListener('unhandledrejection',e=>record('Promise',e.reason?.message||e.reason||'Unhandled promise rejection'));
  window.addEventListener('offline',()=>record('Network','Device went offline'));
