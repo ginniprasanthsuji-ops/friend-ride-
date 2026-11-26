@@ -2214,46 +2214,26 @@ function frV8UrlBase64ToUint8Array(base64String){
   return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)));
 }
 async function frEnableDeviceAlerts(){
-  const out=document.getElementById('frNotifyPermissionStatus');
-  frUnlockAlertAudio();
-  if(!currentUser?.id){if(out)out.textContent='ముందుగా Customer / Driver Login చేయండి.';return;}
-  if(!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)){
-    if(out)out.textContent='ఈ Browserలో Web Push అందుబాటులో లేదు. Chromeలో FRIEND RIDE తెరవండి.';
-    return;
-  }
-  try{
-    const permission=await Notification.requestPermission();
-    if(permission!=='granted'){if(out)out.textContent='Notification permission ఇవ్వలేదు.';return;}
-    const registration=await navigator.serviceWorker.register('./service-worker.js');
-    await navigator.serviceWorker.ready;
-    if(!FR_VAPID_PUBLIC_KEY){
-      if(out)out.textContent='ఫోన్ Notification permission ON అయింది. Background Push కోసం VAPID public key + Supabase Edge Function deploy చేయాలి.';
-      return;
-    }
-    const applicationServerKey=frV8UrlBase64ToUint8Array(FR_VAPID_PUBLIC_KEY);
-    let subscription=await registration.pushManager.getSubscription();
-    if(!subscription){
-      subscription=await registration.pushManager.subscribe({
-        userVisibleOnly:true,
-        applicationServerKey
-      });
-    }
-    const json=subscription.toJSON();
-    const row={
-      user_id:currentUser.id,
-      endpoint:json.endpoint,
-      p256dh:json.keys?.p256dh,
-      auth_key:json.keys?.auth,
-      user_agent:navigator.userAgent,
-      is_active:true,
-      updated_at:new Date().toISOString()
-    };
-    const {error}=await sb.from('fr_push_subscriptions').upsert(row,{onConflict:'endpoint'});
-    if(error)throw error;
-    if(out)out.textContent='ఈ పరికరం Background Push కోసం నమోదు అయింది.';
-  }catch(e){
-    if(out)out.textContent='Notification setup error: '+(e.message||e);
-  }
+ const out=document.getElementById('frNotifyPermissionStatus');
+ frUnlockAlertAudio();
+ if(!currentUser?.id){if(out)out.textContent='ముందుగా Customer / Driver Login చేయండి.';return;}
+ if(!('Notification' in window)||!('serviceWorker' in navigator)||!('PushManager' in window)){if(out)out.textContent='Chrome browserలో FRIEND RIDE తెరిచి ప్రయత్నించండి.';return;}
+ try{
+  if(Notification.permission==='denied'){if(out)out.textContent='Notification blocked. Android Settings → Apps → Chrome → Notifications ON చేసి, site settingsలో friendride.in Notifications allow చేయండి.';return;}
+  const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();
+  if(permission!=='granted'){if(out)out.textContent='Permission denied. Phone Settingsలో FRIEND RIDE/Chrome Notifications ON చేయండి.';return;}
+  const registration=await navigator.serviceWorker.register('./service-worker.js');
+  await navigator.serviceWorker.ready;
+  if(!FR_VAPID_PUBLIC_KEY)throw Error('VAPID public key missing');
+  const key=frV8UrlBase64ToUint8Array(FR_VAPID_PUBLIC_KEY);
+  let subscription=await registration.pushManager.getSubscription();
+  if(!subscription)subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});
+  const json=subscription.toJSON();
+  const row={user_id:currentUser.id,endpoint:json.endpoint,p256dh:json.keys?.p256dh,auth_key:json.keys?.auth,user_agent:navigator.userAgent,is_active:true,updated_at:new Date().toISOString()};
+  const {error}=await sb.from('fr_push_subscriptions').upsert(row,{onConflict:'endpoint'});
+  if(error)throw error;
+  if(out)out.textContent='VAPID Push registration successful. ఈ device background notifications కోసం register అయింది.';
+ }catch(e){if(out)out.textContent='Push setup failed: '+(e.message||e);}
 }
 
 (function frRideInstallHooks(){
