@@ -586,3 +586,12 @@ test('Phase 13D Admin Refund Queue UI is present and wired to protected refund R
   expect(handlers).toEqual({ load: 'function', mark: 'function', source: true });
   await page.locator('#frRefundFilter').selectOption('refund_pending');
 });
+
+
+test('Refund queue stays behind the Admin role gate when unauthenticated', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const result = await page.evaluate(() => window.showPage('adminDashboard'));
+  expect(result).toBe(false);
+  await expect(page.locator('#adminDashboard')).not.toHaveClass(/active/);
+  await expect(page.locator('#roleLauncher')).toBeAttached();
+});
