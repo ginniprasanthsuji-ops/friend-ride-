@@ -41,11 +41,24 @@ on conflict (id) do update set public=false,file_size_limit=5242880,allowed_mime
  drop policy if exists fr_rrs_guest_photo_admin_delete on storage.objects;
 create policy fr_rrs_guest_photo_admin_select on storage.objects for select to authenticated using (bucket_id='fr-rrs-guest-driver-photos' and public.is_friend_ride_admin());
 create policy fr_rrs_guest_photo_admin_insert on storage.objects for insert to authenticated with check (bucket_id='fr-rrs-guest-driver-photos' and public.is_friend_ride_admin());
+-- SECURITY DEFINER ownership helpers avoid broad table SELECT grants for storage-policy checks.
+create or replace function public.fr_phase13e_customer_can_upload_rrs_photo(p_booking_id uuid)
+returns boolean language sql stable security definer set search_path=public,auth
+as $ select auth.uid() is not null and exists(select 1 from public.fr_phase13d_ers_rrs_bookings b where b.id=p_booking_id and b.customer_id=auth.uid() and b.ride_kind='RRS' and b.status='pending' and b.guest_driver_photo_path is null) $;
+create or replace function public.fr_phase13e_customer_can_view_rrs_photo(p_booking_id uuid)
+returns boolean language sql stable security definer set search_path=public,auth
+as $ select auth.uid() is not null and exists(select 1 from public.fr_phase13d_ers_rrs_bookings b where b.id=p_booking_id and b.customer_id=auth.uid() and b.ride_kind='RRS') $;
+revoke all on function public.fr_phase13e_customer_can_upload_rrs_photo(uuid) from public,anon;
+revoke all on function public.fr_phase13e_customer_can_view_rrs_photo(uuid) from public,anon;
+grant execute on function public.fr_phase13e_customer_can_upload_rrs_photo(uuid) to authenticated;
+grant execute on function public.fr_phase13e_customer_can_view_rrs_photo(uuid) to authenticated;
 -- Customer upload/read/delete is scoped to their own pending RRS booking UUID folder.
 drop policy if exists fr_rrs_guest_photo_customer_insert on storage.objects;
 drop policy if exists fr_rrs_guest_photo_customer_select on storage.objects;
 drop policy if exists fr_rrs_guest_photo_customer_delete on storage.objects;
-create policy fr_rrs_guest_photo_customer_insert on storage.objects for insert to authenticated with check (bucket_id='fr-rrs-guest-driver-photos' and split_part(name,'/',1) ~* '^[0-9a-f-]{36}
+create policy fr_rrs_guest_photo_customer_insert on storage.objects for insert to authenticated with check (bucket_id='fr-rrs-guest-driver-photos' and public.fr_phase13e_customer_can_upload_rrs_photo(split_part(name,'/',1)::uuid));
+create policy fr_rrs_guest_photo_customer_select on storage.objects for select to authenticated using (bucket_id='fr-rrs-guest-driver-photos' and public.fr_phase13e_customer_can_view_rrs_photo(split_part(name,'/',1)::uuid));
+create policy fr_rrs_guest_photo_customer_delete on storage.objects for delete to authenticated using (bucket_id='fr-rrs-guest-driver-photos' and public.fr_phase13e_customer_can_upload_rrs_photo(split_part(name,'/',1)::uuid));
 create policy fr_rrs_guest_photo_admin_delete on storage.objects for delete to authenticated using (bucket_id='fr-rrs-guest-driver-photos' and public.is_friend_ride_admin());
 
 alter table public.fr_phase13d_ers_rrs_bookings enable row level security;
