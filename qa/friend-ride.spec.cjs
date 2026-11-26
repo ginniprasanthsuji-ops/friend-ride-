@@ -571,3 +571,18 @@ test('Laundry Partner registration uses the exact approved database category and
   expect(source).toContain('laundry_unit_price:unitPrice');
 });
 
+
+
+test('Phase 13D Admin Refund Queue UI is present and wired to protected refund RPCs', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#frAdminRefundQueue')).toBeAttached();
+  await expect(page.locator('#frRefundFilter')).toContainText('payment_check_required');
+  await expect(page.locator('#frAdminRefundQueueList')).toContainText('Press Load / Refresh');
+  const handlers = await page.evaluate(() => ({
+    load: typeof window.frAdminRefundLoad,
+    mark: typeof window.frAdminRefundMarkPaid,
+    source: document.documentElement.innerHTML.includes('fr_admin_ride_refund_queue') && document.documentElement.innerHTML.includes('fr_admin_ride_refund_mark_paid')
+  }));
+  expect(handlers).toEqual({ load: 'function', mark: 'function', source: true });
+  await page.locator('#frRefundFilter').selectOption('refund_pending');
+});
