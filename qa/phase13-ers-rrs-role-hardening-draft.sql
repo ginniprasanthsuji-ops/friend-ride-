@@ -193,7 +193,7 @@ begin
     return query select 'customer'::text,p.full_name,coalesce(nullif(trim(p.whatsapp_phone),''),nullif(trim(p.phone),''))::text
     from public.fr_road_ride_bookings b join public.profiles p on p.id=b.passenger_id
     where b.ride_id=p_ride_id and b.status in ('confirmed','boarding','in_progress','dropped','completed','disputed')
-      and p.role='customer' order by b.created_at desc limit 1;
+      and p.role='customer' order by b.created_at desc;
     return;
   end if;
   raise exception 'Contact details are available only to confirmed ride participants';
