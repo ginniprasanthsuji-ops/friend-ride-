@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#24105f">
+<meta name="theme-color" content="#050b17">
 <meta name="application-version" content="11.1-PRO-category-routing-learning-isolation">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>FRIEND RIDE V11.1 PRO – Friend Mart | Version 10.3</title>
@@ -4595,3 +4595,18 @@ window.frRefreshHomeProfileAvatar=async function(){
   observer.observe(document.querySelector('main')||document.body,{subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
+
+<!-- FRIEND RIDE UI preview: safe additive Dark + Gold visual alignment; no JS/backend changes -->
+<style id="fr-dark-gold-preview-sync">
+:root{--purple:#f5b84c;--purple2:#d99026;--gold:#f5b84c;--orange:#f5b84c;--navy:#07101e;--bg:#050b17;--ink:#f6f8ff;--muted:#aab9d0;--line:#263b59;--white:#101a2c}
+html{color-scheme:dark}body{background:radial-gradient(ellipse at 12% 0%,#1a2440 0,transparent 32%),linear-gradient(180deg,#050b17,#080d17);color:#f6f8ff}
+.topbar,.bottom,.drawer,.drawer-head,.modalbox{background:linear-gradient(110deg,#101a2c,#07101e 65%,#18243a);color:#f6f8ff;border-color:#263b59}
+.card,.tile,.stat,.listrow,.menu-item,.notice{background:linear-gradient(145deg,#14223a,#0b1423);color:#f6f8ff;border-color:#263b59}
+.tile b,.card b,.listrow b,h1,h2,h3{color:#f6f8ff}.muted,.tile small,.card small{color:#aab9d0}
+.btn,.top-action,.location-action{background:linear-gradient(105deg,#f5b84c,#d99026);border-color:#f5b84c;color:#111827;font-weight:850}
+.btn.dark,.btn.light{background:#111e31;color:#f6f8ff;border-color:#314762}.btn.red{background:#3a1825;color:#ff8795;border-color:#7d3447}.btn.green{background:#0c3b2b;color:#6ee0ad;border-color:#1b7048}
+.bottom button.active{color:#f5b84c}.bottom button.active span{background:#332514}.role.active,.pill,.status{background:#332514;color:#f5b84c;border-color:#8c6125}
+input,textarea,select,.field input,.field textarea,.field select{background:#0a1424;color:#f6f8ff;border-color:#354a65}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f5b84c!important;outline-offset:2px!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
