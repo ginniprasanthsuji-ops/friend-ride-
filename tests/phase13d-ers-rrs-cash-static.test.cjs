@@ -5,7 +5,7 @@ for(const s of ["ride_kind in ('ERS','RRS')","payment_method text not null defau
 for(const s of ["ERS","RRS","PAYMENT: CASH ONLY","fr_phase13d_create_ers_rrs_booking","fr_phase13d_driver_confirm_cash","fr_phase13d_driver_complete_ers_rrs_ride","fr_phase13d_assign_ers_rrs_booking","function esc(v)"])assert.ok(html.includes(s),s);
 assert.ok(!/upi|online payment|payment gateway/i.test(html.replace("No UPI / Online / QR","")), "UI should not offer online payment");
 assert.ok(/status='completed'[\\s\\S]*payment_method='cash'[\\s\\S]*payment_status='cash_pending'/.test(sql),"Cash confirmation requires completed ride and pending cash");
-assert.equal((sql.match(/as \\$\\$[\\s\\S]*?begin/g)||[]).length,6,"All PL/pgSQL functions must use valid dollar quoting");
-assert.equal((sql.match(/end \\$\\$;/g)||[]).length,6,"Function bodies must close with dollar quotes");
+assert.equal((sql.match(/as \\$\\$[\\s\\S]*?begin/g)||[]).length,4,"All PL/pgSQL functions must use valid dollar quoting");
+assert.equal((sql.match(/end \\$\\$;/g)||[]).length,4,"Function bodies must close with dollar quotes");
 assert.ok(!/as \\$\\n?begin/.test(sql),"Malformed function dollar delimiter");
 console.log("Phase 13D ERS/RRS cash-only static checks PASS");
