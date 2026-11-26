@@ -54,17 +54,28 @@ begin
   if not found then raise exception 'Booking unavailable or already assigned'; end if;
 end $$;
 
-create or replace function public.fr_phase13d_driver_confirm_cash(p_booking_id uuid)
+create or replace function public.fr_phase13d_driver_complete_ers_rrs_ride(p_booking_id uuid)
 returns void language plpgsql security definer set search_path=public,auth
-as $$
+as $
 begin
   if auth.uid() is null then raise exception 'Authentication required'; end if;
   update public.fr_phase13d_ers_rrs_bookings
-    set payment_status='cash_received',cash_received_at=now(),status='completed',updated_at=now()
-    where id=p_booking_id and driver_id=auth.uid() and status='assigned'
+    set status='completed',updated_at=now()
+    where id=p_booking_id and driver_id=auth.uid() and status='assigned';
+  if not found then raise exception 'Only the assigned driver can complete an assigned ride'; end if;
+end $;
+
+create or replace function public.fr_phase13d_driver_confirm_cash(p_booking_id uuid)
+returns void language plpgsql security definer set search_path=public,auth
+as $
+begin
+  if auth.uid() is null then raise exception 'Authentication required'; end if;
+  update public.fr_phase13d_ers_rrs_bookings
+    set payment_status='cash_received',cash_received_at=now(),updated_at=now()
+    where id=p_booking_id and driver_id=auth.uid() and status='completed'
       and payment_method='cash' and payment_status='cash_pending';
-  if not found then raise exception 'Only the assigned driver can confirm pending cash'; end if;
-end $$;
+  if not found then raise exception 'Assigned driver can confirm cash only after ride completion'; end if;
+end $;
 
 create or replace function public.fr_phase13d_list_ers_rrs_bookings()
 returns setof public.fr_phase13d_ers_rrs_bookings
@@ -86,11 +97,13 @@ $$;
 
 revoke all on function public.fr_phase13d_create_ers_rrs_booking(text,text,text,numeric) from public,anon;
 revoke all on function public.fr_phase13d_assign_ers_rrs_booking(uuid,uuid) from public,anon;
+revoke all on function public.fr_phase13d_driver_complete_ers_rrs_ride(uuid) from public,anon;
 revoke all on function public.fr_phase13d_driver_confirm_cash(uuid) from public,anon;
 revoke all on function public.fr_phase13d_list_ers_rrs_bookings() from public,anon;
 revoke all on function public.fr_phase13d_get_my_ers_rrs_bookings() from public,anon;
 grant execute on function public.fr_phase13d_create_ers_rrs_booking(text,text,text,numeric) to authenticated;
 grant execute on function public.fr_phase13d_assign_ers_rrs_booking(uuid,uuid) to authenticated;
+grant execute on function public.fr_phase13d_driver_complete_ers_rrs_ride(uuid) to authenticated;
 grant execute on function public.fr_phase13d_driver_confirm_cash(uuid) to authenticated;
 grant execute on function public.fr_phase13d_list_ers_rrs_bookings() to authenticated;
 grant execute on function public.fr_phase13d_get_my_ers_rrs_bookings() to authenticated;
