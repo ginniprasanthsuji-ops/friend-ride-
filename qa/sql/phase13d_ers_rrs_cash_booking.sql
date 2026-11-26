@@ -29,6 +29,19 @@ alter table public.fr_phase13d_ers_rrs_bookings add column if not exists departi
 alter table public.fr_phase13d_ers_rrs_bookings add column if not exists guest_driver_name text;
 alter table public.fr_phase13d_ers_rrs_bookings add column if not exists guest_driver_phone text;
 alter table public.fr_phase13d_ers_rrs_bookings add column if not exists guest_bike_details text;
+alter table public.fr_phase13d_ers_rrs_bookings add column if not exists guest_driver_photo_path text;
+
+-- Private RRS guest-driver photo storage; admin-only access.
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
+values ('fr-rrs-guest-driver-photos','fr-rrs-guest-driver-photos',false,5242880,array['image/jpeg','image/png','image/webp'])
+on conflict (id) do update set public=false,file_size_limit=5242880,allowed_mime_types=array['image/jpeg','image/png','image/webp'];
+
+ drop policy if exists fr_rrs_guest_photo_admin_select on storage.objects;
+ drop policy if exists fr_rrs_guest_photo_admin_insert on storage.objects;
+ drop policy if exists fr_rrs_guest_photo_admin_delete on storage.objects;
+create policy fr_rrs_guest_photo_admin_select on storage.objects for select to authenticated using (bucket_id='fr-rrs-guest-driver-photos' and public.is_friend_ride_admin());
+create policy fr_rrs_guest_photo_admin_insert on storage.objects for insert to authenticated with check (bucket_id='fr-rrs-guest-driver-photos' and public.is_friend_ride_admin());
+create policy fr_rrs_guest_photo_admin_delete on storage.objects for delete to authenticated using (bucket_id='fr-rrs-guest-driver-photos' and public.is_friend_ride_admin());
 
 alter table public.fr_phase13d_ers_rrs_bookings enable row level security;
 revoke all on public.fr_phase13d_ers_rrs_bookings from anon, authenticated;
@@ -79,16 +92,18 @@ end $$;
 
 -- RRS ONLY: admin records an unregistered/guest bike driver; no auth UUID/profile/KYC lookup.
 create or replace function public.fr_phase13e_assign_rrs_guest_driver(
-  p_booking_id uuid,p_guest_driver_name text,p_guest_driver_phone text,p_guest_bike_details text
+  p_booking_id uuid,p_guest_driver_name text,p_guest_driver_phone text,p_guest_bike_details text,p_guest_driver_photo_path text
 ) returns void language plpgsql security definer set search_path=public,auth
 as $$
 begin
   if auth.uid() is null or not public.is_friend_ride_admin() then raise exception 'Admin access required'; end if;
   if length(trim(coalesce(p_guest_driver_name,'')))<2 or length(trim(coalesce(p_guest_driver_phone,'')))<7
-     or length(trim(coalesce(p_guest_bike_details,'')))<2 then raise exception 'Guest name, phone, and bike details are required'; end if;
+     or length(trim(coalesce(p_guest_bike_details,'')))<2 or length(trim(coalesce(p_guest_driver_photo_path,'')))<5 then raise exception 'Guest name, phone, bike details, and photo are required'; end if;
+  if p_guest_driver_photo_path not like p_booking_id::text||'/%' then raise exception 'Photo path must be scoped to this RRS booking'; end if;
+  if not exists (select 1 from storage.objects o where o.bucket_id='fr-rrs-guest-driver-photos' and o.name=p_guest_driver_photo_path) then raise exception 'Uploaded guest driver photo not found in private bucket'; end if;
   update public.fr_phase13d_ers_rrs_bookings
     set guest_driver_name=trim(p_guest_driver_name),guest_driver_phone=trim(p_guest_driver_phone),
-        guest_bike_details=trim(p_guest_bike_details),status='assigned',updated_at=now()
+        guest_bike_details=trim(p_guest_bike_details),guest_driver_photo_path=p_guest_driver_photo_path,status='assigned',updated_at=now()
     where id=p_booking_id and ride_kind='RRS' and status='pending' and driver_id is null
       and guest_driver_name is null;
   if not found then raise exception 'RRS booking unavailable, wrong ride type, or already assigned'; end if;
@@ -153,7 +168,7 @@ order by created_at desc limit 100 $$;
 
 revoke all on function public.fr_phase13d_create_ers_rrs_booking(text,text,text,numeric,timestamp) from public,anon;
 revoke all on function public.fr_phase13d_assign_ers_rrs_booking(uuid,uuid) from public,anon;
-revoke all on function public.fr_phase13e_assign_rrs_guest_driver(uuid,text,text,text) from public,anon;
+revoke all on function public.fr_phase13e_assign_rrs_guest_driver(uuid,text,text,text,text) from public,anon;
 revoke all on function public.fr_phase13d_driver_complete_ers_rrs_ride(uuid) from public,anon;
 revoke all on function public.fr_phase13d_driver_confirm_cash(uuid) from public,anon;
 revoke all on function public.fr_phase13e_admin_complete_rrs_guest_cash(uuid) from public,anon;
@@ -162,7 +177,7 @@ revoke all on function public.fr_phase13d_get_my_ers_rrs_bookings() from public,
 revoke all on function public.fr_phase13d_cancel_ers_rrs_booking(uuid) from public,anon;
 grant execute on function public.fr_phase13d_create_ers_rrs_booking(text,text,text,numeric,timestamp) to authenticated;
 grant execute on function public.fr_phase13d_assign_ers_rrs_booking(uuid,uuid) to authenticated;
-grant execute on function public.fr_phase13e_assign_rrs_guest_driver(uuid,text,text,text) to authenticated;
+grant execute on function public.fr_phase13e_assign_rrs_guest_driver(uuid,text,text,text,text) to authenticated;
 grant execute on function public.fr_phase13d_driver_complete_ers_rrs_ride(uuid) to authenticated;
 grant execute on function public.fr_phase13d_driver_confirm_cash(uuid) to authenticated;
 grant execute on function public.fr_phase13e_admin_complete_rrs_guest_cash(uuid) to authenticated;
