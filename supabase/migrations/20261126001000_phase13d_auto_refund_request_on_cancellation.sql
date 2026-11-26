@@ -108,3 +108,13 @@ begin
 end; $function$;
 
 -- Keep the live QA authorization grants intact; do not grant PUBLIC/anon execution.
+
+-- Explicit RPC execution permissions.
+revoke execute on function public.fr_road_ride_cancel_booking(uuid) from public, anon;
+revoke execute on function public.fr_road_ride_driver_cancel(uuid) from public, anon;
+revoke execute on function public.fr_shared_ride_cancel_booking(uuid) from public, anon;
+revoke execute on function public.fr_shared_ride_driver_cancel(uuid) from public, anon;
+grant execute on function public.fr_road_ride_cancel_booking(uuid) to authenticated, service_role;
+grant execute on function public.fr_road_ride_driver_cancel(uuid) to authenticated, service_role;
+grant execute on function public.fr_shared_ride_cancel_booking(uuid) to authenticated, service_role;
+grant execute on function public.fr_shared_ride_driver_cancel(uuid) to authenticated, service_role;
