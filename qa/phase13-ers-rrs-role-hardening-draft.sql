@@ -8,6 +8,14 @@
 
 begin;
 
+-- Remove unused anon writes on rides/bookings/events and direct guest-profile writes.
+-- Guest-profile writes remain available only through the validated definer RPC below.
+drop policy if exists rr_guest_profile_insert_own on public.fr_road_ride_guest_profiles;
+drop policy if exists rr_guest_profile_update_own on public.fr_road_ride_guest_profiles;
+revoke all privileges on table public.fr_road_rides,public.fr_road_ride_bookings,public.fr_road_ride_events from anon,authenticated;
+revoke all privileges on table public.fr_road_ride_guest_profiles from anon,authenticated;
+grant select on table public.fr_road_rides,public.fr_road_ride_bookings,public.fr_road_ride_events,public.fr_road_ride_guest_profiles to authenticated;
+
 create or replace function public.fr_road_ride_create(
   p_from_label text,
   p_to_label text,
@@ -240,6 +248,7 @@ begin
     raise exception 'Name and bike registration are required';
   end if;
   if p_driver_photo_path is null or (storage.foldername(p_driver_photo_path))[1]<>v_uid::text then raise exception 'Invalid private photo path'; end if;
+  if not exists(select 1 from storage.objects o where o.bucket_id='road-ride-driver-photos' and o.name=p_driver_photo_path) then raise exception 'Uploaded driver photo not found'; end if;
   insert into public.fr_road_ride_guest_profiles(driver_id,driver_phone,driver_photo_path,bike_registration_number,driver_display_name)
   values(v_uid,trim(p_driver_phone),p_driver_photo_path,upper(trim(p_bike_registration_number)),trim(p_driver_display_name))
   on conflict(driver_id) do update set driver_phone=excluded.driver_phone,driver_photo_path=excluded.driver_photo_path,
@@ -248,6 +257,10 @@ begin
 end;
 $function$;
 
+revoke all on function public.fr_road_ride_is_driver(uuid) from public,anon;
+revoke all on function public.fr_road_ride_is_passenger(uuid) from public,anon;
+grant execute on function public.fr_road_ride_is_driver(uuid) to authenticated;
+grant execute on function public.fr_road_ride_is_passenger(uuid) to authenticated;
 revoke all on function public.fr_road_ride_create(text,text,numeric,timestamptz,timestamptz,text,double precision,double precision,double precision,double precision,numeric) from public,anon;
 revoke all on function public.fr_road_ride_book(uuid,text,text) from public,anon;
 revoke all on function public.fr_road_ride_confirm_booking(uuid) from public,anon;
