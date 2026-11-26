@@ -14,7 +14,7 @@ assert.ok(sql.includes("create policy fr_rrs_guest_photo_admin_select")&&sql.inc
 assert.ok(sql.includes("p_guest_driver_photo_path not like p_booking_id::text||\'/%\'")&&sql.includes("Uploaded guest driver photo not found in private bucket"),"Guest photo is booking-scoped and must exist in private storage");
 assert.ok(/ride_kind='RRS' and driver_id is null[\s\S]*guest_driver_name is not null/.test(sql),"Guest completion/cash path must be RRS-only");
 assert.ok(sql.includes("departing_time")&&sql.includes("p_departing_time")&&html.includes("p_departing_time:"),"Departing Time persisted and passed by UI");
-assert.ok(/status='completed'[s\S]*payment_method='cash'[s\S]*payment_status='cash_pending'/.test(sql),"ERS cash confirmation requires completion and pending cash");
+assert.ok(/status='completed'[\\s\\S]*payment_method='cash'[\\s\\S]*payment_status='cash_pending'/.test(sql),"ERS cash confirmation requires completion and pending cash");
 assert.equal(sql.split('as $$').length-1,9,"All nine RPC bodies must use dollar quoting");
 assert.equal(sql.split('$$;').length-1,9,"All nine RPC bodies must close");
 assert.ok(sql.includes("fr_phase13d_cancel_ers_rrs_booking(p_booking_id uuid)\nreturns void language plpgsql")&&sql.includes("end $$;"),"Cancellation RPC dollar quoting valid");
