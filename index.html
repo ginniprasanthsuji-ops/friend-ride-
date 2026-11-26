@@ -1128,13 +1128,13 @@ async function frLoadTrackingMarketOrders(){
   if(!data?.length){box.innerHTML='<div class="empty-state">Food / Shop orders ఇంకా లేవు.</div>';return;}
   const labels={quote_requested:'Partner quote కోసం వేచి ఉంది',quoted:'Price received — మీ approval అవసరం',accepted:'Order accepted',preparing:'Preparing',ready:'Ready for delivery',completed:'Delivered / Completed',rejected:'Order rejected',cancelled:'Cancelled'};
   const activeStatuses=['quote_requested','quoted','accepted','preparing','ready'];
-  box.innerHTML='<b>Food / Shop Orders</b>'+data.map(o=>{
+  box.innerHTML='<div class="row"><b>Food / Shop Orders</b><button class="btn light" onclick="frLoadTrackingMarketOrders()">↻ Refresh Orders</button></div>'+data.map(o=>{
    const status=String(o.status||'unknown').toLowerCase();
    const items=Array.isArray(o.items)?o.items:[];
    const itemText=items.map(i=>safe(i.item_name)+' × '+safe(i.quantity)).join(', ');
    const stage=labels[status]||safe(o.status||'Status unavailable');
    const isActive=activeStatuses.includes(status);
-   return '<div class="card" style="margin:9px 0;padding:12px"><div class="row"><b>'+safe(o.order_number||o.order_id||'Order')+'</b><span class="pill">'+stage+'</span></div><p>'+itemText+'</p><p>Delivery: '+safe(o.delivery_address||'Address unavailable')+'</p><small>'+ (isActive?'Live order status is read from FRIEND RIDE backend.':'Latest backend order status.')+'</small></div>';
+   return '<div class="card" style="margin:9px 0;padding:12px"><div class="row"><b>'+safe(o.order_number||o.order_id||'Order')+'</b><span class="pill">'+stage+'</span></div><p>'+itemText+'</p><p>Delivery: '+safe(o.delivery_address||'Address unavailable')+'</p><small>'+ (isActive?'Order status is read from FRIEND RIDE backend when refreshed.':'Latest backend order status.')+'</small></div>';
   }).join('');
  }catch(e){box.innerHTML='<div class="notice">Food / Shop tracking load కాలేదు: '+safe(e.message||e)+'</div>';}
 }
