@@ -65,32 +65,3 @@ test('draft explicitly documents manual UPI confirmation and not provider settle
   assert.match(sql, /NOT Razorpay\/provider settlement/i);
   assert.match(sql, /No SQL has been applied/i);
 });
-/);
-  assert.match(sql, /v_pay\.status<>'pending' or v_pay\.expires_at<=now\(\)/);
-});
-
-test('driver payment confirmation requires assigned approved driver and submitted transaction', () => {
-  assert.match(sql, /r\.driver_id=auth\.uid\(\) and r\.status='completed'/);
-  assert.match(sql, /v_pay\.status<>'awaiting_driver_confirmation' or v_pay\.transaction_id is null/);
-  assert.match(sql, /set status='success',confirmed_at=now\(\)/);
-});
-
-test('payment state RPC authorizes only ride participants and expires pending QR sessions', () => {
-  assert.match(sql, /v_ride\.customer_id<>auth\.uid\(\) and v_ride\.driver_id<>auth\.uid\(\)/);
-  assert.match(sql, /v_pay\.status='pending' and v_pay\.expires_at<=now\(\)/);
-  assert.match(sql, /set status='expired'/);
-});
-
-test('UTR uniqueness is case-insensitive and all six RPCs are authenticated-only', () => {
-  assert.match(sql, /unique index[^;]+lower\(transaction_id\)/i);
-  for (const fn of ['fr_driver_save_payment_qr','fr_customer_create_ride_payment','fr_get_ride_payment_state','fr_customer_submit_ride_transaction','fr_driver_confirm_ride_payment','get_ride_payment_details_v1']) {
-    assert.match(sql, new RegExp('grant execute on function public\\.' + fn + '\\('));
-    assert.match(sql, new RegExp('revoke all on function public\\.' + fn + '\\('));
-  }
-});
-
-test('draft explicitly documents manual UPI confirmation and not provider settlement', () => {
-  assert.match(sql, /Manual-UPI QR payment backend draft/i);
-  assert.match(sql, /NOT Razorpay\/provider settlement/i);
-  assert.match(sql, /No SQL has been applied/i);
-});
