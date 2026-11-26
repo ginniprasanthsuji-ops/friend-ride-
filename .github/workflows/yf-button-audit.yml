@@ -1,0 +1,39 @@
+name: YF Button and JavaScript Audit
+on:
+  push:
+    branches: [yf-test-1-to-15]
+  pull_request:
+    branches: [yf-test-1-to-15]
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check inline JavaScript syntax and button targets
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const app = fs.readFileSync('index.html', 'utf8');
+          const qa = fs.readFileSync('test.html', 'utf8');
+          function checkScripts(label, html) {
+            const scripts = [...html.matchAll(/<script(?![^>]*\\bsrc=)[^>]*>([\\s\\S]*?)<\\/script>/gi)];
+            let failed = 0;
+            scripts.forEach((m, i) => {
+              try { new vm.Script(m[1], {filename: label + '-inline-' + (i+1)}); }
+              catch (e) { failed++; console.error(label + ' script ' + (i+1) + ': ' + e.message); }
+            });
+            console.log(label + ': ' + (scripts.length-failed) + '/' + scripts.length + ' inline scripts syntax PASS');
+            if (failed) process.exitCode = 1;
+          }
+          checkScripts('app', app);
+          checkScripts('qa-page', qa);
+          const handlers = [...app.matchAll(/\\bonclick\\s*=\\s*(['"])(.*?)\\1/gi)].map(m=>m[2]);
+          const targets = [...new Set(handlers.map(h=>h.match(/^\\s*([A-Za-z_$][\\w$]*)\\s*\\(/)?.[1]).filter(n=>n&&n!=='if'))];
+          const missing = targets.filter(n=>!new RegExp('function\\\\s+'+n+'\\\\s*\\\\(').test(app)&&!new RegExp('window\\\\.'+n+'\\\\s*=').test(app)&&!new RegExp('(?:const|let|var)\\\\s+'+n+'\\\\s*=').test(app));
+          console.log('Buttons with inline handlers: '+handlers.length+'; unique handler targets: '+targets.length+'; missing: '+missing.length);
+          if(missing.length){console.error(missing.join(', '));process.exitCode=1;}
+          NODE
