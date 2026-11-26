@@ -139,4 +139,7 @@ grant execute on function public.fr_phase13d_list_ers_rrs_bookings() to authenti
 grant execute on function public.fr_phase13d_get_my_ers_rrs_bookings() to authenticated;
 grant execute on function public.fr_phase13d_cancel_ers_rrs_booking(uuid) to authenticated;
 
+-- Refresh PostgREST's schema cache so the no-argument booking-list RPC is discoverable.
+notify pgrst, 'reload schema';
+
 commit;
