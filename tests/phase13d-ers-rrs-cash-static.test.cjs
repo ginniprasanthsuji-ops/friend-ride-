@@ -9,7 +9,7 @@ assert.ok(sql.includes("p.role='driver'")&&sql.includes("driver_approval_status,
 assert.ok(sql.includes("('driving_license'),('aadhaar'),('vehicle_rc')")&&sql.includes("verification_status,''))='verified'"),"Assignment requires all three verified KYC documents");
 assert.equal((sql.match(/as \$\$\s*(?:begin|declare)/g)||[]).length,4,"All PL/pgSQL functions must use valid dollar quoting");
 assert.equal((sql.match(/end \$\$;/g)||[]).length,4,"Function bodies must close with dollar quotes");
-assert.ok(sql.includes("fr_phase13d_cancel_ers_rrs_booking(p_booking_id uuid)\nreturns void language plpgsql")&&sql.includes("end $;"),"Cancellation RPC must use correct dollar quoting");
+assert.ok(sql.includes("fr_phase13d_cancel_ers_rrs_booking(p_booking_id uuid)\nreturns void language plpgsql")&&sql.includes("end $$;"),"Cancellation RPC must use correct dollar quoting");
 assert.ok(!/as \$\s*(?:begin|declare)/.test(sql),"Malformed function dollar delimiter");
 assert.ok(sql.includes("status='pending' and driver_id is null")&&sql.includes("customer_id=auth.uid() or public.is_friend_ride_admin()"),"Cancellation is limited to customer/admin and pending unassigned bookings");
 console.log("Phase 13D ERS/RRS cash-only static checks PASS");
