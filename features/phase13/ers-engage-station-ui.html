@@ -11,7 +11,7 @@ main{max-width:760px;margin:auto;padding:14px}.card{background:#fff;border:1px s
 label{font-weight:700;font-size:13px;display:block;margin:10px 0 5px}input,select{width:100%;padding:12px;border:1px solid #d9cde9;border-radius:12px;background:#fff;color:var(--ink)}
 .filters{display:flex;gap:8px;flex-wrap:wrap}.filter{border:1px solid #d8c9ef;background:#fff;border-radius:999px;padding:9px 14px;color:var(--p);font-weight:700}.filter.active{background:var(--p);color:#fff}
 .vehicle{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:15px;padding:12px;margin:10px 0}.vehicle .emoji{font-size:32px}.vehicle .info{flex:1}.vehicle .fare{font-weight:900;color:var(--p)}.vehicle small{display:block;color:var(--muted)}.vehicle button{background:#fff;border:1px solid var(--p);color:var(--p);font-weight:800;border-radius:10px;padding:9px 12px}
-.payrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pay{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff;font-weight:800}.pay.selected{border:2px solid var(--p);background:#f4eaff}
+.payrow{display:grid;grid-template-columns:1fr;gap:10px}.pay{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff;font-weight:800}.pay.selected{border:2px solid var(--p);background:#f4eaff}
 .primary{width:100%;background:linear-gradient(110deg,var(--p),var(--p2));border:0;color:#fff;padding:14px;border-radius:14px;font-weight:900;font-size:16px;margin-top:12px}.notice{font-size:12px;background:#fff5df;padding:11px;border-radius:12px;color:#75520b}
 .hidden{display:none}.count{color:#14884e;font-weight:900}.summary{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}
 </style>
@@ -26,7 +26,7 @@ label{font-weight:700;font-size:13px;display:block;margin:10px 0 5px}input,selec
 <section class="card"><h2>🟢 Total Available Vehicles <span id="count">4</span></h2><div class="filters">
 <button class="filter active" data-filter="all">All</button><button class="filter" data-filter="bike">🏍 Bike</button><button class="filter" data-filter="car">🚗 Car</button><button class="filter" data-filter="auto">🛺 Auto</button>
 </div><div id="vehicles"></div><p class="notice">Demo vehicle listings only. Actual live availability, driver details, fare and ETA must come from verified backend records.</p></section>
-<section class="card"><h2>💳 Payment Method</h2><div class="payrow"><button class="pay selected" data-pay="Cash">💵 Cash</button><button class="pay" data-pay="UPI">📱 UPI</button></div></section>
+<section class="card"><h2>💵 Payment Method</h2><div class="payrow"><div class="pay selected" aria-label="Cash only payment">💵 Cash Only</div></div><p class="notice">ERS rides accept cash only. Online, UPI, and QR payment options are disabled.</p></section>
 <section class="card"><h2>Ride Confirmation</h2><div id="summary"><p>Select a vehicle to review your ride.</p></div><button class="primary" id="confirm" disabled>Confirm Engage Ride</button><p id="msg" aria-live="polite"></p></section>
 </main>
 <script>
@@ -35,13 +35,12 @@ const demo=[
 {id:2,type:'car',icon:'🚗',name:'Demo Driver B',rating:'4.9',vehicle:'Car · XX00 CD 5678',distance:'1.8 km',eta:'5 min',fare:220},
 {id:3,type:'auto',icon:'🛺',name:'Demo Driver C',rating:'4.7',vehicle:'Auto · XX00 TX 9876',distance:'2.4 km',eta:'6 min',fare:120},
 {id:4,type:'bike',icon:'🏍',name:'Demo Driver D',rating:'4.8',vehicle:'Bike · XX00 EF 5566',distance:'2.6 km',eta:'7 min',fare:70}
-];let filter='all',selected=null,payment='Cash';
+];let filter='all',selected=null;const payment='Cash';
 const list=document.getElementById('vehicles'),count=document.getElementById('count');
 function render(){const rows=demo.filter(v=>filter==='all'||v.type===filter);count.textContent=rows.length;list.innerHTML=rows.map(v=>`<div class="vehicle"><span class="emoji">${v.icon}</span><div class="info"><b>${v.name} ⭐ ${v.rating}</b><small>${v.vehicle}</small><small>🟢 ${v.distance} · ETA ${v.eta}</small></div><div><div class="fare">₹${v.fare}</div><button onclick="choose(${v.id})">${selected?.id===v.id?'Selected':'Choose'}</button></div></div>`).join('')}
 window.choose=id=>{selected=demo.find(v=>v.id===id);render();updateSummary()};
 function updateSummary(){const s=document.getElementById('summary'),btn=document.getElementById('confirm');if(!selected){s.innerHTML='<p>Select a vehicle to review your ride.</p>';btn.disabled=true;return}const dest=document.getElementById('dest').value.trim()||'Destination not entered';s.innerHTML=`<div class="summary"><span>Vehicle</span><b>${selected.type.toUpperCase()}</b></div><div class="summary"><span>Driver (demo)</span><b>${selected.name}</b></div><div class="summary"><span>Pickup</span><b>${document.getElementById('pickup').value}</b></div><div class="summary"><span>Destination</span><b>${dest}</b></div><div class="summary"><span>ETA</span><b>${selected.eta}</b></div><div class="summary"><span>Fare estimate</span><b>₹${selected.fare}</b></div><div class="summary"><span>Payment</span><b>${payment}</b></div>`;btn.disabled=false}
 document.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));render()});
-document.querySelectorAll('.pay').forEach(b=>b.onclick=()=>{payment=b.dataset.pay;document.querySelectorAll('.pay').forEach(x=>x.classList.toggle('selected',x===b));updateSummary()});
 document.getElementById('dest').oninput=updateSummary;document.getElementById('pickup').oninput=updateSummary;
 document.getElementById('confirm').onclick=()=>{document.getElementById('msg').textContent='Prototype only — ride request is not sent. Backend integration is pending.'};
 render();
