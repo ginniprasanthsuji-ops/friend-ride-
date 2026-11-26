@@ -28,3 +28,8 @@ assert.ok(sql.includes("where auth.uid() is not null and (customer_id=auth.uid()
 assert.ok(sql.includes("where auth.uid() is not null and public.is_friend_ride_admin()"),"Admin list RPC requires admin authorization");
 for(const fn of ["create_ers_rrs_booking","assign_ers_rrs_booking","driver_complete_ers_rrs_ride","driver_confirm_cash","list_ers_rrs_bookings","get_my_ers_rrs_bookings","cancel_ers_rrs_booking"])assert.ok(sql.includes("revoke all on function public.fr_phase13d_"+fn),"Anon/public execute revoked: "+fn);
 console.log("Phase 13D ERS/RRS authorization invariant checks PASS");
+// Main app Phase 13D lifecycle integration assertions.
+const app=fs.readFileSync('index.html','utf8');
+for(const s of ['fr13dCreate()','fr13dRefresh()','fr13dAssign()','fr13dAdminList()','fr13dComplete()','fr13dCash()','fr13dCancel(id)','fr_phase13d_create_ers_rrs_booking','fr_phase13d_assign_ers_rrs_booking','fr_phase13d_driver_complete_ers_rrs_ride','fr_phase13d_driver_confirm_cash','fr_phase13d_cancel_ers_rrs_booking','fr_phase13d_get_my_ers_rrs_bookings','fr_phase13d_list_ers_rrs_bookings','fr13dMyBookings','fr13dAdminBookings','fr13dDriverBookingId','PAYMENT: CASH ONLY'])assert.ok(app.includes(s), 'Main app integration missing: '+s);
+assert.ok(app.includes('frSubEsc(x.pickup_text)')&&app.includes('frSubEsc(x.drop_text)')&&app.includes('frSubEsc(x.driver_id||'), 'Rendered booking fields must be escaped');
+console.log('Phase 13D main-app integration assertions PASS');
