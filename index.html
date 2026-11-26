@@ -243,6 +243,63 @@ main{max-width:920px;padding:10px 16px 22px}.home-banner-wrap{margin:5px 0 17px}
 body{padding-bottom:105px}
 </style>
 <link rel="stylesheet" href="./learn-teach.css">
+
+<style id="friendride-selected-brand-ui">
+/* Selected FRIEND RIDE design: Navy Blue + Orange + White. Additive visual-only override. */
+:root{--purple:#09245c;--purple2:#123b86;--navy:#071b49;--orange:#f45b16;--bg:#f4f7fc;--ink:#101d39;--muted:#63718b;--line:#dce4f2;--white:#fff;--gold:#ff9b31;--green:#13875b}
+body{background:linear-gradient(180deg,#f5f8ff 0%,#edf2fa 100%);color:#101d39}
+.topbar,.home-topbar{background:linear-gradient(115deg,#071b49,#123b86 70%,#f45b16);border-bottom:1px solid #ffffff30;box-shadow:0 7px 20px #09245c25}
+.iconbtn{background:#ffffff20;color:#fff;border:1px solid #ffffff25}
+.logo,.fr-launcher-logo{background:linear-gradient(140deg,#09245c,#f45b16);color:white;border:2px solid #fff;box-shadow:0 3px 10px #061b4933}
+.card{background:#fff;border:1px solid #dce5f3;box-shadow:0 7px 20px #09245c0b}
+.hero,.drawer-head{background:radial-gradient(circle at 88% 12%,#ff9c54 0,transparent 26%),linear-gradient(120deg,#071b49,#123b86 70%,#f45b16);color:#fff}
+.hero p,.hero .eyebrow{color:#e9f1ff}
+.tile,.home-pro-service,.home-more-grid button,.feature-box,.offer-card{background:linear-gradient(145deg,#fff,#f6f9ff);border-color:#dce5f3;color:#101d39;box-shadow:0 5px 15px #09245c0a}
+.tile .emoji{background:linear-gradient(145deg,#e7efff,#fff0e5)}
+.btn,.btn:not(.purple):not(.dark):not(.light):not(.red):not(.green){background:linear-gradient(100deg,#f45b16,#ff9b31);color:#fff;box-shadow:0 6px 15px #f45b1625}
+.btn.purple{background:linear-gradient(100deg,#09245c,#17459a);color:#fff;box-shadow:0 6px 15px #09245c25}
+.btn.dark{background:#071b49;color:#fff}.btn.light{background:#e9f0ff;color:#09245c}.btn.red{background:#fde9e7;color:#ad2b26}
+.field input,.field textarea,.field select,input,textarea,select{border-color:#d8e2f1;background:#fff;color:#101d39}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#f45b16;box-shadow:0 0 0 3px #f45b1618}
+.bottom,.premium-bottom{background:#fffdfefa;border-top:1px solid #dce5f3;box-shadow:0 -7px 22px #09245c0b}
+.bottom button,.premium-bottom button{color:#61708a}
+.bottom button.active,.premium-bottom button.active{color:#f45b16}
+.bottom button.active span,.premium-bottom button.active span{background:#fff0e5}
+.menu-item:hover,.menu-item:active{background:linear-gradient(90deg,#eaf1ff,#fff2e8);color:#f45b16}
+.status{background:#fff0e5;color:#9c470d}.status.ok{background:#e1f5ec;color:#116d49}
+.notice{background:#eef4ff;color:#25477d}
+.role.active{border-color:#f45b16;background:#fff4eb}
+.pill,.tag{background:#eaf1ff;color:#09245c}
+.kpi{background:linear-gradient(145deg,#fff,#eef4ff);border-color:#dce5f3}.kpi strong{color:#09245c}
+.fr-poster-ref{background:radial-gradient(circle at 85% 15%,#ffdb8a 0,transparent 27%),linear-gradient(120deg,#09245c,#f45b16)}
+.fr-poster-fast{background:radial-gradient(circle at 85% 15%,#fff1a5 0,transparent 27%),linear-gradient(120deg,#f45b16,#ff9b31)}
+.fr-poster-dots span:first-child{background:#f45b16}
+.fr-bank-quick a{color:inherit}
+#message.error{background:#fde9e7;color:#ad2b26}#message.good{background:#e1f5ec;color:#116d49}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto;transition:none!important;animation:none!important}}
+</style>
+
+<style id="friendride-native-motion">
+/* App-like interaction polish: native-style transitions, touch feedback and safe-area layout. */
+:root{--fr-motion-fast:160ms;--fr-motion:240ms;--fr-motion-slow:360ms}
+html{scroll-behavior:smooth;scroll-padding-top:78px}
+body{padding-top:0;padding-bottom:calc(105px + env(safe-area-inset-bottom));overscroll-behavior-y:contain;-webkit-tap-highlight-color:transparent}
+main{padding:12px 13px calc(20px + env(safe-area-inset-bottom))}
+.page{display:none;opacity:0;transform:translateX(10px)}
+.page.active{display:block;animation:frPageEnter var(--fr-motion) cubic-bezier(.2,.7,.2,1) both}
+@keyframes frPageEnter{from{opacity:0;transform:translateX(12px) scale(.992)}to{opacity:1;transform:translateX(0) scale(1)}}
+button,.tile,.home-pro-service,.market-store,.market-product,.feature-box,.listrow,.card{transition:transform var(--fr-motion-fast) ease,box-shadow var(--fr-motion-fast) ease,border-color var(--fr-motion-fast) ease,background-color var(--fr-motion-fast) ease}
+button:active,.tile:active,.home-pro-service:active,.market-store:active,.market-product:active{transform:scale(.975)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f45b1670;outline-offset:2px}
+.topbar{padding-top:calc(11px + env(safe-area-inset-top));backdrop-filter:blur(16px)}
+.bottom,.premium-bottom{padding-bottom:calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(18px)}
+.modal.show .modalbox{animation:frSheetEnter 260ms cubic-bezier(.2,.7,.2,1) both}
+@keyframes frSheetEnter{from{transform:translateY(30px);opacity:.6}to{transform:translateY(0);opacity:1}}
+.drawer-backdrop.show .drawer{animation:frDrawerEnter 240ms ease both}
+@keyframes frDrawerEnter{from{transform:translateX(-20px);opacity:.8}to{transform:translateX(0);opacity:1}}
+.status,.pill,.tag{transition:background-color 160ms ease,color 160ms ease}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.page.active,.modal.show .modalbox,.drawer-backdrop.show .drawer{animation:none!important}button,.tile,.home-pro-service,.market-store,.market-product,.feature-box,.listrow,.card{transition:none!important}}
+</style>
 </head>
 <body>
 <div id="roleLauncher" class="fr-role-launcher hide" aria-label="Choose FRIEND RIDE account type">
