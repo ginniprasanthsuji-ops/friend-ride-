@@ -254,3 +254,16 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - GitHub Actions after the KYC handler fix: browser regression **29/29 PASS**, browser E2E **29/29 PASS**, TypeScript/core typecheck PASS, unit tests **5/5 PASS**, core tests **2/2 PASS**, Pages build/deploy PASS.
 - The earlier 28/29 failure was a test assertion expecting the bucket name inside the handler function text. The handler was corrected to satisfy that assertion; the next CI run passed 29/29.
 - These are browser/source wiring checks. They do **not** prove an authenticated driver has uploaded real documents or that an Admin has reviewed them. Those remain live staging tests.
+
+
+## Phase 13D cancellation/refund QA progress — 2026-11-26
+
+- QA-only branch: `arjuna-x/phase-13-feature-audit`; production/Main not modified.
+- Road and Shared Ride passenger/driver cancellation RPCs verified in QA Supabase.
+- Cancellation flow automatically creates refund tracking requests (Road: payment check required; Shared: pending only when payment data supports it; otherwise payment check required). This is request tracking, not an automatic transfer.
+- Admin refund queue RPC and mark-refunded RPC exist. Verified grants: `anon` cannot execute; `authenticated` can execute (admin checks are enforced inside the functions).
+- Admin Dashboard Refund Queue UI added to `index.html`; it calls both protected RPCs and requires an entered refund reference plus confirmation before marking refunded.
+- Playwright regression test added for presence/wiring of refund queue UI.
+- Current QA refund request table has zero rows, so no seeded workflow records were altered during this audit.
+- Latest test commit: `8c666bea63852613640c98646c9382d2a4fe97a2`. Commit status API currently returns no CI statuses; browser test execution remains UNVERIFIED.
+- Release gate remains BLOCKED until browser execution, controlled cancellation/refund workflow, live device tests, and release packaging evidence are completed.
