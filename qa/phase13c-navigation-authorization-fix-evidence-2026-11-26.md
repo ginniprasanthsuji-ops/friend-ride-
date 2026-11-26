@@ -32,9 +32,10 @@ Failure logs showed route-authorization tests where `showPage` returned from a r
 ## Checks in this continuation
 - In-memory source/test static assertions: **7/7 passed**.
 - New Node test file syntax compile (V8 compile-only check): **passed**.
-- Node test runner for the new test: **not yet executed**.
-- Playwright after this fix: **pending CI**, no PASS claimed.
+- GitHub Actions Node unit/static test step: **passed**, including the new navigation propagation test.
+- Playwright after this fix: **in progress** in run `45743043471`; no PASS claimed.
 - QA SQL: read-only inventory/security query re-executed successfully; module inventory unchanged.
+- Payment/QR storage bucket `provider-payment-qr` (and queried aliases): **not found**; matching storage policies: none. Catalogue/order tables: none found by the QA inventory query.
 - No SQL migrations applied.
 
 ## Live QA inventory
@@ -50,3 +51,8 @@ Failure logs showed route-authorization tests where `showPage` returned from a r
 
 ## Release
 **BLOCKED.** Browser regression previously failed and needs rerun after this fix; the newly added test is not yet confirmed by Node runner. Module backend gaps, admin runtime testing, and role checks remain. QA branch only; production untouched; estimates/graph frozen.
+
+
+## Current CI run
+- Run `45743043471` (`run #1229`, QA branch commit `ebc787e63e9e17ad0f5843d13b2372354de9c721`): inline JS check, npm install, Node unit/static suite, Chromium installation, and local server steps completed successfully. Browser regression remains in progress at evidence update.
+- [Open GitHub Actions run](https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45743043471)
