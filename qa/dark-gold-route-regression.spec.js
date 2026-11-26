@@ -77,11 +77,11 @@ test.describe('FRIEND RIDE current V11.1 UI regression', () => {
 
   test('home service shortcuts preserve current protected navigation', async ({ page }) => {
     await expect(page.locator('#home .home-service-grid .home-service')).toHaveCount(2);
-    await page.locator('#home .home-service').filter({hasText:'Friend Mart'}).click();
+    await page.locator('#home .home-service-grid .home-service').filter({hasText:'Friend Mart'}).click();
     await expect(page.locator('#authModal')).toHaveClass(/show/);
     await expect(page.locator('#authTitle')).toHaveText('Customer Login');
     await page.locator('#authModal .close').click();
-    await page.locator('#home .home-service').filter({hasText:'Food Delivery'}).click();
+    await page.locator('#home .home-service-grid .home-service').filter({hasText:'Food Delivery'}).click();
     await expect(page.locator('#authModal')).toHaveClass(/show/);
   });
 
