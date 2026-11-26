@@ -56,18 +56,18 @@ end $$;
 
 create or replace function public.fr_phase13d_driver_complete_ers_rrs_ride(p_booking_id uuid)
 returns void language plpgsql security definer set search_path=public,auth
-as $
+as $$
 begin
   if auth.uid() is null then raise exception 'Authentication required'; end if;
   update public.fr_phase13d_ers_rrs_bookings
     set status='completed',updated_at=now()
     where id=p_booking_id and driver_id=auth.uid() and status='assigned';
   if not found then raise exception 'Only the assigned driver can complete an assigned ride'; end if;
-end $;
+end $$;
 
 create or replace function public.fr_phase13d_driver_confirm_cash(p_booking_id uuid)
 returns void language plpgsql security definer set search_path=public,auth
-as $
+as $$
 begin
   if auth.uid() is null then raise exception 'Authentication required'; end if;
   update public.fr_phase13d_ers_rrs_bookings
@@ -75,7 +75,7 @@ begin
     where id=p_booking_id and driver_id=auth.uid() and status='completed'
       and payment_method='cash' and payment_status='cash_pending';
   if not found then raise exception 'Assigned driver can confirm cash only after ride completion'; end if;
-end $;
+end $$;
 
 create or replace function public.fr_phase13d_list_ers_rrs_bookings()
 returns setof public.fr_phase13d_ers_rrs_bookings
