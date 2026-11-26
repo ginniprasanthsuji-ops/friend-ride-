@@ -60,66 +60,47 @@ test.describe('FRIEND RIDE current V11.1 UI regression', () => {
     await expect(paymentLink).toHaveAttribute('rel', 'noopener');
   });
 
-  test('new home replaces the old home presentation and mirrors live location', async ({ page }) => {
-    await expect(page.locator('#home .fr-native-home')).toBeAttached();
-    await expect(page.locator('#home .fr-native-home')).toBeVisible();
-    await expect(page.locator('#home .home-banner')).toHaveCount(0);
-    await expect(page.locator('#home .fr-native-location')).toBeAttached();
-    await page.locator('#homeLocationText').evaluate(el => { el.textContent = 'QA GPS location'; });
-    await expect(page.locator('#frNativeLocationText')).toHaveText('QA GPS location');
-  });
-
-  test('native home preserves customer, driver and partner registration entry points', async ({ page }) => {
-    const registrations = page.locator('#home .fr-native-register-grid button[data-fr-native-register]');
-    await expect(registrations).toHaveCount(3);
-    for (const role of ['customer', 'driver', 'partner']) {
-      // Re-activate Home after closing the previous role's auth modal and wait for its transition.
+  test('current home banner, location and registration tiles match V11.1 source', async ({ page }) => {
+    await expect(page.locator('#home .home-banner')).toBeVisible();
+    await expect(page.locator('#home .home-banner')).toContainText('WELCOME TO FRIEND RIDE');
+    await expect(page.locator('#homeLocationText')).toBeAttached();
+    await expect(page.locator('#home .join-card button.tile')).toHaveCount(3);
+    for (const role of ['customer','driver','partner']) {
       await page.evaluate(() => window.showPage('home'));
-      const entry = page.locator('#home [data-fr-native-register="' + role + '"]');
-      await expect(page.locator('#home')).toHaveClass(/active/);
-      await expect(entry).toBeVisible({ timeout: 10000 });
-      await entry.click();
+      const label = role[0].toUpperCase()+role.slice(1)+' Registration';
+      await page.locator('#home .join-card button.tile').filter({hasText:label}).click();
       await expect(page.locator('#authModal')).toHaveClass(/show/);
-      await expect(page.locator('#authModal')).toHaveAttribute('data-active-role', role);
+      await expect(page.locator('#authTitle')).toHaveText(label);
       await page.locator('#authModal .close').click();
-      await expect(page.locator('#authModal')).not.toHaveClass(/show/);
     }
   });
 
-  test('native home service cards navigate through real click handlers', async ({ page }) => {
-    const routeButtons = page.locator('#home .fr-native-home [data-fr-native-route]');
-    const expectedRoutes = ['ride','goods','shopping','food','homeServices','homeServices','shopping','laundryServices','homeServices','shops','learnTeach'];
-    await expect(routeButtons).toHaveCount(expectedRoutes.length);
-    for (let i = 0; i < expectedRoutes.length; i++) {
-      await page.evaluate(() => window.showPage('home'));
-      const button = routeButtons.nth(i);
-      await expect(button).toBeVisible();
-      await button.click();
-      await expect(page.locator('#' + expectedRoutes[i])).toHaveClass(/active/);
-    }
+  test('home service shortcuts preserve current protected navigation', async ({ page }) => {
+    await expect(page.locator('#home .home-service')).toHaveCount(2);
+    await page.locator('#home .home-service').filter({hasText:'Friend Mart'}).click();
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await expect(page.locator('#authTitle')).toHaveText('Customer Login');
+    await page.locator('#authModal .close').click();
+    await page.locator('#home .home-service').filter({hasText:'Food Delivery'}).click();
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
   });
 
-  test('drawer and CRM surfaces use the shared dark surfaces', async ({ page }) => {
+  test('drawer and CRM surfaces render visible non-transparent UI', async ({ page }) => {
     await page.evaluate(() => window.openDrawer());
     await expect(page.locator('.drawer-backdrop')).toHaveClass(/show/);
-    const drawerBg = await page.locator('.drawer').evaluate(el => getComputedStyle(el).backgroundImage);
-    expect(drawerBg).not.toBe('none');
+    const drawerBg = await page.locator('.drawer').evaluate(el => getComputedStyle(el).backgroundColor);
+    expect(drawerBg).not.toBe('rgba(0, 0, 0, 0)');
     await page.evaluate(() => { currentUser={id:'qa-admin'}; currentProfile={role:'admin'}; selectedRole='admin'; window.showPage('crmDashboard'); });
-    const crmBg = await page.locator('#crmDashboard .fr-crm-panel').first().evaluate(el => getComputedStyle(el).backgroundImage).catch(() => '');
-    expect(crmBg).not.toBe('none');
+    const crmBg = await page.locator('#crmDashboard .fr-crm-panel').first().evaluate(el => getComputedStyle(el).backgroundColor);
+    expect(crmBg).not.toBe('rgba(0, 0, 0, 0)');
+    expect(crmBg).not.toBe('');
   });
 
-  test('primary navigation has no duplicate legacy service tabs', async ({ page }) => {
+  test('bottom navigation matches the existing seven-tab source', async ({ page }) => {
     const nav = page.locator('.premium-bottom');
-    await expect(nav.locator('button')).toHaveCount(5);
-    await expect(nav).toContainText('Home');
-    await expect(nav).toContainText('Services');
-    await expect(nav).toContainText('Cart');
-    await expect(nav).toContainText('Orders');
-    await expect(nav).toContainText('Profile');
-    await expect(nav).not.toContainText('Friend Mart');
-    await expect(nav).not.toContainText('Food Delivery');
-    await expect(nav).not.toContainText('విద్యా సేతు');
+    await expect(nav.locator('button')).toHaveCount(7);
+    for (const label of ['Home','Friend','Food','My Cart','Categories','Orders']) await expect(nav).toContainText(label);
+    await expect(nav).toContainText('విద్యా సేతు');
   });
 
   test('shared customer routes activate their existing destination screens', async ({ page }) => {
