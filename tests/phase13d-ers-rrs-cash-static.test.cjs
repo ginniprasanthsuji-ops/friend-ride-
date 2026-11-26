@@ -30,7 +30,7 @@ for(const fn of ["create_ers_rrs_booking","assign_ers_rrs_booking","driver_compl
 console.log("Phase 13D ERS/RRS authorization invariant checks PASS");
 // Main app Phase 13D lifecycle integration assertions.
 const app=fs.readFileSync('index.html','utf8');
-for(const s of ['fr13dCreate()','fr13dRefresh()','fr13dAssign()','fr13dAdminList()','fr13dComplete()','fr13dCash()','fr13dCancel(id)','fr_phase13d_create_ers_rrs_booking','fr_phase13d_assign_ers_rrs_booking','fr_phase13d_driver_complete_ers_rrs_ride','fr_phase13d_driver_confirm_cash','fr_phase13d_cancel_ers_rrs_booking','fr_phase13d_get_my_ers_rrs_bookings','fr_phase13d_list_ers_rrs_bookings','fr13dMyBookings','fr13dAdminBookings','fr13dDriverBookingId','PAYMENT: CASH ONLY'])assert.ok(app.includes(s), 'Main app integration missing: '+s);
+for(const s of ['fr13dCreate()','fr13dRefresh()','fr13dAssign()','fr13dAdminList()','fr13dComplete()','fr13dCash()','fr13dCancel(id)','fr_phase13d_create_ers_rrs_booking','fr_phase13d_assign_ers_rrs_booking','fr_phase13d_driver_complete_ers_rrs_ride','fr_phase13d_driver_confirm_cash','fr_phase13d_cancel_ers_rrs_booking','fr_phase13d_get_my_ers_rrs_bookings_with_driver','fr_phase13d_list_ers_rrs_bookings_with_driver','fr13dMyBookings','fr13dAdminBookings','fr13dDriverBookingId','PAYMENT: CASH ONLY'])assert.ok(app.includes(s), 'Main app integration missing: '+s);
 assert.ok(app.includes('frSubEsc(x.pickup_text)')&&app.includes('frSubEsc(x.drop_text)')&&app.includes('frSubEsc(x.driver_id||'), 'Rendered booking fields must be escaped');
 console.log('Phase 13D main-app integration assertions PASS');
 
@@ -40,3 +40,9 @@ for(const s of ["status='reference_submitted'","admin_verified_by uuid reference
 assert.ok(subscriptionMigration.includes("p_action='approve' then 'activated'"),'Admin approval must activate only after review');
 assert.ok(subscriptionMigration.includes("p_action='reject' then 'rejected'"),'Admin rejection state must be preserved');
 console.log('Subscription migration drift/review invariants PASS');
+
+// Driver details display and scoped RPC assertions.
+const driverDetailsMigration=fs.readFileSync('supabase/migrations/202611260006_fr_phase13d_driver_details.sql','utf8');
+for(const s of ['fr_phase13d_get_my_ers_rrs_bookings_with_driver','fr_phase13d_list_ers_rrs_bookings_with_driver','p.full_name,p.phone,coalesce(p.vehicle_number,p.vehicle_registration)','b.customer_id=auth.uid() or b.driver_id=auth.uid()','public.is_friend_ride_admin()'])assert.ok(driverDetailsMigration.includes(s),'Driver details migration missing scoped field/access check: '+s);
+for(const s of ['Driver Name:','Driver Phone:','Vehicle Number:','x.driver_personal_name','x.driver_personal_number','x.driver_vehicle_number'])assert.ok(app.includes(s),'Assigned driver details UI missing: '+s);
+console.log('ERS/RRS assigned driver personal name/phone/vehicle display and scoped access checks PASS');
