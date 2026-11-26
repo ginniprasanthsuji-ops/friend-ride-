@@ -4,6 +4,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '30 2 * * *'
+
 jobs:
   typecheck-and-unit:
     runs-on: ubuntu-latest
@@ -12,6 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - run: npm install
       - run: npm run typecheck
       - run: npm run typecheck:core
@@ -26,13 +31,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - run: npm install
       - run: npx playwright install --with-deps chromium
-      - name: Start local app server
+      - name: Start local app server (Node.js)
         run: |
-          python3 -m http.server 4173 --directory . >/tmp/friend-ride-http.log 2>&1 &
-          echo $! >/tmp/friend-ride-http.pid
-          sleep 2
+          node -e 'const http=require("http"),fs=require("fs"),path=require("path");const root=process.cwd();const types={".html":"text/html",".js":"text/javascript",".css":"text/css",".json":"application/json",".webmanifest":"application/manifest+json",".png":"image/png",".svg":"image/svg+xml",".jpg":"image/jpeg",".jpeg":"image/jpeg",".webp":"image/webp",".ico":"image/x-icon"};http.createServer((req,res)=>{let pathname=decodeURIComponent(new URL(req.url,"http://localhost").pathname);if(pathname==="/")pathname="/index.html";const file=path.resolve(root,"."+pathname);if(!file.startsWith(root+path.sep)){res.writeHead(403);return res.end("Forbidden");}fs.readFile(file,(err,data)=>{if(err){res.writeHead(err.code==="ENOENT"?404:500);return res.end("Not found");}res.writeHead(200,{"Content-Type":types[path.extname(file)]||"application/octet-stream","Cache-Control":"no-store"});res.end(data);});}).listen(4173,"127.0.0.1");'
+          echo "Local app server started on 127.0.0.1:4173"
+      - name: Wait for local server
+        run: node -e 'const http=require("http");let n=0;const t=setInterval(()=>http.get("http://127.0.0.1:4173/",r=>{if(r.statusCode===200){clearInterval(t);process.exit(0)}if(++n>20){clearInterval(t);process.exit(1)}}).on("error",()=>{if(++n>20){clearInterval(t);process.exit(1)}}),500)'
       - name: Run browser regression suite
         env:
           FRIEND_RIDE_BASE_URL: http://127.0.0.1:4173
