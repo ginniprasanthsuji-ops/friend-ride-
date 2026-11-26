@@ -18,7 +18,7 @@ from priv
 union all
 select 'participant_contact_single_row_limit',
        case when exists(select 1 from f where proname='fr_road_ride_get_participant_contact'
-         and definition ~* 'order by b\.created_at desc limit 1')
+         and definition ~* 'order by b[.]created_at desc limit 1')
          then 'confirmed: driver-side contact query returns at most one passenger'
          else 'not detected' end
 union all
