@@ -33,3 +33,10 @@ const app=fs.readFileSync('index.html','utf8');
 for(const s of ['fr13dCreate()','fr13dRefresh()','fr13dAssign()','fr13dAdminList()','fr13dComplete()','fr13dCash()','fr13dCancel(id)','fr_phase13d_create_ers_rrs_booking','fr_phase13d_assign_ers_rrs_booking','fr_phase13d_driver_complete_ers_rrs_ride','fr_phase13d_driver_confirm_cash','fr_phase13d_cancel_ers_rrs_booking','fr_phase13d_get_my_ers_rrs_bookings','fr_phase13d_list_ers_rrs_bookings','fr13dMyBookings','fr13dAdminBookings','fr13dDriverBookingId','PAYMENT: CASH ONLY'])assert.ok(app.includes(s), 'Main app integration missing: '+s);
 assert.ok(app.includes('frSubEsc(x.pickup_text)')&&app.includes('frSubEsc(x.drop_text)')&&app.includes('frSubEsc(x.driver_id||'), 'Rendered booking fields must be escaped');
 console.log('Phase 13D main-app integration assertions PASS');
+
+// Subscription payment migration reconciliation regression checks.
+const subscriptionMigration=fs.readFileSync('supabase/migrations/202611260005_fr_subscription_migration_reconcile.sql','utf8');
+for(const s of ["status='reference_submitted'","admin_verified_by uuid references auth.users(id)","admin_verified_at timestamptz","status in ('pending_payment','reference_submitted','verified','rejected','activated')","public.fr_subscription_submit_payment_reference","public.fr_admin_subscription_review","where id=p_request_id and user_id=auth.uid() and status='pending_payment'","where id=p_request_id and status='reference_submitted'","notify pgrst, 'reload schema'"])assert.ok(subscriptionMigration.includes(s),'Subscription reconciliation migration missing: '+s);
+assert.ok(subscriptionMigration.includes("p_action='approve' then 'activated'"),'Admin approval must activate only after review');
+assert.ok(subscriptionMigration.includes("p_action='reject' then 'rejected'"),'Admin rejection state must be preserved');
+console.log('Subscription migration drift/review invariants PASS');
