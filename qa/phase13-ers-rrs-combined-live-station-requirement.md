@@ -14,7 +14,7 @@ Customer must see ERS and RRS ride/booking activity in one unified Live / Ongoin
 - Vehicle details from registered Driver profile.
 - Online/live availability and current status from backend.
 - Customer chooses a listed eligible vehicle/driver.
-- Payment choice Cash or UPI (persisted only when backend integration exists).
+- Payment choice Cash only (persisted only when backend integration exists).
 - ERS lifecycle: available/listed -> customer request -> driver accepted -> arriving/pickup -> ongoing -> completed/cancelled.
 
 ## RRS source
@@ -22,6 +22,7 @@ Customer must see ERS and RRS ride/booking activity in one unified Live / Ongoin
 - Guest profile/photo/bike registration/route information follows RRS guest requirements and privacy rules.
 - RRS is bike-only for guest drivers.
 - Customer can view eligible guest rides and book according to RRS booking rules.
+- Payment choice Cash only (persisted only when backend integration exists).
 - RRS lifecycle: published/live -> booking pending/confirmed -> booked -> pickup/ongoing -> completed/cancelled (exact states must align with existing backend).
 
 ## Unified station display
@@ -49,6 +50,13 @@ Customer can filter by All / ERS / RRS and see live status:
 3. Do not blindly merge tables or alter existing lifecycle rules; keep source-specific booking/acceptance logic.
 4. Implement QA-only integration and test ERS and RRS independently, then test combined station.
 5. Record test evidence before marking pass. No production deployment without Phase 14 review and explicit user approval.
+
+## Payment policy
+- ERS registered-driver rides: cash only.
+- RRS guest-bike rides/bookings: cash only.
+- Online, UPI and QR payment options must not be presented or accepted for ERS/RRS.
+- Driver confirms cash received at ride completion; payment state must be synchronized and server-validated.
+- This requirement is not runtime-verified yet.
 
 ## Status
 Requirement documented. Combined live station implementation and runtime testing pending.
