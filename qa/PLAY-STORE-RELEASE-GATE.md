@@ -293,3 +293,13 @@ Required: configure the OpenAI API key in Supabase Edge Function Secrets (never 
 - Added Playwright tests for the four cancellation RPC mappings, confirmation prompts, refund-review warning, and rejected confirmation (no RPC call).
 - Important UI gap: the cancellation helper exists as an asset, but `index.html` currently does not invoke it and no cancel buttons are wired. Cancellation backend/client helper coverage is therefore source/test coverage only; end-user cancellation UI integration remains pending.
 - CI/runtime execution remains UNVERIFIED.
+
+
+## Phase 13 ERS/RRS Cash-only payment policy update (QA branch)
+
+- ERS UI prototype now displays Cash Only; online/UPI/QR selector options removed from the prototype.
+- Combined ERS/RRS station prototype displays a Cash Only policy notice.
+- ERS payment SQL draft restricts payment_method to cash when populated.
+- RRS payment SQL draft adds payment_method default cash and a cash-only constraint to guest ride bookings.
+- Static test added: `tests/phase13-ers-rrs-cash-only-static.test.cjs`.
+- **Status: SOURCE CHANGES COMMITTED; runtime test not yet executed.** SQL drafts are NOT applied. Production/Main remains untouched. Booking RPC integration, payment-state persistence, driver cash-received confirmation, and customer/admin synchronization are still blocked pending reviewed RPC/UI integration.
