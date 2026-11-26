@@ -43,6 +43,6 @@ console.log('Subscription migration drift/review invariants PASS');
 
 // Driver details display and scoped RPC assertions.
 const driverDetailsMigration=fs.readFileSync('supabase/migrations/202611260006_fr_phase13d_driver_details.sql','utf8');
-for(const s of ['fr_phase13d_get_my_ers_rrs_bookings_with_driver','fr_phase13d_list_ers_rrs_bookings_with_driver','p.full_name,p.phone,coalesce(p.vehicle_number,p.vehicle_registration)','b.customer_id=auth.uid() or b.driver_id=auth.uid()','public.is_friend_ride_admin()'])assert.ok(driverDetailsMigration.includes(s),'Driver details migration missing scoped field/access check: '+s);
+for(const s of ['fr_phase13d_get_my_ers_rrs_bookings_with_driver','fr_phase13d_list_ers_rrs_bookings_with_driver','p.full_name,p.phone,p.vehicle_number','b.customer_id=auth.uid() or b.driver_id=auth.uid()','public.is_friend_ride_admin()'])assert.ok(driverDetailsMigration.includes(s),'Driver details migration missing scoped field/access check: '+s);
 for(const s of ['Driver Name:','Driver Phone:','Vehicle Number:','x.driver_personal_name','x.driver_personal_number','x.driver_vehicle_number'])assert.ok(app.includes(s),'Assigned driver details UI missing: '+s);
 console.log('ERS/RRS assigned driver personal name/phone/vehicle display and scoped access checks PASS');
