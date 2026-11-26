@@ -617,3 +617,44 @@ test('Refund mark-paid UI requires transfer reference and explicit confirmation'
     refreshesQueueAfterSuccess: true
   });
 });
+
+test('Phase 13D cancellation client maps four actions, requires confirmation and warns refund review', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const result = await page.evaluate(async () => {
+    const calls = [], alerts = [], confirms = [];
+    window.currentUser = { id: 'qa-user' };
+    window.confirm = message => { confirms.push(message); return true; };
+    window.alert = message => alerts.push(message);
+    window.sb = { rpc: async (name, args) => { calls.push([name, args]); return { data: { refund_request_created: true }, error: null }; } };
+    const api = window.FRPhase13DCancel;
+    await api.roadPassenger('booking-road');
+    await api.roadDriver('ride-road');
+    await api.sharedPassenger('booking-shared');
+    await api.sharedDriver('ride-shared');
+    return { calls, confirms, alerts };
+  });
+  expect(result.calls).toEqual([
+    ['fr_road_ride_cancel_booking', { p_booking_id: 'booking-road' }],
+    ['fr_road_ride_driver_cancel', { p_ride_id: 'ride-road' }],
+    ['fr_shared_ride_cancel_booking', { p_booking_id: 'booking-shared' }],
+    ['fr_shared_ride_driver_cancel', { p_ride_id: 'ride-shared' }]
+  ]);
+  expect(result.confirms).toHaveLength(4);
+  expect(result.confirms.every(message => message.includes('manual review'))).toBe(true);
+  expect(result.alerts).toHaveLength(4);
+  expect(result.alerts.every(message => message.includes('Refund review pending'))).toBe(true);
+});
+
+test('Phase 13D cancellation helper does not call backend when user rejects confirmation', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const result = await page.evaluate(async () => {
+    let calls = 0;
+    window.currentUser = { id: 'qa-user' };
+    window.confirm = () => false;
+    window.sb = { rpc: async () => { calls++; return { data: null, error: null }; } };
+    const value = await window.FRPhase13DCancel.sharedPassenger('booking-cancel');
+    return { calls, value };
+  });
+  expect(result.calls).toBe(0);
+  expect(result.value).toBeNull();
+});
