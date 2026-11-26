@@ -20,7 +20,7 @@ jobs:
           const app = fs.readFileSync('index.html', 'utf8');
           const qa = fs.readFileSync('test.html', 'utf8');
           function checkScripts(label, html) {
-            const scriptRegex = new RegExp('<script(?![^>]*src)[^>]*>([\\\\s\\\\S]*?)</script>', 'gi');
+            const scriptRegex = new RegExp('<script(?![^>]*src)[^>]*>([\\s\\S]*?)</script>', 'gi');
             const scripts = [...html.matchAll(scriptRegex)].map(m => m[1]);
             let failed = 0;
             scripts.forEach((code, i) => { try { new vm.Script(code, {filename: label+'-inline-'+(i+1)}); } catch(e) { failed++; console.error(label+' script '+(i+1)+': '+e.message); } });
