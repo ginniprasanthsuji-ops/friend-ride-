@@ -13,3 +13,8 @@ assert.ok(sql.includes("fr_phase13d_cancel_ers_rrs_booking(p_booking_id uuid)\nr
 assert.ok(sql.includes("status='pending' and driver_id is null")&&sql.includes("customer_id=auth.uid() or public.is_friend_ride_admin()"),"Cancellation is limited to customer/admin and pending unassigned bookings");
 assert.ok(sql.includes("fr_phase13d_get_my_ers_rrs_bookings()")&&sql.includes("notify pgrst, 'reload schema';"),"No-argument bookings RPC must be created and PostgREST schema cache reloaded");
 console.log("Phase 13D ERS/RRS cash-only static checks PASS");
+// RPC/server error text must never be inserted as HTML.
+assert.ok(html.includes("e.textContent=t"),"RPC status/error message uses textContent");
+assert.ok(html.includes("document.getElementById('mine').textContent=e.message"),"Customer booking errors use textContent");
+assert.ok(html.includes("document.getElementById('admin').textContent=e.message"),"Admin booking errors use textContent");
+console.log("Phase 13D RPC error-output safety checks PASS");
