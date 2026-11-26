@@ -21,9 +21,7 @@ create table if not exists public.fr_phase13d_ers_rrs_bookings (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check ((payment_status='cash_pending' and cash_received_at is null) or
-         (payment_status='cash_received' and cash_received_at is not null)),
-  check ((ride_kind='ERS' and driver_id is not null and guest_driver_name is null and guest_driver_phone is null)
-      or (ride_kind='RRS' and driver_id is null))
+         (payment_status='cash_received' and cash_received_at is not null))
 );
 
 -- Compatibility for the existing QA table if this draft is reapplied.
