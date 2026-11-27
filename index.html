@@ -1158,7 +1158,7 @@ function selectTrackingCategory(category){
  if(result)result.innerHTML='<div class="notice">Food / Shop orders loading…</div>';
  frLoadTrackingMarketOrders();
 }
-async function frLoadTrackingParcelOrders(){
+async async function frLoadTrackingParcelOrders(){
  const box=$('trackingCategoryResults');if(!box)return;
  if(!currentUser||currentProfile?.role!=='customer'){box.innerHTML='<div class="notice">Parcel tracking చూడటానికి Customer login చేయండి.</div>';return;}
  box.innerHTML='<div class="notice">Parcel requests refresh అవుతున్నాయి…</div>';
@@ -1180,7 +1180,7 @@ async function frCancelParcelRequest(parcelId){
  try{const {error}=await sb.rpc('fr_customer_cancel_parcel_request',{p_parcel_id:parcelId});if(error)throw error;alert('Parcel request cancel అయ్యింది.');await frLoadTrackingParcelOrders();}
  catch(e){alert('Cancel కాలేదు: '+(e.message||e));}
 }
-async function frLoadTrackingMarketOrders(){
+async async function frLoadTrackingMarketOrders(){
  const box=$('trackingCategoryResults');if(!box)return;
  if(!currentUser){box.innerHTML='<div class="notice">Food / Shop tracking చూడటానికి Customer login చేయండి.</div>';return;}
  box.innerHTML='<div class="notice">మీ orders refresh అవుతున్నాయి…</div>';
@@ -2543,7 +2543,7 @@ async function frPartnerSendQuote(orderId){
 }
 
 // Customer order history with partner quote acceptance / counter-price actions.
-async function frLoadCustomerMarketOrders(){
+async async function frLoadCustomerMarketOrders(){
  const el=$('frCustomerMarketOrders');if(!el||!currentUser)return;
  el.innerHTML='<div class="notice">Shop Orders loading…</div>';
  try{const {data,error}=await sb.rpc('fr_customer_list_market_orders');if(error)throw error;
@@ -2554,8 +2554,8 @@ async function frLoadCustomerMarketOrders(){
   }).join('');
  }catch(e){el.innerHTML='<div class="notice">Shop Orders load కాలేదు: '+safe(e.message||e)+'</div>';}
 }
-async function frCustomerAcceptQuote(id){try{const {error}=await sb.rpc('fr_customer_accept_market_quote',{p_order_id:id});if(error)throw error;alert('Partner ధర అంగీకరించారు.');await frLoadCustomerMarketOrders();}catch(e){alert(e.message||e);}}
-async function frCustomerSendCounter(id){const card=[...document.querySelectorAll('#frCustomerMarketOrders .card')].find(c=>c.innerHTML.includes(id));if(!card)return;const offers=[];for(const input of card.querySelectorAll('input[id^="frCounter_"]')){const v=Number(input.value);if(!Number.isFinite(v)||v<=0){alert('Counter Price నమోదు చేయండి.');return;}offers.push({item_id:input.id.replace('frCounter_',''),price_paise:frRupeesToPaise(v)});}try{const {error}=await sb.rpc('fr_customer_counter_market_order',{p_order_id:id,p_offers:offers});if(error)throw error;alert('మీ Counter Price Partnerకు పంపబడింది.');await frLoadCustomerMarketOrders();}catch(e){alert(e.message||e);}}
+async async function frCustomerAcceptQuote(id){try{const {error}=await sb.rpc('fr_customer_accept_market_quote',{p_order_id:id});if(error)throw error;alert('Partner ధర అంగీకరించారు.');await frLoadCustomerMarketOrders();}catch(e){alert(e.message||e);}}
+async async function frCustomerSendCounter(id){const card=[...document.querySelectorAll('#frCustomerMarketOrders .card')].find(c=>c.innerHTML.includes(id));if(!card)return;const offers=[];for(const input of card.querySelectorAll('input[id^="frCounter_"]')){const v=Number(input.value);if(!Number.isFinite(v)||v<=0){alert('Counter Price నమోదు చేయండి.');return;}offers.push({item_id:input.id.replace('frCounter_',''),price_paise:frRupeesToPaise(v)});}try{const {error}=await sb.rpc('fr_customer_counter_market_order',{p_order_id:id,p_offers:offers});if(error)throw error;alert('మీ Counter Price Partnerకు పంపబడింది.');await frLoadCustomerMarketOrders();}catch(e){alert(e.message||e);}}
 const frOriginalShowPage=showPage;
 showPage=function(id){frOriginalShowPage(id);if(id==='orders'&&currentUser?.id)setTimeout(frLoadCustomerMarketOrders,150);if(id==='catalogue'&&currentProfile?.role==='partner')setTimeout(()=>frLoadPartnerCatalogue().catch(e=>console.warn(e)),150);if(id==='partnerOrders')setTimeout(()=>loadPartnerOrders(),150);};
 // Persist catalogue entries when partner selects a master category and opens the editor.
@@ -2746,7 +2746,7 @@ async function frPartnerSendQuote(orderId){
  try{const {error}=await sb.rpc('fr_partner_quote_market_order',{p_order_id:orderId,p_quotes:quotes,p_delivery_fee_paise:frRupeesToPaise(delivery)});if(error)throw error;alert('Quotation Customerకు పంపబడింది.');await loadPartnerOrders();}
  catch(e){alert('Quotation పంపబడలేదు: '+(e.message||e));}
 }
-async function frPartnerConfirmMarketPayment(orderId){
+async async function frPartnerConfirmMarketPayment(orderId){
  if(!confirm('Customer payment మీ Shop bank/UPI accountలో నిజంగా వచ్చిందని verify చేశారా? Verify చేసిన తర్వాత మాత్రమే Confirm చేయండి.'))return;
  try{const {error}=await sb.rpc('fr_partner_confirm_market_payment',{p_order_id:orderId,p_payment_reference:null});if(error)throw error;alert('Payment confirmed. Order is now confirmed.');await loadPartnerOrders();}
  catch(e){alert(e.message||e);}
