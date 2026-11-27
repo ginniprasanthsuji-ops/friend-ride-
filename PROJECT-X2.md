@@ -128,3 +128,12 @@
 - Expanded `tests/project-x2-transfer-static.test.cjs` checks for multi-passenger booking capacity/locking, own-ride rejection, authenticated booking RPC ACL, cancellation ownership/status/seat restoration and RPC ACL, ERS approval/future-departure requirements, RRS photo compression/1 MB guard, confirmed-booking-only photo privacy, and LIVE view full-ride filtering.
 - Commit: `57367a69`.
 - GitHub Actions Button/JavaScript Audit, Playwright Regression/E2E, and Pages deployment were triggered for this commit and are currently in progress; do not report PASS until completed.
+
+
+## YT Project X2 continuation — QA schema re-audit (2026-11-27)
+- Reconfirmed branch head before work: `b174bbb20f17fecd923b760d285d22b5aa4ce4c4` on `yt-test-1-to-15`; Main/production untouched.
+- Latest CI for this exact SHA: Button/JavaScript Audit #217 PASS; Playwright Regression & E2E #213 PASS; Pages build/deploy #588 PASS.
+- Read-only QA Supabase re-audit of `information_schema.columns` for store/catalog/partner/market-like names found only `fr_store_campaigns` and `fr_store_campaign_redemptions` (campaign/redemption tables), not authoritative product catalogue or market-order tables. No Food/Shop order/payment SQL was applied.
+- Parcel migration is recorded in QA migration history (`project_x2_parcel_persistence_yt_202611270004`); authenticated customer create/list/cancel remains untested.
+- Next safe step: continue backend contract discovery from existing Partner catalogue RPC definitions and their source tables, then implement only against confirmed columns and verify with QA. Maintain no-fake-order/payment guarantees.
+- This audit adds evidence, not feature completion; overall progress stays at 61% pending implementation and live workflow tests.
