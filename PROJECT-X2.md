@@ -94,3 +94,10 @@
 - Therefore Food/Shop order RPCs are absent in QA DB and Parcel migration has not been applied there; no live workflow claims made. No Supabase schema was modified.
 - Current head CI: Button & JavaScript Audit #188 PASS; Playwright Regression & E2E #184 PASS; Pages deployment #569 PASS. These are branch CI results, not live DB verification.
 - Next implementation blocker: inspect and define Food/Shop order + quote + payment SQL contract against the existing partner catalogue tables, then add QA-only migration and regression coverage. Apply/test Parcel and RRS-photo migrations to QA separately before claiming backend verification.
+
+
+### YT Project X2 continuation — Parcel QA migration applied (2026-11-27)
+- Applied branch migration `202611270004_project_x2_parcel_persistence.sql` to FRIEND RIDE QA Supabase project `pqsangtvietawkfgpgfu` (not Main/production).
+- Supabase migration history confirms application under `project_x2_parcel_persistence_yt_202611270004`; RPCs `fr_customer_create_parcel_request`, `fr_customer_list_parcel_requests`, `fr_customer_cancel_parcel_request` are present.
+- Authenticated real-user Parcel workflow (create, list/reopen, cancel) still requires test account execution; migration-only confirmation is not end-to-end PASS.
+- Food/Shop catalogue tables and market-order/payment RPCs are absent from QA schema inventory. Need identify/apply catalogue base schema first; do not implement market-order SQL against guessed table contracts. Main/production untouched.
