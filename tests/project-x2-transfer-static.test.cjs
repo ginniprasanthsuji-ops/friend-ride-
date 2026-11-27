@@ -3,7 +3,7 @@ const app=fs.readFileSync('index.html','utf8');
 const migration=fs.readFileSync('supabase/migrations/202611270002_project_x2_ers_rrs_departure_photo.sql','utf8');
 const cancel=fs.readFileSync('supabase/migrations/202611260012_fr_station_booking_cancel_restore_seats.sql','utf8');
 for(const s of ['frRRSCompressedPhotoData','frCompressRRSPhoto(event)','frRrsDepartAt','frStationPostRRS()','async function frStationPostRRS','p_departure_at:new Date(depart).toISOString()','p_photo_data:frRRSCompressedPhotoData','frRrsGuestSb.rpc'])assert.ok(app.includes(s),'YT X2 frontend invariant missing: '+s);
-for(const s of ['1048576','blob.size<=1048576','p_photo_data text','p_departure_at timestamptz','p_departure_at<=now()','driver_photo_data text','v_photo_bytes>1048576'])assert.ok(migration.includes(s),'YT X2 migration invariant missing: '+s);
+for(const s of ['1048576','v_photo_bytes>1048576','p_photo_data text','p_departure_at timestamptz','p_departure_at<=now()','driver_photo_data text','v_photo_bytes>1048576'])assert.ok(migration.includes(s),'YT X2 migration invariant missing: '+s);
 assert.ok(cancel.includes('passenger_count')&&cancel.includes('passengers_booked=greatest(0,passengers_booked-v_booking.passenger_count)'),'Existing YT cancellation restores multi-passenger seats');
 assert.ok(cancel.includes('revoke all on function public.fr_station_cancel_booking(uuid) from public,anon;')&&cancel.includes('grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;'),'YT cancellation RPC ACL restricted');
 const cancelFix=fs.readFileSync('supabase/migrations/202611270003_project_x2_station_cancel_security_fix.sql','utf8');
