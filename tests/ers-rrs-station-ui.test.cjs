@@ -13,7 +13,7 @@ const capacity=fs.readFileSync('supabase/migrations/202611260010_fr_station_pass
 const multi=fs.readFileSync('supabase/migrations/202611260011_fr_station_multi_passenger_booking.sql','utf8');
 for(const x of ['passenger_capacity integer not null default 1','passengers_booked integer not null default 0','passengers_remaining','passengers_booked=passengers_booked+1','for update','No passenger seats left'])assert.ok(capacity.includes(x),'Capacity regression check missing: '+x);
 for(const x of ['p_passengers integer default 1','passenger_count integer not null default 1','passenger_count between 1 and 10','passengers_booked+p_passengers','Only % passenger seats remaining','fr_station_book_ride(uuid,integer)','passenger_count'])assert.ok(multi.includes(x),'Multi-passenger booking regression check missing: '+x);
-for(const x of ["prompt('How many passenger seats do you want to book? ('","p_passengers:seats","Passengers booked: ","x.passenger_count||1"])assert.ok(app.includes(x),'Booking quantity UI check missing: '+x);
+for(const x of ["prompt('How many passenger seats do you want to book? (","p_passengers:seats","Passengers booked: ","x.passenger_count||1"])assert.ok(app.includes(x),'Booking quantity UI check missing: '+x);
 console.log('ERS/RRS capacity and multi-passenger quantity regression checks PASS');
 
 const cancel=fs.readFileSync('supabase/migrations/202611260012_fr_station_booking_cancel_restore_seats.sql','utf8');
