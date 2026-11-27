@@ -13,6 +13,10 @@ assert.ok(!app.includes('fglyplxcczdjtfwobtzh.supabase.co'),'YF test app must no
 // RRS photo UI, iterative compression, strict size cap, and RPC payload.
 for(const s of ['frRRSCompressedPhotoData','frCompressRRSPhoto(event)','accept="image/*"','1 MB','1048576','canvas.toBlob(resolve,\'image/jpeg\',quality)','blob.size<=1048576','p_photo_data:frRRSCompressedPhotoData'])assert.ok(app.includes(s),'RRS photo invariant: '+s);
 assert.ok(app.includes('frStationPostRRS()'),'RRS post handler exists');
+// Guest RRS RPC must not send a persisted user JWT; use the isolated anon client.
+assert.ok(app.includes('const frRrsGuestSb=window.supabase.createClient'),'Session-free guest RRS client exists');
+assert.ok(app.includes("frRrsGuestSb.rpc('fr_station_post_rrs_guest'"),'Guest RRS posting uses isolated client');
+
 // Prevent the missing/stale RPC signature shown in the user's RRS error screenshot.
 assert.ok(app.includes("sb.rpc('fr_station_post_rrs_guest'"),'RRS frontend calls expected RPC');
 for(const s of ['p_name:name','p_phone:phone','p_vehicle:vehicle','p_from:f','p_to:t','p_fare:fare','p_passengers:passengers','p_departure_at:new Date(depart).toISOString()','p_photo_data:frRRSCompressedPhotoData'])assert.ok(app.includes(s),'RRS RPC argument: '+s);
