@@ -47,4 +47,10 @@ assert.ok(app.includes("sb.rpc('fr_station_cancel_booking',{p_booking_id:id})"),
 for(const s of ['auth.uid() is null','passenger_id = auth.uid()','Only confirmed bookings can be cancelled','for update','passengers_booked = greatest(0, passengers_booked - 1)','status = case when status = \'booked\' then \'live\' else status end'])assert.ok(cancel.includes(s),'Cancellation invariant: '+s);
 assert.ok(cancel.includes('revoke all on function public.fr_station_cancel_booking(uuid) from public, anon;'),'Cancellation RPC blocks public and anon');
 assert.ok(cancel.includes('grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;'),'Cancellation RPC granted to authenticated only');
+
+// Unverified platform-fee acknowledgement must never authorize a market order.
+assert.ok(app.includes("sessionStorage.getItem('frPlatformFeeVerified_'+ids[0])"),'Checkout requires verified platform fee state');
+assert.ok(app.includes("paidFlag!=='verified'"),'Checkout rejects anything except verified payment');
+assert.ok(!app.includes("sessionStorage.setItem('frPlatformFeeAck_'+ids[0],'1')"),'Unverified acknowledgement cannot authorize checkout');
+assert.ok(app.includes('Verified payment లేకుండా Order submit చేయడం నిలిపివేయబడింది'),'Checkout blocks until payment verification backend is connected');
 console.log('Project X2 static security/regression checks PASS');
