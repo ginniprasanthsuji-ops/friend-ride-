@@ -34,7 +34,7 @@ test.describe('FRIEND RIDE launcher smoke / regression', () => {
 
 
 test.describe('FRIEND RIDE navigation click diagnostics', () => {
-  test('no uncaught runtime errors while loading and navigating all home tabs', async ({ page }) => {
+  test('bottom navigation pages and menu drawer respond to clicks', async ({ page }) => {
     const errors=[];
     page.on('pageerror', e=>errors.push(e.message));
     page.on('console', msg=>{ if(msg.type()==='error') errors.push('console: '+msg.text()); });
@@ -42,22 +42,33 @@ test.describe('FRIEND RIDE navigation click diagnostics', () => {
     await expect(page.locator('#roleLauncher')).toBeVisible();
     await page.locator('#roleLauncher button.fr-role-card.customer').click();
     await expect(page.locator('#authModal')).toHaveClass(/show/);
-    // Exercise the app's page-navigation function and verify each target page becomes active.
-    const tabIds=await page.locator('.bottom button[data-page]').evaluateAll(btns=>btns.map(b=>b.dataset.page));
-    const report=[];
+    // Close the auth gate to exercise the real bottom navigation controls.
+    await page.locator('#authModal button.close').click();
+    const tabIds=['home','shops','food','marketCart','explore','orders'];
     for(const id of tabIds){
+      const button=page.locator('.bottom button[data-page="'+id+'"]');
       const target=page.locator('#'+id+'.page');
-      if(await target.count()){
-        await page.evaluate(id=>{ if(typeof window.showPage==='function') window.showPage(id); else throw new Error('showPage is not callable'); },id);
+      await expect(button).toHaveCount(1);
+      await expect(target).toHaveCount(1);
+      await button.click();
+      if(id==='orders'){
+        // Orders are login-gated; the click should open authentication, not a missing page.
+        await expect(page.locator('#authModal')).toHaveClass(/show/);
+        await page.locator('#authModal button.close').click();
+      }else{
         await expect(target).toHaveClass(/active/);
-        report.push(id+' OK');
-      }else report.push(id+' missing target');
+      }
     }
-    expect(report.filter(x=>x.endsWith('missing target')), 'missing tab targets').toEqual([]);
+    const menu=page.locator('.bottom button[data-page="menu"]');
+    await expect(menu).toHaveCount(1);
+    await menu.click();
+    await expect(page.locator('#drawerBackdrop')).toHaveClass(/show/);
+    await page.locator('#drawerBackdrop button.close').click();
+    await expect(page.locator('#drawerBackdrop')).not.toHaveClass(/show/);
     expect(errors, 'uncaught errors during click/navigation diagnostics').toEqual([]);
   });
 
-  test('menu drawer and role launcher controls respond to clicks', async ({ page }) => {
+  test('role launcher and role-specific auth controls respond to clicks', async ({ page }) => {
     const errors=[]; page.on('pageerror',e=>errors.push(e.message));
     await page.goto('/');
     await page.locator('#roleLauncher button.fr-role-card.driver').click();
