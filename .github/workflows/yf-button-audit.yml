@@ -23,7 +23,7 @@ jobs:
             const scriptRegex = new RegExp('<script(?![^>]*src)[^>]*>([\\s\\S]*?)</script>', 'gi');
             const scripts = [...html.matchAll(scriptRegex)].map(m => m[1]);
             let failed = 0;
-            scripts.forEach((code, i) => { try { new vm.Script(code, {filename: label+'-inline-'+(i+1)}); } catch(e) { failed++; console.error(label+' script '+(i+1)+': '+e.stack); } });
+            scripts.forEach((code, i) => { try { new vm.Script('(async function(){\\n'+code+'\\n})()', {filename: label+'-inline-'+(i+1)}); } catch(e) { failed++; console.error(label+' script '+(i+1)+': '+e.stack); } });
             console.log(label+': '+(scripts.length-failed)+'/'+scripts.length+' inline scripts syntax PASS');
             if(failed) process.exitCode=1;
           }
