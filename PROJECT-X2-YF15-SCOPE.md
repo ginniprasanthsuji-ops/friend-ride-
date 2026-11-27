@@ -82,3 +82,10 @@ Project X2 is **not yet 100% complete**. Automated CI, JavaScript/button audit, 
 - Continue X2 exclusively on `yf-test-1-to-15` for the planned test period.
 - Mark X2 100% only after implementation blockers are resolved and final CI, regression, E2E, Playwright, deployment and backend/device checks are completed with evidence.
 - Then work on Project Arjuna X separately; main production launch only after Arjuna X is complete and its release gate passes.
+
+
+## Project X2 continuation — 2026-11-27 safety hardening
+- Reviewed connected QA database `pqsangtvietawkfgpgfu`: no market-order RPC/table or Razorpay payment-order ledger exists in this QA project.
+- Disabled real Razorpay order creation in `fr-razorpay-create-order` by failing closed with HTTP 503 until server-authoritative cart/catalog pricing RPC is implemented. This prevents client-submitted subtotal from generating a real payment order.
+- Commit: `642e1c676d322130ee11cc7e4a2779f6dd2b4473` on `yf-test-1-to-15`.
+- This is a safety gate, not payment integration completion. Checkout remains blocked pending trusted catalog pricing, market-order RPC and atomic verified-payment gate.
