@@ -62,3 +62,11 @@
 - UI already calls create/list/cancel RPCs, refreshes tracking, and shows backend status; the migration now supplies the branch-side contract. SQL is not applied to QA Supabase yet, so live DB persistence is pending.
 - Food: demo menu is deliberately disabled and does not add fake cart entries. Approved partner catalogue is orderable through `fr_customer_place_market_order`; UI includes partner quotation, customer acceptance/counter, payment QR handoff and partner manual payment confirmation RPC calls. However, the required market-order/payment RPC migration definitions are absent from this branch migration inventory; backend contract, platform fee (2.5% capped at ₹25), and payment-verification rules still need a migration and QA DB verification before these workflows can be called live.
 - CI audit after fixes: Button/JavaScript Audit PASS on commit 93ec3545. Playwright and Pages deployment were still running at report update.
+
+
+## YT branch progress update (2026-11-27)
+- Parcel persistence SQL dollar quoting corrected in commit `965c68e206d5826f404eb68eb9f7428193ca883a`; the YT Playwright Regression & E2E run passed, including Project X2 static QA, ERS/RRS station UI regression, Phase 13D cash-only static QA, and Playwright E2E.
+- Added regression checks for Parcel and Food/Shop tracking loaders: both must be async, await Supabase RPC, and handle errors; tracking tabs/category wiring is asserted. Commit `2793c2737cbb3368ae7278ec1dcdedb64faa747a`.
+- Food/Shop order RPC migration remains a blocker: the UI calls market-order/quote/payment RPCs, but branch migration inventory currently contains no definitions for these RPCs. Do not call Food/Shop backend-live until the SQL contract/migration and QA Supabase verification are completed.
+- Parcel SQL remains branch-side only; QA Supabase migration application and authenticated live create/list/cancel test are pending.
+- RRS photo compression, storage policy and signed display remain awaiting QA Supabase migration/device verification.
