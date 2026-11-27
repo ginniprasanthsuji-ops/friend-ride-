@@ -45,3 +45,16 @@ QA Supabase project: `pqsangtvietawkfgpgfu`
 
 ## Next
 Create the versioned QA migration only after status values and the complete RPC result shapes are confirmed from the UI. Then apply QA migration, test RPC ownership and workflow, and repair Food/Shop UI/backend integration. Main/production remain untouched.
+
+
+## UI-verified order status and transitions (source inspection)
+- Customer-facing status labels include: `quote_requested`, `quoted`, `customer_quote_accepted`, `payment_pending`, `accepted`, `preparing`, `ready`, `completed`, `rejected`, `cancelled`.
+- Partner quote UI is enabled for `quote_requested` and `counter_offered`; partner may reject in those states.
+- Partner actions: `accepted -> preparing -> ready`. UI currently locks completion at `ready` because driver delivery OTP/payment verification is not connected.
+- Customer actions: `quoted` accept quotation or counter; `payment_pending` opens payment panel; accepted status displays partner confirmation. Payment countdown invokes `fr_customer_tick_market_payment(p_order_id)`.
+- Quote RPC includes additional optional `p_delivery_fee_paise` argument; contract should support it.
+- Payment confirmation UI calls `fr_partner_confirm_market_payment(p_order_id,p_payment_reference=null)` after partner manually confirms payment. This is not bank verification.
+- Store payment options RPC: `fr_customer_store_payment_options(p_store_id)`; QR is retrieved from `partner-qr` bucket using a signed URL, while catalogue images use `fr-partner-catalogue` public URL. Both buckets currently absent from QA audit.
+
+## Implementation implication
+The migration must implement the UI's observed state names and optional delivery fee; do not substitute a different state machine. The QA DB profile rows are empty, so partner approval value still needs source-code verification before any migration is applied.
