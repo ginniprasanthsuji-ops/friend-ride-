@@ -1170,7 +1170,7 @@ async function frLoadTrackingParcelOrders(){
    const status=String(o.status||'unknown').toLowerCase();
    const stage=labels[status]||safe(o.status||'Status unavailable');
    const tracking=safe(o.tracking_id||o.parcel_id||'Parcel');
-   return '<div class="card" style="margin:9px 0;padding:12px"><div class="row"><b>'+tracking+'</b><span class="pill">'+stage+'</span></div><p>Pickup: '+safe(o.pickup_address||o.pickup||'Not available')+'</p><p>Delivery: '+safe(o.delivery_address||o.drop||'Not available')+'</p><p>Parcel: '+safe(o.description||o.parcel_description||'Details unavailable')+'</p><small>'+(active.includes(status)?'Backend status: '+stage:'Latest backend parcel status.')+'</small>'+(status==='requested'?'<button class="btn light" onclick="frCancelParcelRequest(\\''+safe(o.parcel_id||o.id||'')+'\\')">Cancel Request</button>':'')+'</div>';
+   return '<div class="card" style="margin:9px 0;padding:12px"><div class="row"><b>'+tracking+'</b><span class="pill">'+stage+'</span></div><p>Pickup: '+safe(o.pickup_address||o.pickup||'Not available')+'</p><p>Delivery: '+safe(o.delivery_address||o.drop||'Not available')+'</p><p>Parcel: '+safe(o.description||o.parcel_description||'Details unavailable')+'</p><small>'+(active.includes(status)?'Backend status: '+stage:'Latest backend parcel status.')+'</small>'+(status==='requested'?'<button class="btn light" onclick="frCancelParcelRequest(this.dataset.parcel)" data-parcel="'+safe(o.parcel_id||o.id||'')+'">Cancel Request</button>':'')+'</div>';
   }).join('');
  }catch(e){box.innerHTML='<div class="notice">Parcel tracking load కాలేదు: '+safe(e.message||e)+'</div>';}
 }
