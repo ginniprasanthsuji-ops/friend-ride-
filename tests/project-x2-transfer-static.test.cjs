@@ -67,3 +67,14 @@ for(const fn of ['frLoadCustomerMarketOrders','frCustomerAcceptQuote','frCustome
 
 // Catch accidental doubled async keywords introduced during handler fixes.
 assert.ok(!app.includes('async async function'),'Duplicated async declaration found in app inline script');
+
+
+// Additional YT X2 ERS/RRS booking and privacy regression checks.
+const multiBooking=fs.readFileSync('supabase/migrations/202611260011_fr_station_multi_passenger_booking.sql','utf8');
+for(const s of ['auth.uid() is null','p_passengers not between 1 and 10','for update','passengers_booked+p_passengers > v_ride.passenger_capacity','v_ride.driver_id=auth.uid()','status in (\'requested\',\'confirmed\')','passenger_count','revoke all on function public.fr_station_book_ride(uuid,integer) from public,anon;','grant execute on function public.fr_station_book_ride(uuid,integer) to authenticated;'])assert.ok(multiBooking.includes(s),'YT X2 multi-passenger booking invariant missing: '+s);
+const cancelBase=fs.readFileSync('supabase/migrations/202611260012_fr_station_booking_cancel_restore_seats.sql','utf8');
+for(const s of ['auth.uid() is null','passenger_id=auth.uid()','for update','v_booking.status not in (\'requested\',\'confirmed\')','passengers_booked-v_booking.passenger_count','revoke all on function public.fr_station_cancel_booking(uuid) from public,anon;','grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;'])assert.ok(cancelBase.includes(s),'YT X2 cancellation seat-restoration invariant missing: '+s);
+const photoMigration=fs.readFileSync('supabase/migrations/202611270002_project_x2_ers_rrs_departure_photo.sql','utf8');
+for(const s of ['driver_approval_status','p_departure_at<=now()','p_photo_data !~ \'^data:image/jpeg;base64,\'','v_photo_bytes>1048576','case when b.status=\'confirmed\'','case when b.status=\'confirmed\' and r.ride_kind=\'RRS\' then r.driver_photo_data else null end','grant execute on function public.fr_station_post_ers'])assert.ok(photoMigration.includes(s),'YT X2 ERS/RRS photo/privacy invariant missing: '+s);
+assert.ok(photoMigration.includes('from public.fr_station_rides where status=\'live\' and passengers_booked < passenger_capacity'),'Public LIVE view must hide full rides');
+console.log('YT Project X2 ERS/RRS booking-capacity, cancellation, photo, and privacy regression checks PASS');
