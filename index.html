@@ -1677,7 +1677,7 @@ async function frLoadStorePaymentOptions(storeId){
   methods.innerHTML=out||'<div class="notice">à° Store QR / UPI / PhonePe à°µà°¿à°µà°°à°¾à°²à± à°Ǡ° °ՠ°¾ à°¨à°®à±ˠ°¦à± à°ڠ±Ǡ°¯à°²à±Ǡ°¦à±.</div>';
  }catch(e){methods.innerHTML='<div class="notice">Payment details load à°ՠ°¾à°²à±Ǡ°¦à±: '+safe(e.message)+'</div>';}
 }
-async function marketCheckout(){
+async async function marketCheckout(){
  try{
   if(!currentUser||currentProfile?.role!=='customer')throw Error('à°®à±`° °¦à±`°נ°¾ Customer Login à°ڠ±Ǡ°¯à° °¡à°¿.');
   if(!frMarketCart.length)throw Error('à°®à±`° °¦à±`°נ°¾ Cartà°²à± items à°ܠ±ˠ°¡à°¿à° °ڠ° °¡à°¿.');
@@ -1689,13 +1689,23 @@ async function marketCheckout(){
   const items=frMarketCart.map(x=>({name:String(x.name||'').trim(),quantity:Math.max(1,Math.min(99,Number(x.qty)||1)),prescription_required:!!x.prescriptionRequired,catalogue_item_id:x.catalogueItemId||null,image_url:x.imageUrl||null,unit_price_paise:x.price==null?null:Math.round(Number(x.price)*100)}));
   if(items.some(x=>!x.name))throw Error('Cart item à°ªà±Ǡ°°à± à°¸à°°à°¿à°נ°¾ à°²à±Ǡ°¦à±.');
   const btn=$('frContinuePaymentBtn');if(btn){btn.disabled=true;btn.textContent='Order à°ªà° °ªà°¿à°¸à±͠°¤à±`°¨à±͠°¨à°¾à°â¦';}
-  const {data,error}=await sb.rpc('fr_customer_place_market_order',{p_store_id:ids[0],p_delivery_address:addr,p_items:items});
+  const requestSignature=JSON.stringify({store:ids[0],address:addr,items});
+  let requestKey='';
+  try{
+   const saved=JSON.parse(localStorage.getItem('fr_market_checkout_request')||'null');
+   if(saved&&saved.signature===requestSignature&&saved.key)requestKey=saved.key;
+  }catch(_){}
+  if(!requestKey){
+   requestKey=crypto.randomUUID();
+   try{localStorage.setItem('fr_market_checkout_request',JSON.stringify({signature:requestSignature,key:requestKey}));}catch(_){}
+  }
+  const {data,error}=await sb.rpc('fr_customer_place_market_order_v2',{p_store_id:ids[0],p_delivery_address:addr,p_items:items,p_request_key:requestKey});
   if(error)throw error;
   const result=Array.isArray(data)?data[0]:data;
   const orderId=result?.order_id||result?.id;
   const orderNo=result?.order_number||String(orderId||'').slice(0,8);
   if(!orderId)throw Error('Order ID à°°à°¾à°²à±Ǡ°¦à±. Supabase RPC response à°¤à°¨à°¿à°֠± à°ڠ±Ǡ°¯à° °¡à°¿.');
-  frMarketCart=[];renderMarketCart();
+  frMarketCart=[];renderMarketCart();try{localStorage.removeItem('fr_market_checkout_request');}catch(_){}
   alert('Order Partnerà°ՠ± à°ªà° °ªà°¬à°¡à°¿à° °¦à°¿. Order No: '+orderNo+' — Partner à°§à°° à°¨à°¿à°°à±͠°§à°¾à°°à°£ à°ՠ±ˠ°¸à° à°µà±Ǡ°ڠ°¿ à°ɠ° °¡à° °¡à°¿.');
   showPage('orders');
  }catch(e){alert('Order save à°ՠ°¾à°²à±Ǡ°¦à±: '+(e.message||e));}
