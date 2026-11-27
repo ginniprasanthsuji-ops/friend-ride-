@@ -82,7 +82,7 @@ console.log('YT Project X2 ERS/RRS booking-capacity, cancellation, photo, and pr
 
 // Project X2 station booking client integration checks for the screenshot RPC mismatch.
 const stationBookingStart=app.indexOf('async function frStationBook(id)');
-const stationBookingEnd=app.indexOf('\\nasync function frStationCancelBooking',stationBookingStart);
+const stationBookingEnd=app.indexOf('\nasync function frStationCancelBooking',stationBookingStart);
 assert.ok(stationBookingStart>=0&&stationBookingEnd>stationBookingStart,'Station booking handler must exist');
 const stationBooking=app.slice(stationBookingStart,stationBookingEnd);
 for(const s of ["sb.rpc('fr_station_book_ride'","p_ride_id:id","p_passengers:seats","Number.isInteger(seats)","seats<1","seats>10","frStationRefresh()","frStationMyBookings()","Booking failed:"])assert.ok(stationBooking.includes(s),'X2 station booking RPC/UI integration invariant missing: '+s);
