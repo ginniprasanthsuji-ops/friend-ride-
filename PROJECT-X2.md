@@ -86,3 +86,11 @@
 - Code commit: `7a728177`; QA guard commit: `eb02c889`.
 - At the latest poll: Button/JavaScript Audit passed on `eb02c889`; Playwright and Pages deployment were still running.
 - This is a client-side syntax/handler correction only. Food/Shop backend RPC SQL remains unimplemented/unverified in the YT migration inventory.
+
+
+### YT branch fresh QA database verification (2026-11-27)
+- Confirmed current branch: `yt-test-1-to-15`, head `85763474d90130779e94299781a0e8f050fdbccd`.
+- QA Supabase project `FRIEND RIDE QA` (ref `pqsangtvietawkfgpgfu`) inspected read-only. Matching public-schema table inventory found no market-order, catalogue, parcel, or order persistence tables; only store-campaign tables matched the store-related filter. Existing profiles, station rides/bookings, and subscription tracking tables were present.
+- Therefore Food/Shop order RPCs are absent in QA DB and Parcel migration has not been applied there; no live workflow claims made. No Supabase schema was modified.
+- Current head CI: Button & JavaScript Audit #188 PASS; Playwright Regression & E2E #184 PASS; Pages deployment #569 PASS. These are branch CI results, not live DB verification.
+- Next implementation blocker: inspect and define Food/Shop order + quote + payment SQL contract against the existing partner catalogue tables, then add QA-only migration and regression coverage. Apply/test Parcel and RRS-photo migrations to QA separately before claiming backend verification.
