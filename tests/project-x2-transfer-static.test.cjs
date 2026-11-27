@@ -78,3 +78,14 @@ const photoMigration=fs.readFileSync('supabase/migrations/202611270002_project_x
 for(const s of ['driver_approval_status','p_departure_at<=now()','p_photo_data !~ \'^data:image/jpeg;base64,\'','v_photo_bytes>1048576','case when b.status=\'confirmed\'','case when b.status=\'confirmed\' and r.ride_kind=\'RRS\' then r.driver_photo_data else null end','grant execute on function public.fr_station_post_ers'])assert.ok(photoMigration.includes(s),'YT X2 ERS/RRS photo/privacy invariant missing: '+s);
 assert.ok(photoMigration.includes('from public.fr_station_rides where status=\'live\' and passengers_booked < passenger_capacity'),'Public LIVE view must hide full rides');
 console.log('YT Project X2 ERS/RRS booking-capacity, cancellation, photo, and privacy regression checks PASS');
+
+
+// Project X2 station booking client integration checks for the screenshot RPC mismatch.
+const stationBookingStart=app.indexOf('async function frStationBook(id)');
+const stationBookingEnd=app.indexOf('\\nasync function frStationCancelBooking',stationBookingStart);
+assert.ok(stationBookingStart>=0&&stationBookingEnd>stationBookingStart,'Station booking handler must exist');
+const stationBooking=app.slice(stationBookingStart,stationBookingEnd);
+for(const s of ["sb.rpc('fr_station_book_ride'","p_ride_id:id","p_passengers:seats","Number.isInteger(seats)","seats<1","seats>10","frStationRefresh()","frStationMyBookings()","Booking failed:"])assert.ok(stationBooking.includes(s),'X2 station booking RPC/UI integration invariant missing: '+s);
+assert.ok(stationBooking.includes('CASH ONLY'),'Station booking must clearly state cash-only payment');
+assert.ok(stationBooking.includes('Customer login required')&&stationBooking.includes('openAuth(\'login\')'),'Station booking requires customer authentication');
+console.log('YT Project X2 station booking RPC parameter and UI integration static QA PASS');
