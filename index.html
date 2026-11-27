@@ -883,7 +883,7 @@ async function frSuperServiceNotice(service){
 <script>
 const SUPABASE_URL='https://pqsangtvietawkfgpgfu.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_tFvhxu087vPefh3gdJ-fuQ_Q-iMHlAo';
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:'friend-ride-auth-v1'}});
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:'friend-ride-yf15-auth-v1'}});
 let selectedRole='customer',currentUser=null,currentProfile=null,afterLoginAction=null,rideVehicle='Bike',online=false,rideMap=null,trackingMap=null,pickupMarker=null,dropMarker=null,driverMarker=null,pickupCoords=null,dropCoords=null,driverWatchId=null,frTrackingRideData=null,frRouteLayer=null;
 const $=id=>document.getElementById(id);
 function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
