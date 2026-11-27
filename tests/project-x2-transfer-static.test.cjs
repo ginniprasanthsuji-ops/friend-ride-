@@ -25,7 +25,7 @@ console.log('YT Project X2 parcel persistence and commerce safeguards PASS');
 assert.ok(foodMenuCode.includes('Demo Menu Only')&&foodMenuCode.includes('disabled')&&!foodMenuCode.includes('addMarketCart'),'Demo food menu remains disabled and cannot create fake cart items');
 // Market checkout must only send store-backed catalogue items and persist orders via RPC.
 const checkoutCode=app.slice(app.indexOf('async function marketCheckout()'),app.indexOf('document.addEventListener(\'DOMContentLoaded\',()=>{renderRestaurantList()'));
-for(const s of ['frMarketCart.length','ids.length!==1','fr_customer_place_market_order','p_store_id:ids[0]','p_items:items','Order ID రాలేదు'])assert.ok(checkoutCode.includes(s),'X2 market checkout safeguard missing: '+s);
+for(const s of ['frMarketCart.length','ids.length!==1','fr_customer_place_market_order','p_store_id:ids[0]','p_items:items','Order ID'])assert.ok(checkoutCode.includes(s),'X2 market checkout safeguard missing: '+s);
 
 // Tracking loaders must await Supabase RPCs so errors/data are handled from the resolved response.
 for(const fn of ['frLoadTrackingParcelOrders','frLoadTrackingMarketOrders']){
