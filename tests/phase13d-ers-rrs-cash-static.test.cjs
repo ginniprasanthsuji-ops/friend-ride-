@@ -64,5 +64,5 @@ console.log("ERS/RRS Station registered-driver / guest-RRS / cash-only / privacy
 // Passenger capacity and live remaining-seat decrement regression assertions.
 const stationCapacityMigration=fs.readFileSync('supabase/migrations/202611260010_fr_station_passenger_capacity.sql','utf8');
 for(const s of ['passenger_capacity integer not null default 1','passengers_booked integer not null default 0','passengers_remaining','p_passengers integer default 1','passengers_booked=passengers_booked+1','passengers_booked+1>=passenger_capacity','for update','No passenger seats left'])assert.ok(stationCapacityMigration.includes(s),'Station passenger capacity migration missing: '+s);
-for(const s of ['frErsPassengers','frRrsGuestPassengers','passengers_remaining','passenger_capacity','Passengers:','p_passengers:passengers'])assert.ok(app.includes(s),'Passenger count/remaining seats UI integration missing: '+s);
+for(const s of ['frErsPassengers','frRrsPassengers','passengers_remaining','passenger_capacity','Passengers:','p_passengers:seats'])assert.ok(app.includes(s),'Passenger count/remaining seats UI integration missing: '+s);
 console.log('ERS/RRS passenger capacity + LIVE count decrement assertions PASS');
