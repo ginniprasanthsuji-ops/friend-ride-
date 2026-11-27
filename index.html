@@ -1188,7 +1188,7 @@ async function frLoadTrackingMarketOrders(){
   const {data,error}=await sb.rpc('fr_customer_list_market_orders');if(error)throw error;
   if(!data?.length){box.innerHTML='<div class="empty-state">Food / Shop orders à°Ǡ° °ՠ°¾ à°²à±Ǡ°µà±.</div>';return;}
   const labels={quote_requested:'Partner quote requested',quoted:'Price received — awaiting customer approval',customer_quote_accepted:'Quotation accepted — payment pending',payment_pending:'Payment pending',accepted:'Partner confirmed',preparing:'Preparing',ready:'Ready for delivery',completed:'Delivered / Completed',rejected:'Order rejected',cancelled:'Cancelled'};
-  const activeStatuses=['quote_requested','quoted','accepted','preparing','ready'];
+  const activeStatuses=['quote_requested','quoted','customer_quote_accepted','payment_pending','accepted','preparing','ready'];
   box.innerHTML='<div class="row"><b>Food / Shop Orders</b><button class="btn light" onclick="frLoadTrackingMarketOrders()">â» Refresh Orders</button></div>'+data.map(o=>{
    const status=String(o.status||'unknown').toLowerCase();
    const items=Array.isArray(o.items)?o.items:[];
