@@ -55,7 +55,8 @@ begin
  return v_id;
 end $$;
 
-create or replace function public.fr_station_my_bookings()
+drop function if exists public.fr_station_my_bookings();
+create function public.fr_station_my_bookings()
 returns table(booking_id uuid,ride_id uuid,ride_kind text,driver_name text,driver_phone text,vehicle_number text,
  from_label text,to_label text,fare numeric,booking_status text,payment_method text,created_at timestamptz,
  departure_at timestamptz,driver_photo_data text,passenger_count integer)
