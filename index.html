@@ -633,9 +633,10 @@ async function frSuperServiceNotice(service){
   <div class="market-heading"><h2>🍽️ Food Delivery</h2><span class="pill">Restaurants</span></div>
   <p class="muted">ముందుగా రెస్టారెంట్ ఎంచుకోండి. తర్వాత ఆ రెస్టారెంట్ మెనూ ఫోటోలు, ఐటమ్స్, ధరలతో ఓపెన్ అవుతుంది.</p>
   <div class="field"><label>Delivery Address</label><textarea id="foodAddress" placeholder="Saved address or enter another delivery address"></textarea></div>
-  <div class="market-search"><input id="restaurantSearch" placeholder="Search restaurant / cuisine" oninput="renderRestaurantList()"></div>
+  <div class="market-search"><input id="restaurantSearch" placeholder="Search approved restaurant / area" oninput="frRenderApprovedFoodStores()"></div>
   <div id="restaurantVisualList" class="market-store-grid"></div>
-  <div class="notice">మీ దగ్గరలో అందుబాటులో ఉన్న రెస్టారెంట్లు, మెనూ మరియు ధరలు ఇక్కడ కనిపిస్తాయి.</div>
+  <div id="frFoodStoreStatus" class="notice">Approved Restaurants backend నుంచి loading…</div>
+  <div class="notice">Restaurant ఎంచుకున్న తర్వాత దాని live Partner Catalogue, ధరలు, Cart మరియు Order flow ఓపెన్ అవుతాయి.</div>
  </div>
 </section>
 <section id="restaurantCatalogue" class="page">
@@ -984,7 +985,7 @@ function useHomeLocation(){const el=document.getElementById('homeLocationText');
 function frHomeSearch(q){const box=$('frHomeSearchResults');if(!box)return;const items=[['Ride Booking','ride','🚕'],['Food Delivery','food','🍱'],['Friend Mart / Local Stores','shops','🛒'],['Parcel Delivery','parcel','📦'],['Goods Delivery','goods','🚚'],['Home Services','homeServices','🧰'],['Scheduled Booking','scheduled','🗓️'],['Banking & Financial Services','bankingServices','🏦'],['My Orders','orders','🧾'],['Live Tracking','tracking','📍'],['Offers & Rewards','offers','🎁'],['Help & Support','support','💬']];const term=String(q||'').trim().toLowerCase();if(!term){box.hidden=true;box.innerHTML='';return;}const hits=items.filter(x=>(x[0]+' '+x[2]).toLowerCase().includes(term));box.innerHTML=hits.length?hits.map(x=>'<button type="button" onclick="frHomeSearchOpen(\''+x[1]+'\')">'+x[2]+' &nbsp; '+x[0]+'</button>').join(''):'<button type="button" disabled>No matching service found</button>';box.hidden=false;}
 function frHomeSearchOpen(id){const box=$('frHomeSearchResults');if(box)box.hidden=true;const inp=$('frHomeSearchInput');if(inp)inp.blur();if(['ride','food','shops','parcel','goods','homeServices','scheduled','orders','tracking'].includes(id))requireLogin(()=>showPage(id));else showPage(id);}
 function frHomeSearchGo(){const inp=$('frHomeSearchInput');const q=String(inp?.value||'').trim().toLowerCase();if(!q)return;frHomeSearch(q);const first=$('frHomeSearchResults')?.querySelector('button[onclick]');if(first)first.click();}
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(initRideMap,100);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='storeBrowse'||id==='shops')loadApprovedStores();if(id==='storeBrowse')setTimeout(()=>{frInitMarketMap();},100);if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerApprovals')loadPartnerApprovals();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='catalogue')loadPartnerCatalogue();if(id==='products')loadPartnerCatalogue();}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='ride')setTimeout(initRideMap,100);if(id==='tracking')setTimeout(initTrackingMap,100);if(id==='food')frLoadApprovedFoodStores();if(id==='storeBrowse'||id==='shops')loadApprovedStores();if(id==='storeBrowse')setTimeout(()=>{frInitMarketMap();},100);if(id==='driverApprovals')loadDriverApprovals();if(id==='driverDocumentReviews')loadDriverDocumentReviews();if(id==='partnerApprovals')loadPartnerApprovals();if(id==='partnerPaymentSettings')loadPartnerPaymentSettings();if(id==='partnerOrders')loadPartnerOrders();if(id==='catalogue')loadPartnerCatalogue();if(id==='products')loadPartnerCatalogue();}
 function requireLogin(fn){if(currentUser){fn();return;}afterLoginAction=fn;openAuth('login');}
 function enterRole(role){selectedRole=role;const gate=$('roleLauncher');if(gate)gate.classList.add('hide');openAuth('login',role);$('authModal').classList.add('fr-role-locked');}
 function openAuth(mode='login',role='customer'){selectedRole=role;document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));switchAuth(mode);$('authModal').classList.add('show');}
@@ -1604,6 +1605,23 @@ function renderCustomerCatalogue(){
   return `<article class="market-product market-product-3d">${visual}<div class="market-product-info"><b>${name}</b><small class="muted">${cat}${unit?' • '+unit:''}</small>${price}<span class="stock-mark yes">✓ Available</span></div><button class="btn purple" onclick="addMarketCart('${safe(x.name).replace(/'/g,"&#39;")}','${safe(frActiveStore.name).replace(/'/g,"&#39;")}','${action}','${x.id}','${shownPrice}','${safe(x.imageUrl||'').replace(/'/g,"&#39;")}','${x.prescriptionCheck?'true':'false'}')">${x.price===null?'＋ Ask Price':'＋ Add to Cart'}</button></article>`;
  }).join('')||'<div class="market-empty">ఈ షాప్ ఈ కేటగిరీలో products publish చేయలేదు.</div>';
 }
+async function frLoadApprovedFoodStores(){
+ const el=$('restaurantVisualList'),status=$('frFoodStoreStatus');if(!el)return;
+ el.innerHTML='<div class="notice">Approved Restaurants loading…</div>';
+ try{
+  const {data,error}=await sb.rpc('fr_customer_list_approved_stores_geo',{p_category:'restaurant'});if(error)throw error;
+  frApprovedFoodStores=(data||[]).filter(x=>(x.partner_category||'').toLowerCase()==='restaurant').map(x=>({id:x.id,name:x.business_name||'Restaurant',type:'restaurant',category:'Restaurant',area:x.address||'',art:'🍽️',a:'#fff0d7',b:'#ffc57b'}));
+  frRenderApprovedFoodStores();
+  if(status)status.textContent=frApprovedFoodStores.length?frApprovedFoodStores.length+' approved restaurant(s).':'Approved Restaurants ఇంకా లేవు. Partner approval/catalogue publish తర్వాత కనిపిస్తాయి.';
+ }catch(e){el.innerHTML='<div class="notice">Approved Restaurants load కాలేదు: '+safe(e.message||e)+'</div>';if(status)status.textContent='Restaurant backend error.';}
+}
+function frRenderApprovedFoodStores(){
+ const el=$('restaurantVisualList');if(!el)return;
+ const q=($('restaurantSearch')?.value||'').toLowerCase();
+ const rows=(frApprovedFoodStores||[]).filter(x=>(x.name+' '+x.area).toLowerCase().includes(q));
+ el.innerHTML=rows.map(x=>'<button class="market-store" onclick="frOpenApprovedFoodStore(\\''+safe(x.id)+'\\')"><div class="market-store-art" style="--a:'+x.a+';--b:'+x.b+'">'+x.art+'</div><div class="market-store-info"><b>'+safe(x.name)+'</b><small>Approved Restaurant</small><small>'+safe(x.area)+' • Open Menu →</small></div></button>').join('')||'<div class="market-empty">Approved Restaurant దొరకలేదు.</div>';
+}
+function frOpenApprovedFoodStore(id){const x=(frApprovedFoodStores||[]).find(v=>String(v.id)===String(id));if(x){frActiveStore=x;frMarketCategory='All';frCustomerStoreCatalogue=[];$('customerCatalogueTitle').textContent=x.name;$('customerCatalogueType').textContent='Restaurant';$('customerCatalogueSub').textContent='Live restaurant catalogue • Backend prices';$('customerCatalogueSearch').value='';showPage('customerCatalogue');renderStoreCategories();const grid=$('customerCatalogueGrid');if(grid)grid.innerHTML='<div class="notice">Live restaurant catalogue loading…</div>';openFriendStore(x.id);}}
 function renderRestaurantList(){
  const q=($('restaurantSearch')?.value||'').toLowerCase(),el=$('restaurantVisualList');if(!el)return;
  const items=FR_DEMO_RESTAURANTS.filter(x=>(x.name+' '+x.cuisine).toLowerCase().includes(q));
