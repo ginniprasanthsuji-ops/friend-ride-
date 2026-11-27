@@ -19,13 +19,22 @@
 
 ## Start-from-zero Audit
 - [x] Confirm branch and current commit before work.
-- [ ] Audit current code for each requirement and identify incomplete/buggy pieces.
-- [ ] Fix critical blockers first.
-- [ ] Add/maintain focused tests and regression coverage.
-- [ ] Commit only to this branch.
+- [x] Audit current code for each requirement and identify incomplete/buggy pieces (RRS photo flow missing; guest RPC passenger-capacity contract mismatch found).
+- [x] Fix critical blockers first (async RRS handler; passenger-capacity RPC migration).
+- [x] Add focused static regression checks for RRS async handler and passenger-capacity RPC.
+- [x] Commit only to this branch.
 - [ ] Report commit, tests/checks, outstanding live-device verification.
 
 ## Current baseline
 - Branch head at project start: `1dc760a5ef1cdd6c9cc1ebfe6bf86a7a8b1689c7`.
 - Audit has already found a critical syntax issue candidate: `frStationPostRRS` contains `await` but is declared without `async`; verify/fix immediately.
 - RRS photo compression/upload code was not found by current audit search and must be implemented/verified.
+
+## X2 progress update (2026-11-27)
+- Fixed `frStationPostRRS` declaration to async (commit `f19b98c830d1594bbc7d4e8587ae027c851a2ad7`).
+- Added migration `202611270001_fr_x2_rrs_passenger_capacity_rpc_fix.sql`: adds passenger capacity column and aligns guest-post RPC with UI's `p_passengers` parameter (commit `0a3efc2b37c2b250df887137534b890a0048ae36`).
+- Added X2 regression assertions to `tests/ers-rrs-station-ui.test.cjs` (commit `62c1c49f66c28f285810fff915c9387fdc410904`; corrected assertion in `f74f2ca6d1dbdaee14f35799a735a143968642a6`).
+- Branch head now `f74f2ca6d1dbdaee14f35799a735a143968642a6`.
+- No SQL migration has been applied to Supabase in this update; it remains branch code pending QA DB migration.
+- Pages workflow was queued on earlier commit and cancelled after subsequent branch updates; do not treat as deploy/test success.
+- Next: implement RRS driver photo selection, client compression to <=1MB, secure storage and safe display; then audit/test Food/Shop, Parcel, payment/subscription and auth.
