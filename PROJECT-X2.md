@@ -45,3 +45,12 @@
 - Commit `ca63b81dd52c52cc5a0b4d879625ccc3536af651`: LIVE ride cards show signed photo URL.
 - Regression test additions committed to test file.
 - Live QA still pending: apply migrations in QA Supabase, test anonymous upload and signed read, verify photo appears after posting.
+
+
+## X2 Commerce / Parcel Audit (2026-11-27)
+- **Food:** restaurant and menu rendering currently uses local demo arrays (FR_DEMO_RESTAURANTS, FR_FOOD_MENU); menu items display “Price set by restaurant” and use add/ask-price behavior. This is not verified live backend catalogue pricing or an order-create workflow.
+- **Shop:** approved store list and partner catalogue are RPC-backed (fr_customer_list_approved_stores_geo, fr_customer_list_partner_catalogue). The UI has cart/checkout components, but this audit has not yet verified server-side order creation, fee calculation, payment verification, or tracking persistence end-to-end.
+- **Parcel:** submitParcelRequest() currently validates form inputs and then shows an alert saying live booking requires parcel table mapping. It does not save a booking or create a tracking record. Parcel create/save/reopen/cancel/tracking is therefore **not implemented/verified** in this branch at this point.
+- **SQL inventory:** the branch has no parcel/food/shop order migration files in its Supabase migrations directory; do not report these workflows as backend-live.
+- **Next blockers:** identify/confirm the existing schema and auth/payment contracts before implementing parcel/order persistence; avoid inventing production tables or marking payment verified client-side.
+- **Verification:** latest CI on f7aad253 — Button & JavaScript Audit PASS, Playwright Regression & E2E PASS, Pages build/deployment PASS. These checks do not prove real Supabase order persistence, payment verification, SMS, push, or live-device tracking.
