@@ -64,3 +64,21 @@ Changes and preview deployments are limited to `yf-test-1-to-15`. Do not merge o
 - Negative backend validation check: malformed RRS payload rejected by the deployed RPC (PASS); no test ride was inserted.
 - The QA database does not currently contain the market-order RPC/table definitions or the X2 payment-order ledger. Therefore the secure Razorpay integration remains code-only and cannot safely gate real market orders yet.
 - Main/production untouched; work remains restricted to `yf-test-1-to-15`.
+
+
+## Current continuation report — 2026-11-27 (YF15)
+**Verified branch HEAD at this check:** `357bf9ca02f21b3871ff6f315666179d6be2e73f`
+
+### Current CI / deploy results for this commit
+- YF15 Preview Deploy #31: **PASS** — https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45936669079
+- Button & JavaScript Audit #113: **PASS** — https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45936669060
+- Playwright Regression & E2E #108: **PASS** — https://github.com/ginniprasanthsuji-ops/friend-ride-/actions/runs/45936669135
+- GitHub Pages Build #480: was still running at the last status poll; Pages #479 on previous commit `18d6080b` passed. Do not claim #480 PASS until it completes.
+
+### Release readiness
+Project X2 is **not yet 100% complete**. Automated CI, JavaScript/button audit, preview deployment and Playwright regression/E2E are passing on the current YF15 commit, but secure platform-fee payment integration is incomplete and not deployed. Real staging persistence tests (RRS/ERS departure time and guest photo), real device OTP/SMS/push/live tracking, subscription payment verification, and final full workflow release gate remain outstanding. No production/main deployment or merge is authorized.
+
+### User's launch sequence
+- Continue X2 exclusively on `yf-test-1-to-15` for the planned test period.
+- Mark X2 100% only after implementation blockers are resolved and final CI, regression, E2E, Playwright, deployment and backend/device checks are completed with evidence.
+- Then work on Project Arjuna X separately; main production launch only after Arjuna X is complete and its release gate passes.
