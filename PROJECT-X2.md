@@ -112,3 +112,13 @@
 - QA Supabase has no catalogue/order/market tables and no Food/Shop order RPCs. Existing UI RPC contract is documented in `index.html`; do not build order SQL against guessed catalogue fields. Food demo menu stays disabled/non-orderable.
 - QA Supabase `fr_station_rides` columns verified: `passenger_capacity`, `passengers_booked`, `departure_at`, `driver_photo_data` exist. This is schema verification only, not ERS/RRS user workflow PASS.
 - Remaining: authenticated Parcel E2E; ERS/RRS posting/booking/cancel E2E with test accounts; Food/Shop catalogue and server-side order/payment backend design after identifying authoritative store/catalogue schema; subscription payment reference/admin approval activation test; real OTP/device/push/live-location tests; full YT 1–15 browser and mobile regression.
+
+
+## Continuation checkpoint — 2026-11-27 (verified YT branch)
+- Target branch is exactly `yt-test-1-to-15`; do not confuse with other branches. Main/production remains untouched.
+- Current head verified: `82ac59d16ca6fc1351cbc65caf139c90247d9c83`.
+- Latest Pages deployment for this head completed successfully (run 46013107150).
+- QA Supabase read-only table inventory rechecked: no catalogue/order/market-order tables found; `fr_parcel_requests` exists. Do not invent Food/Shop schema.
+- Food/Shop order and payment backend remains blocked on identifying authoritative catalogue schema and defining server-side price/fee/payment-verification contract.
+- Parcel migration is present in QA, but authenticated customer create/list/cancel E2E remains unverified.
+- Progress estimate remains approximately 60% only as a project estimate, not a fully verified completion rate. Remaining work must be tracked against actual tests and live workflow evidence.
