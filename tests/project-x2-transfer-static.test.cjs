@@ -11,3 +11,11 @@ assert.ok(cancel.includes('revoke all on function public.fr_station_cancel_booki
 const cancelFix=fs.readFileSync('supabase/migrations/202611270003_project_x2_station_cancel_security_fix.sql','utf8');
 for(const s of ['auth.uid() is null','passenger_id=auth.uid()','for update','v_booking.status not in (\'requested\',\'confirmed\')','v_ride.status not in (\'live\',\'booked\')','passengers_booked-v_booking.passenger_count','revoke all on function public.fr_station_cancel_booking(uuid) from public,anon;','grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;'])assert.ok(cancelFix.includes(s),'YT X2 cancellation security/seat restoration invariant missing: '+s);
 console.log('YT Project X2 transfer static checks PASS');
+
+const parcelMigration=fs.readFileSync('supabase/migrations/202611270004_project_x2_parcel_persistence.sql','utf8');
+for(const s of ['fr_parcel_requests','tracking_id text not null unique','customer_id uuid not null references auth.users(id)','fr_customer_create_parcel_request','fr_customer_list_parcel_requests','fr_customer_cancel_parcel_request','auth.uid()','status=\\'requested\\'','grant execute on function public.fr_customer_create_parcel_request'])assert.ok(parcelMigration.includes(s),'X2 parcel persistence migration invariant missing: '+s);
+for(const s of ['fr_customer_create_parcel_request','p_sender_name','p_sender_phone','p_pickup_address','p_receiver_name','p_receiver_phone','p_delivery_address','p_description','p_weight_kg','frLoadTrackingParcelOrders','fr_customer_cancel_parcel_request'])assert.ok(app.includes(s),'X2 parcel UI integration missing: '+s);
+const foodMenuCode=app.slice(app.indexOf('function renderRestaurantMenu()'),app.indexOf('function frCartUpdateBadges()'));
+assert.ok(foodMenuCode.includes('Demo Menu Only')&&!foodMenuCode.includes('addMarketCart'),'Demo food menu must not create fake checkout cart entries');
+for(const s of ['fr_customer_place_market_order','fr_customer_list_market_orders','fr_partner_quote_market_order','fr_customer_accept_market_quote','fr_customer_counter_market_order','fr_partner_confirm_market_payment'])assert.ok(app.includes(s),'X2 food/shop order backend RPC integration missing: '+s);
+console.log('YT Project X2 parcel persistence and commerce safeguards PASS');
