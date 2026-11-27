@@ -5,6 +5,9 @@ const create=fs.readFileSync('supabase/functions/fr-razorpay-create-order/index.
 const verify=fs.readFileSync('supabase/functions/fr-razorpay-verify-payment/index.ts','utf8');
 const ledger=fs.readFileSync('supabase/migrations/202611270002_fr_razorpay_payment_orders.sql','utf8');
 // YF-only test preview must never call the production Supabase project.
+// QA auth must use a dedicated local-storage session key to avoid production-token contamination.
+assert.ok(app.includes("storageKey:'friend-ride-yf15-auth-v1'"),'YF QA auth session is isolated');
+assert.ok(!app.includes("storageKey:'friend-ride-auth-v1'"),'YF app must not reuse shared auth storage key');
 assert.ok(app.includes("https://pqsangtvietawkfgpgfu.supabase.co"),'YF test app uses FRIEND RIDE QA Supabase');
 assert.ok(!app.includes('fglyplxcczdjtfwobtzh.supabase.co'),'YF test app must not point to production Supabase');
 // RRS photo UI, iterative compression, strict size cap, and RPC payload.
