@@ -1,0 +1,26 @@
+const fs=require('node:fs');const assert=require('node:assert/strict');
+const app=fs.readFileSync('index.html','utf8');
+const migration=fs.readFileSync('supabase/migrations/202611270001_project_x2_ers_rrs_departure_rrs_photo.sql','utf8');
+const create=fs.readFileSync('supabase/functions/fr-razorpay-create-order/index.ts','utf8');
+const verify=fs.readFileSync('supabase/functions/fr-razorpay-verify-payment/index.ts','utf8');
+const ledger=fs.readFileSync('supabase/migrations/202611270002_fr_razorpay_payment_orders.sql','utf8');
+// RRS photo UI, iterative compression, strict size cap, and RPC payload.
+for(const s of ['frRRSCompressedPhotoData','frCompressRRSPhoto(event)','accept="image/*"','1 MB','1048576','canvas.toBlob(resolve,\'image/jpeg\',quality)','blob.size<=1048576','p_photo_data:frRRSCompressedPhotoData'])assert.ok(app.includes(s),'RRS photo invariant: '+s);
+assert.ok(app.includes('frStationPostRRS()'),'RRS post handler exists');
+assert.ok(app.includes('p_departure_at:new Date(depart).toISOString()'),'RRS departure timestamp sent as ISO');
+assert.ok(migration.includes('p_departure_at timestamptz'),'Backend departure parameter exists');
+assert.ok(migration.includes('p_departure_at<=now()'),'Backend rejects past departure');
+assert.ok(migration.includes('driver_photo_data text'),'RRS photo column exists');
+assert.ok(migration.includes('v_photo_bytes>1048576'),'Backend enforces 1 MB photo limit');
+assert.ok(migration.includes('b.status=\'confirmed\' and r.ride_kind=\'RRS\''),'Photo only returned to confirmed RRS booking');
+assert.ok(migration.includes('case when b.status=\'confirmed\' then r.driver_phone else null end'),'Driver contact hidden until booking confirmed');
+// Platform fee calculation bounds.
+assert.ok(create.includes('Math.min(2500,Math.round(subtotal*0.025))'),'2.5% fee capped at ₹25');
+assert.ok(create.includes('Authentication required'),'Payment order creation requires authenticated user');
+assert.ok(create.includes('RAZORPAY_KEY_ID')&&create.includes('RAZORPAY_KEY_SECRET'),'Payment server secrets required');
+assert.ok(create.includes('fr_razorpay_payment_orders'),'Order ledger write present');
+assert.ok(create.includes('Invalid subtotal'),'Subtotal validation present');
+// Verification requires signature + provider lookup + captured payment + amount/currency/order/owner.
+for(const s of ['hmacHex(secret,orderId+"|"+paymentId)','constantTimeEqual(expected,signature)','eq("user_id",user.id)','payment.status!=="captured"','payment.amount!==record.amount_paise','payment.currency!==record.currency','record.status!=="created"','status:"paid"'])assert.ok(verify.includes(s),'Payment verification invariant: '+s);
+for(const s of ['user_id uuid not null','razorpay_order_id','amount_paise','status','unique'])assert.ok(ledger.includes(s),'Ledger invariant: '+s);
+console.log('Project X2 static security/regression checks PASS');
