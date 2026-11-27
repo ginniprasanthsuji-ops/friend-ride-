@@ -21,13 +21,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main production source
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: production
-
-      - name: Checkout YF 1-15 preview source
+      - name: Checkout YF 1-15 source
         uses: actions/checkout@v4
         with:
           ref: yf-test-1-to-15
@@ -36,14 +30,11 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Stage production root and isolated YF15 preview
+      - name: Stage active YF15 app at Pages root
         run: |
-          mkdir -p site/qa-preview-yf15
-          rsync -a --exclude='.git' production/ site/
-          cp yf15/index.html yf15/manifest.webmanifest yf15/manifest.json yf15/sw.js yf15/service-worker.js yf15/learn-teach.js yf15/learn-teach.css yf15/test.html site/qa-preview-yf15/ 2>/dev/null || true
-          for d in assets icons styles; do
-            if [ -d "yf15/$d" ]; then cp -R "yf15/$d" site/qa-preview-yf15/; fi
-          done
+          mkdir -p site
+          rsync -a --exclude='.git' --exclude='.github' yf15/ site/
+          test -f site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
