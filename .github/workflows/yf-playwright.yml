@@ -18,6 +18,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Phase 13D ERS/RRS cash-only static QA
         run: node tests/phase13d-ers-rrs-cash-static.test.cjs
+      - name: Project X2 photo, departure, and payment security regression checks
+        run: node tests/project-x2-static.test.cjs
       - name: Run E2E and regression tests
         run: npx playwright test
       - name: Upload Playwright report and test artifacts
