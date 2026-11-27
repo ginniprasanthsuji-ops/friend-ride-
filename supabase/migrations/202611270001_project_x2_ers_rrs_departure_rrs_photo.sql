@@ -11,7 +11,7 @@ create or replace view public.fr_station_live_rides_public as
  where status='live' and passengers_booked < passenger_capacity;
 grant select on public.fr_station_live_rides_public to anon,authenticated;
 
-drop function if exists public.fr_station_post_ers(text,text,numeric,integer);
+drop function if exists public.fr_station_post_ers(text,text,numeric,integer);\ndrop function if exists public.fr_station_post_ers(text,text,numeric);
 create or replace function public.fr_station_post_ers(
  p_from text,p_to text,p_fare numeric,p_passengers integer,p_departure_at timestamptz
 ) returns uuid language plpgsql security definer set search_path=public,auth
@@ -31,7 +31,7 @@ begin
  return v_id;
 end $$;
 
-drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer);
+drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer);\ndrop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric);
 create or replace function public.fr_station_post_rrs_guest(
  p_name text,p_phone text,p_vehicle text,p_from text,p_to text,p_fare numeric,
  p_passengers integer,p_departure_at timestamptz,p_photo_data text
