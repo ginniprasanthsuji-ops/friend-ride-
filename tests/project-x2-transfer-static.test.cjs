@@ -25,6 +25,11 @@ for(const s of ['మీ ప్రయాణం • మీ సేవలు • మ
 const stationRefresh=app.slice(app.indexOf('async function frStationRefresh(){'),app.indexOf('\nfunction frStationFilter',app.indexOf('async function frStationRefresh(){')));
 assert.ok(stationRefresh.includes('fr_station_live_rides_public'),'LIVE station query missing');
 assert.ok(!stationRefresh.includes('driver_photo_path'),'LIVE station query/cards must not depend on nonexistent driver_photo_path or expose private photos');
+// Screenshot regression: customer dashboard numbers, readable icon entities, and clean home subtitle.
+assert.ok(app.includes('<small>Wallet Balance</small><b>₹0.00</b>'),'Dashboard wallet amount must render as readable rupee value');
+assert.ok(app.includes('<small>Bookings</small><b>0</b>'),'Dashboard bookings must show numeric zero, not a placeholder dash');
+assert.ok(app.includes('Your ride, services and local shopping — all in one app.'),'Home subtitle encoding regression');
+assert.ok(app.includes('&#9776;'),'Hamburger icon must use a safe HTML entity');
 console.log('YT Project X2 parcel persistence and commerce safeguards PASS');
 // Food demo items must remain non-orderable until linked to an approved restaurant catalogue.
 assert.ok(foodMenuCode.includes('Demo Menu Only')&&foodMenuCode.includes('disabled')&&!foodMenuCode.includes('addMarketCart'),'Demo food menu remains disabled and cannot create fake cart items');
