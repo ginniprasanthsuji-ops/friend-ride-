@@ -21,4 +21,5 @@ drop policy if exists fr_razorpay_payment_orders_read_own on public.fr_razorpay_
 create policy fr_razorpay_payment_orders_read_own on public.fr_razorpay_payment_orders for select to authenticated using (user_id=auth.uid());
 revoke insert,update,delete on public.fr_razorpay_payment_orders from anon,authenticated;
 grant select on public.fr_razorpay_payment_orders to authenticated;
+grant all on public.fr_razorpay_payment_orders to service_role;
 commit;
