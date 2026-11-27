@@ -4,6 +4,7 @@ const migration=fs.readFileSync('supabase/migrations/202611270001_project_x2_ers
 const create=fs.readFileSync('supabase/functions/fr-razorpay-create-order/index.ts','utf8');
 const verify=fs.readFileSync('supabase/functions/fr-razorpay-verify-payment/index.ts','utf8');
 const ledger=fs.readFileSync('supabase/migrations/202611270002_fr_razorpay_payment_orders.sql','utf8');
+const cancel=fs.readFileSync('supabase/migrations/202611270004_project_x2_station_booking_cancel_fix.sql','utf8');
 // YF-only test preview must never call the production Supabase project.
 // QA auth must use a dedicated local-storage session key to avoid production-token contamination.
 assert.ok(app.includes("storageKey:'friend-ride-yf15-auth-v1'"),'YF QA auth session is isolated');
@@ -41,4 +42,9 @@ assert.ok(create.includes('Invalid subtotal'),'Subtotal validation present');
 // Verification requires signature + provider lookup + captured payment + amount/currency/order/owner.
 for(const s of ['hmacHex(secret,orderId+"|"+paymentId)','constantTimeEqual(expected,signature)','eq("user_id",user.id)','payment.status!=="captured"','payment.amount!==record.amount_paise','payment.currency!==record.currency','record.status!=="created"','status:"paid"'])assert.ok(verify.includes(s),'Payment verification invariant: '+s);
 for(const s of ['user_id uuid not null','razorpay_order_id','amount_paise','status','unique'])assert.ok(ledger.includes(s),'Ledger invariant: '+s);
+// Passenger cancellation is scoped to the booking owner and confirmed status; restore seats safely.
+assert.ok(app.includes("sb.rpc('fr_station_cancel_booking',{p_booking_id:id})"),'Cancellation UI calls backend RPC');
+for(const s of ['auth.uid() is null','passenger_id = auth.uid()','Only confirmed bookings can be cancelled','for update','passengers_booked = greatest(0, passengers_booked - 1)','status = case when status = \'booked\' then \'live\' else status end'])assert.ok(cancel.includes(s),'Cancellation invariant: '+s);
+assert.ok(cancel.includes('revoke all on function public.fr_station_cancel_booking(uuid) from public, anon;'),'Cancellation RPC blocks public and anon');
+assert.ok(cancel.includes('grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;'),'Cancellation RPC granted to authenticated only');
 console.log('Project X2 static security/regression checks PASS');
