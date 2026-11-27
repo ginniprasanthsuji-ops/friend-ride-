@@ -34,4 +34,17 @@ jobs:
           const missing = targets.filter(n=>!app.includes('function '+n+'(')&&!app.includes('window.'+n+'=')&&!app.includes('window.'+n+' =')&&!app.includes('const '+n+'=')&&!app.includes('const '+n+' =')&&!app.includes('let '+n+'=')&&!app.includes('let '+n+' =')&&!app.includes('var '+n+'=')&&!app.includes('var '+n+' ='));
           console.log('Buttons with inline handlers: '+handlers.length+'; unique handler targets: '+targets.length+'; missing: '+missing.length);
           if(missing.length){console.error(missing.join(', '));process.exitCode=1;}
+          const trackingRequired = [
+            'function selectTrackingCategory(',
+            'function frLoadTrackingParcelOrders(',
+            'function frLoadTrackingMarketOrders(',
+            "sb.rpc('fr_customer_list_parcel_requests')",
+            "sb.rpc('fr_customer_list_market_orders')",
+            'trackTabParcel',
+            'trackTabMarket',
+            'trackingCategoryResults'
+          ];
+          const trackingMissing = trackingRequired.filter(s => !app.includes(s));
+          console.log('Parcel/Food/Shop tracking implementation markers: '+(trackingRequired.length-trackingMissing.length)+'/'+trackingRequired.length+' PASS');
+          if(trackingMissing.length){console.error('Tracking implementation missing: '+trackingMissing.join(', '));process.exitCode=1;}
           NODE
