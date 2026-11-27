@@ -26,3 +26,10 @@ assert.ok(app.includes('async function frStationPostRRS(){'),'X2 RRS post handle
 assert.ok(app.includes('p_passengers:passengers'),'RRS UI must pass passenger capacity to RPC');
 for(const x of ['add column if not exists passenger_capacity integer','p_passengers integer default 1','p_passengers not between 1 and 10','passenger_capacity'])assert.ok(x2Migration.includes(x),'X2 RRS capacity migration assertion missing: '+x);
 console.log('Project X2 RRS async handler and passenger-capacity RPC contract checks PASS');
+
+const x2Photo=fs.readFileSync('supabase/migrations/202611270002_fr_x2_rrs_driver_photo_storage.sql','utf8');
+for(const x of ['frRrsGuestPhoto','frRrsPreviewPhoto','frRrsCompressPhoto','maximum 1 MB','p_photo_path:path','createSignedUrl'])assert.ok(app.includes(x),'X2 photo UI assertion missing: '+x);
+for(const x of ['driver_photo_path text','fr_x2_rrs_guest_photo_insert','fr_x2_rrs_guest_photo_read','rrs-guest/','p_photo_path text default null','driver_photo_path'])assert.ok(x2Photo.includes(x),'X2 photo migration assertion missing: '+x);
+assert.ok(app.includes('driver_photo_path,from_label'),'LIVE ride query must select driver photo path');
+assert.ok(app.includes('async function frStationPostRRS()'),'RRS post handler async');
+console.log('Project X2 RRS photo upload, compression, storage policy, RPC and LIVE-card display static checks PASS');
