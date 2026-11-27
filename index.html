@@ -1053,12 +1053,19 @@ async function saveRideRequest(){
     if(!currentUser||currentProfile?.role!=='customer')throw Error('Customer OTP Login అవసరం.');
     const pickup=$('pickup').value.trim(),drop=$('drop').value.trim(),fare=Number($('fare').value);
     if(!pickup||!drop||!Number.isFinite(fare)||fare<=0)throw Error('Pickup, Drop, సరైన Fare నమోదు చేయండి.');
+    const platformFee=Math.min(Math.round(fare*0.025*100)/100,25);
+    const totalNow=Math.round((fare+platformFee)*100)/100;
+    const feePrompt='Ride Fare: ₹'+fare.toFixed(2)+'\nFRIEND RIDE Platform Fee (2.5%, max ₹25): ₹'+platformFee.toFixed(2)+'\nPlatform Fee Now: ₹'+platformFee.toFixed(2)+'\nDriverకు Ride Fare directగా: ₹'+fare.toFixed(2)+'\n\nRazorpay Platform Fee link open చేయాలా?';
+    if(!confirm(feePrompt))return;
+    const paymentWindow=window.open('https://rzp.io/rzp/VDAnsnXS','_blank','noopener,noreferrer');
+    alert('Razorpayలో FRIEND RIDE Platform Fee ₹'+platformFee.toFixed(2)+' మాత్రమే చెల్లించండి. Link amount fixed అయి ఉండవచ్చు; సరైన amount manually confirm చేయండి. Payment verification ప్రస్తుతం server-side లేదు.');
+    if(!confirm('Platform Fee ₹'+platformFee.toFixed(2)+' చెల్లించానని acknowledge చేసి Ride Request పంపాలా?\n\nఈ acknowledgement verified payment కాదు.')){if(paymentWindow)try{paymentWindow.close();}catch(_){}return;}
     const coords=frParsePickupCoords();
-    const row={customer_id:currentUser.id,vehicle_type:rideVehicle,pickup,drop,fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested'};
+    const row={customer_id:currentUser.id,vehicle_type:rideVehicle,pickup,drop,fare_offer:fare,notes:$('rideNotes')?.value.trim()||'',status:'requested',platform_fee:platformFee};
     if(coords){row.pickup_lat=coords[0];row.pickup_lng=coords[1];}
     if(dropCoords&&Number.isFinite(Number(dropCoords.lat))&&Number.isFinite(Number(dropCoords.lon))){row.drop_lat=Number(dropCoords.lat);row.drop_lng=Number(dropCoords.lon);}
     const {data,error}=await sb.from('rides').insert(row).select('id,status').single();if(error)throw error;
-    frActiveRideId=data.id;frShow('trackingStatus','Ride Request పంపబడింది. దగ్గరలోని Drivers కోసం చూస్తున్నాం…');frShow('liveRideStatus','Active Ride ID: '+data.id+' • Driver response కోసం వేచి ఉంది.');
+    frActiveRideId=data.id;frShow('trackingStatus','Platform Fee acknowledgement నమోదు అయింది. Ride Request పంపబడింది. దగ్గరలోని Drivers కోసం చూస్తున్నాం…');frShow('liveRideStatus','Active Ride ID: '+data.id+' • Platform Fee ₹'+platformFee.toFixed(2)+' • Driverకు ₹'+fare.toFixed(2)+' direct payment • Driver response కోసం వేచి ఉంది.');
     showPage('tracking');frEnsureTrackingMap(coords);await refreshNearbyDrivers();
     if(frNearbyTimer)clearInterval(frNearbyTimer);
     frNearbyTimer=setInterval(()=>{if(!document.hidden&&currentUser?.id)refreshNearbyDrivers();},10000);
