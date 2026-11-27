@@ -38,3 +38,10 @@
 - No SQL migration has been applied to Supabase in this update; it remains branch code pending QA DB migration.
 - Pages workflow was queued on earlier commit and cancelled after subsequent branch updates; do not treat as deploy/test success.
 - Next: implement RRS driver photo selection, client compression to <=1MB, secure storage and safe display; then audit/test Food/Shop, Parcel, payment/subscription and auth.
+
+## X2 RRS photo implementation
+- Commit `b1583905aac5e994adf1360f2e099f50226c6ff2`: required photo selection, preview, client JPEG compression to <=1 MB, upload to existing `driver-profile-photos` bucket under `rrs-guest/`, RPC path persistence.
+- Commit `b56c33f582675f98977694b43527e3b21fc08886`: migration adds photo path column, restricted Storage policies, public LIVE view field and photo-path RPC.
+- Commit `ca63b81dd52c52cc5a0b4d879625ccc3536af651`: LIVE ride cards show signed photo URL.
+- Regression test additions committed to test file.
+- Live QA still pending: apply migrations in QA Supabase, test anonymous upload and signed read, verify photo appears after posting.
