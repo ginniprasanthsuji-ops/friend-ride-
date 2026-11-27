@@ -1,7 +1,7 @@
 name: YF Button and JavaScript Audit
 on:
   push:
-    branches: [yf-test-1-to-15]
+    branches: [yf-test-1-to-15, yt-test-1-to-15]
   pull_request:
     branches: [yf-test-1-to-15]
 jobs:
