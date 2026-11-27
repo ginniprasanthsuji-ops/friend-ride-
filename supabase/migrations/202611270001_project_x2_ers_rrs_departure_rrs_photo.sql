@@ -1,4 +1,4 @@
--- Project X2 Phase 1: ERS/RRS departure time and RRS guest-driver photo (YF15 only).
+-- Project X2: ERS/RRS departure and RRS guest photo backend. YF15 branch only.
 begin;
 alter table public.fr_station_rides add column if not exists departure_at timestamptz;
 alter table public.fr_station_rides add column if not exists driver_photo_data text;
@@ -7,11 +7,13 @@ create or replace view public.fr_station_live_rides_public as
  select id,ride_kind,driver_name,vehicle_number,from_label,to_label,fare,status,payment_method,
         passenger_capacity,passengers_booked,(passenger_capacity-passengers_booked) as passengers_remaining,
         created_at,departure_at
- from public.fr_station_rides
- where status='live' and passengers_booked < passenger_capacity;
+ from public.fr_station_rides where status='live' and passengers_booked < passenger_capacity;
 grant select on public.fr_station_live_rides_public to anon,authenticated;
 
-drop function if exists public.fr_station_post_ers(text,text,numeric,integer);\ndrop function if exists public.fr_station_post_ers(text,text,numeric);
+-- Remove prior RPC signatures, including the legacy 3-argument and capacity 4-argument forms.
+drop function if exists public.fr_station_post_ers(text,text,numeric,integer,timestamptz);
+drop function if exists public.fr_station_post_ers(text,text,numeric,integer);
+drop function if exists public.fr_station_post_ers(text,text,numeric);
 create or replace function public.fr_station_post_ers(
  p_from text,p_to text,p_fare numeric,p_passengers integer,p_departure_at timestamptz
 ) returns uuid language plpgsql security definer set search_path=public,auth
@@ -31,7 +33,9 @@ begin
  return v_id;
 end $$;
 
-drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer);\ndrop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric);
+drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer,timestamptz,text);
+drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer);
+drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric);
 create or replace function public.fr_station_post_rrs_guest(
  p_name text,p_phone text,p_vehicle text,p_from text,p_to text,p_fare numeric,
  p_passengers integer,p_departure_at timestamptz,p_photo_data text
