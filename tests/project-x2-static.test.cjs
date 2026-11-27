@@ -4,6 +4,9 @@ const migration=fs.readFileSync('supabase/migrations/202611270001_project_x2_ers
 const create=fs.readFileSync('supabase/functions/fr-razorpay-create-order/index.ts','utf8');
 const verify=fs.readFileSync('supabase/functions/fr-razorpay-verify-payment/index.ts','utf8');
 const ledger=fs.readFileSync('supabase/migrations/202611270002_fr_razorpay_payment_orders.sql','utf8');
+// YF-only test preview must never call the production Supabase project.
+assert.ok(app.includes("https://pqsangtvietawkfgpgfu.supabase.co"),'YF test app uses FRIEND RIDE QA Supabase');
+assert.ok(!app.includes('fglyplxcczdjtfwobtzh.supabase.co'),'YF test app must not point to production Supabase');
 // RRS photo UI, iterative compression, strict size cap, and RPC payload.
 for(const s of ['frRRSCompressedPhotoData','frCompressRRSPhoto(event)','accept="image/*"','1 MB','1048576','canvas.toBlob(resolve,\'image/jpeg\',quality)','blob.size<=1048576','p_photo_data:frRRSCompressedPhotoData'])assert.ok(app.includes(s),'RRS photo invariant: '+s);
 assert.ok(app.includes('frStationPostRRS()'),'RRS post handler exists');
