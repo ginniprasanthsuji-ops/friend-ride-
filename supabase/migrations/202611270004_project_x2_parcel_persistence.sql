@@ -26,7 +26,7 @@ create or replace function public.fr_customer_create_parcel_request(
  p_receiver_name text,p_receiver_phone text,p_delivery_address text,
  p_description text,p_weight_kg numeric
 ) returns table(parcel_id uuid,tracking_id text,status text)
-language plpgsql security definer set search_path='' as $
+language plpgsql security definer set search_path='' as $$
 declare v_id uuid; v_tracking text;
 begin
  if auth.uid() is null then raise exception 'Authentication required'; end if;
@@ -43,12 +43,12 @@ begin
 end $$;
 create or replace function public.fr_customer_list_parcel_requests()
 returns table(parcel_id uuid,tracking_id text,status text,pickup_address text,delivery_address text,description text,weight_kg numeric,created_at timestamptz)
-language sql security definer set search_path='' as $
+language sql security definer set search_path='' as $$
  select id,tracking_id,status,pickup_address,delivery_address,description,weight_kg,created_at
  from public.fr_parcel_requests where auth.uid() is not null and customer_id=auth.uid() order by created_at desc
 $$;
 create or replace function public.fr_customer_cancel_parcel_request(p_parcel_id uuid)
-returns void language plpgsql security definer set search_path='' as $
+returns void language plpgsql security definer set search_path='' as $$
 begin
  if auth.uid() is null then raise exception 'Authentication required'; end if;
  update public.fr_parcel_requests p set status='cancelled',updated_at=now()
