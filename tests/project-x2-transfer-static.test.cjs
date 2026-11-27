@@ -54,3 +54,6 @@ for(const fn of ['frLoadCustomerMarketOrders','frCustomerAcceptQuote','frCustome
  const body=app.slice(start,next<0?start+5000:next);
  assert.ok(body.includes('await sb.rpc('),'RPC handler must await its Supabase call: '+fn);
 }
+
+// Catch accidental doubled async keywords introduced during handler fixes.
+assert.ok(!app.includes('async async function'),'Duplicated async declaration found in app inline script');
