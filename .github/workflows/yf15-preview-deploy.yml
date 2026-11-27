@@ -41,7 +41,6 @@ jobs:
         with:
           path: site/
 
-      - name: Deploy isolated YF15 preview
+      - name: Deploy YF15 app
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
