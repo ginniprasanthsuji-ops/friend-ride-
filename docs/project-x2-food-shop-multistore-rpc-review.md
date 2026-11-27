@@ -16,7 +16,7 @@ Status: review-only. Not applied to Supabase. Checkout UI not yet integrated.
 ## Review findings / blockers before integration
 1. Existing UI cart item mapping must be updated to include `store_id` on every line; current single-store payload omits it.
 2. Existing checkout cart can include non-catalogue/master items with no catalogue item ID; these cannot be submitted to this RPC without an approved backend catalogue mapping.
-3. The idempotency key record currently stores result only, not a hash of the request payload. Same customer/key reused with a different cart will replay the original result. Consider adding request fingerprint and rejecting mismatched payload.
+3. Updated draft migration 015 now stores a canonical payload string (delivery address + JSONB items) and rejects reuse of the same customer/request key when payload differs. This safeguard is draft-only and still requires review.
 4. Existing single-order idempotency migration 012 adds `request_key` to `fr_market_orders`; multi-store request idempotency uses a separate request table. Confirm whether migration 012 is needed for the final architecture or can be excluded.
 5. Verify schema migration ordering and all function grants/ownership against live QA database before apply.
 6. Partner order listing/tracking functions need regression checks to ensure every child order is independently visible to its owning partner and customer.
@@ -33,4 +33,4 @@ Status: review-only. Not applied to Supabase. Checkout UI not yet integrated.
 - Cart and request key clear only after complete success in UI integration.
 
 ## Recommendation
-Before UI integration, revise the RPC to store a payload fingerprint and reject key reuse with a changed payload, then validate migration dependencies/order. This draft is a starting point only; no SQL applied and no real orders created.
+Draft migration 015 now includes payload equality validation and rejects changed payloads for a reused request key. Next verify migration dependencies/order and UI payload mapping. This remains draft-only; no SQL applied and no real orders created.
