@@ -55,3 +55,12 @@ Changes and preview deployments are limited to `yf-test-1-to-15`. Do not merge o
 - Functions/migration are repository-only and **not deployed/applied**.
 - **Integration blocker:** market-order RPC definition is absent from YF15 repository migrations and the connected FRIEND RIDE QA database. Checkout/order creation cannot yet be enabled safely; market-order RPC must atomically require this verified payment record. Also subtotal is client-supplied at the current function boundary, so server-authoritative cart pricing must be connected before real payment use.
 - Subscription static link cannot be auto-verified without actual Razorpay payment-link ID and expected plan amount mapping. Keep manual admin verification.
+
+
+## Continued X2 verification — 2026-11-27
+- Current branch head: `18d6080bbe9f9a587ea73091d4d13c91572af942` (RRS post-handler repair).
+- RRS handler fix was deployed in YF15 Preview Deploy #30 and passed Playwright Regression #107, Button/JS Audit #112, and Pages Build #479.
+- Connected FRIEND RIDE QA Supabase project `pqsangtvietawkfgpgfu`: confirmed deployed RRS guest-post RPC signature includes passenger capacity, departure timestamp, and driver photo data.
+- Negative backend validation check: malformed RRS payload rejected by the deployed RPC (PASS); no test ride was inserted.
+- The QA database does not currently contain the market-order RPC/table definitions or the X2 payment-order ledger. Therefore the secure Razorpay integration remains code-only and cannot safely gate real market orders yet.
+- Main/production untouched; work remains restricted to `yf-test-1-to-15`.
