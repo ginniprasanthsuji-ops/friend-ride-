@@ -26,3 +26,14 @@ assert.ok(foodMenuCode.includes('Demo Menu Only')&&foodMenuCode.includes('disabl
 // Market checkout must only send store-backed catalogue items and persist orders via RPC.
 const checkoutCode=app.slice(app.indexOf('async function marketCheckout()'),app.indexOf('document.addEventListener(\'DOMContentLoaded\',()=>{renderRestaurantList()'));
 for(const s of ['frMarketCart.length','ids.length!==1','fr_customer_place_market_order','p_store_id:ids[0]','p_items:items','Order ID రాలేదు'])assert.ok(checkoutCode.includes(s),'X2 market checkout safeguard missing: '+s);
+
+// Tracking loaders must await Supabase RPCs so errors/data are handled from the resolved response.
+for(const fn of ['frLoadTrackingParcelOrders','frLoadTrackingMarketOrders']){
+ const start=app.indexOf('async function '+fn+'(');
+ assert.ok(start>=0,'Tracking loader must be async: '+fn);
+ const next=app.indexOf('\nasync function ',start+1);
+ const body=app.slice(start,next<0?start+4500:next);
+ assert.ok(body.includes('await sb.rpc('),'Tracking loader must await Supabase RPC: '+fn);
+ assert.ok(body.includes('catch(e)'), 'Tracking loader must show backend errors: '+fn);
+}
+for(const s of ['trackTabParcel','trackTabMarket','selectTrackingCategory(\'parcel\')','selectTrackingCategory(\'market\')','frLoadTrackingParcelOrders()','frLoadTrackingMarketOrders()'])assert.ok(app.includes(s),'Parcel/Food/Shop tracking UI integration missing: '+s);
