@@ -2,7 +2,7 @@ const fs=require('node:fs');const assert=require('node:assert/strict');
 const app=fs.readFileSync('index.html','utf8');
 const migration=fs.readFileSync('supabase/migrations/202611270002_project_x2_ers_rrs_departure_photo.sql','utf8');
 const cancel=fs.readFileSync('supabase/migrations/202611260012_fr_station_booking_cancel_restore_seats.sql','utf8');
-for(const s of ['frRrsCompressPhoto(file)','blob.size>1024*1024','blob.size>1048576','frRRSCompressedPhotoData','frCompressRRSPhoto(event)','frRrsDepartAt','frStationPostRRS()','async function frStationPostRRS','p_departure_at:new Date(depart).toISOString()','p_photo_data:frRRSCompressedPhotoData','frRrsGuestSb.rpc'])assert.ok(app.includes(s),'YT X2 frontend invariant missing: '+s);
+for(const s of ['frErsDepartAt','p_departure_at:departureAt.toISOString()','departureAt<=new Date()','frRrsCompressPhoto(file)','blob.size>1024*1024','blob.size>1048576','frRRSCompressedPhotoData','frCompressRRSPhoto(event)','frRrsDepartAt','frStationPostRRS()','async function frStationPostRRS','p_departure_at:new Date(depart).toISOString()','p_photo_data:frRRSCompressedPhotoData','frRrsGuestSb.rpc'])assert.ok(app.includes(s),'YT X2 frontend invariant missing: '+s);
 for(const s of ['1048576','v_photo_bytes>1048576','p_photo_data text','p_departure_at timestamptz','p_departure_at<=now()','driver_photo_data text'])assert.ok(migration.includes(s),'YT X2 migration invariant missing: '+s);
 assert.ok(migration.includes('passenger_count integer')&&migration.includes('b.passenger_count'),'My bookings RPC returns the actual booked passenger quantity');
 assert.ok(migration.includes('drop function if exists public.fr_station_my_bookings();'),'Bookings RPC must be dropped before its return schema changes');
