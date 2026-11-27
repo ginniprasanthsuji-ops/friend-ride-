@@ -18,6 +18,8 @@ Deno.serve(async(req)=>{
  const subtotal=Number(body.subtotal_paise);
  if(!Number.isSafeInteger(subtotal)||subtotal<0||subtotal>100000000)return json({error:"Invalid subtotal"},400);
  if(!body.store_id||String(body.store_id).length>128)return json({error:"Store ID required"},400);
+ // FAIL CLOSED: subtotal is currently supplied by the client. Until an authoritative catalog/market-order quote RPC exists and is wired here, do not create a real Razorpay order from client-controlled prices.
+ return json({error:"Secure checkout is not enabled yet: server-authoritative cart pricing is not configured."},503);
  const amount=feeFor(subtotal);
  if(amount<=0)return json({error:"Platform fee is zero; no payment order needed"},400);
  const authHeader="Basic "+btoa(keyId+":"+keySecret);
