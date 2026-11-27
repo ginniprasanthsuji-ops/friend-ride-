@@ -1621,7 +1621,7 @@ function frRenderApprovedFoodStores(){
  const rows=(frApprovedFoodStores||[]).filter(x=>(x.name+' '+x.area).toLowerCase().includes(q));
  el.innerHTML=rows.map(x=>'<button class="market-store" onclick="frOpenApprovedFoodStore(\\''+safe(x.id)+'\\')"><div class="market-store-art" style="--a:'+x.a+';--b:'+x.b+'">'+x.art+'</div><div class="market-store-info"><b>'+safe(x.name)+'</b><small>Approved Restaurant</small><small>'+safe(x.area)+' • Open Menu →</small></div></button>').join('')||'<div class="market-empty">Approved Restaurant దొరకలేదు.</div>';
 }
-function frOpenApprovedFoodStore(id){const x=(frApprovedFoodStores||[]).find(v=>String(v.id)===String(id));if(x){frActiveStore=x;frMarketCategory='All';frCustomerStoreCatalogue=[];$('customerCatalogueTitle').textContent=x.name;$('customerCatalogueType').textContent='Restaurant';$('customerCatalogueSub').textContent='Live restaurant catalogue • Backend prices';$('customerCatalogueSearch').value='';showPage('customerCatalogue');renderStoreCategories();const grid=$('customerCatalogueGrid');if(grid)grid.innerHTML='<div class="notice">Live restaurant catalogue loading…</div>';openFriendStore(x.id);}}
+function frOpenApprovedFoodStore(id){const x=(frApprovedFoodStores||[]).find(v=>String(v.id)===String(id));if(x){frApprovedStores=frApprovedFoodStores;openFriendStore(x.id);}}
 function renderRestaurantList(){
  const q=($('restaurantSearch')?.value||'').toLowerCase(),el=$('restaurantVisualList');if(!el)return;
  const items=FR_DEMO_RESTAURANTS.filter(x=>(x.name+' '+x.cuisine).toLowerCase().includes(q));
