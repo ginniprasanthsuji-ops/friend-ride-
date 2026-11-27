@@ -1180,7 +1180,7 @@ function selectTrackingCategory(category){
  if(result)result.innerHTML='<div class="notice">Food / Shop orders loading…</div>';
  frLoadTrackingMarketOrders();
 }
-async function frLoadTrackingParcelOrders(){
+async async function frLoadTrackingParcelOrders(){
  const box=$('trackingCategoryResults');if(!box)return;
  if(!currentUser||currentProfile?.role!=='customer'){box.innerHTML='<div class="notice">Parcel tracking చూడటానికి Customer login చేయండి.</div>';return;}
  box.innerHTML='<div class="notice">Parcel requests refresh అవుతున్నాయి…</div>';
@@ -1197,7 +1197,7 @@ async function frLoadTrackingParcelOrders(){
   }).join('');
  }catch(e){box.innerHTML='<div class="notice">Parcel tracking load కాలేదు: '+safe(e.message||e)+'</div>';}
 }
-async function frLoadTrackingMarketOrders(){
+async async function frLoadTrackingMarketOrders(){
  const box=$('trackingCategoryResults');if(!box)return;
  if(!currentUser){box.innerHTML='<div class="notice">Food / Shop tracking చూడటానికి Customer login చేయండి.</div>';return;}
  box.innerHTML='<div class="notice">మీ orders refresh అవుతున్నాయి…</div>';
