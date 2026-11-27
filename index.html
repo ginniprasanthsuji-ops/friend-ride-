@@ -1696,8 +1696,8 @@ async function marketCheckout(){
   const ids=[...new Set(frMarketCart.map(x=>x.storeId).filter(Boolean))];
   if(ids.length!==1)throw Error('ఒకే Store వస్తువులతో Checkout చేయండి.');
   const fee=frPlatformFee(frMarketCart.reduce((n,x)=>n+(Number(x.price)||0)*x.qty,0));
-  const paidFlag=sessionStorage.getItem('frPlatformFeeAck_'+ids[0]);
-  if(!paidFlag){const panel=$('frPlatformFeePayPanel');if(panel)panel.style.display='block';throw Error('ముందుగా FRIEND RIDE Platform Fee Razorpay linkలో pay చేసి, క్రింది “Payment చేశాను” button నొక్కండి. Payment server-side verify చేయబడలేదు.');}
+  const paidFlag=sessionStorage.getItem('frPlatformFeeVerified_'+ids[0]);
+  if(paidFlag!=='verified'){const panel=$('frPlatformFeePayPanel');if(panel)panel.style.display='block';throw Error('Razorpay server-side verification ఇంకా checkoutకు అనుసంధానం కాలేదు. Verified payment లేకుండా Order submit చేయడం నిలిపివేయబడింది.');}
   const items=frMarketCart.map(x=>({name:String(x.name||'').trim(),quantity:Math.max(1,Math.min(99,Number(x.qty)||1)),prescription_required:!!x.prescriptionRequired,catalogue_item_id:x.catalogueItemId||null,image_url:x.imageUrl||null,unit_price_paise:x.price==null?null:Math.round(Number(x.price)*100)}));
   if(items.some(x=>!x.name))throw Error('Cart item పేరు సరిగా లేదు.');
   const btn=$('frContinuePaymentBtn');if(btn){btn.disabled=true;btn.textContent='Order పంపిస్తున్నాం…';}
@@ -1722,8 +1722,7 @@ function frAcknowledgePlatformFeePayment(){
  if(ids.length!==1){alert('ఒక Store Cart items మాత్రమే checkout చేయండి.');return;}
  const fee=frPlatformFee(frMarketCart.reduce((n,x)=>n+(Number(x.price)||0)*x.qty,0));
  if(fee<=0){alert('Platform fee amount zero.');return;}
- sessionStorage.setItem('frPlatformFeeAck_'+ids[0],'1');
- alert('Payment acknowledgement మాత్రమే నమోదు అయ్యింది; Razorpay payment నిజంగా జరిగిందని backend verify చేయలేదు. ఇప్పుడు Continue to Payment ద్వారా order పంపండి.');
+ alert('Payment acknowledgement మాత్రమే తీసుకోవడం సురక్షితం కాదు. Razorpay server-side verification మరియు market-order backend gate పూర్తయ్యే వరకు Order submit చేయలేము.');
 }
 document.addEventListener('DOMContentLoaded',()=>{renderRestaurantList();renderMarketCart();frCartUpdateBadges();});
 
