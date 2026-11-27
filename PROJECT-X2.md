@@ -101,3 +101,14 @@
 - Supabase migration history confirms application under `project_x2_parcel_persistence_yt_202611270004`; RPCs `fr_customer_create_parcel_request`, `fr_customer_list_parcel_requests`, `fr_customer_cancel_parcel_request` are present.
 - Authenticated real-user Parcel workflow (create, list/reopen, cancel) still requires test account execution; migration-only confirmation is not end-to-end PASS.
 - Food/Shop catalogue tables and market-order/payment RPCs are absent from QA schema inventory. Need identify/apply catalogue base schema first; do not implement market-order SQL against guessed table contracts. Main/production untouched.
+
+
+## X2 Continuation checkpoint (YT branch, 2026-11-27)
+- Latest verified commit before this checkpoint: `108c5f3d40c3928594a130bb5132ffb52286faf2`.
+- CI verified for that commit: Button/JavaScript audit #200 PASS; Playwright Regression/E2E #196 PASS; Pages deployment #576 PASS.
+- LIVE rides schema mismatch fix: client query no longer requests absent `driver_photo_path`; YT QA schema contains `driver_photo_data` instead. Keep photo data off the public LIVE listing; only show after confirmed booking as currently designed.
+- Role-launcher Telugu/emoji encoding repair and SOS card contrast fix committed in prior X2 work; deployment CI is green, but phone screenshot verification remains outstanding.
+- QA Supabase parcel migration applied: `project_x2_parcel_persistence_yt_202611270004`; RPCs exist. Authenticated create/list/cancel workflow is NOT yet verified with a QA customer session.
+- QA Supabase has no catalogue/order/market tables and no Food/Shop order RPCs. Existing UI RPC contract is documented in `index.html`; do not build order SQL against guessed catalogue fields. Food demo menu stays disabled/non-orderable.
+- QA Supabase `fr_station_rides` columns verified: `passenger_capacity`, `passengers_booked`, `departure_at`, `driver_photo_data` exist. This is schema verification only, not ERS/RRS user workflow PASS.
+- Remaining: authenticated Parcel E2E; ERS/RRS posting/booking/cancel E2E with test accounts; Food/Shop catalogue and server-side order/payment backend design after identifying authoritative store/catalogue schema; subscription payment reference/admin approval activation test; real OTP/device/push/live-location tests; full YT 1–15 browser and mobile regression.
