@@ -10,6 +10,12 @@ assert.ok(!app.includes('fglyplxcczdjtfwobtzh.supabase.co'),'YF test app must no
 // RRS photo UI, iterative compression, strict size cap, and RPC payload.
 for(const s of ['frRRSCompressedPhotoData','frCompressRRSPhoto(event)','accept="image/*"','1 MB','1048576','canvas.toBlob(resolve,\'image/jpeg\',quality)','blob.size<=1048576','p_photo_data:frRRSCompressedPhotoData'])assert.ok(app.includes(s),'RRS photo invariant: '+s);
 assert.ok(app.includes('frStationPostRRS()'),'RRS post handler exists');
+// Prevent the missing/stale RPC signature shown in the user's RRS error screenshot.
+assert.ok(app.includes("sb.rpc('fr_station_post_rrs_guest'"),'RRS frontend calls expected RPC');
+for(const s of ['p_name:name','p_phone:phone','p_vehicle:vehicle','p_from:f','p_to:t','p_fare:fare','p_passengers:passengers','p_departure_at:new Date(depart).toISOString()','p_photo_data:frRRSCompressedPhotoData'])assert.ok(app.includes(s),'RRS RPC argument: '+s);
+assert.ok(migration.includes('create or replace function public.fr_station_post_rrs_guest('),'RRS backend RPC is defined in migration');
+for(const s of ['p_name text,p_phone text,p_vehicle text,p_from text,p_to text,p_fare numeric','p_passengers integer,p_departure_at timestamptz,p_photo_data text'])assert.ok(migration.includes(s),'RRS RPC signature includes: '+s);
+
 assert.ok(app.includes('p_departure_at:new Date(depart).toISOString()'),'RRS departure timestamp sent as ISO');
 assert.ok(migration.includes('p_departure_at timestamptz'),'Backend departure parameter exists');
 assert.ok(migration.includes('p_departure_at<=now()'),'Backend rejects past departure');
