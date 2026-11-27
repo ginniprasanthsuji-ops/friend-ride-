@@ -22,7 +22,7 @@ assert.ok(foodMenuCode.includes('Demo Menu Only')&&!foodMenuCode.includes('addMa
 for(const s of ['fr_customer_place_market_order','fr_customer_list_market_orders','fr_partner_quote_market_order','fr_customer_accept_market_quote','fr_customer_counter_market_order','fr_partner_confirm_market_payment'])assert.ok(app.includes(s),'X2 food/shop order backend RPC integration missing: '+s);
 // YT mobile screenshot regression: role launcher text must be readable UTF-8 and LIVE listing must not request private photo-path schema.
 for(const s of ['మీ ప్రయాణం • మీ సేవలు • మీ వ్యాపారం','మీరు ఎవరు?','Customer','Driver','Partner','Admin'])assert.ok(app.includes(s),'Role launcher encoding/readability regression: '+s);
-const stationRefresh=app.slice(app.indexOf('async function frStationRefresh(){'),app.indexOf('\\nfunction frStationFilter',app.indexOf('async function frStationRefresh(){')));
+const stationRefresh=app.slice(app.indexOf('async function frStationRefresh(){'),app.indexOf('\nfunction frStationFilter',app.indexOf('async function frStationRefresh(){')));
 assert.ok(stationRefresh.includes('fr_station_live_rides_public'),'LIVE station query missing');
 assert.ok(!stationRefresh.includes('driver_photo_path'),'LIVE station query/cards must not depend on nonexistent driver_photo_path or expose private photos');
 console.log('YT Project X2 parcel persistence and commerce safeguards PASS');
