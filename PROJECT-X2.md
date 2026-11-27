@@ -122,3 +122,9 @@
 - Food/Shop order and payment backend remains blocked on identifying authoritative catalogue schema and defining server-side price/fee/payment-verification contract.
 - Parcel migration is present in QA, but authenticated customer create/list/cancel E2E remains unverified.
 - Progress estimate remains approximately 60% only as a project estimate, not a fully verified completion rate. Remaining work must be tracked against actual tests and live workflow evidence.
+
+
+### ERS/RRS regression guard strengthening (2026-11-27)
+- Expanded `tests/project-x2-transfer-static.test.cjs` checks for multi-passenger booking capacity/locking, own-ride rejection, authenticated booking RPC ACL, cancellation ownership/status/seat restoration and RPC ACL, ERS approval/future-departure requirements, RRS photo compression/1 MB guard, confirmed-booking-only photo privacy, and LIVE view full-ride filtering.
+- Commit: `57367a69`.
+- GitHub Actions Button/JavaScript Audit, Playwright Regression/E2E, and Pages deployment were triggered for this commit and are currently in progress; do not report PASS until completed.
