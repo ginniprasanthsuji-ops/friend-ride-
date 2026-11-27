@@ -37,3 +37,11 @@ for(const fn of ['frLoadTrackingParcelOrders','frLoadTrackingMarketOrders']){
  assert.ok(body.includes('catch(e)'), 'Tracking loader must show backend errors: '+fn);
 }
 for(const s of ['trackTabParcel','trackTabMarket','selectTrackingCategory(\'parcel\')','selectTrackingCategory(\'market\')','frLoadTrackingParcelOrders()','frLoadTrackingMarketOrders()'])assert.ok(app.includes(s),'Parcel/Food/Shop tracking UI integration missing: '+s);
+
+// Food/Shop payment UI must require partner confirmation and rely on backend RPC (no client-side fake paid state).
+const partnerPaymentConfirm=app.slice(app.indexOf('async function frPartnerConfirmMarketPayment('),app.indexOf('\nasync function ',app.indexOf('async function frPartnerConfirmMarketPayment(')+1));
+for(const s of ['confirm(','fr_partner_confirm_market_payment','if(error)throw error','loadPartnerOrders()'])assert.ok(partnerPaymentConfirm.includes(s),'Partner payment confirmation safeguard missing: '+s);
+assert.ok(!partnerPaymentConfirm.includes('payment_status=')&&!partnerPaymentConfirm.includes('status=\'paid\''),'Payment confirmation must not be client-written as paid');
+const customerQuoteAccept=app.slice(app.indexOf('async function frCustomerAcceptQuote('),app.indexOf('\nasync function ',app.indexOf('async function frCustomerAcceptQuote(')+1));
+assert.ok(customerQuoteAccept.includes('fr_customer_accept_market_quote'),'Customer quote acceptance must use backend RPC');
+assert.ok(!customerQuoteAccept.includes('payment_status=')&&!customerQuoteAccept.includes('status=\'paid\''),'Quote acceptance must not mark payment paid');
