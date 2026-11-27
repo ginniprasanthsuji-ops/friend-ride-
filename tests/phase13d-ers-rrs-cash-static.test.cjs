@@ -68,3 +68,7 @@ const stationCapacityMigration=fs.readFileSync('supabase/migrations/202611260010
 for(const s of ['passenger_capacity integer not null default 1','passengers_booked integer not null default 0','passengers_remaining','p_passengers integer default 1','passengers_booked=passengers_booked+1','passengers_booked+1>=passenger_capacity','for update','No passenger seats left'])assert.ok(stationCapacityMigration.includes(s),'Station passenger capacity migration missing: '+s);
 for(const s of ['frErsPassengers','frRrsPassengers','passengers_remaining','passenger_capacity','Passengers:','p_passengers:passengers'])assert.ok(app.includes(s),'Passenger count/remaining seats UI integration missing: '+s);
 console.log('ERS/RRS passenger capacity + LIVE count decrement assertions PASS');
+
+// RRS guest post handler must be a single valid async declaration.
+assert.ok(/async function frStationPostRRS\(/.test(app)&&!/async async function frStationPostRRS\(/.test(app),"RRS Post Ride handler must declare async exactly once");
+console.log("RRS post handler async syntax guard PASS");
