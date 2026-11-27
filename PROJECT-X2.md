@@ -70,3 +70,10 @@
 - Food/Shop order RPC migration remains a blocker: the UI calls market-order/quote/payment RPCs, but branch migration inventory currently contains no definitions for these RPCs. Do not call Food/Shop backend-live until the SQL contract/migration and QA Supabase verification are completed.
 - Parcel SQL remains branch-side only; QA Supabase migration application and authenticated live create/list/cancel test are pending.
 - RRS photo compression, storage policy and signed display remain awaiting QA Supabase migration/device verification.
+
+
+### Follow-up QA safeguard (2026-11-27)
+- Added static regression assertions that Partner Food/Shop payment confirmation requires an explicit confirmation prompt, calls the backend confirmation RPC, handles RPC errors, and does not client-write a paid status.
+- Added assertions that customer quote acceptance uses its backend RPC and cannot client-write paid status.
+- Commit: `0905399b9bf625cd8217a1c3ad1697fe664f765e`.
+- Backend Food/Shop order/payment RPC SQL remains absent; this test only verifies frontend safeguards and is not proof of live payment verification.
