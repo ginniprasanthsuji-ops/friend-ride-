@@ -89,3 +89,10 @@ Project X2 is **not yet 100% complete**. Automated CI, JavaScript/button audit, 
 - Disabled real Razorpay order creation in `fr-razorpay-create-order` by failing closed with HTTP 503 until server-authoritative cart/catalog pricing RPC is implemented. This prevents client-submitted subtotal from generating a real payment order.
 - Commit: `642e1c676d322130ee11cc7e4a2779f6dd2b4473` on `yf-test-1-to-15`.
 - This is a safety gate, not payment integration completion. Checkout remains blocked pending trusted catalog pricing, market-order RPC and atomic verified-payment gate.
+
+
+## Project X2 user-provided Razorpay links and banner update — 2026-11-27
+- Subscription Payment Link: `https://rzp.io/rzp/54cMN1g`. Added four role banners (Partner, Driver, Technician, Non-Technician) on the Subscription page, all pointing to the same supplied subscription link.
+- Platform fee link: `https://rzp.io/rzp/VDAnsnXS`. Existing ride fee and market-cart fee calculations changed from 2.5% capped at ₹25 to uncapped 2.5%, rounded to paise. This link is static; it may not accept a dynamically calculated amount automatically. UI calculates the fee and tells the user to confirm/pay the exact amount; no verified server payment completion is claimed.
+- The four uploaded image artworks are not yet stored in repository assets because the GitHub connector cannot upload binary image files. Current subscription banners are responsive styled cards; original artwork assets remain pending.
+- Commit: `3d14fa449ef63da2d36b43932db044efa1ce9603` on `yf-test-1-to-15`.
