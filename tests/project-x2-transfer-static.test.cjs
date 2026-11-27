@@ -5,6 +5,7 @@ const cancel=fs.readFileSync('supabase/migrations/202611260012_fr_station_bookin
 for(const s of ['frRrsCompressPhoto(file)','blob.size>1024*1024','blob.size>1048576','frRRSCompressedPhotoData','frCompressRRSPhoto(event)','frRrsDepartAt','frStationPostRRS()','async function frStationPostRRS','p_departure_at:new Date(depart).toISOString()','p_photo_data:frRRSCompressedPhotoData','frRrsGuestSb.rpc'])assert.ok(app.includes(s),'YT X2 frontend invariant missing: '+s);
 for(const s of ['1048576','v_photo_bytes>1048576','p_photo_data text','p_departure_at timestamptz','p_departure_at<=now()','driver_photo_data text'])assert.ok(migration.includes(s),'YT X2 migration invariant missing: '+s);
 assert.ok(migration.includes('passenger_count integer')&&migration.includes('b.passenger_count'),'My bookings RPC returns the actual booked passenger quantity');
+assert.ok(migration.includes('drop function if exists public.fr_station_my_bookings();'),'Bookings RPC must be dropped before its return schema changes');
 assert.ok(cancel.includes('passenger_count')&&cancel.includes('passengers_booked=greatest(0,passengers_booked-v_booking.passenger_count)'),'Existing YT cancellation restores multi-passenger seats');
 assert.ok(cancel.includes('revoke all on function public.fr_station_cancel_booking(uuid) from public,anon;')&&cancel.includes('grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;'),'YT cancellation RPC ACL restricted');
 const cancelFix=fs.readFileSync('supabase/migrations/202611270003_project_x2_station_cancel_security_fix.sql','utf8');
