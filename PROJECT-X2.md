@@ -77,3 +77,12 @@
 - Added assertions that customer quote acceptance uses its backend RPC and cannot client-write paid status.
 - Commit: `0905399b9bf625cd8217a1c3ad1697fe664f765e`.
 - Backend Food/Shop order/payment RPC SQL remains absent; this test only verifies frontend safeguards and is not proof of live payment verification.
+
+
+### Async RPC-handler syntax correction (2026-11-27)
+- Corrected six Food/Shop and Parcel/Tracking handlers that contain awaited Supabase RPC calls but were declared non-async: customer market order loader, quote accept, counter-price submit, partner payment confirm, market tracking loader, parcel tracking loader.
+- A duplicated async keyword introduced during the correction was identified by the JavaScript Audit and removed.
+- Added regression checks requiring these handlers to be async and to await RPC, plus a duplicate-async declaration guard.
+- Code commit: `7a728177`; QA guard commit: `eb02c889`.
+- At the latest poll: Button/JavaScript Audit passed on `eb02c889`; Playwright and Pages deployment were still running.
+- This is a client-side syntax/handler correction only. Food/Shop backend RPC SQL remains unimplemented/unverified in the YT migration inventory.
