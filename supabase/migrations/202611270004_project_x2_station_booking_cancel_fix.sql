@@ -51,5 +51,5 @@ begin
 end;
 $function$;
 
-revoke all on function public.fr_station_cancel_booking(uuid) from public;
+revoke all on function public.fr_station_cancel_booking(uuid) from public, anon;
 grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;
