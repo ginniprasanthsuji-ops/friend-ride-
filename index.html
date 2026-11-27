@@ -1677,7 +1677,7 @@ async function frLoadStorePaymentOptions(storeId){
   methods.innerHTML=out||'<div class="notice">à° Store QR / UPI / PhonePe à°µà°¿à°µà°°à°¾à°²à± à°Ǡ° °ՠ°¾ à°¨à°®à±ˠ°¦à± à°ڠ±Ǡ°¯à°²à±Ǡ°¦à±.</div>';
  }catch(e){methods.innerHTML='<div class="notice">Payment details load à°ՠ°¾à°²à±Ǡ°¦à±: '+safe(e.message)+'</div>';}
 }
-async async function marketCheckout(){
+async function marketCheckout(){
  try{
   if(!currentUser||currentProfile?.role!=='customer')throw Error('à°®à±`° °¦à±`°נ°¾ Customer Login à°ڠ±Ǡ°¯à° °¡à°¿.');
   if(!frMarketCart.length)throw Error('à°®à±`° °¦à±`°נ°¾ Cartà°²à± items à°ܠ±ˠ°¡à°¿à° °ڠ° °¡à°¿.');
