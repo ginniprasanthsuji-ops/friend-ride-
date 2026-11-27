@@ -24,5 +24,5 @@ console.log('ERS/RRS cancellation, ownership, double-cancel guard and seat resto
 const x2Migration=fs.readFileSync('supabase/migrations/202611270001_fr_x2_rrs_passenger_capacity_rpc_fix.sql','utf8');
 assert.ok(app.includes('async function frStationPostRRS(){'),'X2 RRS post handler must be async for awaited RPC');
 assert.ok(app.includes('p_passengers:passengers'),'RRS UI must pass passenger capacity to RPC');
-for(const x of ['add column if not exists passenger_capacity integer','p_passengers integer default 1','passengers between 1 and 10','passenger_capacity'])assert.ok(x2Migration.includes(x),'X2 RRS capacity migration assertion missing: '+x);
+for(const x of ['add column if not exists passenger_capacity integer','p_passengers integer default 1','p_passengers not between 1 and 10','passenger_capacity'])assert.ok(x2Migration.includes(x),'X2 RRS capacity migration assertion missing: '+x);
 console.log('Project X2 RRS async handler and passenger-capacity RPC contract checks PASS');
