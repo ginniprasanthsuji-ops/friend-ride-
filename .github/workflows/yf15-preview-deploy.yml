@@ -36,11 +36,14 @@ jobs:
           rsync -a --exclude='.git' --exclude='.github' yf15/ site/
           test -f site/index.html
 
-      - name: Upload Pages artifact
+      - name: Upload YF15 Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          name: yf15-pages
+          path: site/
 
       - name: Deploy isolated YF15 preview
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: yf15-pages
