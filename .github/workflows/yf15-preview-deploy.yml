@@ -39,8 +39,12 @@ jobs:
       - name: Upload YF15 Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          name: github-pages-yf15-${{ github.run_id }}-${{ github.run_attempt }}
           path: site/
 
       - name: Deploy YF15 app
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-yf15-${{ github.run_id }}-${{ github.run_attempt }}
+          preview: true
