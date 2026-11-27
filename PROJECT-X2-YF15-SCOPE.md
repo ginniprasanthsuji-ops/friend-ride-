@@ -43,3 +43,13 @@ Changes and preview deployments are limited to `yf-test-1-to-15`. Do not merge o
 - Confirm RRS/ERS departure-time persistence and RRS photo workflow in staging against deployed Supabase schema.
 - Payment provider configuration and server-side verification.
 - Original FRIEND RIDE logo asset upload/integration, if still pending.
+
+
+## Razorpay server-side verification foundation (YF15)
+- Added migration file: `supabase/migrations/202611270002_fr_razorpay_payment_orders.sql` (not applied to any database).
+- Added `fr-razorpay-create-order` Edge Function: authenticated user, Razorpay Orders API, server fee calculation (2.5%, capped at ₹25), and payment order record.
+- Added `fr-razorpay-verify-payment` Edge Function: verifies HMAC, independently fetches payment API record, checks captured status/order/amount/currency, and records paid status for the owning user.
+- Required secrets: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`; secrets are not committed.
+- Functions/migration are repository-only and **not deployed/applied**.
+- **Integration blocker:** market-order RPC definition is absent from YF15 repository migrations and the connected FRIEND RIDE QA database. Checkout/order creation cannot yet be enabled safely; market-order RPC must atomically require this verified payment record. Also subtotal is client-supplied at the current function boundary, so server-authoritative cart pricing must be connected before real payment use.
+- Subscription static link cannot be auto-verified without actual Razorpay payment-link ID and expected plan amount mapping. Keep manual admin verification.
