@@ -28,6 +28,6 @@ test.describe('FRIEND RIDE launcher smoke / regression', () => {
     await page.goto('/test.html');
     await expect(page.getByRole('heading', {name:/YF Test 1 to 15/i})).toBeVisible();
     await expect(page.locator('#run')).toBeVisible();
-    await expect(page.locator('#phases .test')).toHaveCount(19);
+    await expect(page.locator('#phases .test')).toHaveCount(29);
   });
 });
