@@ -1,7 +1,7 @@
 name: YF Playwright Regression and E2E
 on:
   push:
-    branches: [yf-test-1-to-15]
+    branches: [yf-test-1-to-15, yt-test-1-to-15]
   pull_request:
     branches: [yf-test-1-to-15]
 jobs:
@@ -16,6 +16,10 @@ jobs:
         run: npm install --no-save @playwright/test
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+      - name: Project X2 transfer static QA
+        run: node tests/project-x2-transfer-static.test.cjs
+      - name: ERS/RRS station UI regression static QA
+        run: node tests/ers-rrs-station-ui.test.cjs
       - name: Phase 13D ERS/RRS cash-only static QA
         run: node tests/phase13d-ers-rrs-cash-static.test.cjs
       - name: Run E2E and regression tests
