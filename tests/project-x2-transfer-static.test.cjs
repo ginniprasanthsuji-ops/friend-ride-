@@ -45,3 +45,12 @@ assert.ok(!partnerPaymentConfirm.includes('payment_status=')&&!partnerPaymentCon
 const customerQuoteAccept=app.slice(app.indexOf('async function frCustomerAcceptQuote('),app.indexOf('\nasync function ',app.indexOf('async function frCustomerAcceptQuote(')+1));
 assert.ok(customerQuoteAccept.includes('fr_customer_accept_market_quote'),'Customer quote acceptance must use backend RPC');
 assert.ok(!customerQuoteAccept.includes('payment_status=')&&!customerQuoteAccept.includes('status=\'paid\''),'Quote acceptance must not mark payment paid');
+
+// Any UI RPC handler that uses await must be declared async to avoid browser SyntaxErrors.
+for(const fn of ['frLoadCustomerMarketOrders','frCustomerAcceptQuote','frCustomerSendCounter','frPartnerConfirmMarketPayment','frLoadTrackingParcelOrders','frLoadTrackingMarketOrders']){
+ const start=app.indexOf('async function '+fn+'(');
+ assert.ok(start>=0,'RPC handler must be async: '+fn);
+ const next=app.indexOf('\\nasync function ',start+1);
+ const body=app.slice(start,next<0?start+5000:next);
+ assert.ok(body.includes('await sb.rpc('),'RPC handler must await its Supabase call: '+fn);
+}
