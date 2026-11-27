@@ -37,7 +37,7 @@ begin
  if p_delivery_address is null or length(trim(p_delivery_address))<8 then raise exception 'Valid delivery address required'; end if;
  if p_items is null or jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)=0 or jsonb_array_length(p_items)>100 then raise exception 'Invalid order items'; end if;
  if exists(select 1 from jsonb_array_elements(p_items) x where coalesce(x.value->>'store_id','')='' or coalesce(x.value->>'catalogue_item_id','')='') then raise exception 'Each item requires store_id and catalogue_item_id'; end if;
- v_fingerprint:=md5(trim(p_delivery_address)||':'||p_items::text);
+ v_fingerprint:=trim(p_delivery_address)||':'||p_items::text;
 
  perform pg_advisory_xact_lock(hashtextextended(v_customer::text||':'||p_request_key::text,0));
  select result_orders,payload_fingerprint into v_existing,v_existing_fingerprint from public.fr_market_checkout_requests
