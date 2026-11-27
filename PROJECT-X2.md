@@ -54,3 +54,11 @@
 - **SQL inventory:** the branch has no parcel/food/shop order migration files in its Supabase migrations directory; do not report these workflows as backend-live.
 - **Next blockers:** identify/confirm the existing schema and auth/payment contracts before implementing parcel/order persistence; avoid inventing production tables or marking payment verified client-side.
 - **Verification:** latest CI on f7aad253 — Button & JavaScript Audit PASS, Playwright Regression & E2E PASS, Pages build/deployment PASS. These checks do not prove real Supabase order persistence, payment verification, SMS, push, or live-device tracking.
+
+
+## X2 Parcel Persistence Implementation (2026-11-27)
+- Added `202611270004_project_x2_parcel_persistence.sql` for Parcel requests, unique tracking IDs, authenticated customer creation/list/cancel RPCs, status constraints, customer-scoped RLS, and RPC-only grants.
+- Hardened create RPC to require a customer profile role; list is customer-scoped and returns no sender/receiver phone numbers; cancel is restricted to the owning customer while status is `requested`.
+- UI already calls create/list/cancel RPCs, refreshes tracking, and shows backend status; the migration now supplies the branch-side contract. SQL is not applied to QA Supabase yet, so live DB persistence is pending.
+- Food: demo menu is deliberately disabled and does not add fake cart entries. Approved partner catalogue is orderable through `fr_customer_place_market_order`; UI includes partner quotation, customer acceptance/counter, payment QR handoff and partner manual payment confirmation RPC calls. However, the required market-order/payment RPC migration definitions are absent from this branch migration inventory; backend contract, platform fee (2.5% capped at ₹25), and payment-verification rules still need a migration and QA DB verification before these workflows can be called live.
+- CI audit after fixes: Button/JavaScript Audit PASS on commit 93ec3545. Playwright and Pages deployment were still running at report update.
