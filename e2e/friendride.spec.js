@@ -77,3 +77,52 @@ test.describe('FRIEND RIDE navigation click diagnostics', () => {
     expect(errors).toEqual([]);
   });
 });
+
+
+test.describe('Project X2 Food/Shop and tracking UI regression', () => {
+  test('Food, Shop, Cart, and tracking category controls render and respond', async ({ page }) => {
+    const errors=[];
+    page.on('pageerror', e=>errors.push(e.message));
+    await page.goto('/');
+    await page.locator('#roleLauncher button.fr-role-card.customer').click();
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await page.locator('#authModal button.close').click();
+
+    await page.locator('.bottom button[data-page="food"]').click();
+    await expect(page.locator('#food.page')).toHaveClass(/active/);
+    await expect(page.locator('#restaurantSearch')).toBeVisible();
+    await expect(page.locator('#restaurantVisualList')).toBeVisible();
+
+    await page.locator('.bottom button[data-page="shops"]').click();
+    await expect(page.locator('#shops.page')).toHaveClass(/active/);
+    await expect(page.locator('#shopCategory')).toBeVisible();
+    await expect(page.locator('#shopAddress')).toBeVisible();
+    await expect(page.locator('#shopSelectedStore')).toBeVisible();
+
+    await page.locator('.bottom button[data-page="marketCart"]').click();
+    await expect(page.locator('#marketCart.page')).toHaveClass(/active/);
+    await expect(page.locator('#frContinuePaymentBtn')).toBeVisible();
+    await expect(page.locator('#marketCartItems')).toBeVisible();
+
+    await page.locator('.bottom button[data-page="orders"]').click();
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await page.locator('#authModal button.close').click();
+    await page.locator('.bottom button[data-page="menu"]').click();
+    await expect(page.locator('#drawerBackdrop')).toHaveClass(/show/);
+    await page.locator('#drawerBackdrop button.close').click();
+
+    // Open tracking via Orders page action after navigating to orders as a page.
+    await page.locator('.bottom button[data-page="orders"]').click();
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await page.locator('#authModal button.close').click();
+    // Direct page navigation helper is exercised by the visible tracking action from the Orders screen.
+    await page.locator('.bottom button[data-page="tracking"]').click();
+    await expect(page.locator('#tracking.page')).toHaveClass(/active/);
+    for (const [category, tab] of [['ride','#trackTabRide'],['parcel','#trackTabParcel'],['market','#trackTabMarket']]) {
+      await page.locator(tab).click();
+      await expect(page.locator(tab)).toHaveClass(/purple/);
+      await expect(page.locator('#trackingTitle')).toBeVisible();
+    }
+    expect(errors, 'uncaught runtime errors in X2 UI controls').toEqual([]);
+  });
+});
