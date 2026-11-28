@@ -137,3 +137,15 @@
 - Parcel migration is recorded in QA migration history (`project_x2_parcel_persistence_yt_202611270004`); authenticated customer create/list/cancel remains untested.
 - Next safe step: continue backend contract discovery from existing Partner catalogue RPC definitions and their source tables, then implement only against confirmed columns and verify with QA. Maintain no-fake-order/payment guarantees.
 - This audit adds evidence, not feature completion; overall progress stays at 61% pending implementation and live workflow tests.
+
+
+## Continuation checkpoint — 2026-11-28
+- Target branch: `yt-test-1-to-15` only; Main/Production untouched.
+- Verified branch head before this checkpoint: `1e8a092ed07dc224dd9f2a3267e08f844bc4d631`.
+- Button & JavaScript Audit run #302: success.
+- Playwright Regression & E2E run #298: success.
+- GitHub Pages build/deploy run #673: success.
+- The latest commit adds a regression guard ensuring parcel-release UI explicitly stays demo-only and does not claim a parcel release executed, until server-side payment verification and OTP validation exist.
+- CI/deployment success is not evidence of authenticated live backend workflows, real SMS, push notifications, live location, or payment verification.
+- Food/Shop backend schema/order migrations remain unapplied in QA. Safe next work: reconcile migration dependencies/signatures and payment/state contract before applying anything; then authenticated QA workflow tests. Parcel authenticated lifecycle persistence also requires QA verification.
+- Progress estimate: 63% (branch/CI regression and deployment verification advanced; remaining backend integration and live QA blockers are substantial).
