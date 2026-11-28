@@ -115,3 +115,16 @@ const counterHandler=app.slice(app.indexOf('async function frCustomerSendCounter
 assert.ok(counterHandler.includes('if(!offers.length)'),'Counter offer must reject empty item offers before RPC');
 assert.ok(counterHandler.includes('fr_customer_counter_market_order'),'Counter offer must persist via backend RPC');
 console.log('YT Project X2 marketplace counter-offer empty-input regression PASS');
+
+
+// Project X2 payment-claim UI compatibility and safe wording regression.
+const claimHandler=app.slice(app.indexOf('async function frCustomerClaimMarketPayment('),app.indexOf('\nasync function ',app.indexOf('async function frCustomerClaimMarketPayment(')+1));
+for(const s of ['fr_customer_claim_market_payment','p_order_id:id','p_reference:reference','reference.length<4','reference.length>160','Waiting for Shop confirmation','payment is not verified'])assert.ok(claimHandler.includes(s),'Customer payment claim UI invariant missing: '+s);
+const claimUi=app.slice(app.indexOf('frCustomerOpenMarketPayment('),app.indexOf('async function frCustomerClaimMarketPayment('));
+for(const s of ['frMarketPaymentReference_','frCustomerClaimMarketPayment','Payment Reference / UPI Transaction ID'])assert.ok(claimUi.includes(s),'Payment claim UI control missing: '+s);
+const claimMigration=fs.readFileSync('supabase/migrations/202611270013_project_x2_food_shop_payment_claim_confirmation_draft.sql','utf8');
+const confirmCompat=fs.readFileSync('supabase/migrations/202611270014_project_x2_food_shop_payment_confirmation_ui_compat_draft.sql','utf8');
+for(const s of ['fr_customer_claim_market_payment','customer_payment_claimed_at','partner_payment_confirmed_at','payment_status=\'customer_claimed\'','payment_status=\'partner_confirmed\'','revoke all on function public.fr_customer_claim_market_payment(uuid,text) from public,anon;'])assert.ok(claimMigration.includes(s),'Payment claim migration invariant missing: '+s);
+for(const s of ['p_payment_reference text default null','return public.fr_partner_confirm_market_payment(p_order_id)','does not mark payment verified'])assert.ok(confirmCompat.includes(s),'Payment confirmation compatibility migration invariant missing: '+s);
+assert.ok(!claimMigration.includes("payment_status='verified'")&&!confirmCompat.includes("payment_status='verified'"),'Claim/partner-confirm drafts must not mark payment verified');
+console.log('YT Project X2 customer payment claim and partner confirmation static QA PASS');
