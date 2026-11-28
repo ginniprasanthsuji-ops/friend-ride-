@@ -139,6 +139,15 @@ const acceptQuoteDraft=fs.readFileSync('supabase/migrations/202611270008_project
 const acceptQuoteHandler=acceptQuoteDraft.slice(acceptQuoteDraft.indexOf('create or replace function public.fr_customer_accept_market_quote'),acceptQuoteDraft.indexOf('create or replace function public.fr_customer_counter_market_order'));
 assert.ok(acceptQuoteHandler.includes("status='customer_quote_accepted'"),'Quote acceptance must enter the state-machine payment-gated state');
 assert.ok(!acceptQuoteHandler.includes("status='accepted'"),'Quote acceptance must not enter the legacy accepted state');
+const acceptQuoteFinal=fs.readFileSync('supabase/migrations/202611270010_project_x2_food_shop_delivery_fee_quote_history_draft.sql','utf8');
+const acceptFinalHandler=acceptQuoteFinal.slice(acceptQuoteFinal.indexOf('create or replace function public.fr_customer_accept_market_quote'),acceptQuoteFinal.indexOf('create or replace function public.fr_customer_list_market_quote_history'));
+assert.ok(acceptFinalHandler.includes("status='customer_quote_accepted'"),'Chronologically final quote-acceptance RPC must use payment-gated state');
+assert.ok(!acceptFinalHandler.includes("status='accepted'"),'Final quote acceptance must not bypass payment-gated state');
+const paymentDraft=fs.readFileSync('supabase/migrations/202611270013_project_x2_food_shop_payment_claim_confirmation_draft.sql','utf8');
+const partnerConfirmDraft=paymentDraft.slice(paymentDraft.indexOf('create or replace function public.fr_partner_confirm_market_payment'),paymentDraft.indexOf('revoke all on function public.fr_customer_claim_market_payment'));
+assert.ok(partnerConfirmDraft.includes("payment_status='partner_confirmed'"),'Partner confirmation should record confirmation state');
+assert.ok(!partnerConfirmDraft.includes("payment_status='verified'"),'Partner confirmation must not self-mark payment verified');
+
 assert.ok(stateFix.includes('revoke all on function public.fr_partner_update_market_order(uuid,text) from public,anon;')&&stateFix.includes('grant execute on function public.fr_partner_update_market_order(uuid,text) to authenticated;'),'Partner status updater ACL must remain restricted');
 for(const s of ['request_key uuid','fr_market_orders_customer_request_key_uq','pg_advisory_xact_lock','fr_customer_place_market_order','update public.fr_market_orders set request_key=p_request_key'])assert.ok(idempotency.includes(s),'Single-store checkout idempotency draft invariant missing: '+s);
 for(const s of ['fr_market_checkout_requests','payload_fingerprint','Request key already used with a different checkout payload','pg_advisory_xact_lock','fr_customer_place_market_order','group by (x.value->>\'store_id\')::uuid','grant execute on function public.fr_customer_place_market_orders_multi_v1(text,jsonb,uuid) to authenticated;'])assert.ok(multiStore.includes(s),'Multi-store transactional checkout draft invariant missing: '+s);
