@@ -67,6 +67,7 @@ for(const fn of ['frLoadCustomerMarketOrders','frCustomerAcceptQuote','frCustome
 
 // Catch accidental doubled async keywords introduced during handler fixes.
 assert.ok(!app.includes('async async function'),'Duplicated async declaration found in app inline script');
+assert.equal((app.match(/async function frStationPostRRS\\(\\)\\{/g)||[]).length,1,'RRS post handler must be declared exactly once to avoid duplicate/overridden workflow logic');
 
 
 // Additional YT X2 ERS/RRS booking and privacy regression checks.
