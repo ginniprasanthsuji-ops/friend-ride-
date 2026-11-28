@@ -98,3 +98,13 @@ for(const s of ['p_departure_at timestamptz','p_photo_data text','p_departure_at
 assert.ok(rrsCompat.includes('drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer,text);'),'Corrective migration must remove incompatible path-only RPC');
 assert.ok(rrsCompat.includes('grant execute on function public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer,timestamptz,text) to anon,authenticated;'),'Corrective migration must grant the frontend-compatible RPC signature');
 console.log('YT Project X2 RRS photo RPC compatibility regression QA PASS');
+
+
+// Project X2 Parcel persistence: owner isolation, tracking format, cancellation boundary and phone privacy.
+assert.ok(parcelMigration.includes("v_tracking:='FRP-'||upper(substr(replace(v_id::text,'-',''),1,12));"),'Parcel tracking ID must be generated with FRP prefix from request UUID');
+const parcelList=parcelMigration.slice(parcelMigration.indexOf('create or replace function public.fr_customer_list_parcel_requests'),parcelMigration.indexOf('create or replace function public.fr_customer_cancel_parcel_request'));
+for(const s of ['auth.uid() is not null','customer_id=auth.uid()','pickup_address','delivery_address','description','weight_kg','created_at'])assert.ok(parcelList.includes(s),'Parcel list must scope to authenticated owner and return tracking fields: '+s);
+assert.ok(!parcelList.includes('sender_phone')&&!parcelList.includes('receiver_phone'),'Parcel tracking list must not expose sender or receiver phone numbers');
+const parcelCancel=parcelMigration.slice(parcelMigration.indexOf('create or replace function public.fr_customer_cancel_parcel_request'),parcelMigration.indexOf('revoke all on function public.fr_customer_create_parcel_request'));
+for(const s of ['auth.uid() is null','customer_id=auth.uid()',"status='requested'", "status='cancelled'",'updated_at=now()','if not found then raise exception'])assert.ok(parcelCancel.includes(s),'Parcel cancel must enforce ownership and requested-only status: '+s);
+console.log('YT Project X2 Parcel tracking privacy, ownership, and cancellation static QA PASS');
