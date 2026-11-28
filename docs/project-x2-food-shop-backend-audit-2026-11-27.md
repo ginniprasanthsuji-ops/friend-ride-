@@ -51,3 +51,24 @@ This confirms request persistence schema/RPC presence only. Driver assignment, e
 3. Create a versioned SQL migration in QA repository branch.
 4. Review security/RLS and test SQL function contracts before applying to QA Supabase.
 5. Run E2E Food/Shop tests and Parcel tracking regression.
+
+
+## Project X2 continuation — Food/Shop UI compatibility recheck (2026-11-28)
+
+Read-only branch-source review confirmed the following blockers remain and are **not runtime-tested**:
+
+- Checkout calls the legacy single-store RPC `fr_customer_place_market_order`; no UI request key/idempotency v2 integration was found in this review.
+- Current UI rejects multi-store cart checkout (single store ID validation); multi-store transactional checkout is not implemented.
+- UI partner payment-confirmation call passes `p_order_id` and `p_payment_reference:null`; draft 013 has a one-argument RPC, while draft 014 supplies a two-argument compatibility wrapper. Draft 014 is not applied/verified in the QA database.
+- UI payment flow uses status labels/actions that do not fully match draft backend statuses. In particular, manual partner confirmation is not trusted payment verification and must not unlock fulfillment as if payment were verified.
+- Existing UI does not wire the customer payment-claim/reference RPC described in draft 013 in the audited path.
+
+### Safe completion criteria
+1. Confirm migration dependency order and function signatures against the actual QA database without applying migrations.
+2. Resolve RPC/UI status and payment-claim compatibility, and add regression tests.
+3. Implement multi-store checkout or clearly prevent/label it as unsupported.
+4. Integrate idempotency request keys into checkout retries.
+5. Keep fulfillment locked until an explicitly trusted payment-verification policy exists; manual partner confirmation is only a claim/confirmation.
+6. Execute CI/static tests and authorized QA database checks, then perform app E2E only at the final-test stage.
+
+No migration was applied, no live order/payment was created, and Main/production were not touched.
