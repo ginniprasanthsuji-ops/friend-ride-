@@ -90,3 +90,11 @@ for(const s of ["sb.rpc('fr_station_book_ride'","p_ride_id:id","p_passengers:sea
 assert.ok(stationBooking.includes('CASH ONLY'),'Station booking must clearly state cash-only payment');
 assert.ok(stationBooking.includes('Customer login required')&&stationBooking.includes('openAuth(\'login\')'),'Station booking requires customer authentication');
 console.log('YT Project X2 station booking RPC parameter and UI integration static QA PASS');
+
+
+// Project X2 corrective migration: RRS guest RPC must match the frontend's photo-data payload.
+const rrsCompat=fs.readFileSync('supabase/migrations/202611280001_project_x2_rrs_photo_rpc_compatibility.sql','utf8');
+for(const s of ['p_departure_at timestamptz','p_photo_data text','p_departure_at<=now()','p_photo_data !~ \'^data:image/jpeg;base64,\'','v_photo_bytes>1048576','driver_photo_data','p_photo_data:frRRSCompressedPhotoData'])assert.ok(rrsCompat.includes(s)||app.includes(s),'X2 RRS photo RPC compatibility invariant missing: '+s);
+assert.ok(rrsCompat.includes('drop function if exists public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer,text);'),'Corrective migration must remove incompatible path-only RPC');
+assert.ok(rrsCompat.includes('grant execute on function public.fr_station_post_rrs_guest(text,text,text,text,text,numeric,integer,timestamptz,text) to anon,authenticated;'),'Corrective migration must grant the frontend-compatible RPC signature');
+console.log('YT Project X2 RRS photo RPC compatibility regression QA PASS');
