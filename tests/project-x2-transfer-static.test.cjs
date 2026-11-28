@@ -23,6 +23,14 @@ for(const s of ["frTrackingCategory=category","category==='ride'","loadMyRideTra
 const trackingMenu=menuGo.slice(menuGo.indexOf("'tracking'"));
 assert.ok(trackingMenu.includes("!currentUser")&&trackingMenu.includes("openAuth('login')"),'Live tracking menu must be login-gated');
 console.log('YT X2 tracking category dispatch/login gate static regression PASS');
+// Ensure role dashboard destinations are real distinct page sections and role router uses the matching targets.
+for(const id of ['customerDashboard','driverDashboard','partnerDashboard','adminDashboard']) {
+ assert.ok(app.includes('id="'+id+'"')||app.includes("id='"+id+"'"),'Dashboard section missing from app: '+id);
+ assert.ok(menuGo.includes("id==='"+id+"'"),'Role router must explicitly guard dashboard destination: '+id);
+}
+assert.ok(menuGo.includes("showPage(id)"),'Role router must navigate to requested dashboard target');
+console.log('YT X2 dashboard destination existence and distinct role routing PASS');
+
 
 console.log('YT Project X2 transfer static checks PASS');
 
