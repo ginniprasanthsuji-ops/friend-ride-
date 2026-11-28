@@ -199,3 +199,11 @@ console.log('YT X2 homepage poster Telugu/Unicode integrity PASS');
  assert.ok(app.includes("p_payment_reference:null"),'Current partner payment confirmation UI sends optional reference argument');
  assert.ok(app.includes("fr_partner_confirm_market_payment"),'Partner payment confirmation RPC path exists');
  console.log('YT X2 Food/Shop current UI contract/idempotency regression PASS');
+
+ // Parcel create RPC input validation and execution permissions.
+ const parcelCreate=parcelMigration.slice(parcelMigration.indexOf('create or replace function public.fr_customer_create_parcel_request'),parcelMigration.indexOf('create or replace function public.fr_customer_list_parcel_requests'));
+ for(const s of ["p.role='customer'","p_sender_phone !~ '^[0-9]{10}$'","p_receiver_phone !~ '^[0-9]{10}$'","p_weight_kg<=0","p_weight_kg>100","trim(p_sender_name)","trim(p_receiver_name)","trim(p_pickup_address)","trim(p_delivery_address)","trim(p_description)","auth.uid()","tracking_id"])
+  assert.ok(parcelCreate.includes(s),'Parcel create RPC must validate customer ownership/input: '+s);
+ for(const s of ["revoke all on public.fr_parcel_requests from anon,authenticated;","grant execute on function public.fr_customer_create_parcel_request(text,text,text,text,text,text,text,numeric) to authenticated;","grant execute on function public.fr_customer_list_parcel_requests() to authenticated;","grant execute on function public.fr_customer_cancel_parcel_request(uuid) to authenticated;"])
+  assert.ok(parcelMigration.includes(s),'Parcel table/RPC access permissions invariant missing: '+s);
+ console.log('YT X2 Parcel input validation and permission-boundary static QA PASS');
