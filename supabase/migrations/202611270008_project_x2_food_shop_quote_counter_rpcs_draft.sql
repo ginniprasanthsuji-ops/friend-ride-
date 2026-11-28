@@ -35,7 +35,7 @@ begin
  select status,total_amount_paise into v_status,v_total from public.fr_market_orders where order_id=p_order_id and customer_id=v_customer for update;
  if not found then raise exception 'Order not found for this customer'; end if;
  if v_status<>'quoted' or v_total is null then raise exception 'No active partner quote'; end if;
- update public.fr_market_orders set status='accepted',updated_at=now() where order_id=p_order_id;
+ update public.fr_market_orders set status='customer_quote_accepted',updated_at=now() where order_id=p_order_id;
  return true;
 end; $$;
 
