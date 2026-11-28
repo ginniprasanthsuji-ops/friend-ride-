@@ -2793,9 +2793,21 @@ async function frCustomerOpenMarketPayment(id){
   if(d.qr_path){const signed=await sb.storage.from('provider-payment-qr').createSignedUrl(d.qr_path,600);if(!signed.error&&signed.data?.signedUrl)qr='<img class="fr-pay-qr" src="'+frMarketEsc(signed.data.signedUrl)+'" alt="Shop UPI QR Code">';}
   const upi=d.upi_id||'';
   const payUri=upi?'upi://pay?pa='+encodeURIComponent(upi)+'&pn='+encodeURIComponent('FRIEND RIDE Shop')+'&am='+(Number(d.total_amount_paise)/100).toFixed(2)+'&cu=INR&tn='+encodeURIComponent('FRIEND RIDE '+d.order_number):'';
-  panel.innerHTML='<div class="fr-pay-box"><h3>Pay to Shop / UPI QR</h3><div class="fr-pay-total" style="text-align:center">'+frMarketMoney(d.total_amount_paise)+'</div>'+qr+(upi?'<p style="text-align:center"><b>UPI ID:</b> '+frMarketEsc(upi)+'</p>':'')+(payUri?'<a class="fr-pay-link" href="'+frMarketEsc(payUri)+'">Open UPI App & Pay</a>':'')+'<div class="fr-pay-timer" id="frPayTimer_'+id+'">05:00</div><p class="tiny muted" style="text-align:center">First 5 minutes + automatic 3-minute extension. Same Shop QR remains active.</p><div class="notice">Payment à°ڠ±Ǡ°¸à°¿à°¨ à°¤à°°à±͠°µà°¾à°¤ Shop Owner à°¤à°¨ bank/UPI accountà°²à± receipt verify à°ڠ±Ǡ°¸à°¿ Confirm à°ڠ±Ǡ°¸à±͠°¤à°¾à°°à±. QR scan à°²à±Ǡ°¦à°¾ screenshot à°®à°¾à°¤à±͠°°à°®à± payment success à°ՠ°¾à°¦à±.</div><button class="btn light" onclick="frLoadCustomerMarketOrders()">Refresh Payment Status</button></div>';
+  panel.innerHTML='<div class="fr-pay-box"><h3>Pay to Shop / UPI QR</h3><div class="fr-pay-total" style="text-align:center">'+frMarketMoney(d.total_amount_paise)+'</div>'+qr+(upi?'<p style="text-align:center"><b>UPI ID:</b> '+frMarketEsc(upi)+'</p>':'')+(payUri?'<a class="fr-pay-link" href="'+frMarketEsc(payUri)+'">Open UPI App & Pay</a>':'')+'<div class="fr-pay-timer" id="frPayTimer_'+id+'">05:00</div><p class="tiny muted" style="text-align:center">First 5 minutes + automatic 3-minute extension. Same Shop QR remains active.</p><div class="notice">Payment à°ڠ±Ǡ°¸à°¿à°¨ à°¤à°°à±͠°µà°¾à°¤ Shop Owner à°¤à°¨ bank/UPI accountà°²à± receipt verify à°ڠ±Ǡ°¸à°¿ Confirm à°ڠ±Ǡ°¸à±͠°¤à°¾à°°à±. QR scan à°²à±Ǡ°¦à°¾ screenshot à°®à°¾à°¤à±͠°°à°®à± payment success à°ՠ°¾à°¦à±.</div><div class="field"><label>Payment Reference / UPI Transaction ID</label><input id="frMarketPaymentReference_'${id}'" placeholder="Enter UPI transaction reference (min 4 chars)"></div><button class="btn purple" onclick="frCustomerClaimMarketPayment(''${id}'')">Submit Payment Reference to Shop</button><p class="tiny muted">Submitting a reference is only a payment claim. Shop must independently check its bank/UPI receipt. This does not mark payment verified.</p><button class="btn light" onclick="frLoadCustomerMarketOrders()">Refresh Payment Status</button></div>';
   frStartMarketPayCountdown(id,d.expires_at,d.extension_used);
  }catch(e){panel.innerHTML='<div class="notice">'+frMarketEsc(e.message||e)+'</div>';await frLoadCustomerMarketOrders();}
+}
+async function frCustomerClaimMarketPayment(id){
+ const input=$('frMarketPaymentReference_'+id);
+ const reference=String(input?.value||'').trim();
+ if(reference.length<4||reference.length>160){alert('Please enter a valid UPI/payment reference (4–160 characters).');return;}
+ if(!confirm('Submit this payment reference as a claim? The Shop must independently verify receipt. This will not mark payment verified.'))return;
+ try{
+  const {error}=await sb.rpc('fr_customer_claim_market_payment',{p_order_id:id,p_reference:reference});
+  if(error)throw error;
+  alert('Payment reference submitted. Waiting for Shop confirmation; payment is not verified.');
+  await frLoadCustomerMarketOrders();
+ }catch(e){alert(e.message||e);}
 }
 function frStartMarketPayCountdown(id,expiresAt,extended){
  if(frMarketPayTimer)clearInterval(frMarketPayTimer);
