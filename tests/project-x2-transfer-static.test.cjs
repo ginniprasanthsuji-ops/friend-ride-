@@ -188,3 +188,14 @@ for(const marker of ['à°','â¹','ð','ð'])assert.ok(!posterRail.in
 assert.ok(/[\u0C00-\u0C7F]/.test(posterRail),'Homepage poster rail must retain readable Telugu copy');
 for(const emoji of ['🛡️','🎁','🛵','🚦','🏆','🎉','🧰','🚸'])assert.ok(posterRail.includes(emoji),'Homepage poster rail expected valid emoji: '+emoji);
 console.log('YT X2 homepage poster Telugu/Unicode integrity PASS');
+
+ // Food/Shop UI-RPC compatibility: checkout must use the draft v2 idempotent RPC,
+ // persist/reuse a request key for identical retries, and remain single-store until
+ // the multi-store RPC is fully integrated and the approved migration is applied.
+ for(const marker of ["fr_customer_place_market_order_v2","p_request_key:requestKey","localStorage.setItem('fr_market_checkout_request'","localStorage.removeItem('fr_market_checkout_request')"])
+  assert.ok(app.includes(marker),'Food/Shop idempotency integration marker missing: '+marker);
+ assert.ok(app.includes("if(ids.length!==1"),'Current checkout must explicitly reject multi-store carts until multi-store integration is ready');
+ assert.ok(app.includes("customer_quote_accepted:'Quotation accepted — payment pending'"),'Customer order status must display quote-accepted state');
+ assert.ok(app.includes("p_payment_reference:null"),'Current partner payment confirmation UI sends optional reference argument');
+ assert.ok(app.includes("fr_partner_confirm_market_payment"),'Partner payment confirmation RPC path exists');
+ console.log('YT X2 Food/Shop current UI contract/idempotency regression PASS');
