@@ -119,12 +119,10 @@ test.describe('Project X2 Food/Shop and tracking UI regression', () => {
     await page.locator('.bottom button[data-page="menu"]').click();
     await expect(page.locator('#drawerBackdrop')).toHaveClass(/show/);
     await page.locator('.drawer button.menu-item').filter({hasText:'Live Tracking'}).click();
-    await expect(page.locator('#tracking.page')).toHaveClass(/active/);
-    for (const [category, tab] of [['ride','#trackTabRide'],['parcel','#trackTabParcel'],['market','#trackTabMarket']]) {
-      await page.locator(tab).click();
-      await expect(page.locator(tab)).toHaveClass(/purple/);
-      await expect(page.locator('#trackingTitle')).toBeVisible();
-    }
+    // Tracking is account-gated; an unauthenticated click should open auth instead of navigation.
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await expect(page.locator('#tracking.page')).not.toHaveClass(/active/);
+    await page.locator('#authModal button.close').click();
     expect(errors, 'uncaught runtime errors in X2 UI controls').toEqual([]);
   });
 });
