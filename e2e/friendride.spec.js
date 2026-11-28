@@ -79,6 +79,27 @@ test.describe('FRIEND RIDE navigation click diagnostics', () => {
 });
 
 
+test.describe('Project X2 dashboard menu routing regression', () => {
+  test('each dashboard menu target opens its own login gate without Customer Dashboard fallback', async ({ page }) => {
+    const errors=[];
+    page.on('pageerror',e=>errors.push(e.message));
+    await page.goto('/');
+    await page.locator('#roleLauncher button.fr-role-card.customer').click();
+    await expect(page.locator('#authModal')).toHaveClass(/show/);
+    await page.locator('#authModal button.close').click();
+    const targets=['customerDashboard','driverDashboard','partnerDashboard','adminDashboard'];
+    for(const target of targets){
+      await page.locator('.bottom button[data-page="menu"]').click();
+      await expect(page.locator('#drawerBackdrop')).toHaveClass(/show/);
+      await page.locator('.drawer button.menu-item').filter({hasText:target.replace('Dashboard',' Dashboard')}).click();
+      await expect(page.locator('#authModal')).toHaveClass(/show/);
+      await expect(page.locator('#'+target+'.page')).not.toHaveClass(/active/);
+      await page.locator('#authModal button.close').click();
+    }
+    expect(errors,'runtime errors while checking role dashboard menu gates').toEqual([]);
+  });
+});
+
 test.describe('Project X2 Food/Shop and tracking UI regression', () => {
   test('Food, Shop, Cart, and tracking category controls render and respond', async ({ page }) => {
     const errors=[];
