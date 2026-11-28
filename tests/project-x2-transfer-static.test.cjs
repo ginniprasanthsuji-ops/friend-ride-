@@ -125,6 +125,6 @@ for(const s of ['frMarketPaymentReference_','frCustomerClaimMarketPayment','Paym
 const claimMigration=fs.readFileSync('supabase/migrations/202611270013_project_x2_food_shop_payment_claim_confirmation_draft.sql','utf8');
 const confirmCompat=fs.readFileSync('supabase/migrations/202611270014_project_x2_food_shop_payment_confirmation_ui_compat_draft.sql','utf8');
 for(const s of ['fr_customer_claim_market_payment','customer_payment_claimed_at','partner_payment_confirmed_at','payment_status=\'customer_claimed\'','payment_status=\'partner_confirmed\'','revoke all on function public.fr_customer_claim_market_payment(uuid,text) from public,anon;'])assert.ok(claimMigration.includes(s),'Payment claim migration invariant missing: '+s);
-for(const s of ['p_payment_reference text default null','return public.fr_partner_confirm_market_payment(p_order_id)','does not mark payment verified'])assert.ok(confirmCompat.includes(s),'Payment confirmation compatibility migration invariant missing: '+s);
+for(const s of ['p_payment_reference text default null','return public.fr_partner_confirm_market_payment(p_order_id)','Does not mark payment verified'])assert.ok(confirmCompat.includes(s),'Payment confirmation compatibility migration invariant missing: '+s);
 assert.ok(!claimMigration.includes("payment_status='verified'")&&!confirmCompat.includes("payment_status='verified'"),'Claim/partner-confirm drafts must not mark payment verified');
 console.log('YT Project X2 customer payment claim and partner confirmation static QA PASS');
