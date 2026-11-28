@@ -207,3 +207,13 @@ console.log('YT X2 homepage poster Telugu/Unicode integrity PASS');
  for(const s of ["revoke all on public.fr_parcel_requests from anon,authenticated;","grant execute on function public.fr_customer_create_parcel_request(text,text,text,text,text,text,text,numeric) to authenticated;","grant execute on function public.fr_customer_list_parcel_requests() to authenticated;","grant execute on function public.fr_customer_cancel_parcel_request(uuid) to authenticated;"])
   assert.ok(parcelMigration.includes(s),'Parcel table/RPC access permissions invariant missing: '+s);
  console.log('YT X2 Parcel input validation and permission-boundary static QA PASS');
+
+ // Parcel lifecycle: customer-owned cancellation is only allowed while status=requested.
+ const parcelCancelSql=parcelMigration.slice(parcelMigration.indexOf('create or replace function public.fr_customer_cancel_parcel_request'));
+ for(const s of ['p.customer_id=auth.uid()','p.status=\'requested\'','if not found then raise exception','grant execute on function public.fr_customer_cancel_parcel_request(uuid) to authenticated'])
+  assert.ok(parcelCancelSql.includes(s),'Parcel cancellation ownership/state guard missing: '+s);
+ const parcelTrackingUi=app.slice(app.indexOf('async function frLoadTrackingParcelOrders'),app.indexOf('async function frCancelParcelRequest'));
+ for(const s of ['fr_customer_list_parcel_requests','tracking_id','pickup_address','delivery_address','description','status','status===\'requested\'','frCancelParcelRequest'])
+  assert.ok(parcelTrackingUi.includes(s),'Parcel tracking UI status/persistence field missing: '+s);
+ assert.ok(!parcelTrackingUi.includes('sender_phone')&&!parcelTrackingUi.includes('receiver_phone'),'Customer parcel tracking display must not expose phone fields from list RPC');
+ console.log('YT X2 Parcel ownership/cancel-state/tracking UI regression PASS');
