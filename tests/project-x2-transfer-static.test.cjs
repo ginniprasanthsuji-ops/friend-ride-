@@ -147,6 +147,11 @@ const paymentDraft=fs.readFileSync('supabase/migrations/202611270013_project_x2_
 const partnerConfirmDraft=paymentDraft.slice(paymentDraft.indexOf('create or replace function public.fr_partner_confirm_market_payment'),paymentDraft.indexOf('revoke all on function public.fr_customer_claim_market_payment'));
 assert.ok(partnerConfirmDraft.includes("payment_status='partner_confirmed'"),'Partner confirmation should record confirmation state');
 assert.ok(!partnerConfirmDraft.includes("payment_status='verified'"),'Partner confirmation must not self-mark payment verified');
+const idemDraft=fs.readFileSync('supabase/migrations/202611270012_project_x2_food_shop_idempotency_draft.sql','utf8');
+assert.ok(idemDraft.includes('request_payload_fingerprint'),'Idempotency migration must persist request payload fingerprint');
+assert.ok(idemDraft.includes('Request key already used with a different order payload'),'Idempotency migration must reject changed payload on reused key');
+assert.ok(idemDraft.includes('v_existing_fingerprint is distinct from v_fingerprint'),'Existing idempotency key must be fingerprint-checked');
+
 
 assert.ok(stateFix.includes('revoke all on function public.fr_partner_update_market_order(uuid,text) from public,anon;')&&stateFix.includes('grant execute on function public.fr_partner_update_market_order(uuid,text) to authenticated;'),'Partner status updater ACL must remain restricted');
 for(const s of ['request_key uuid','fr_market_orders_customer_request_key_uq','pg_advisory_xact_lock','fr_customer_place_market_order','update public.fr_market_orders set request_key=p_request_key'])assert.ok(idempotency.includes(s),'Single-store checkout idempotency draft invariant missing: '+s);
