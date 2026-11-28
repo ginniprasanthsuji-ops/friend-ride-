@@ -16,6 +16,14 @@ for(const s of ["showPage(id)","id==='customerDashboard'","id==='driverDashboard
  assert.ok(menuGo.includes(s),'Dashboard routing/role guard invariant missing: '+s);
 assert.ok(!menuGo.includes("showPage('customerDashboard')"),'Role dashboard router must not fall back to Customer Dashboard');
 console.log('YT X2 dashboard routing distinct-target regression PASS');
+// Tracking page category switcher: each category dispatches to its own loader.
+const trackingSwitch=app.slice(app.indexOf('function selectTrackingCategory('),app.indexOf('async function frLoadTrackingParcelOrders'));
+for(const s of ["frTrackingCategory=category","category==='ride'","loadMyRideTracking()","category==='parcel'","frLoadTrackingParcelOrders()","frLoadTrackingMarketOrders()"])
+ assert.ok(trackingSwitch.includes(s),'Tracking category dispatch invariant missing: '+s);
+const trackingMenu=menuGo.slice(menuGo.indexOf("'tracking'"));
+assert.ok(trackingMenu.includes("!currentUser")&&trackingMenu.includes("openAuth('login')"),'Live tracking menu must be login-gated');
+console.log('YT X2 tracking category dispatch/login gate static regression PASS');
+
 console.log('YT Project X2 transfer static checks PASS');
 
 const parcelMigration=fs.readFileSync('supabase/migrations/202611270004_project_x2_parcel_persistence.sql','utf8');
