@@ -116,7 +116,9 @@ test.describe('Project X2 Food/Shop and tracking UI regression', () => {
     await expect(page.locator('#authModal')).toHaveClass(/show/);
     await page.locator('#authModal button.close').click();
     // Direct page navigation helper is exercised by the visible tracking action from the Orders screen.
-    await page.locator('.bottom button[data-page="tracking"]').click();
+    await page.locator('.bottom button[data-page="menu"]').click();
+    await expect(page.locator('#drawerBackdrop')).toHaveClass(/show/);
+    await page.locator('.drawer button.menu-item').filter({hasText:'Live Tracking'}).click();
     await expect(page.locator('#tracking.page')).toHaveClass(/active/);
     for (const [category, tab] of [['ride','#trackTabRide'],['parcel','#trackTabParcel'],['market','#trackTabMarket']]) {
       await page.locator(tab).click();
