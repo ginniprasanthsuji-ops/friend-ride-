@@ -10,6 +10,12 @@ assert.ok(cancel.includes('passenger_count')&&cancel.includes('passengers_booked
 assert.ok(cancel.includes('revoke all on function public.fr_station_cancel_booking(uuid) from public,anon;')&&cancel.includes('grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;'),'YT cancellation RPC ACL restricted');
 const cancelFix=fs.readFileSync('supabase/migrations/202611270003_project_x2_station_cancel_security_fix.sql','utf8');
 for(const s of ['auth.uid() is null','passenger_id=auth.uid()','for update','v_booking.status not in (\'requested\',\'confirmed\')','v_ride.status not in (\'live\',\'booked\')','passengers_booked-v_booking.passenger_count','revoke all on function public.fr_station_cancel_booking(uuid) from public,anon;','grant execute on function public.fr_station_cancel_booking(uuid) to authenticated;'])assert.ok(cancelFix.includes(s),'YT X2 cancellation security/seat restoration invariant missing: '+s);
+// Dashboard routing regression: menu targets remain distinct and role-gated.
+const menuGo=app.slice(app.indexOf('function menuGo('),app.indexOf('function useHomeLocation'));
+for(const s of ["showPage(id)","id==='customerDashboard'","id==='driverDashboard'","id==='adminDashboard'","id==='partnerDashboard'","selectedRole!=='customer'","selectedRole!=='driver'","selectedRole!=='admin'","selectedRole!=='partner'"])
+ assert.ok(menuGo.includes(s),'Dashboard routing/role guard invariant missing: '+s);
+assert.ok(!menuGo.includes("showPage('customerDashboard')"),'Role dashboard router must not fall back to Customer Dashboard');
+console.log('YT X2 dashboard routing distinct-target regression PASS');
 console.log('YT Project X2 transfer static checks PASS');
 
 const parcelMigration=fs.readFileSync('supabase/migrations/202611270004_project_x2_parcel_persistence.sql','utf8');
