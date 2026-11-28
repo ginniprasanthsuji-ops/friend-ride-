@@ -185,6 +185,6 @@ console.log('YT Project X2 Food/Shop state-machine, payment gate, idempotency an
 const posterRail=app.slice(app.indexOf('<div class="fr-poster-rail'),app.indexOf('<div class="fr-poster-dots'));
 assert.ok(posterRail.length>500,'Homepage poster rail should exist');
 for(const marker of ['à°','â¹','ð','ð'])assert.ok(!posterRail.includes(marker),'Homepage poster rail contains mojibake marker: '+marker);
-assert.ok(/[\\u0C00-\\u0C7F]/.test(posterRail),'Homepage poster rail must retain readable Telugu copy');
+assert.ok(/[\u0C00-\u0C7F]/.test(posterRail),'Homepage poster rail must retain readable Telugu copy');
 for(const emoji of ['🛡️','🎁','🛵','🚦','🏆','🎉','🧰','🚸'])assert.ok(posterRail.includes(emoji),'Homepage poster rail expected valid emoji: '+emoji);
 console.log('YT X2 homepage poster Telugu/Unicode integrity PASS');
