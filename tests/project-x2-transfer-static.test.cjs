@@ -217,3 +217,10 @@ console.log('YT X2 homepage poster Telugu/Unicode integrity PASS');
   assert.ok(parcelTrackingUi.includes(s),'Parcel tracking UI status/persistence field missing: '+s);
  assert.ok(!parcelTrackingUi.includes('sender_phone')&&!parcelTrackingUi.includes('receiver_phone'),'Customer parcel tracking display must not expose phone fields from list RPC');
  console.log('YT X2 Parcel ownership/cancel-state/tracking UI regression PASS');
+
+ // Parcel release must remain visibly demo-only until backend verification/OTP RPC exists.
+ const parcelRelease=app.slice(app.indexOf('function confirmParcelRelease()'),app.indexOf('\nasync function login()',app.indexOf('function confirmParcelRelease()')));
+ for(const marker of ['Demo UI validation only','No parcel release was executed','Server-side verified payment and OTP validation are not implemented'])
+  assert.ok(parcelRelease.includes(marker),'Parcel release UI must clearly not claim execution: '+marker);
+ assert.ok(!parcelRelease.includes('sb.rpc('),'Parcel release demo must not call unverified backend RPC');
+ console.log('YT X2 parcel release demo-safety regression PASS');
