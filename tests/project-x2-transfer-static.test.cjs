@@ -108,3 +108,10 @@ assert.ok(!parcelList.includes('sender_phone')&&!parcelList.includes('receiver_p
 const parcelCancel=parcelMigration.slice(parcelMigration.indexOf('create or replace function public.fr_customer_cancel_parcel_request'),parcelMigration.indexOf('revoke all on function public.fr_customer_create_parcel_request'));
 for(const s of ['auth.uid() is null','customer_id=auth.uid()',"status='requested'", "status='cancelled'",'updated_at=now()','if not found then raise exception'])assert.ok(parcelCancel.includes(s),'Parcel cancel must enforce ownership and requested-only status: '+s);
 console.log('YT Project X2 Parcel tracking privacy, ownership, and cancellation static QA PASS');
+
+
+// Marketplace counter-price form must not send empty offers to backend.
+const counterHandler=app.slice(app.indexOf('async function frCustomerSendCounter('),app.indexOf('const frOriginalShowPage=showPage',app.indexOf('async function frCustomerSendCounter(')));
+assert.ok(counterHandler.includes('if(!offers.length)'),'Counter offer must reject empty item offers before RPC');
+assert.ok(counterHandler.includes('fr_customer_counter_market_order'),'Counter offer must persist via backend RPC');
+console.log('YT Project X2 marketplace counter-offer empty-input regression PASS');
