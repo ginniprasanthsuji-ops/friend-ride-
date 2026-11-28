@@ -224,3 +224,10 @@ console.log('YT X2 homepage poster Telugu/Unicode integrity PASS');
   assert.ok(parcelRelease.includes(marker),'Parcel release UI must clearly not claim execution: '+marker);
  assert.ok(!parcelRelease.includes('sb.rpc('),'Parcel release demo must not call unverified backend RPC');
  console.log('YT X2 parcel release demo-safety regression PASS');
+
+ // Parcel request submission UX guard: required fields, phone digits, weight bounds,
+ // customer role, disable during RPC, validate tracking response and restore button.
+ const parcelSubmit=app.slice(app.indexOf('async function submitParcelRequest'),app.indexOf('function submitServiceRequest',app.indexOf('async function submitParcelRequest')));
+ for(const s of ['parcelSender','parcelSenderPhone','parcelPickup','parcelReceiver','parcelReceiverPhone','parcelDrop','parcelDescription','length!==10','currentProfile?.role!==\'customer\'','weight>100','btn.disabled=true','fr_customer_create_parcel_request','result?.parcel_id||result?.id','result?.tracking_id','finally{if(btn){btn.disabled=false'])
+  assert.ok(parcelSubmit.includes(s),'Parcel request submit validation/UX guard missing: '+s);
+ console.log('YT X2 Parcel submit validation/tracking-reference regression PASS');
