@@ -180,3 +180,11 @@ for(const s of ['request_key uuid','fr_market_orders_customer_request_key_uq','p
 for(const s of ['fr_market_checkout_requests','payload_fingerprint','Request key already used with a different checkout payload','pg_advisory_xact_lock','fr_customer_place_market_order','group by (x.value->>\'store_id\')::uuid','grant execute on function public.fr_customer_place_market_orders_multi_v1(text,jsonb,uuid) to authenticated;'])assert.ok(multiStore.includes(s),'Multi-store transactional checkout draft invariant missing: '+s);
 for(const p of ['202611270005_project_x2_food_shop_catalogue_foundation.sql','202611270006_project_x2_food_shop_order_schema_draft.sql','202611270007_project_x2_food_shop_core_order_rpcs_draft.sql','202611270008_project_x2_food_shop_quote_counter_rpcs_draft.sql','202611270009_project_x2_food_shop_negotiation_integrity_draft.sql','202611270010_project_x2_food_shop_delivery_fee_quote_history_draft.sql','202611270011_project_x2_food_shop_state_machine_correction_draft.sql','202611270012_project_x2_food_shop_idempotency_draft.sql','202611270013_project_x2_food_shop_payment_claim_confirmation_draft.sql','202611270014_project_x2_food_shop_payment_confirmation_ui_compat_draft.sql','202611270015_project_x2_food_shop_multistore_transaction_draft.sql'])assert.ok(fs.existsSync('supabase/migrations/'+p),'Expected draft migration missing: '+p);
 console.log('YT Project X2 Food/Shop state-machine, payment gate, idempotency and multi-store draft-chain regression PASS');
+
+// Homepage poster rail Telugu/Unicode text integrity regression.
+const posterRail=app.slice(app.indexOf('<div class="fr-poster-rail'),app.indexOf('<div class="fr-poster-dots'));
+assert.ok(posterRail.length>500,'Homepage poster rail should exist');
+for(const marker of ['à°','â¹','ð','ð'])assert.ok(!posterRail.includes(marker),'Homepage poster rail contains mojibake marker: '+marker);
+assert.ok(/[\\u0C00-\\u0C7F]/.test(posterRail),'Homepage poster rail must retain readable Telugu copy');
+for(const emoji of ['🛡️','🎁','🛵','🚦','🏆','🎉','🧰','🚸'])assert.ok(posterRail.includes(emoji),'Homepage poster rail expected valid emoji: '+emoji);
+console.log('YT X2 homepage poster Telugu/Unicode integrity PASS');
